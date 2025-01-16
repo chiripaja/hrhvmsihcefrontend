@@ -1,0 +1,4 @@
+
+.contenedor{
+    @apply flex flex-wrap bg-white p-3 rounded w-full;
+}

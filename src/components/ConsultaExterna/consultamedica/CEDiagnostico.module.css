@@ -1,0 +1,6 @@
+.fixed-width {
+    width: 400px; /* Puedes ajustar este valor a lo que desees */
+    word-break: break-word;
+    white-space: normal;
+    text-align: justify;
+}

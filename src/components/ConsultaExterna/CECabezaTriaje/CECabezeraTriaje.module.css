@@ -1,0 +1,38 @@
+/* Aplicando clases a .modalSize */
+.modalSize {
+  @apply max-w-[85vw] max-h-[75vh];
+}
+
+/* Definición de la clase .mainTriaje */
+.mainTriaje {
+  @apply bg-white w-full mb-6 rounded-lg shadow-lg border-b-4 border-emerald-200;
+}
+
+/* Aplicando .mainTriaje directamente dentro de .mainTriaje__grid */
+.mainTriaje__grid {
+  @apply grid grid-cols-1 items-center;
+}
+
+/* .mainTriaje__grid__header con estilos adicionales */
+.mainTriaje__grid__header {
+  @apply flex items-center justify-center space-x-4 mb-2;
+}
+
+.mainTriaje__body{
+  @apply flex flex-col md:flex-row gap-4 w-full;
+}
+.mainTriaje__body__container{
+  @apply flex-grow flex flex-col md:flex-row;
+}
+.mainTriaje__body__container__item{
+  @apply flex-grow flex flex-col mx-2;
+}
+.mainTriaje__body__container__item__container{
+  @apply flex flex-col mb-4;
+}
+.mainTriaje__body__container__item__container__txtprincipal{
+  @apply font-semibold text-gray-800;
+}
+.txtColorContenido{
+  @apply text-gray-600
+}
