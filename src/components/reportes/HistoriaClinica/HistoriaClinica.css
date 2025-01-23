@@ -1,0 +1,44 @@
+/* Estilo de la página para simular una hoja de Word */
+.page {
+    width: 210mm; /* Ancho de una hoja A4 */
+    height: 297mm; /* Alto de una hoja A4 */
+    padding: 20mm; /* Márgenes */
+    margin: 0 auto; /* Centrar la hoja */
+    background: white; /* Fondo blanco */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para simular una hoja */
+    border: 1px solid #ddd;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Contenido interno de la página */
+  .content {
+    font-family: Arial, sans-serif;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+  
+  /* Ocultar todo lo que no sea la hoja en modo impresión */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+  
+    .page,
+    .page * {
+      visibility: visible;
+    }
+  
+    .page {
+      margin: 0;
+      box-shadow: none;
+      border: none;
+      width: 100%;
+      height: auto;
+    }
+  
+    button {
+      display: none;
+    }
+  }
+  

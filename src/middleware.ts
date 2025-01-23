@@ -7,11 +7,13 @@ import { auth } from "./auth"
 
 const publicRoutes: string[] = [
     "/login",
-    "/allow"
+    "/allow",
+    "/reportes"
 ]
 
 const publicRoutesRegex: RegExp[] = [
-  /^\/allow(\/.*)?$/  // Permite todas las subrutas bajo "/allow"
+  /^\/allow(\/.*)?$/,  // Permite todas las subrutas bajo "/allow"
+  /^\/reportes(\/.*)?$/  // Permite todas las subrutas bajo "/allow"
 ];
 const roleRoutes: Record<string, string[]> = {
   //"/sihce/inicio": [""],

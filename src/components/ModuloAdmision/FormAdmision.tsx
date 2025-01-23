@@ -8,7 +8,7 @@ import Select from 'react-select';
 import Swal from "sweetalert2";
 import { FormNuevoUsuario } from './FormNuevoUsuario';
 import { ModalGenerico } from "../ui/ModalGenerico";
-import { FiPrinter } from "react-icons/fi";
+import { FiFile, FiPrinter } from "react-icons/fi";
 import { AiOutlineLoading } from "react-icons/ai";
 import { TicketImpresion } from "./TicketImpresion";
 import { useSession } from "next-auth/react";
@@ -16,7 +16,8 @@ import { RiDeleteBin6Line, RiH1 } from "react-icons/ri";
 import { FormPaciente } from "./FormPaciente";
 import { FormPacientev2 } from "./FormPacientev2";
 import { Tooltip } from '../ui/Tooltip';
-
+import { useRouter } from "next/router";
+import Link from 'next/link';
 type InputBusquedadDni = {
     dni: string,
     idDocIdentidad: string,
@@ -88,7 +89,7 @@ const fetchOptionsByCodigo = async (codigo: string): Promise<Establecimiento[]> 
 
 
 export const FormAdmision = (data: any) => {
-
+  
     const referenciaInputRef = useRef<HTMLInputElement>(null);
     const { diactual } = data
     const { ffFinanciamiento } = data;
@@ -307,6 +308,8 @@ export const FormAdmision = (data: any) => {
         await setNearest(data)
         setShouldPrint(true);
     }
+
+
 
     const AnularCuenta = async (idcita: any, idprogramacion: any) => {
         Swal.fire({
@@ -663,12 +666,19 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                                                         onClick={() => impresionTicket(datalista?.idCuentaAtencion)}
                                                                         className="py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-yellow-500 text-gray-700  hover:bg-yellow-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
                                                                     >
-                                                                    
                                                                             <FiPrinter size={18} className="text-white hover: cursor-pointer" />
-                                            
-
                                                                     </button>
                                                                     </Tooltip>
+                                                                    <Tooltip text="Hoja Filiación">
+  <a
+    href={`/reportes/historiaclinica/${datalista?.idCuentaAtencion}`}
+    target="_blank"
+    className="ml-3 py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-blue-400 text-gray-700 hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+  >
+    
+    <FiFile size={18} className="text-white" />
+  </a>
+</Tooltip>
                                                                     <Tooltip text="Eliminar">
                                                                     <button
                                                                         type="button"
