@@ -238,30 +238,23 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
                   <td className="font-bold">Departamento:</td>
                   <td>{datosPx?.departamentonacimiento}</td>
                 </tr>
-
                 <tr>
                   <td className="font-bold">Provincia:</td>
                   <td>{datosPx?.provincianacimiento}</td>
                 </tr>
-
                 <tr>
                   <td className="font-bold">Distrito:</td>
                   <td>{datosPx?.distritonacimiento}</td>
                 </tr>
-
                 <tr>
                   <td className="font-bold">Centro Poblado:</td>
                   <td>{datosPx?.centropobladonac || '-'}</td>
                 </tr>
               </tbody>
-
             </table>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mt-4 text-sm border-t-2">
-
-
-
             <table>
               <tbody>
                 <tr>
@@ -275,7 +268,7 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
               <tbody>
                 <tr>
                   <td className="font-bold">Nº Orden Pago</td>
-                  <td>-</td>
+                  <td>{datosPx?.idOrdenPago || '-'}</td>
                 </tr>
               </tbody>
 
