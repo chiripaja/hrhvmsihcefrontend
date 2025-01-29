@@ -412,7 +412,7 @@ export const FormAdmision = (data: any) => {
 
     return (
         <>
-            <div className="h-full  p-3 print:hidden">
+            <div className=" p-3 print:hidden">
                 <div className="flex justify-center">
                     {enableNewUser && (
                         <button
@@ -448,12 +448,15 @@ export const FormAdmision = (data: any) => {
                                 <div
                                     key={index}
                                     onClick={() => verdata(data, index)}
-                                    className={`${activeIndex === index ? 'bg-yellow-400 text-black font-semibold' : 'bg-blue-500 text-white'} 
-                                shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:bg-yellow-200 hover:text-black rounded-lg p-4 sm:p-6 m-2 sm:m-4 flex items-center justify-center`}
+                                    className={`${data?.cuposLibres === '0' ? 'bg-orange-600 hover:bg-orange-500' : activeIndex === index ? 'bg-yellow-400 text-black font-semibold hover:bg-yellow-200' : 'bg-blue-500 text-white hover:bg-yellow-200'} 
+shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:text-black rounded-lg p-4 sm:p-6 m-2 sm:m-4 flex items-center justify-center`}
                                 >    <div className="text-center" >
                                         <div className="mt-2 text-xs sm:text-sm md:text-base">
+                                 
+                                         
+                                            <p className="font-bold">{data?.fecha}</p>
                                             <p >{data.nombreServicio}
-                                                ({(data.cuposLibres >= 0) ? data.cuposLibres : 0})
+                                              <span className="font-bold">  ({(data.cuposLibres >= 0) ? data.cuposLibres : 0})</span>
                                             </p>
                                             <p >{data.nombreMedico}</p>
                                             <p className="font-bold"> ( {data.horaInicio} - {data.horaFin} )</p>
@@ -629,10 +632,10 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                     </>
                 )}
 
-                <div className="flex flex-col mt-4">
+                <div className="flex flex-col mt-4 ">
                     <div className="-m-1.5 overflow-x-auto">
                         <div className="p-1.5 min-w-full inline-block align-middle">
-                            <div className="overflow-hidden h-[75vh]"> {/* Establece la altura fija aquí */}
+                            <div className="overflow-hidden h-[48vh]"> {/* Establece la altura fija aquí */}
                                 <div className="overflow-y-auto h-full"> {/* Habilita el scroll vertical */}
                                     {cargandoLista ? (
                                         <div className="flex items-center justify-center h-full">

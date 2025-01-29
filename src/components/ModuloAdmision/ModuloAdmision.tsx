@@ -2,9 +2,10 @@
 
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-
+import Select from 'react-select';
 import * as StompJs from '@stomp/stompjs';
 import { FormAdmision } from "./FormAdmision";
+import { Controller, useForm } from "react-hook-form";
 
 interface Cita {
     idEspecialidad: number;
@@ -62,8 +63,10 @@ const generarFechas = (citas: Cita[]): string[] => {
 
 export const ModuloAdmision = ({ usuario }: any) => {
     const [medicoSeleccionado, setMedicoSeleccionado] = useState<string | null>(null);
-
+    const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const diactual = new Date().toISOString().split('T')[0];
+
+    const [options, setoptions] = useState<any[]>([]);
 
     const [stompClient, setStompClient] = useState<StompJs.Client | null>(null);
     const [citas, setCitas] = useState<Cita[]>([]);
@@ -76,15 +79,20 @@ export const ModuloAdmision = ({ usuario }: any) => {
     const [ffFinanciamiento, setffFinanciamiento] = useState<any>()
     const [tipoDoc, setTipoDoc] = useState<any>()
 
-    const obtenerMedicosUnicos = (citas: Cita[]) => {
+
+    const obtenerMedicosUnicos2 = (citas: Cita[]) => {
         const medicos = new Set<string>();
         citas.forEach((cita: any) => {
             if (cita?.nombreMedico) {
                 medicos.add(cita.nombreMedico);
             }
         });
-        return Array.from(medicos).sort();
+        return Array.from(medicos)
+            .sort()
+            .map(medico => ({ value: medico, label: medico }));
+
     };
+
     const citasFiltradas = medicoSeleccionado
         ? citas.filter((cita: any) => cita?.nombreMedico === medicoSeleccionado)
         : citas;
@@ -103,6 +111,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
         try {
             const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibres`);
             setCitas(data);
+
         } catch (error) {
             console.error('Error fetching products:', error);
         } finally {
@@ -113,7 +122,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
     const fetchProductsActualizacionPosterior = async () => {
         settextoLoading("cargando");
         try {
-            const {data} = await axios.get(`${process.env.apiurl}/Admision/CuposLibres`);            
+            const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibres`);
             setCitas(data);
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -133,11 +142,11 @@ export const ModuloAdmision = ({ usuario }: any) => {
     }
 
     useEffect(() => {
-       
+
         fetchProducts();
         obtenerff();
         getTipoDoc();
- 
+
         const conectarWS = () => {
             const client = new StompJs.Client({
                 webSocketFactory: () => new WebSocket(`${process.env.apiws}/websocket`),
@@ -176,7 +185,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
             return null;
         }
     }
-  
+
     const actualizarCitas = (mensaje: any) => {
         try {
             const body = typeof mensaje === 'string' ? JSON.parse(mensaje) : mensaje;
@@ -199,9 +208,17 @@ export const ModuloAdmision = ({ usuario }: any) => {
     }
     const citasAgrupadas = agruparYCuposLibres(citas);
     const fechas = generarFechas(citas);
+    const medicoBuscadoW = watch('medicoBuscado')
+    useEffect(() => {
+        if (medicoBuscadoW) {
+            setMedicoSeleccionado(medicoBuscadoW?.value)
+        }
+    }, [medicoBuscadoW])
+
 
     return (
         <div className="p-2 bg-white rounded print:m-0 print:p-0 print:bg-transparent print:rounded-none">
+
             {isLoading ? (
                 <div className="flex justify-center items-center h-screen">
                     <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
@@ -212,23 +229,36 @@ export const ModuloAdmision = ({ usuario }: any) => {
                         <div className="col-span-12 print:hidden">
                             <h1>{TextoLoading}</h1>
                         </div>
-                        <div className="col-span-12 ">
+                        <div className="col-span-12 print:hidden">
                             <label htmlFor="medico" className=" block text-sm font-medium text-gray-700">
                                 Filtrar por Médico
                             </label>
-                            <select
-                                id="medico"
-                                value={medicoSeleccionado || ""}
-                                onChange={(e) => setMedicoSeleccionado(e.target.value || null)}
-                                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            >
-                                <option value="">Todos</option>
-                                {obtenerMedicosUnicos(citas).map((medico) => (
-                                    <option key={medico} value={medico}>
-                                        {medico}
-                                    </option>
-                                ))}
-                            </select>
+
+                
+                                <Controller
+                                    name="medicoBuscado"
+                                    control={control}
+                                    defaultValue={null}
+                                    render={({ field }) => (
+                                        <Select
+                                            instanceId="unique-select-id"
+                                            {...field}
+                                            options={[
+                                                { value: "", label: "Todos" }, // Opción adicional para "Todos"
+                                                ...obtenerMedicosUnicos2(citas)
+                                            ]}
+                                            placeholder="Servicios Emergencia"
+                                            className="w-full z-30"
+                                            isLoading={isLoading}
+                                            required
+                                            onChange={(selectedOption) => {
+                                                field.onChange(selectedOption); // Mantiene la funcionalidad de react-hook-form
+                                                setMedicoSeleccionado(selectedOption?.value); // Actualiza el estado directamente
+                                            }}
+                                        />
+                                    )}
+                                />
+                        
                         </div>
                         <div className="col-span-12 print:hidden">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
@@ -248,7 +278,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
                                 </button>
                             </div>
                         </div>
-                        <div className="col-span-12 md:col-span-8 gap-3 overflow-x-auto print:hidden">
+                        <div className="col-span-12 md:col-span-8 gap-3 overflow-x-auto print:hidden h-4/6 overflow-y-auto">
                             <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700 ">
                                 <thead>
                                     <tr>
@@ -263,14 +293,14 @@ export const ModuloAdmision = ({ usuario }: any) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {Object.keys(agruparYCuposLibres(citasFiltradas)).map((idEspecialidad,index) => {
+                                    {Object.keys(agruparYCuposLibres(citasFiltradas)).map((idEspecialidad, index) => {
                                         const citaEspecialidad = citas.find(
                                             (cita) => cita.idEspecialidad === parseInt(idEspecialidad)
                                         );
                                         return (
                                             <tr key={idEspecialidad} className="odd:bg-white even:bg-gray-100 ">
-                                                <td 
-                                        className={`sticky left-0 z-10 px-4 py-2 
+                                                <td
+                                                    className={`sticky left-0 z-10 px-4 py-2 
                                             ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} dark:bg-neutral-800`}
                                                 >{citaEspecialidad ? citaEspecialidad.nombreEspecialidad : 'No disponible'}</td>
                                                 {fechas.slice(0, daysToShow).map((fecha) => (
@@ -322,7 +352,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
                                 </tbody>
                             </table>
                         </div>
-                        <div className="col-span-12 md:col-span-4 border rounded print:col-span-12 print:md:col-span-12 print:border-none print:rounded-none">
+                        <div className="col-span-12 md:col-span-4 h-4/6 border rounded print:col-span-12 print:md:col-span-12 print:border-none print:rounded-none ">
                             <FormAdmision diactual={diactual} usuario={usuario} consultorio={consultorio} establecimientos={establecimientosLista} ffFinanciamiento={ffFinanciamiento} tipoDoc={tipoDoc} ejecutarVer={ver} />
                         </div>
                     </div>

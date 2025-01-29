@@ -1,14 +1,9 @@
-
-
 import React from 'react'
 import { LogoutBtn } from '../LogoutBtn';
 import { auth } from '@/auth';
-
 import { BsHospital } from 'react-icons/bs';
-import { TopMenuItem } from './TopMenuItem/TopMenuItem';
 import { ColorPicker } from '../utils/ColorPicker';
 import { FaRegFileAlt, FaRegUser, FaUserCog } from 'react-icons/fa';
-import { CiHospital1 } from 'react-icons/ci';
 import { TbBuildingHospital } from 'react-icons/tb';
 import Link from 'next/link';
 import { GrConfigure } from "react-icons/gr";
@@ -34,14 +29,11 @@ export const TopMenu2 = async () => {
   ];
 
   const menuItemsConfiguracion = [
-    { href: "/sihce/roles", label: "Roles", condition: webadmin }, 
-     { href: "/sihce/auditoria", label: "Auditoria", condition: webadmin }
+    { href: "/sihce/roles", label: "Roles", condition: webadmin },
+    { href: "/sihce/auditoria", label: "Auditoria", condition: webadmin }
   ];
 
-
   return (<>
-
-
     <header className=" print:hidden flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full colorFondo text-sm py-4 sm:py-0 dark:bg-neutral-800 ">
       <nav className="max-w-[85rem] w-full mx-auto px-4 md:px-6 lg:px-8 p-2">
         <div className="relative sm:flex sm:items-center">
@@ -50,7 +42,6 @@ export const TopMenu2 = async () => {
               <Link href="/sihce/inicio" passHref className='flex'>
                 <BsHospital className="mr-2" /> HRHVM
               </Link>
-
             </span>
             <div className="sm:hidden">
               <button
@@ -102,17 +93,14 @@ export const TopMenu2 = async () => {
             className="hidden hs-collapse overflow-hidden transition-all duration-300 basis-full grow sm:block"
             aria-labelledby="hs-navbar-columns-collapse"
           >
-            <div className="flex flex-col gap-y-3 sm:gap-y-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:mt-0 sm:ps-5">
-
-
-
+            <div className="flex flex-col gap-y-3  sm:gap-y-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:mt-0 sm:ps-5">
               {menuItemsConsultaExterna
                 .filter(item => item.condition).length > 0 && (
-                  <div className="hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
+                  <div className="hs-dropdown z-50 [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
                     <button
                       id="hs-mega-menu-1-col"
                       type="button"
-                      className="sm:p-3 flex items-center w-full text-white font-medium hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-neutral-400 dark:hover:text-neutral-500 dark:focus:text-neutral-500 dark:bg-neutral-700 dark:hover:bg-neutral-600 rounded-md shadow-md transition-all duration-300"
+                      className="sm:p-3 flex  items-center w-full text-white font-medium hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-neutral-400 dark:hover:text-neutral-500 dark:focus:text-neutral-500 dark:bg-neutral-700 dark:hover:bg-neutral-600 rounded-md shadow-md transition-all duration-300"
                       aria-haspopup="menu"
                       aria-expanded="false"
                       aria-label="Mega Menu"
@@ -157,7 +145,7 @@ export const TopMenu2 = async () => {
                 )}
               {/* Optionally, add a similar dropdown or section for Emergencia */}
               {menuItemsEmergencia.filter(item => item.condition).length > 0 && (
-                <div className="hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
+                <div className="hs-dropdown  z-50 [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
                   <button
                     id="hs-mega-menu-2-col"
                     type="button"
@@ -209,12 +197,8 @@ export const TopMenu2 = async () => {
                 </div>
               )}
 
-
-
-
-
-{menuItemsConfiguracion.filter(item => item.condition).length > 0 && (
-                <div className="hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
+              {menuItemsConfiguracion.filter(item => item.condition).length > 0 && (
+                <div className="hs-dropdown z-50 [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
                   <button
                     id="hs-mega-menu-2-col"
                     type="button"
@@ -224,7 +208,7 @@ export const TopMenu2 = async () => {
                     aria-controls="emergency-menu"
                     aria-label="Emergencia"
                   >
-                    <GrConfigure   className='mr-2' />
+                    <GrConfigure className='mr-2' />
                     Configuraciones
                     <svg
                       className="hs-dropdown-open:-rotate-180 sm:hs-dropdown-open:rotate-0 duration-300 ms-1 shrink-0 size-4"
@@ -263,10 +247,7 @@ export const TopMenu2 = async () => {
                   </div>
                 </div>
               )}
-
-
-
-              <div className="mr-2 hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
+              <div className="mr-2 z-50 hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
                 <button
                   id="hs-mega-menu-2-col"
                   type="button"
@@ -276,7 +257,6 @@ export const TopMenu2 = async () => {
                   aria-label="Mega Menu"
                 >
                   <FaUserCog className="mr-2" />
-
                   {session?.user?.name}
                   <svg
                     className="hs-dropdown-open:-rotate-180 sm:hs-dropdown-open:rotate-0 duration-300 ms-1 shrink-0 size-4"
@@ -293,7 +273,6 @@ export const TopMenu2 = async () => {
                     <path d="m6 9 6 6 6-6" />
                   </svg>
                 </button>
-
                 <div
                   className="hs-dropdown-menu sm:transition-all ease-in-out sm:duration-300 hs-dropdown-open:opacity-100 opacity-0 hidden z-10 top-full sm:w-60 bg-white sm:shadow-lg rounded-lg py-4 sm:px-4 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700"
                   role="menu"
@@ -305,17 +284,12 @@ export const TopMenu2 = async () => {
                   </div>
                 </div>
               </div>
-
               <ColorPicker />
             </div>
           </div>
         </div>
       </nav>
     </header>
-
-
-
-
   </>
   )
 }
