@@ -142,11 +142,9 @@ export const ModuloAdmision = ({ usuario }: any) => {
     }
 
     useEffect(() => {
-
         fetchProducts();
         obtenerff();
         getTipoDoc();
-
         const conectarWS = () => {
             const client = new StompJs.Client({
                 webSocketFactory: () => new WebSocket(`${process.env.apiws}/websocket`),
