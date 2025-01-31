@@ -204,7 +204,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
             console.log(error)
         }
     }
-    const citasAgrupadas = agruparYCuposLibres(citas);
+    const citasAgrupadas = agruparYCuposLibres(citasFiltradas);
     const fechas = generarFechas(citas);
     const medicoBuscadoW = watch('medicoBuscado')
     useEffect(() => {
@@ -216,7 +216,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
 
     return (
         <div className="p-2 bg-white rounded print:m-0 print:p-0 print:bg-transparent print:rounded-none">
-
+           
             {isLoading ? (
                 <div className="flex justify-center items-center h-screen">
                     <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
@@ -291,63 +291,54 @@ export const ModuloAdmision = ({ usuario }: any) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {Object.keys(agruparYCuposLibres(citasFiltradas)).map((idEspecialidad, index) => {
-                                        const citaEspecialidad = citas.find(
-                                            (cita) => cita.idEspecialidad === parseInt(idEspecialidad)
-                                        );
-                                        return (
-                                            <tr key={idEspecialidad} className="odd:bg-white even:bg-gray-100 ">
-                                                <td
-                                                    className={`sticky left-0 z-10 px-4 py-2 
-                                            ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} dark:bg-neutral-800`}
-                                                >{citaEspecialidad ? citaEspecialidad.nombreEspecialidad : 'No disponible'}</td>
-                                                {fechas.slice(0, daysToShow).map((fecha) => (
-                                                    <td key={fecha} className={` p-1 `}  >
-                                                        {citasAgrupadas[parseInt(idEspecialidad)][fecha] ? (
-                                                            citasAgrupadas[parseInt(idEspecialidad)][fecha].cuposLibres > 0 ? (
-                                                                <div onClick={() => ver(idEspecialidad, fecha)} className={`
-                                                           ${(activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha) ? 'bg-yellow-400 font-bold' : ''} 
-                                                           cursor-pointer  text-center rounded bg-teal-500 hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105`}>
-                                                                    [{citasAgrupadas[parseInt(idEspecialidad)][fecha].cuposLibres}]
-                                                                </div>
-                                                            ) : (
-                                                                (() => {
-                                                                    const givenDate = new Date(fecha);
-                                                                    const today = new Date();
+  {Object.keys(agruparYCuposLibres(citasFiltradas))
+    .filter((idEspecialidad) => 
+      fechas.slice(0, daysToShow).some((fecha) => 
+        citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres > 0
+      )
+    )
+    .map((idEspecialidad, index) => {
+      const citaEspecialidad:any = citasFiltradas.find(
+        (cita) => cita.idEspecialidad === parseInt(idEspecialidad)
+      );
 
-                                                                    const todayString = today.toISOString().split('T')[0];
-                                                                    const givenDateString = givenDate.toISOString().split('T')[0];
-
-                                                                    if (todayString === givenDateString) {
-                                                                        return (
-                                                                            <div onClick={() => ver(idEspecialidad, fecha)} className={`
-                                                                       ${(activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha) ? 'bg-yellow-400 font-bold' : ''} 
-                                                                       bg-orange-600 cursor-pointer rounded text-center hover:bg-yellow-200 shadow-lg transition duration-300 ease-in-out transform hover:scale-105`}>
-                                                                                [0]
-                                                                            </div>
-                                                                        );
-                                                                    } else {
-                                                                        return (
-                                                                            <div className="bg-gray-300 rounded">
-                                                                                <button onClick={() => ver(idEspecialidad, fecha)}></button>
-                                                                            </div>
-                                                                        );
-                                                                    }
-                                                                })()
-                                                            )
-                                                        ) : (
-                                                            <div className="bg-gray-300 rounded">
-                                                                <button onClick={() => ver(idEspecialidad, fecha)}></button>
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                ))}
-                                            </tr>
-
-
-                                        );
-                                    })}
-                                </tbody>
+      return (
+        <tr key={idEspecialidad} className="odd:bg-white even:bg-gray-100">
+          <td
+            className={`sticky left-0 z-10 px-4 py-2 
+              ${index % 2 === 0 ? "bg-white" : "bg-gray-100"} dark:bg-neutral-800`}
+          >
+            {citaEspecialidad ? citaEspecialidad.nombreEspecialidad : "No disponible"}
+          </td>
+          {fechas.slice(0, daysToShow).map((fecha) => (
+            <td key={fecha} className="p-1">
+              {citasAgrupadas[parseInt(idEspecialidad)][fecha] ? (
+                citasAgrupadas[parseInt(idEspecialidad)][fecha].cuposLibres > 0 ? (
+                  <div
+                    onClick={() => ver(idEspecialidad, fecha)}
+                    className={`cursor-pointer text-center rounded bg-teal-500 hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
+                      ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}`}
+                  >
+              
+                   
+                    [{citasAgrupadas[parseInt(idEspecialidad)][fecha].cuposLibres}]
+                  </div>
+                ) : (
+                  <div className="bg-gray-300 rounded">
+                    <button onClick={() => ver(idEspecialidad, fecha)}></button>
+                  </div>
+                )
+              ) : (
+                <div className="bg-gray-300 rounded">
+                  <button onClick={() => ver(idEspecialidad, fecha)}></button>
+                </div>
+              )}
+            </td>
+          ))}
+        </tr>
+      );
+    })}
+</tbody>
                             </table>
                         </div>
                         <div className="col-span-12 md:col-span-4 h-4/6 border rounded print:col-span-12 print:md:col-span-12 print:border-none print:rounded-none ">
