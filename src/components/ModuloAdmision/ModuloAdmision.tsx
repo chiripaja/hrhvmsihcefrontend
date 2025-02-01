@@ -292,13 +292,25 @@ export const ModuloAdmision = ({ usuario }: any) => {
                                 </thead>
                                 <tbody>
   {Object.keys(agruparYCuposLibres(citasFiltradas))
-    .filter((idEspecialidad) => 
-      fechas.slice(0, daysToShow).some((fecha) => 
-        citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres > 0
+    .filter((idEspecialidad) =>
+      fechas.slice(0, daysToShow).some(
+        (fecha) =>
+          citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres > 0
       )
     )
+    .sort((a, b) => {
+      const nombreA =
+        citasFiltradas.find(
+          (cita) => cita.idEspecialidad === parseInt(a)
+        )?.nombreEspecialidad || "";
+      const nombreB =
+        citasFiltradas.find(
+          (cita) => cita.idEspecialidad === parseInt(b)
+        )?.nombreEspecialidad || "";
+      return nombreA.localeCompare(nombreB);
+    })
     .map((idEspecialidad, index) => {
-      const citaEspecialidad:any = citasFiltradas.find(
+      const citaEspecialidad: any = citasFiltradas.find(
         (cita) => cita.idEspecialidad === parseInt(idEspecialidad)
       );
 
@@ -319,8 +331,6 @@ export const ModuloAdmision = ({ usuario }: any) => {
                     className={`cursor-pointer text-center rounded bg-teal-500 hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
                       ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}`}
                   >
-              
-                   
                     [{citasAgrupadas[parseInt(idEspecialidad)][fecha].cuposLibres}]
                   </div>
                 ) : (
