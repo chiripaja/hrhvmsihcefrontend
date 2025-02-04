@@ -89,7 +89,7 @@ const fetchOptionsByCodigo = async (codigo: string): Promise<Establecimiento[]> 
 
 
 export const FormAdmision = (data: any) => {
-  
+
     const referenciaInputRef = useRef<HTMLInputElement>(null);
     const { diactual } = data
     const { ffFinanciamiento } = data;
@@ -412,8 +412,9 @@ export const FormAdmision = (data: any) => {
 
     return (
         <>
-            <div className=" p-3 print:hidden">
-                <div className="flex justify-center">
+            <div className=" p-3 print:hidden ">
+                <div className="flex justify-center ">
+
                     {enableNewUser && (
                         <button
                             className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
@@ -452,11 +453,11 @@ export const FormAdmision = (data: any) => {
 shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:text-black rounded-lg p-4 sm:p-6 m-2 sm:m-4 flex items-center justify-center`}
                                 >    <div className="text-center" >
                                         <div className="mt-2 text-xs sm:text-sm md:text-base">
-                                 
-                                         
+
+
                                             <p className="font-bold">{data?.fecha}</p>
                                             <p >{data.nombreServicio}
-                                              <span className="font-bold">  ({(data.cuposLibres >= 0) ? data.cuposLibres : 0})</span>
+                                                <span className="font-bold">  ({(data.cuposLibres >= 0) ? data.cuposLibres : 0})</span>
                                             </p>
                                             <p >{data.nombreMedico}</p>
                                             <p className="font-bold"> ( {data.horaInicio} - {data.horaFin} )</p>
@@ -501,7 +502,7 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                         maxLength: selectedTipoDocumento === '1' ? 8 : undefined,
                                     })}
                                 />
-                      
+
 
 
                                 <button
@@ -548,9 +549,9 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                                 // Verifica si data.idsis es igual a 1
                                                 if (validacionListarIafas == 1) { // Cambia `true` a la condición real que necesitas
                                                     // Filtra el arreglo basado en la condición
-                                                    opcionFormateado = ffFinanciamiento.filter((data: any) => 
+                                                    opcionFormateado = ffFinanciamiento.filter((data: any) =>
                                                         data.idFuenteFinanciamiento === 3 || data.idFuenteFinanciamiento === 5
-                                                      );
+                                                    );
                                                 } else if (validacionListarIafas == 3) {
                                                     opcionFormateado = ffFinanciamiento.filter((data: any) => data.idFuenteFinanciamiento != 3);
                                                 } else if (validacionListarIafas == 0) {
@@ -635,10 +636,10 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                 <div className="flex flex-col mt-4 ">
                     <div className="-m-1.5 overflow-x-auto">
                         <div className="p-1.5 min-w-full inline-block align-middle">
-                            <div className="overflow-hidden h-[48vh]"> {/* Establece la altura fija aquí */}
-                                <div className="overflow-y-auto h-full"> {/* Habilita el scroll vertical */}
+                            <div className="overflow-hidden h-fit"> {/* Establece la altura fija aquí */}
+                                <div className="overflow-y-auto h-5/6"> {/* Habilita el scroll vertical */}
                                     {cargandoLista ? (
-                                        <div className="flex items-center justify-center h-full">
+                                        <div className="flex items-center justify-center h-fit">
                                             <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
                                         </div>
                                     ) : listadoProgramacion && Array.isArray(listadoProgramacion) && listadoProgramacion.length === 0 ? (
@@ -646,61 +647,66 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                             <span className="text-gray-500">No tiene datos</span>
                                         </div>
                                     ) : (
-                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700 border">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col" className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Nombres</th>
-                                                    <th scope="col" className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Acción</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                                                {listadoProgramacion.map((datalista: any) => {
-                                                    const isCuentaAtencionNotZero = datalista?.idCuentaAtencion !== 0;
-                                                    return (
-                                                        <tr key={datalista?.idCita} className={isCuentaAtencionNotZero ? '' : 'bg-yellow-100'}>
-                                                            <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-                                                                {datalista?.paciente} ({datalista?.idCuentaAtencion})
-                                                            </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                                                <div className="flex  gap-y-1">
-                                                                <Tooltip text="Imprimir">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => impresionTicket(datalista?.idCuentaAtencion)}
-                                                                        className="py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-yellow-500 text-gray-700  hover:bg-yellow-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
-                                                                    >
-                                                                            <FiPrinter size={18} className="text-white hover: cursor-pointer" />
-                                                                    </button>
-                                                                    </Tooltip>
-                                                                    <Tooltip text="Hoja Filiación">
-  <a
-    href={`/reportes/historiaclinica/${datalista?.idCuentaAtencion}`}
-    target="_blank"
-    className="ml-3 py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-blue-400 text-gray-700 hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
-  >
-    
-    <FiFile size={18} className="text-white" />
-  </a>
-</Tooltip>
-                                                                    <Tooltip text="Eliminar">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => AnularCuenta(datalista?.idCita, datalista?.idProgramacion)}
-                                                                        className="ml-3 py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none"
-                                                                    >
-                                                                    
-                                                                            <RiDeleteBin6Line size={18} className="text-red-200  hover:text-red-300 cursor-pointer" />
-                                                                        
-                                                                    </button>
-                                                                    </Tooltip>
-                                                                </div>
-                                                            </td>
-
+                                        <>
+                                            <div className=" h-[39vh] m-1 overflow-auto">
+                                                <table className="min-w-fit divide-y divide-gray-200 dark:divide-neutral-700 border ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Nombres</th>
+                                                            <th scope="col" className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Acción</th>
                                                         </tr>
-                                                    );
-                                                })}
-                                            </tbody>
-                                        </table>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
+                                                        {listadoProgramacion.map((datalista: any) => {
+                                                            const isCuentaAtencionNotZero = datalista?.idCuentaAtencion !== 0;
+                                                            return (
+                                                                <tr key={datalista?.idCita} className={isCuentaAtencionNotZero ? '' : 'bg-yellow-100'}>
+                                                                    <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                                                        {datalista?.paciente} ({datalista?.idCuentaAtencion})
+                                                                    </td>
+                                                                    <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                                                                        <div className="flex  gap-y-1">
+                                                                            <Tooltip text="Imprimir">
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => impresionTicket(datalista?.idCuentaAtencion)}
+                                                                                    className="py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-yellow-500 text-gray-700  hover:bg-yellow-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                                                                                >
+                                                                                    <FiPrinter size={18} className="text-white hover: cursor-pointer" />
+                                                                                </button>
+                                                                            </Tooltip>
+                                                                            <Tooltip text="Hoja Filiación">
+                                                                                <a
+                                                                                    href={`/reportes/historiaclinica/${datalista?.idCuentaAtencion}`}
+                                                                                    target="_blank"
+                                                                                    className="ml-3 py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-blue-400 text-gray-700 hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                                                                                >
+
+                                                                                    <FiFile size={18} className="text-white" />
+                                                                                </a>
+                                                                            </Tooltip>
+                                                                            <Tooltip text="Eliminar">
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => AnularCuenta(datalista?.idCita, datalista?.idProgramacion)}
+                                                                                    className="ml-3 py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none"
+                                                                                >
+
+                                                                                    <RiDeleteBin6Line size={18} className="text-red-200  hover:text-red-300 cursor-pointer" />
+
+                                                                                </button>
+                                                                            </Tooltip>
+                                                                        </div>
+                                                                    </td>
+
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>  </div>
+
+
+                                        </>
                                     )}
                                 </div>
                             </div>

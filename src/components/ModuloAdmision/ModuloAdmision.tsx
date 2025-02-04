@@ -223,7 +223,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
                 </div>
             ) : (
                 <>
-                    <div className="grid grid-cols-12 gap-4 ">
+                    <div className="grid grid-cols-12 gap-4   h-5/6">
                         <div className="col-span-12 print:hidden">
                             <h1>{TextoLoading}</h1>
                         </div>
@@ -276,7 +276,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
                                 </button>
                             </div>
                         </div>
-                        <div className="col-span-12 md:col-span-8 gap-3 overflow-x-auto print:hidden h-4/6 overflow-y-auto">
+                        <div className="col-span-12 md:col-span-8 gap-3 overflow-x-auto print:hidden h-fit overflow-y-auto border">
                             <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700 ">
                                 <thead>
                                     <tr>
@@ -322,36 +322,54 @@ export const ModuloAdmision = ({ usuario }: any) => {
           >
             {citaEspecialidad ? citaEspecialidad.nombreEspecialidad : "No disponible"}
           </td>
-          {fechas.slice(0, daysToShow).map((fecha) => (
-            <td key={fecha} className="p-1">
-              {citasAgrupadas[parseInt(idEspecialidad)][fecha] ? (
-                citasAgrupadas[parseInt(idEspecialidad)][fecha].cuposLibres > 0 ? (
-                  <div
-                    onClick={() => ver(idEspecialidad, fecha)}
-                    className={`cursor-pointer text-center rounded bg-teal-500 hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
-                      ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}`}
-                  >
-                    [{citasAgrupadas[parseInt(idEspecialidad)][fecha].cuposLibres}]
-                  </div>
+          {fechas.slice(0, daysToShow).map((fecha) => {
+            const hoy = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
+            const esHoy = fecha === hoy;
+            const cuposLibres = citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres || 0;
+
+            return (
+              <td key={fecha} className="p-1">
+                {citasAgrupadas[parseInt(idEspecialidad)]?.[fecha] ? (
+                  esHoy ? (
+                    <div
+                      onClick={() => ver(idEspecialidad, fecha)}
+                      className={`cursor-pointer text-center rounded  hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
+                        ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}
+                        ${cuposLibres>0 ? "bg-teal-500":"bg-orange-600"}
+                        `}
+                    >
+                      {/* Mostrar cupos libres si hay más de 0, de lo contrario mostrar 0 */}
+                      [{cuposLibres > 0 ? cuposLibres : 0}]
+                  
+                    </div>
+                  ) : cuposLibres > 0 ? (
+                    <div
+                      onClick={() => ver(idEspecialidad, fecha)}
+                      className={`cursor-pointer text-center rounded bg-teal-500 hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
+                        ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}`}
+                    >
+                      [{cuposLibres}] 
+                    </div>
+                  ) : (
+                    <div className="bg-gray-300 rounded">
+                      <button onClick={() => ver(idEspecialidad, fecha)}></button>
+                    </div>
+                  )
                 ) : (
                   <div className="bg-gray-300 rounded">
                     <button onClick={() => ver(idEspecialidad, fecha)}></button>
                   </div>
-                )
-              ) : (
-                <div className="bg-gray-300 rounded">
-                  <button onClick={() => ver(idEspecialidad, fecha)}></button>
-                </div>
-              )}
-            </td>
-          ))}
+                )}
+              </td>
+            );
+          })}
         </tr>
       );
     })}
 </tbody>
                             </table>
                         </div>
-                        <div className="col-span-12 md:col-span-4 h-4/6 border rounded print:col-span-12 print:md:col-span-12 print:border-none print:rounded-none ">
+                        <div className="col-span-12 md:col-span-4 h-fit border rounded print:col-span-12 print:md:col-span-12 print:border-none print:rounded-none ">
                             <FormAdmision diactual={diactual} usuario={usuario} consultorio={consultorio} establecimientos={establecimientosLista} ffFinanciamiento={ffFinanciamiento} tipoDoc={tipoDoc} ejecutarVer={ver} />
                         </div>
                     </div>
