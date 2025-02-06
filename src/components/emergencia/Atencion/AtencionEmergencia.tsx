@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CabeceraEmergencia } from "./CabeceraEmergencia"
 import { TriajeBusqueda } from "@/components/Triaje/TriajeBusqueda";
 import { Anamnesis } from "./Anamnesis/Anamnesis";
@@ -8,22 +8,79 @@ import { OrdenesFarmacia } from "./OrdenesFarmacia/OrdenesFarmacia";
 import { CEDiagnostico } from "@/components/ConsultaExterna/consultamedica/CEDiagnostico";
 import { CEConsultaGeneral } from "@/components/ConsultaExterna";
 
+
+import { useEmergenciaDatosStore } from "@/store/ui/emergenciadatos";
+import axios from "axios";
+import { getData } from "@/components/helper/axiosHelper";
+import { Transferencias } from "./Transferencias/Transferencias";
 export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
-    const [activeTab, setActiveTab] = useState(1);
+  const [dataPx, setDataPx] = useState<any>();
+  const [activeTab, setActiveTab] = useState(1);
+  const emergenciaCuentaDatos=useEmergenciaDatosStore((state:any)=>state.datosemergencia)
+  const setIdAtencionv2=useEmergenciaDatosStore((state:any)=>state.setIdAtencionv2);
+  const setDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setDiagnosticoByCuenta);
+  const setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago = useEmergenciaDatosStore((state: any) => state.setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago);
+  const [datosAtencion, setDatosAtencion] = useState<any>();
+  const getDatos = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
+      
+      setIdAtencionv2(
+        data?.idAtencion,
+        data?.idCuentaAtencion,
+        data?.idPaciente,
+        data?.NroHistoriaClinica,
+        data?.CitaMotivo,
+        data?.CitaExamenClinico,
+        data?.IdTipoSexo,
+        data?.CitaObservaciones
+      )
+      setDataPx(data);
+    } catch (error: any) {
+      if (error.response && error.response.status === 404) {
+        console.error("Recurso no encontrado (404)");
+        setDataPx(null);
+      } else {
+        console.error("Ocurrió un error inesperado", error);
+      }
+    }
+  }
+  const getDatosConsulta = async () => {
+      try {
+        const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
+        console.log(datosAtencion)
+        setDatosAtencion(datosAtencion)
+        setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,datosAtencion?.edad,datosAtencion?.idCondicionMaterna,datosAtencion?.idDestinoAtencion)
+        if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
+          datosAtencion.atencionesDiagnosticos.map((data: any) => {
+            setDiagnosticoByCuenta(
+              data.diagnostico.idDiagnostico,
+              data.diagnostico.codigoCIE10+' - '+data.diagnostico.descripcion,
+              data.diagnostico.codigoCIE10,
+              data.idSubclasificacionDx,
+              data.subclasificacionDiagnosticos.descripcion,
+              data.labConfHIS,
+              data.idClasificacionDx
+            );
+          });
+        } else {
+          console.error("datosAtencion.atencionesDiagnosticos no es un array");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+  useEffect(() => {
+    getDatos();
+    getDatosConsulta();
+  }, [])
+  
   return (
     <>
+    <pre>
+      {JSON.stringify(emergenciaCuentaDatos,null,2)}
+    </pre>
     <CabeceraEmergencia idcuentaatencion={idcuentaatencion}/>
-  
-
-
-
-
-
-
-
-
-
-
     <div className="p-4">
       {/* Contenedor de los Tabs */}
       <div className="flex border-b">
@@ -76,6 +133,15 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
         >
           Ordenes 
         </button>
+
+        <button
+          className={`py-2 px-4 text-sm font-semibold ${
+            activeTab === 6 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+          } focus:outline-none`}
+          onClick={() => setActiveTab(6)}
+        >
+          Transferencias 
+        </button>
       </div>
 
       {/* Contenedor del contenido de los tabs */}
@@ -112,6 +178,13 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
           {activeTab === 5 && (
           <div className="p-4 bg-white border rounded-md shadow-md">
             <CEConsultaGeneral/>
+          </div>
+        )}
+
+        {/* Contenido de Tab 6 */}
+        {activeTab === 6 && (
+          <div className="p-4 bg-white border rounded-md shadow-md">
+            <Transferencias/>
           </div>
         )}
       </div>

@@ -15,8 +15,6 @@ export const Transferencias = () => {
   const [optionsS, setOptionsS] = useState<any[]>([]);
   const [options, setOptions] = useState<any[]>([]);
   const getMedicosGeneral = async (nom: string) => {
-    console.log("Buscando médicos:", nom);
-
     try {
       const response = await getData(`${process.env.apijimmynew}/apimedicobynomape/${nom}`);
       console.log(response)
@@ -24,7 +22,6 @@ export const Transferencias = () => {
         value: est.IdMedico,
         label: est.nommed,
       }));
-
       setoptionMedicosG(mappedOptions);
     } catch (error) {
       console.error("Error al obtener médicos:", error);
@@ -32,8 +29,9 @@ export const Transferencias = () => {
   };
 
   const handleSelectChange = (selectedOption: any) => {
-    getMedicos(selectedOption?.IdEspecialidad)
+    getMedicos(selectedOption?.idEspecialidad)
   };
+
   const getMedicos = async (idespecialidad: any) => {
     const response = await getData(`${process.env.apijimmynew}/emergencia/MedicosFiltrar/${idespecialidad}`);
     console.log(response)
@@ -47,12 +45,15 @@ export const Transferencias = () => {
   useEffect(() => {
     fetchCombosEmergencia()
   }, [])
+
   const fetchCombosEmergencia = async () => {
     const response = await getData(`${process.env.apijimmynew}/emergencia/ServiciosFiltrar`);
+    console.log(response)
     const mappedOptions = response.map((est: any) => ({
-      value: est.IdServicio,
-      label: `${est.Nombre.trim()}`,
-      IdEspecialidad: est.IdEspecialidad
+      value: est.idServicio,
+      label: `${est.nombre.trim()}`,
+      idEspecialidad: est.idEspecialidad,
+      idproducto:est.idproducto
     }));
     setOptionsS(mappedOptions);
   }
@@ -63,7 +64,6 @@ export const Transferencias = () => {
       try {
         setIsLoading(true);
         const response = await getData(`${process.env.apijimmynew}/diagnosticos/findByName/${nomdx}`);
-
         const mappedOptions = response.map((est: any) => ({
           value: est.idDiagnostico,
           label: `${est.codigoCIE10} - ${est.descripcion}`,
@@ -81,7 +81,15 @@ export const Transferencias = () => {
   );
 
   const FormTransferencias: SubmitHandler<any> = async (data: any) => {
+    const objetoEnviar={
+      idiagnostico:data.IdDiagnostico.value,
+      IdMedicoSolicitante:data.IdMedicoIngreso.value,
+      IdServicio:data.IdServicio.value,
+      idmedicoDestino:data.idmedico.value,
+      idproducto:data.idproducto
+    }
     console.log(data)
+    
   }
 
   return (
