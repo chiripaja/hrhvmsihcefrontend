@@ -7,7 +7,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Select from 'react-select';
 
 
-export const Transferencias = () => {
+export const Transferencias = ({ datosEmergencia }:any) => {
   const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
   const [optionMedicosG, setoptionMedicosG] = useState<any[]>([])
   const [optionMedicos, setoptionMedicos] = useState<any[]>([])

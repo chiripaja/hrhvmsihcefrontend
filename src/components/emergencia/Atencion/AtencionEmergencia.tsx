@@ -184,7 +184,7 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
         {/* Contenido de Tab 6 */}
         {activeTab === 6 && (
           <div className="p-4 bg-white border rounded-md shadow-md">
-            <Transferencias/>
+            <Transferencias datosEmergencia={emergenciaCuentaDatos}/>
           </div>
         )}
       </div>

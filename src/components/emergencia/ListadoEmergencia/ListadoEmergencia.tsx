@@ -18,10 +18,11 @@ export const ListadoEmergencia = () => {
   const fetchCombosEmergencia = async () => {
     try {
       const response = await getData(`${process.env.apijimmynew}/emergencia/ServiciosFiltrar`);
+      console.log(response)
       const mappedOptions = response.map((est: any) => ({
-        value: est.IdServicio,
-        label: `${est.Nombre.trim()}`,
-        IdEspecialidad: est.IdEspecialidad
+        value: est.idServicio,
+        label: `${est.nombre.trim()}`,
+        IdEspecialidad: est.idEspecialidad
       }));
       setOptions(mappedOptions);
 
