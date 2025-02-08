@@ -102,6 +102,7 @@ export const ListadoPacienteImpresion = () => {
     let idEspe = formData?.idEspe?.value | 0;
     let idServicio = formData?.idServicio?.value | 0;
     const { data } = await axios.get(`${process.env.apiurl}/CitadosBloque/${formData?.desde}/${formData?.hasta}/${idDepa}/${idEspe}/${idServicio}`)
+    console.log(data)
     setLoading(false)
     setDataListadoPX(data)
   };

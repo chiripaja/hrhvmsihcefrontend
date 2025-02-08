@@ -48,7 +48,7 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
   const getDatosConsulta = async () => {
       try {
         const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
-        console.log(datosAtencion)
+
         setDatosAtencion(datosAtencion)
         setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,datosAtencion?.edad,datosAtencion?.idCondicionMaterna,datosAtencion?.idDestinoAtencion)
         if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
@@ -77,9 +77,7 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
   
   return (
     <>
-    <pre>
-      {JSON.stringify(emergenciaCuentaDatos,null,2)}
-    </pre>
+ 
     <CabeceraEmergencia idcuentaatencion={idcuentaatencion}/>
     <div className="p-4">
       {/* Contenedor de los Tabs */}
@@ -184,7 +182,10 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
         {/* Contenido de Tab 6 */}
         {activeTab === 6 && (
           <div className="p-4 bg-white border rounded-md shadow-md">
+            {emergenciaCuentaDatos && 
             <Transferencias datosEmergencia={emergenciaCuentaDatos}/>
+            }
+            
           </div>
         )}
       </div>

@@ -8,6 +8,7 @@ import Select from 'react-select';
 
 
 export const Transferencias = ({ datosEmergencia }:any) => {
+  
   const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
   const [optionMedicosG, setoptionMedicosG] = useState<any[]>([])
   const [optionMedicos, setoptionMedicos] = useState<any[]>([])
@@ -48,7 +49,7 @@ export const Transferencias = ({ datosEmergencia }:any) => {
 
   const fetchCombosEmergencia = async () => {
     const response = await getData(`${process.env.apijimmynew}/emergencia/ServiciosFiltrar`);
-    console.log(response)
+
     const mappedOptions = response.map((est: any) => ({
       value: est.idServicio,
       label: `${est.nombre.trim()}`,
@@ -89,11 +90,24 @@ export const Transferencias = ({ datosEmergencia }:any) => {
       idproducto:data.idproducto
     }
     console.log(data)
-    
   }
 
+  const getTransferencias=async(idcuentaatencion:any)=>{
+    const data=await getData(`${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalariaSeleccionarPorIdCuentaAtencion/${idcuentaatencion}`);
+    console.log(`${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalariaSeleccionarPorIdCuentaAtencion/${idcuentaatencion}`)
+    console.log(data)
+  }
+  useEffect(() => {
+    if(datosEmergencia){
+      getTransferencias(datosEmergencia?.idcuentaatencion)
+    }
+  }, [datosEmergencia])
+  
   return (
     <>
+       <pre>
+          {JSON.stringify(datosEmergencia,null,2)}
+        </pre>
       <div className="p-6 bg-gray-100">
         {/* Formulario */}
         <form className="bg-white p-6 rounded-lg shadow-md space-y-4" onSubmit={handleSubmit(FormTransferencias)}>
