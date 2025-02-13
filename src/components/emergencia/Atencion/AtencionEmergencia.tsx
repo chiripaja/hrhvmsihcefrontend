@@ -48,9 +48,10 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
   const getDatosConsulta = async () => {
       try {
         const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
-
+     
+        console.log(datosAtencion?.servicio?.idProducto)
         setDatosAtencion(datosAtencion)
-        setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,datosAtencion?.edad,datosAtencion?.idCondicionMaterna,datosAtencion?.idDestinoAtencion)
+        setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,datosAtencion?.edad,datosAtencion?.idCondicionMaterna,datosAtencion?.idDestinoAtencion,datosAtencion?.servicio?.idProducto)
         if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
           datosAtencion.atencionesDiagnosticos.map((data: any) => {
             setDiagnosticoByCuenta(
@@ -178,7 +179,7 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
             <CEConsultaGeneral/>
           </div>
         )}
-
+datosEmergencia
         {/* Contenido de Tab 6 */}
         {activeTab === 6 && (
           <div className="p-4 bg-white border rounded-md shadow-md">

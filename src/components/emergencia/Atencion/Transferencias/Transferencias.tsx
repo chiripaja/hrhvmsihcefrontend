@@ -5,10 +5,9 @@ import axios from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Select from 'react-select';
-import { CiLogout } from 'react-icons/ci';
+import { obtenerFechaYHora } from '@/components/utils/obtenerFechaYHora';
 
-
-export const Transferencias = ({ datosEmergencia,session }: any) => {
+export const Transferencias = ({ datosEmergencia, session }: any) => {
 
   const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
   const [optionMedicosG, setoptionMedicosG] = useState<any[]>([])
@@ -16,11 +15,11 @@ export const Transferencias = ({ datosEmergencia,session }: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [optionsS, setOptionsS] = useState<any[]>([]);
   const [options, setOptions] = useState<any[]>([]);
+  const { formattedDate, hora, fechayhora } = obtenerFechaYHora();
   const [dataTransferencias, setDataTransferencias] = useState<any[]>([]);
   const getMedicosGeneral = async (nom: string) => {
     try {
       const response = await getData(`${process.env.apijimmynew}/apimedicobynomape/${nom}`);
-      console.log(response)
       const mappedOptions = response.map((est: any) => ({
         value: est.IdMedico,
         label: est.nommed,
@@ -37,7 +36,6 @@ export const Transferencias = ({ datosEmergencia,session }: any) => {
 
   const getMedicos = async (idespecialidad: any) => {
     const response = await getData(`${process.env.apijimmynew}/emergencia/MedicosFiltrar/${idespecialidad}`);
-    console.log(response)
     const mappedOptions = response.map((est: any) => ({
       value: est.IdMedico,
       label: `${est.Nombres + ' ' + est.ApellidoPaterno + ' ' + est.ApellidoMaterno}`,
@@ -56,7 +54,7 @@ export const Transferencias = ({ datosEmergencia,session }: any) => {
       value: est.idServicio,
       label: `${est.nombre.trim()}`,
       idEspecialidad: est.idEspecialidad,
-      idproducto: est.idproducto
+      idproducto: est.idProducto
     }));
     setOptionsS(mappedOptions);
   }
@@ -84,67 +82,105 @@ export const Transferencias = ({ datosEmergencia,session }: any) => {
   );
 
   const FormTransferencias: SubmitHandler<any> = async (data: any) => {
+    const nuevoArray = [...dataTransferencias];
+
+    const nuevo = nuevoArray
+      .slice()
+      .sort((a, b) => a.IdEstanciaHospitalaria - b.IdEstanciaHospitalaria)
+      .map((item, index, array) => ({
+        idAtencion: datosEmergencia?.idatencion,
+        IdMedicoOrdena: item?.IdMedicoOrdena,
+        idServicio: item?.IdServicio,
+        horaOcupacion: item?.HoraOcupacion,
+        fechaOcupacion: item?.FechaOcupacion,
+        secuencia: item?.Secuencia,
+        llegoAlServicio: 1,
+        idProducto: item?.idProducto,
+        idDiagnosticoTrasf: item?.IdDiagnostico,
+        idUsuarioAuditoria: item?.IdUsuarioAuditoria
+      }));
+    const ultimo = nuevo[nuevo.length - 1];
+
+
     const objetoEnviar = {
-      idiagnostico: data.IdDiagnostico.value,
-      IdMedicoSolicitante: data.IdMedicoIngreso.value,
-      IdServicio: data.IdServicio.value,
-      idmedicoDestino: data.idmedico.value,
-      idproducto: data.idproducto
-    }
-    console.log(data)
+      idAtencion: datosEmergencia?.idatencion,
+      IdMedicoOrdena: data?.IdMedicoIngreso.value,
+      idServicio: data.IdServicio.value,
+      horaOcupacion: hora,
+      fechaOcupacion: formattedDate,
+      secuencia: ultimo.secuencia + 1,
+      llegoAlServicio: 0,
+      idProducto: data.IdServicio?.idproducto,
+      idDiagnosticoTrasf: data.IdDiagnostico.value,
+      idUsuarioAuditoria: parseInt(session?.user?.id, 10) || null
+    };
+
+
+    const nuevoConObjeto = [...nuevo, objetoEnviar];
+
+    registroTransferencias(nuevoConObjeto);
+
   }
 
   const getTransferencias = async (idatencion: any) => {
     const data = await getData(`${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalariaSeleccionarPorIdCuentaAtencion/${idatencion}`);
-    console.log(`${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalariaSeleccionarPorIdCuentaAtencion/${idatencion}`)
+
     setDataTransferencias(data)
   }
+
   useEffect(() => {
     if (datosEmergencia) {
       getTransferencias(datosEmergencia?.idatencion)
     }
   }, [datosEmergencia])
-  const eliminarPorId = (id: number) => {
 
+  const eliminarPorId = (id: number) => {
     setDataTransferencias(prevData => {
       const newData = prevData.filter(item => item.IdEstanciaHospitalaria !== id);
 
-      const updatedData = newData
-        .sort((a, b) => a.IdEstanciaHospitalaria - b.IdEstanciaHospitalaria)
-        .map((item, index) => ({
-          ...item,
-          Secuencia: index + 2,
-        }));
-
-        const nuevo = newData
+      const nuevo = newData
         .sort((a, b) => a.IdEstanciaHospitalaria - b.IdEstanciaHospitalaria)
         .map((item, index, array) => ({
-          IdAtencion:datosEmergencia?.idatencion,
-          IdMedicoOrdena:item?.IdMedicoOrdena,
-          IdServicio:item?.IdServicio,
-          HoraOcupacion:item?.HoraOcupacion,
-          Secuencia:index+1,
-          LlegoAlServicio: index === array.length - 1 ? 0 : 1,
-          idProducto:item?.idProducto,
-          IdDiagnosticoTrasf:item?.IdDiagnostico,
-          IdUsuarioAuditoria:item?.IdUsuarioAuditoria
+          idAtencion: datosEmergencia?.idatencion,
+          IdMedicoOrdena: item?.IdMedicoOrdena,
+          idServicio: item?.IdServicio,
+          horaOcupacion: item?.HoraOcupacion,
+          fechaOcupacion: formattedDate,
+          Secuencia: index + 1,
+          llegoAlServicio: index === array.length - 1 ? 0 : 1,
+          idProducto: item?.idProducto,
+          idDiagnosticoTrasf: item?.IdDiagnostico,
+          idUsuarioAuditoria: item?.IdUsuarioAuditoria
         }));
-
-        registroTransferencias(nuevo)
-      
+      registroTransferencias(nuevo)
       return newData;
     });
   };
 
-  const registroTransferencias=(data:any)=>{
-    console.log("************")
+  const registroTransferencias = async(data: any) => {
     console.log(data)
+
+    try {
+      const response = await axios.post(
+        `${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalariaAgregar`,
+        data
+      );
+  
+      if (response.status === 200 || response.status === 201) {
+        console.log("Guardado correctamente:", response.data);
+        return response.data; // Retorna la respuesta si es necesario
+      } else {
+        console.error("Error al guardar: Código de estado inesperado", response.status);
+      }
+    } catch (error:any) {
+      console.error("Error en la solicitud:", error.response?.data || error.message);
+    }/**/
   }
- 
+
   return (
     <>
-   
- 
+
+
       <div className="p-6 bg-gray-100">
         {/* Formulario */}
         <form className="bg-white p-6 rounded-lg shadow-md space-y-4" onSubmit={handleSubmit(FormTransferencias)}>
@@ -172,7 +208,7 @@ export const Transferencias = ({ datosEmergencia,session }: any) => {
                       }
                     }}
                     onChange={(selectedOption) => {
-                      console.log(selectedOption);
+
                       field.onChange(selectedOption);
                     }}
                   />
@@ -278,26 +314,26 @@ export const Transferencias = ({ datosEmergencia,session }: any) => {
               </tr>
             </thead>
             <tbody>
-  {dataTransferencias &&
-    dataTransferencias.map((data: any) =>
-      data?.Secuencia !== 1 ? ( // Usamos `!==` en lugar de `!=` por buenas prácticas
-        <tr key={data?.IdEstanciaHospitalaria}>
-          <td className="border border-gray-300 px-4 py-2">{data?.FechaOcupacion}</td>
-          <td className="border border-gray-300 px-4 py-2">{data?.HoraOcupacion}</td>
-          <td className="border border-gray-300 px-4 py-2">{data?.NombreServicio}</td>
-          <td className="border border-gray-300 px-4 py-2">{data?.NomMedico}</td>
-          <td className="border border-gray-300 px-4 py-2">
-            <button
-              className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition"
-              onClick={() => eliminarPorId(data?.IdEstanciaHospitalaria)}
-            >
-              Eliminar
-            </button>
-          </td>
-        </tr>
-      ) : null
-    )}
-</tbody>
+              {dataTransferencias &&
+                dataTransferencias.map((data: any) =>
+                  data?.Secuencia !== 1 ? ( // Usamos `!==` en lugar de `!=` por buenas prácticas
+                    <tr key={data?.IdEstanciaHospitalaria}>
+                      <td className="border border-gray-300 px-4 py-2">{data?.FechaOcupacion}</td>
+                      <td className="border border-gray-300 px-4 py-2">{data?.HoraOcupacion}</td>
+                      <td className="border border-gray-300 px-4 py-2">{data?.NombreServicio}</td>
+                      <td className="border border-gray-300 px-4 py-2">{data?.NomMedico}</td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        <button
+                          className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition"
+                          onClick={() => eliminarPorId(data?.IdEstanciaHospitalaria)}
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  ) : null
+                )}
+            </tbody>
           </table>
         </div>
       </div>

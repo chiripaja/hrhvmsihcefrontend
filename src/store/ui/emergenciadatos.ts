@@ -271,7 +271,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       set((state: any) => ({
         datosemergencia: { ...state.datosemergencia,CitaMotivo,CitaExamenClinico }
       })),  
-  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any,newEdad:any,idCondicionMaterna:any,idDestinoAtencion:any) =>
+  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any,newEdad:any,idCondicionMaterna:any,idDestinoAtencion:any,idProducto:any) =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
@@ -282,7 +282,8 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         idPuntoCargaProcDentroConsultorio: newidPuntoCargaProcDentroConsultorio,
         edad:newEdad,
         idCondicionMaterna,
-        idDestinoAtencion
+        idDestinoAtencion,
+        idProducto
       }
     })),
   setIdCuentaAtencion: (newIdCuentaAtencion: any) =>

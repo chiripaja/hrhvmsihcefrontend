@@ -14,6 +14,7 @@ import { useCEDatosStore } from '@/store';
 import { obtenerFechaYHora } from '../utils/obtenerFechaYHora';
 import LinearWithValueLabel from '../ui/LinearProgressWithLabel';
 import { CircularProgress } from '@mui/material';
+import { FiActivity } from 'react-icons/fi';
 
 
 
@@ -43,6 +44,8 @@ export const CEListado = ({ session }: any) => {
   const [dataTotal, setDataTotal] = useState<any[]>([])
   const [dataServiciosProgramados, setdataServiciosProgramados] = useState<any[]>([])
   const [dataTablaRowsPacientes, setDataTablaRowsPacientes] = useState<any[]>([])
+  const [nombreEspecialidad, setNombreEspecialidad] = useState<any[]>([])
+  const [MostraNomEsp, setMostraNomEsp] = useState<any[]>([])
   const [nullCount, setNullCount] = useState(0);
   const [nonNullCount, setNonNullCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,10 +66,12 @@ export const CEListado = ({ session }: any) => {
 
   const getDataCE = async () => {
     setIsLoading(true)
-     const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
+    // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
 
-    //const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4902/2024-07-16`)
+    // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4902/2024-07-16`)
+    const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4147/2024-10-03`)
 
+    console.log(data)
     const groupedData = groupByIdProgramacion(data);
     setDataTotal(groupedData);
     const names = Object.keys(groupedData).map(key => {
@@ -76,8 +81,10 @@ export const CEListado = ({ session }: any) => {
         nombre: firstObject.nombre,
         phorainicio: firstObject.horaInicio,
         phoraFin: firstObject.horaFin,
+        Especialidad: firstObject.NomEspecialidad
       };
     })
+    setNombreEspecialidad(names)
     if (names.length > 0) {
       const serviciosdata: any[] = names.map((datos: any) => ({
         id: datos?.idProgramacion,
@@ -108,10 +115,11 @@ export const CEListado = ({ session }: any) => {
           financiamiento: data.fuentefinanciamento,
           hora: `${data.horaInicioC} - ${data.horaFinC}`,
           nompx: `${data.NombreCompleto} (${data.nroDocumento}) `,
+          Triaje: data.Triaje,
+          TriajePeso: data.TriajePeso,
         })
       });
       setDataTablaRowsPacientes(dataTablaRows);
-
     }
 
   }
@@ -130,14 +138,34 @@ export const CEListado = ({ session }: any) => {
       idProgramacion = (c === 1) ? firstItem.idProgramacion : null;
       if (idProgramacion !== null) {
         getConsultorio(idProgramacion)
+        getEspecilidad(idProgramacion)
       }
     });
   }, [dataTotal])
 
+  const getEspecilidad = (id: any) => {
+    const data = nombreEspecialidad.filter((data: any) => data.idProgramacion == id)
+
+    setMostraNomEsp(data)
+  }
+
   useEffect(() => {
     getConsultorio(idprogramacion)
+    getEspecilidad(idprogramacion)
   }, [idprogramacion])
 
+  const validacionTriaje = (Triaje: any, TriajePeso: any) => {
+    if (!Triaje) {
+      return true
+    } else {
+
+      if (TriajePeso !== "" && TriajePeso !== null) {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
 
 
   const columns: GridColDef[] = [
@@ -156,21 +184,39 @@ export const CEListado = ({ session }: any) => {
       width: 440,
       renderCell: (params) => (
         <div className='flex flex-wrap gap-4'>
-          {params.row?.FyHFinal == null ?
-            <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent colorFondo text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
 
-              <FaRegEdit />
+          {
+            validacionTriaje(params.row?.Triaje, params.row?.TriajePeso) ?
 
-              Atender
-            </button>
+              <>
+                {params.row?.FyHFinal == null ?
+                  <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent colorFondo text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
 
-            :
-            <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent colorFondo text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
+                    <FaRegEdit />
 
-              <FaRegEdit />
+                    Atender
+                  </button>
 
-              Modificar
-            </button>}
+                  :
+                  <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent colorFondo text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
+
+                    <FaRegEdit />
+
+                    Modificar
+                  </button>}
+              </> :
+              <>
+                <a href='/sihce/triaje' target='_blank' className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
+                  <FiActivity className="w-5 h-5" />
+                  Triaje
+                </a>
+              </>
+
+
+          }
+
+
+
 
           <button type="button" onClick={() => handleEditClick(params.row)} className="btnyellow">
             <PiPrinter />
@@ -185,51 +231,54 @@ export const CEListado = ({ session }: any) => {
 
   return (
     <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
-  
-    {/* Sección de estado de atención en una fila */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mb-6">
-      {/* Pacientes no atendidos */}
-      <div className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-red-500 w-full flex flex-col justify-between">
-        <h3 className="text-xl font-semibold text-red-600 mb-2">No Atendidos</h3>
-        <p className="text-gray-700 text-2xl font-bold">{nullCount} pacientes</p>
-      
+
+      {/* Sección de estado de atención en una fila */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mb-6">
+        {/* Pacientes no atendidos */}
+        <div className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-red-500 w-full flex flex-col justify-between">
+          <h3 className="text-xl font-semibold text-red-600 mb-2">No Atendidos</h3>
+          <p className="text-gray-700 text-2xl font-bold">{nullCount} pacientes</p>
+
+        </div>
+
+        {/* Nombre del Doctor */}
+        <div className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500 w-full flex flex-col justify-between">
+          <h1 className="text-3xl font-bold letraFondo mb-2">{session?.user?.name ? `Dr. ${session?.user?.name}` : "Nombre del Doctor"}</h1>
+          {MostraNomEsp[0]?.Especialidad && (
+            <p className="text-gray-500 text-lg">{MostraNomEsp[0]?.Especialidad}</p>
+          )}
+
+        </div>
+
+        {/* Pacientes atendidos */}
+        <div className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-green-500 w-full flex flex-col justify-between">
+          <h3 className="text-xl font-semibold text-green-600 mb-2">Atendidos</h3>
+          <p className="text-gray-700 text-2xl font-bold">{nonNullCount} pacientes</p>
+        </div>
       </div>
-  
-      {/* Nombre del Doctor */}
-      <div className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500 w-full flex flex-col justify-between">
-        <h1 className="text-3xl font-bold letraFondo mb-2">{session?.user?.name ? `Dr. ${session?.user?.name}` : "Nombre del Doctor"}</h1>
-        <p className="text-gray-500 text-lg">Listado de pacientes asignados</p>
-      </div>
-  
-      {/* Pacientes atendidos */}
-      <div className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-green-500 w-full flex flex-col justify-between">
-        <h3 className="text-xl font-semibold text-green-600 mb-2">Atendidos</h3>
-        <p className="text-gray-700 text-2xl font-bold">{nonNullCount} pacientes</p>
-      </div>
-    </div>
-   {/* Barra de progreso */}
-    <LinearWithValueLabel nullCount={nullCount} nonNullCount={nonNullCount} />
- 
-  
-    {/* Formulario de selección */}
-    <form className="bg-white p-6 rounded-lg shadow-lg mb-8">
-      <SelectUI
-        opciones={dataServiciosProgramados}
-        deshabilitado={false}
-        {...register("idprogramacion")}
-      />
-    </form>
-  
-    {/* Tabla de pacientes */}
-    <div>
-    
+      {/* Barra de progreso */}
+      <LinearWithValueLabel nullCount={nullCount} nonNullCount={nonNullCount} />
+
+
+      {/* Formulario de selección */}
+      <form className="bg-white p-6 rounded-lg shadow-lg mb-8">
+        <SelectUI
+          opciones={dataServiciosProgramados}
+          deshabilitado={false}
+          {...register("idprogramacion")}
+        />
+      </form>
+
+      {/* Tabla de pacientes */}
+      <div>
+
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <TableDataGridUI rows={dataTablaRowsPacientes} columns={columns} />
         </div>
-   
+
+      </div>
+
     </div>
-    
-  </div>
 
   );
 }
