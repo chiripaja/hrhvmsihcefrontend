@@ -83,15 +83,17 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
 
   const FormTransferencias: SubmitHandler<any> = async (data: any) => {
     const nuevoArray = [...dataTransferencias];
-
+ 
     const nuevo = nuevoArray
       .slice()
       .sort((a, b) => a.IdEstanciaHospitalaria - b.IdEstanciaHospitalaria)
       .map((item, index, array) => ({
         idAtencion: datosEmergencia?.idatencion,
-        IdMedicoOrdena: item?.IdMedicoOrdena,
+        idMedicoOrdena: item?.IdMedicoOrdena,
         idServicio: item?.IdServicio,
-        horaOcupacion: item?.HoraOcupacion,
+        horaDesocupacion:  item?.HoraDesocupacion !== null ? item?.HoraDesocupacion : hora,
+        fechaDesocupacion: item?.FechaDesocupacion !== null ? item?.FechaDesocupacion : formattedDate,
+        horaOcupacion:  item?.HoraOcupacion,
         fechaOcupacion: item?.FechaOcupacion,
         secuencia: item?.Secuencia,
         llegoAlServicio: 1,
@@ -100,12 +102,12 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
         idUsuarioAuditoria: item?.IdUsuarioAuditoria
       }));
     const ultimo = nuevo[nuevo.length - 1];
-
-
     const objetoEnviar = {
       idAtencion: datosEmergencia?.idatencion,
-      IdMedicoOrdena: data?.IdMedicoIngreso.value,
+      idMedicoOrdena: data?.IdMedicoIngreso.value,
       idServicio: data.IdServicio.value,
+      horaDesocupacion: null,
+      fechaDesocupacion: null,
       horaOcupacion: hora,
       fechaOcupacion: formattedDate,
       secuencia: ultimo.secuencia + 1,
@@ -114,17 +116,15 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
       idDiagnosticoTrasf: data.IdDiagnostico.value,
       idUsuarioAuditoria: parseInt(session?.user?.id, 10) || null
     };
-
-
     const nuevoConObjeto = [...nuevo, objetoEnviar];
-
-    registroTransferencias(nuevoConObjeto);
-
+    console.log(nuevoConObjeto)
+ /*
+    await axios.put(`${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalaria/${datosEmergencia?.idatencion}/${data.IdServicio.value}`)
+    registroTransferencias(nuevoConObjeto);*/
   }
 
   const getTransferencias = async (idatencion: any) => {
     const data = await getData(`${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalariaSeleccionarPorIdCuentaAtencion/${idatencion}`);
-
     setDataTransferencias(data)
   }
 
@@ -135,47 +135,55 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
   }, [datosEmergencia])
 
   const eliminarPorId = (id: number) => {
-    setDataTransferencias(prevData => {
-      const newData = prevData.filter(item => item.IdEstanciaHospitalaria !== id);
+    
+   
+    const nuevoArray = [...dataTransferencias];
 
-      const nuevo = newData
-        .sort((a, b) => a.IdEstanciaHospitalaria - b.IdEstanciaHospitalaria)
-        .map((item, index, array) => ({
-          idAtencion: datosEmergencia?.idatencion,
-          IdMedicoOrdena: item?.IdMedicoOrdena,
-          idServicio: item?.IdServicio,
-          horaOcupacion: item?.HoraOcupacion,
-          fechaOcupacion: formattedDate,
-          Secuencia: index + 1,
-          llegoAlServicio: index === array.length - 1 ? 0 : 1,
-          idProducto: item?.idProducto,
-          idDiagnosticoTrasf: item?.IdDiagnostico,
-          idUsuarioAuditoria: item?.IdUsuarioAuditoria
-        }));
-      registroTransferencias(nuevo)
-      return newData;
-    });
+    const nuevo = nuevoArray.filter(item => item.IdEstanciaHospitalaria !== id)
+    .slice()
+    .sort((a, b) => a.IdEstanciaHospitalaria - b.IdEstanciaHospitalaria)
+    .map((item, index, array) => ({
+      idAtencion: datosEmergencia?.idatencion,
+      idMedicoOrdena: item?.IdMedicoOrdena,
+      idServicio: item?.IdServicio,
+      horaDesocupacion: index === array.length - 1 ? null : item?.HoraDesocupacion ,
+      fechaDesocupacion:  index === array.length - 1 ? null : item?.FechaDesocupacion , 
+      horaOcupacion:   item?.HoraOcupacion,
+      fechaOcupacion: item?.FechaOcupacion,
+      secuencia: index + 1,
+      llegoAlServicio: index === array.length - 1 ? 0 : 1,
+      idProducto: item?.idProducto,
+      idDiagnosticoTrasf: item?.IdDiagnostico,
+      idUsuarioAuditoria: item?.IdUsuarioAuditoria
+    }))
+
+    registroTransferencias(nuevo)
   };
 
-  const registroTransferencias = async(data: any) => {
-    console.log(data)
-
+  const registroTransferencias = async (data: any) => {
     try {
+      // Primero, ejecutar el DELETE
+     /* await axios.delete(
+        `${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalariaEliminaXidAtencion/${datosEmergencia?.idatencion}`
+      );*/
+  
+      // Luego, ejecutar el POST solo si el DELETE fue exitoso
       const response = await axios.post(
         `${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalariaAgregar`,
         data
       );
-  
+      getTransferencias(datosEmergencia?.idatencion)
       if (response.status === 200 || response.status === 201) {
         console.log("Guardado correctamente:", response.data);
         return response.data; // Retorna la respuesta si es necesario
       } else {
         console.error("Error al guardar: Código de estado inesperado", response.status);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Error en la solicitud:", error.response?.data || error.message);
-    }/**/
-  }
+    }
+  };
+  
 
   return (
     <>
@@ -300,6 +308,8 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
 
           </div>
         </form>
+
+
 
         {/* Tabla */}
         <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
