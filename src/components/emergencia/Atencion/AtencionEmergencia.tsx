@@ -13,6 +13,7 @@ import { useEmergenciaDatosStore } from "@/store/ui/emergenciadatos";
 import axios from "axios";
 import { getData } from "@/components/helper/axiosHelper";
 import { Transferencias } from "./Transferencias/Transferencias";
+import { DiagnosticoIngreso } from "./Diagnostico/DiagnosticoIngreso";
 export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
   const [dataPx, setDataPx] = useState<any>();
   const [activeTab, setActiveTab] = useState(1);
@@ -103,24 +104,14 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
           Anamnesis
         </button>
 
-         {/* Tab 5 */}
+         {/* Tab 3 */}
          <button
-          className={`py-2 px-4 text-sm font-semibold ${
-            activeTab === 5 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-          } focus:outline-none`}
-          onClick={() => setActiveTab(5)}
-        >
-          Diagnostico
-        </button>
-
-        {/* Tab 3 */}
-        <button
           className={`py-2 px-4 text-sm font-semibold ${
             activeTab === 3 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
           } focus:outline-none`}
           onClick={() => setActiveTab(3)}
         >
-          Examen Fisico
+          Diagnostico Ingreso
         </button>
 
         {/* Tab 4 */}
@@ -129,6 +120,16 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
             activeTab === 4 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
           } focus:outline-none`}
           onClick={() => setActiveTab(4)}
+        >
+          Ordenes
+        </button>
+
+        {/* Tab 5 */}
+        <button
+          className={`py-2 px-4 text-sm font-semibold ${
+            activeTab === 5 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+          } focus:outline-none`}
+          onClick={() => setActiveTab(5)}
         >
           Ordenes 
         </button>
@@ -162,7 +163,7 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
         {/* Contenido de Tab 3 */}
         {activeTab === 3 && (
           <div className="p-4 bg-white border rounded-md shadow-md">
-            <ExamenFisicoEmergencia/>
+            <DiagnosticoIngreso/>
           </div>
         )}
 
@@ -176,10 +177,10 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
           {/* Contenido de Tab 5 */}
           {activeTab === 5 && (
           <div className="p-4 bg-white border rounded-md shadow-md">
-            <CEConsultaGeneral/>
+            <CEConsultaGeneral />
           </div>
         )}
-datosEmergencia
+
         {/* Contenido de Tab 6 */}
         {activeTab === 6 && (
           <div className="p-4 bg-white border rounded-md shadow-md">

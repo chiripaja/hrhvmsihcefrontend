@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { obtenerFechaYHora } from '@/components/utils/obtenerFechaYHora';
+import Swal from 'sweetalert2';
 
 export const Transferencias = ({ datosEmergencia, session }: any) => {
 
@@ -49,7 +50,6 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
 
   const fetchCombosEmergencia = async () => {
     const response = await getData(`${process.env.apijimmynew}/emergencia/ServiciosFiltrar`);
-
     const mappedOptions = response.map((est: any) => ({
       value: est.idServicio,
       label: `${est.nombre.trim()}`,
@@ -83,7 +83,6 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
 
   const FormTransferencias: SubmitHandler<any> = async (data: any) => {
     const nuevoArray = [...dataTransferencias];
- 
     const nuevo = nuevoArray
       .slice()
       .sort((a, b) => a.IdEstanciaHospitalaria - b.IdEstanciaHospitalaria)
@@ -118,9 +117,9 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
     };
     const nuevoConObjeto = [...nuevo, objetoEnviar];
     console.log(nuevoConObjeto)
- /*
+
     await axios.put(`${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalaria/${datosEmergencia?.idatencion}/${data.IdServicio.value}`)
-    registroTransferencias(nuevoConObjeto);*/
+    registroTransferencias(nuevoConObjeto);
   }
 
   const getTransferencias = async (idatencion: any) => {
@@ -135,37 +134,51 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
   }, [datosEmergencia])
 
   const eliminarPorId = (id: number) => {
-    
-   
-    const nuevoArray = [...dataTransferencias];
 
-    const nuevo = nuevoArray.filter(item => item.IdEstanciaHospitalaria !== id)
-    .slice()
-    .sort((a, b) => a.IdEstanciaHospitalaria - b.IdEstanciaHospitalaria)
-    .map((item, index, array) => ({
-      idAtencion: datosEmergencia?.idatencion,
-      idMedicoOrdena: item?.IdMedicoOrdena,
-      idServicio: item?.IdServicio,
-      horaDesocupacion: index === array.length - 1 ? null : item?.HoraDesocupacion ,
-      fechaDesocupacion:  index === array.length - 1 ? null : item?.FechaDesocupacion , 
-      horaOcupacion:   item?.HoraOcupacion,
-      fechaOcupacion: item?.FechaOcupacion,
-      secuencia: index + 1,
-      llegoAlServicio: index === array.length - 1 ? 0 : 1,
-      idProducto: item?.idProducto,
-      idDiagnosticoTrasf: item?.IdDiagnostico,
-      idUsuarioAuditoria: item?.IdUsuarioAuditoria
-    }))
-
-    registroTransferencias(nuevo)
+    Swal.fire({
+      title: "¿Seguro que quieres eliminarlo?",
+      showDenyButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No, Cancelar`
+  }).then(async (result) => {
+      if (result.isConfirmed) {
+          try {
+            const nuevoArray = [...dataTransferencias];
+            const nuevo = nuevoArray.filter(item => item.IdEstanciaHospitalaria !== id)
+            .slice()
+            .sort((a, b) => a.IdEstanciaHospitalaria - b.IdEstanciaHospitalaria)
+            .map((item, index, array) => ({
+              idAtencion: datosEmergencia?.idatencion,
+              idMedicoOrdena: item?.IdMedicoOrdena,
+              idServicio: item?.IdServicio,
+              horaDesocupacion: index === array.length - 1 ? null : item?.HoraDesocupacion ,
+              fechaDesocupacion:  index === array.length - 1 ? null : item?.FechaDesocupacion , 
+              horaOcupacion:   item?.HoraOcupacion,
+              fechaOcupacion: item?.FechaOcupacion,
+              secuencia: index + 1,
+              llegoAlServicio: index === array.length - 1 ? 0 : 1,
+              idProducto: item?.idProducto,
+              idDiagnosticoTrasf: item?.IdDiagnostico,
+              idUsuarioAuditoria: item?.IdUsuarioAuditoria
+            }))
+           
+            registroTransferencias(nuevo)
+              Swal.fire("Se eliminó!", "", "success");
+          } catch (error) {
+              Swal.fire("Hubo un error al eliminar la cuenta.", "", "error");
+              console.error(error);
+          }
+      }
+  });
+  
   };
 
   const registroTransferencias = async (data: any) => {
     try {
       // Primero, ejecutar el DELETE
-     /* await axios.delete(
+      await axios.delete(
         `${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalariaEliminaXidAtencion/${datosEmergencia?.idatencion}`
-      );*/
+      );
   
       // Luego, ejecutar el POST solo si el DELETE fue exitoso
       const response = await axios.post(
@@ -187,8 +200,6 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
 
   return (
     <>
-
-
       <div className="p-6 bg-gray-100">
         {/* Formulario */}
         <form className="bg-white p-6 rounded-lg shadow-md space-y-4" onSubmit={handleSubmit(FormTransferencias)}>
@@ -216,7 +227,6 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
                       }
                     }}
                     onChange={(selectedOption) => {
-
                       field.onChange(selectedOption);
                     }}
                   />
@@ -235,7 +245,6 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
                     placeholder="Servicios Emergencia"
                     className='w-full'
                     required={true}
-
                     onChange={(selectedOption) => {
                       field.onChange(selectedOption);
                       handleSelectChange(selectedOption);
@@ -243,9 +252,6 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
                   />
                 )}
               />
-
-
-
             </div>
 
 
@@ -264,7 +270,6 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
                     options={optionMedicos}
                     placeholder="Medico"
                     required={true}
-
                   />
                 )}
               />
@@ -305,7 +310,6 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
             <button type='submit' className="flex items-center justify-center bg-green-500 text-white px-4 py-2 rounded-md shadow hover:bg-green-600">
               Agregar
             </button>
-
           </div>
         </form>
 

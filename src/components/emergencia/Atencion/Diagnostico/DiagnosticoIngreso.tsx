@@ -1,189 +1,156 @@
-import { getData } from "@/components/helper/axiosHelper";
+import { getData } from '@/components/helper/axiosHelper';
+import { ToasterMsj } from '@/components/utils/ToasterMsj';
+import { useCEDatosStore } from '@/store';
+import { debounce } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { FaFileMedical, FaPlus } from 'react-icons/fa';
+import { RiDeleteBin3Line } from 'react-icons/ri';
 import Select from 'react-select';
-import { useCallback, useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { FaFileMedical, FaPlus } from "react-icons/fa";
-import Swal from "sweetalert2";
-import { debounce } from "@mui/material";
-import { useCEDatosStore } from "@/store";
-import style from "./CEDiagnostico.module.css";
-import { Toaster, toast } from 'sonner';
-import { ToasterMsj } from "@/components/utils/ToasterMsj";
-import { RiDeleteBin3Line } from "react-icons/ri";
-
-interface Option {
-    value: string;
-    label: string;
-}
-
-export const CEDiagnostico = () => {
-    const [isOffcanvasOpenDx, setIsOffcanvasOpenDx] = useState(false);
-    const [arraLab, setArraLab] = useState<any[]>([]);
-    const [options, setOptions] = useState<Option[]>([]);
-    const [optionsLab, setOptionsLab] = useState<Option[]>([]);
-    const [isCustomInputVisible, setIsCustomInputVisible] = useState(false);
-    const { watch, control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
-    const [clasificacionDx, setClasificacionDx] = useState<any>();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const setDiagnosticoByCuenta = useCEDatosStore((state: any) => state.setDiagnosticoByCuenta)
-    const setEliminarDiagnosticoByCuenta = useCEDatosStore((state: any) => state.setEliminarDiagnosticoByCuenta);
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
-    const clearLabField = () => {
-        setValue('IdDiagnostico', '');
-        setValue("labs", "");
-        setArraLab([]);
-    };
-
-    const FormDX: SubmitHandler<any> = async (data: any) => {
-        const subClasificacion = clasificacionDx.find((item: any) => item.idSubclasificacionDx == data.IdSubclasificacionDx);
-        if (arraLab.length > 0) {
-            for (const datalab of arraLab) {
-                await setDiagnosticoByCuenta(
-                    data.IdDiagnostico.value,
-                    data.IdDiagnostico.label,
-                    data.IdDiagnostico.codigoCIE10,
-                    data.IdSubclasificacionDx,
-                    subClasificacion.descripcion,
-                    datalab
-                );
-            }
-            ToasterMsj("Exito", "success", "Añadio un diagnostico.")
-        }
-
-        else {
-            await checkAndAddDiagnostico(
-                data.IdDiagnostico.value,
-                data.IdDiagnostico.label,
-                data.IdDiagnostico.codigoCIE10,
-                data.IdSubclasificacionDx,
-                subClasificacion.descripcion,
-                cuentaDatos,
-                setDiagnosticoByCuenta
+import Swal from 'sweetalert2';
+export const DiagnosticoIngreso = () => {
+        const [isOffcanvasOpenDx, setIsOffcanvasOpenDx] = useState(false);
+        const [arraLab, setArraLab] = useState<any[]>([]);
+        const [options, setOptions] = useState<any[]>([]);
+        const [optionsLab, setOptionsLab] = useState<any[]>([]);
+        const [isCustomInputVisible, setIsCustomInputVisible] = useState(false);
+        const { watch, control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
+        const [clasificacionDx, setClasificacionDx] = useState<any>();
+        const [isLoading, setIsLoading] = useState<boolean>(false);
+        const setDiagnosticoByCuenta = useCEDatosStore((state: any) => state.setDiagnosticoByCuenta)
+        const setEliminarDiagnosticoByCuenta = useCEDatosStore((state: any) => state.setEliminarDiagnosticoByCuenta);
+        const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
+        const toggleOffcanvasDx = () => {
+            setIsOffcanvasOpenDx(!isOffcanvasOpenDx);
+        };
+        const handleDelete = (indexToDelete: number) => {
+            setEliminarDiagnosticoByCuenta(indexToDelete)
+        };
+        const fetchDx = useCallback(
+                debounce(async (nomdx) => {
+                    try {
+                        setIsLoading(true);
+                        const response = await getData(`${process.env.apijimmynew}/diagnosticos/findByName/${nomdx}`);
+        
+                        const mappedOptions = response.map((est: any) => ({
+                            value: est.idDiagnostico,
+                            label: `${est.codigoCIE10} - ${est.descripcion}`,
+                            codigoCIE10: est.codigoCIE10
+                        }));
+                        setOptions(mappedOptions);
+                    } catch (error) {
+                        console.error("Error al cargar los datos:", error);
+                        setOptions([]);
+                    } finally {
+                        setIsLoading(false);
+                    }
+                }, 500),
+                []
             );
-        }
-        clearLabField()
-
-
-    }
-
-    const checkAndAddDiagnostico =
-        async (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, cuentaDatos: any, setDiagnosticoByCuenta: Function) => {
-            const diagnosticoExiste = cuentaDatos.diagnosticos.some((diagnostico: any) => diagnostico.IdDiagnostico === IdDiagnostico);
-            if (diagnosticoExiste) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Diagnóstico duplicado',
-                    text: 'El diagnóstico con este CIE10 ya ha sido agregado.',
-                    confirmButtonText: 'Aceptar'
-                });
-            } else {
-                await setDiagnosticoByCuenta(IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion);
-                ToasterMsj("Exito", "success", "Añadio un diagnostico.")
-            }
-        };
-
-    const handleDelete = (indexToDelete: number) => {
-        setEliminarDiagnosticoByCuenta(indexToDelete)
-    };
-
-    const fetchDx = useCallback(
-        debounce(async (nomdx) => {
-            try {
-                setIsLoading(true);
-                const response = await getData(`${process.env.apijimmynew}/diagnosticos/findByName/${nomdx}`);
-
-                const mappedOptions = response.map((est: any) => ({
-                    value: est.idDiagnostico,
-                    label: `${est.codigoCIE10} - ${est.descripcion}`,
-                    codigoCIE10: est.codigoCIE10
-                }));
-                setOptions(mappedOptions);
-            } catch (error) {
-                console.error("Error al cargar los datos:", error);
-                setOptions([]);
-            } finally {
-                setIsLoading(false);
-            }
-        }, 500),
-        []
-    );
-
-
-    const getLab = async () => {
-        try {
-            const response = await getData(`${process.env.apijimmynew}/atenciones/findallcampolab`);
-            const mappedOptions = response.map((est: any) => ({
-                value: est.valores ?? est.codigo,
-                label: est.valores ? `${est.valores} - ${est.descripcio}` : est.descripcio,
-                isCustom: est.valores === null,
-            }));
-            setOptionsLab(mappedOptions);
-        } catch (error) {
-            console.error("Error fetching lab options:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
-
-    const selectedDx = watch("IdDiagnostico");
-
-    const selectedLabs = watch("labs");
-    const customvaluewatch = watch("customValue");
-
-    const removeLab = (valueToRemove: any) => {
-        setArraLab((prevArrayLab) => prevArrayLab.filter((item) => item !== valueToRemove));
-    };
-    const addLab = () => {
-        if (selectedLabs) {
-            const selectedValue = selectedLabs.value;
-            if (selectedValue == '999999') {
-                if (customvaluewatch === "") {
-                    ToasterMsj('Advertencia', 'error', 'Ingrese un número para campo lab.');
-                } else {
-                    setArraLab((prevArrayLab) => [...prevArrayLab, customvaluewatch]);
-                    setValue("customValue", "");
+            const removeLab = (valueToRemove: any) => {
+                setArraLab((prevArrayLab) => prevArrayLab.filter((item) => item !== valueToRemove));
+            };
+             const FormDX: SubmitHandler<any> = async (data: any) => {
+                    const subClasificacion = clasificacionDx.find((item: any) => item.idSubclasificacionDx == data.IdSubclasificacionDx);
+                    if (arraLab.length > 0) {
+                        for (const datalab of arraLab) {
+                            await setDiagnosticoByCuenta(
+                                data.IdDiagnostico.value,
+                                data.IdDiagnostico.label,
+                                data.IdDiagnostico.codigoCIE10,
+                                data.IdSubclasificacionDx,
+                                subClasificacion.descripcion,
+                                datalab
+                            );
+                        }
+                        ToasterMsj("Exito", "success", "Añadio un diagnostico.")
+                    }
+            
+                    else {
+                        await checkAndAddDiagnostico(
+                            data.IdDiagnostico.value,
+                            data.IdDiagnostico.label,
+                            data.IdDiagnostico.codigoCIE10,
+                            data.IdSubclasificacionDx,
+                            subClasificacion.descripcion,
+                            cuentaDatos,
+                            setDiagnosticoByCuenta
+                        );
+                    }
+                 
+            
+            
                 }
+                const checkAndAddDiagnostico =
+                        async (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, cuentaDatos: any, setDiagnosticoByCuenta: Function) => {
+                            const diagnosticoExiste = cuentaDatos.diagnosticos.some((diagnostico: any) => diagnostico.IdDiagnostico === IdDiagnostico);
+                            if (diagnosticoExiste) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Diagnóstico duplicado',
+                                    text: 'El diagnóstico con este CIE10 ya ha sido agregado.',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            } else {
+                                await setDiagnosticoByCuenta(IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion);
+                                ToasterMsj("Exito", "success", "Añadio un diagnostico.")
+                            }
+                        };
+                        const selectedLabs = watch("labs");
+                        const customvaluewatch = watch("customValue");
+                        const addLab = () => {
+                            if (selectedLabs) {
+                                const selectedValue = selectedLabs.value;
+                                if (selectedValue == '999999') {
+                                    if (customvaluewatch === "") {
+                                        ToasterMsj('Advertencia', 'error', 'Ingrese un número para campo lab.');
+                                    } else {
+                                        setArraLab((prevArrayLab) => [...prevArrayLab, customvaluewatch]);
+                                        setValue("customValue", "");
+                                    }
+                    
+                    
+                                } else {
+                                    if (arraLab.includes(selectedValue)) {
+                                        ToasterMsj('Advertencia', 'error', 'Codigo lab ya se registrado');
+                                    } else {
+                                        setArraLab((prevArrayLab) => [...prevArrayLab, selectedValue]);
+                                    }
+                                }
+                            }
+                    
+                        };
+                        const getLab = async () => {
+                            try {
+                                const response = await getData(`${process.env.apijimmynew}/atenciones/findallcampolab`);
+                                const mappedOptions = response.map((est: any) => ({
+                                    value: est.valores ?? est.codigo,
+                                    label: est.valores ? `${est.valores} - ${est.descripcio}` : est.descripcio,
+                                    isCustom: est.valores === null,
+                                }));
+                                setOptionsLab(mappedOptions);
+                            } catch (error) {
+                                console.error("Error fetching lab options:", error);
+                            } finally {
+                                setIsLoading(false);
+                            }
+                        }
 
-
-            } else {
-                if (arraLab.includes(selectedValue)) {
-                    ToasterMsj('Advertencia', 'error', 'Codigo lab ya se registrado');
-                } else {
-                    setArraLab((prevArrayLab) => [...prevArrayLab, selectedValue]);
-                }
-            }
-        }
-
-    };
-
-    useEffect(() => {
-        const option: any = optionsLab.find(opt => opt.value === selectedLabs.value);
-        setIsCustomInputVisible(option?.isCustom || false);
-        if (!option?.isCustom) {
-            setValue("customValue", "");
-        }
-    }, [selectedLabs, optionsLab]);
-
-
-
-    useEffect(() => {
-        const getSubClasDx = async () => {
-            const data = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionce`);
-            setClasificacionDx(data);
-            if (data.length > 0) {
-                setValue('IdSubclasificacionDx', `${data[0].idSubclasificacionDx}`);
-            }
-        };
-        getSubClasDx();
-        getLab();
-    }, []);
-    const toggleOffcanvasDx = () => {
-        setIsOffcanvasOpenDx(!isOffcanvasOpenDx);
-    };
-    return (
-        <>
-            <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
+                        useEffect(() => {
+                                const getSubClasDx = async () => {
+                                    const data = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionce`);
+                                    setClasificacionDx(data);
+                                    if (data.length > 0) {
+                                        setValue('IdSubclasificacionDx', `${data[0].idSubclasificacionDx}`);
+                                    }
+                                };
+                                getSubClasDx();
+                                getLab();
+                            }, []);
+                
+  return (
+    <>
+     <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
                     <span className="flex-grow">Diagnostico</span>
@@ -228,7 +195,7 @@ export const CEDiagnostico = () => {
                                 .map((data: any) => (
                                     <tr key={data?.codigoCIE10 + data?.labConfHIS}>
                                         <td className="tabletd w-10">{data?.subClasificacion}</td>
-                                        <td className={`${style['fixed-width']} tabletd`}>
+                                        <td>
                                             {data?.nomdx}
                                         </td>
                                         <td className={`w-10 tabletd`}>
@@ -347,7 +314,6 @@ export const CEDiagnostico = () => {
 
                         <button type="submit" className="btnprimario mt-4">Guardar</button>
                     </form>
-
                     {arraLab && arraLab.length > 0 && (
                         <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md overflow-hidden">
                             <thead>
@@ -377,6 +343,6 @@ export const CEDiagnostico = () => {
                     )}
                 </div>
             </div>
-        </>
-    );
+    </>
+  )
 }
