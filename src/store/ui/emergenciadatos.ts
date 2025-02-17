@@ -5,19 +5,19 @@ import { create } from 'zustand';
 
 export const useEmergenciaDatosStore = create<any>((set, get) => ({
   datosemergencia: {
-    CitaObservaciones:"",
-    IdTipoSexo:"",
+    CitaObservaciones: "",
+    IdTipoSexo: "",
     idatencion: "",
     idpaciente: "",
     idcuentaatencion: "",
     idMedicoIngreso: "",
     idServicio: "",
-    edad:"",
-    NroHistoriaClinica:"",
+    edad: "",
+    NroHistoriaClinica: "",
     idFuenteFinanciamiento: "",
     idFormaPago: "",
-    idDestinoAtencion:"",
-    idCondicionMaterna:"",
+    idDestinoAtencion: "",
+    idCondicionMaterna: "",
     idPuntoCargaProcDentroConsultorio: "",
     diagnosticos: [],
     recetaCabezera: [] as RecetaCabecera[],
@@ -31,22 +31,22 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
   resetdatosemergencia: () => {
     set(() => ({
       datosemergencia: {
-        CitaObservaciones:"",
-        IdTipoSexo:"",
+        CitaObservaciones: "",
+        IdTipoSexo: "",
         idatencion: "",
         idpaciente: "",
         idcuentaatencion: "",
         idMedicoIngreso: "",
         idServicio: "",
-        edad:"",
-        NroHistoriaClinica:"",
+        edad: "",
+        NroHistoriaClinica: "",
         idFuenteFinanciamiento: "",
         idFormaPago: "",
-        idDestinoAtencion:"",
-        idCondicionMaterna:"",
+        idDestinoAtencion: "",
+        idCondicionMaterna: "",
         idPuntoCargaProcDentroConsultorio: "",
-        CitaMotivo:"",
-        CitaExamenClinico:"",
+        CitaMotivo: "",
+        CitaExamenClinico: "",
         diagnosticos: [],
         recetaCabezera: [] as RecetaCabecera[],
         recetaCabezeraProcedimientos: [],
@@ -56,21 +56,21 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         ordenesOtros: [],
         ordenesProcedimiento: [] as OrdenProcedimiento[],
       },
-      
+
     }));
-  
+
   },
 
   updateProcedimientosIdOrden: (idOrden: number) => {
     set((state: any) => {
       const ordenesProcedimiento = state.datosemergencia.ordenesProcedimiento;
-  
+
       // Validar si ordenesProcedimiento es un array
       if (!Array.isArray(ordenesProcedimiento)) {
         console.error("ordenesProcedimiento no es un array");
         return state;
       }
-  
+
       // Actualizar idOrden en cada procedimiento
       const updatedOrdenesProcedimiento = ordenesProcedimiento.map(
         (orden: OrdenProcedimiento) => ({
@@ -78,7 +78,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
           idOrden,
         })
       );
-  
+
       return {
         datosemergencia: {
           ...state.datosemergencia,
@@ -86,7 +86,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         },
       };
     });
-  
+
     // Acceso seguro al estado actualizado
     const updatedOrdenes = get()?.datosemergencia?.ordenesProcedimiento ?? [];
     return updatedOrdenes;
@@ -95,7 +95,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
 
 
 
-  setRecetaCabezeraProcedimientos: (newRecetaCabezeraProcedimientos:[]) => set((state: any) => ({
+  setRecetaCabezeraProcedimientos: (newRecetaCabezeraProcedimientos: []) => set((state: any) => ({
     datosemergencia: {
       ...state.datosemergencia,
       recetaCabezeraProcedimientos: newRecetaCabezeraProcedimientos,
@@ -212,7 +212,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         medicamentos: [...state.datosemergencia.medicamentos, { ...nuevoMedicamento }]
       }
     })),
-  limpiarMedicamento:() =>
+  limpiarMedicamento: () =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
@@ -220,13 +220,13 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       }
     })),
 
-    limpiarordenesProcedimiento:() =>
-      set((state: any) => ({
-        datosemergencia: {
-          ...state.datosemergencia,
-          ordenesProcedimiento: []
-        }
-      })),  
+  limpiarordenesProcedimiento: () =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesProcedimiento: []
+      }
+    })),
 
 
   deleteMedicamento: (idproducto: number) =>
@@ -257,9 +257,9 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     return updatedMedicamentos;
   },
 
-  setIdAtencionv2: (newIdCuenta: any,newIdCuentaIdatencion:any,newIdPaciente:any,newhc:any,CitaMotivo:any,CitaExamenClinico:any,IdTipoSexo:any,CitaObservaciones:any) =>
+  setIdAtencionv2: (newIdCuenta: any, newIdCuentaIdatencion: any, newIdPaciente: any, newhc: any, CitaMotivo: any, CitaExamenClinico: any, IdTipoSexo: any, CitaObservaciones: any) =>
     set((state: any) => ({
-      datosemergencia: { ...state.datosemergencia, idatencion: newIdCuenta,idcuentaatencion:newIdCuentaIdatencion,idpaciente:newIdPaciente,NroHistoriaClinica:newhc,CitaMotivo,CitaExamenClinico,IdTipoSexo,CitaObservaciones }
+      datosemergencia: { ...state.datosemergencia, idatencion: newIdCuenta, idcuentaatencion: newIdCuentaIdatencion, idpaciente: newIdPaciente, NroHistoriaClinica: newhc, CitaMotivo, CitaExamenClinico, IdTipoSexo, CitaObservaciones }
     })),
 
   setIdAtencion: (newIdCuenta: any) =>
@@ -267,11 +267,11 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       datosemergencia: { ...state.datosemergencia, idatencion: newIdCuenta }
     })),
 
-    setAtencionMedica: (CitaMotivo: any,CitaExamenClinico: any) =>
-      set((state: any) => ({
-        datosemergencia: { ...state.datosemergencia,CitaMotivo,CitaExamenClinico }
-      })),  
-  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any,newEdad:any,idCondicionMaterna:any,idDestinoAtencion:any,idProducto:any) =>
+  setAtencionMedica: (CitaMotivo: any, CitaExamenClinico: any) =>
+    set((state: any) => ({
+      datosemergencia: { ...state.datosemergencia, CitaMotivo, CitaExamenClinico }
+    })),
+  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any, newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any, idProducto: any) =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
@@ -280,7 +280,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         idFuenteFinanciamiento: newidFuenteFinanciamiento,
         idFormaPago: newidFormaPago,
         idPuntoCargaProcDentroConsultorio: newidPuntoCargaProcDentroConsultorio,
-        edad:newEdad,
+        edad: newEdad,
         idCondicionMaterna,
         idDestinoAtencion,
         idProducto
@@ -300,11 +300,11 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       recetaCabezera: newRecetaCabezera,
     }
   })),
-  setDiagnosticoByCuenta: (IdDiagnostico: any, nomdx: any,codigoCIE10:any, idSubclasificacionDx: any, subClasificacion: any, labConfHIS: any = null,idClasificacionDx:any) =>
+  setDiagnosticoByCuenta: (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, labConfHIS: any = null, idClasificacionDx: any) =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
-        diagnosticos: [...state.datosemergencia.diagnosticos, { IdDiagnostico, nomdx,codigoCIE10, idSubclasificacionDx, subClasificacion, labConfHIS,idClasificacionDx }]
+        diagnosticos: [...state.datosemergencia.diagnosticos, { IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion, labConfHIS, idClasificacionDx }]
       }
     })),
   setEliminarDiagnosticoByCuenta: (IdDiagnostico: any) =>

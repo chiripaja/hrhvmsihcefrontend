@@ -1,168 +1,173 @@
 import { getData } from '@/components/helper/axiosHelper';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
-import { useCEDatosStore } from '@/store';
+
+import { useEmergenciaDatosStore } from '@/store/ui/emergenciadatos';
 import { debounce } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react'
+import axios from 'axios';
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { FaFileMedical, FaPlus } from 'react-icons/fa';
 import { RiDeleteBin3Line } from 'react-icons/ri';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
-export const DiagnosticoIngreso = () => {
-        const [isOffcanvasOpenDx, setIsOffcanvasOpenDx] = useState(false);
-        const [arraLab, setArraLab] = useState<any[]>([]);
-        const [options, setOptions] = useState<any[]>([]);
-        const [optionsLab, setOptionsLab] = useState<any[]>([]);
-        const [isCustomInputVisible, setIsCustomInputVisible] = useState(false);
-        const { watch, control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
-        const [clasificacionDx, setClasificacionDx] = useState<any>();
-        const [isLoading, setIsLoading] = useState<boolean>(false);
-        const setDiagnosticoByCuenta = useCEDatosStore((state: any) => state.setDiagnosticoByCuenta)
-        const setEliminarDiagnosticoByCuenta = useCEDatosStore((state: any) => state.setEliminarDiagnosticoByCuenta);
-        const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
-        const toggleOffcanvasDx = () => {
-            setIsOffcanvasOpenDx(!isOffcanvasOpenDx);
-        };
-        const handleDelete = (indexToDelete: number) => {
-            setEliminarDiagnosticoByCuenta(indexToDelete)
-        };
-        const fetchDx = useCallback(
-                debounce(async (nomdx) => {
-                    try {
-                        setIsLoading(true);
-                        const response = await getData(`${process.env.apijimmynew}/diagnosticos/findByName/${nomdx}`);
-        
-                        const mappedOptions = response.map((est: any) => ({
-                            value: est.idDiagnostico,
-                            label: `${est.codigoCIE10} - ${est.descripcion}`,
-                            codigoCIE10: est.codigoCIE10
-                        }));
-                        setOptions(mappedOptions);
-                    } catch (error) {
-                        console.error("Error al cargar los datos:", error);
-                        setOptions([]);
-                    } finally {
-                        setIsLoading(false);
-                    }
-                }, 500),
-                []
-            );
-            const removeLab = (valueToRemove: any) => {
-                setArraLab((prevArrayLab) => prevArrayLab.filter((item) => item !== valueToRemove));
-            };
-             const FormDX: SubmitHandler<any> = async (data: any) => {
-                    const subClasificacion = clasificacionDx.find((item: any) => item.idSubclasificacionDx == data.IdSubclasificacionDx);
-                    if (arraLab.length > 0) {
-                        for (const datalab of arraLab) {
-                            await setDiagnosticoByCuenta(
-                                data.IdDiagnostico.value,
-                                data.IdDiagnostico.label,
-                                data.IdDiagnostico.codigoCIE10,
-                                data.IdSubclasificacionDx,
-                                subClasificacion.descripcion,
-                                datalab
-                            );
-                        }
-                        ToasterMsj("Exito", "success", "Añadio un diagnostico.")
-                    }
-            
-                    else {
-                        await checkAndAddDiagnostico(
-                            data.IdDiagnostico.value,
-                            data.IdDiagnostico.label,
-                            data.IdDiagnostico.codigoCIE10,
-                            data.IdSubclasificacionDx,
-                            subClasificacion.descripcion,
-                            cuentaDatos,
-                            setDiagnosticoByCuenta
-                        );
-                    }
-                 
-            
-            
-                }
-                const checkAndAddDiagnostico =
-                        async (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, cuentaDatos: any, setDiagnosticoByCuenta: Function) => {
-                            const diagnosticoExiste = cuentaDatos.diagnosticos.some((diagnostico: any) => diagnostico.IdDiagnostico === IdDiagnostico);
-                            if (diagnosticoExiste) {
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Diagnóstico duplicado',
-                                    text: 'El diagnóstico con este CIE10 ya ha sido agregado.',
-                                    confirmButtonText: 'Aceptar'
-                                });
-                            } else {
-                                await setDiagnosticoByCuenta(IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion);
-                                ToasterMsj("Exito", "success", "Añadio un diagnostico.")
-                            }
-                        };
-                        const selectedLabs = watch("labs");
-                        const customvaluewatch = watch("customValue");
-                        const addLab = () => {
-                            if (selectedLabs) {
-                                const selectedValue = selectedLabs.value;
-                                if (selectedValue == '999999') {
-                                    if (customvaluewatch === "") {
-                                        ToasterMsj('Advertencia', 'error', 'Ingrese un número para campo lab.');
-                                    } else {
-                                        setArraLab((prevArrayLab) => [...prevArrayLab, customvaluewatch]);
-                                        setValue("customValue", "");
-                                    }
-                    
-                    
-                                } else {
-                                    if (arraLab.includes(selectedValue)) {
-                                        ToasterMsj('Advertencia', 'error', 'Codigo lab ya se registrado');
-                                    } else {
-                                        setArraLab((prevArrayLab) => [...prevArrayLab, selectedValue]);
-                                    }
-                                }
-                            }
-                    
-                        };
-                        const getLab = async () => {
-                            try {
-                                const response = await getData(`${process.env.apijimmynew}/atenciones/findallcampolab`);
-                                const mappedOptions = response.map((est: any) => ({
-                                    value: est.valores ?? est.codigo,
-                                    label: est.valores ? `${est.valores} - ${est.descripcio}` : est.descripcio,
-                                    isCustom: est.valores === null,
-                                }));
-                                setOptionsLab(mappedOptions);
-                            } catch (error) {
-                                console.error("Error fetching lab options:", error);
-                            } finally {
-                                setIsLoading(false);
-                            }
-                        }
+export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
+    const [isOffcanvasOpenDx, setIsOffcanvasOpenDx] = useState(false);
+    const [arraLab, setArraLab] = useState<any[]>([]);
+    const [options, setOptions] = useState<any[]>([]);
+    const [isCustomInputVisible, setIsCustomInputVisible] = useState(false);
+    const { watch, control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
+    const [clasificacionDx, setClasificacionDx] = useState<any>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const setDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setDiagnosticoByCuenta)
+    const setEliminarDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setEliminarDiagnosticoByCuenta);
+    const isFirstRender = useRef(true);
+    const toggleOffcanvasDx = () => {
+        setIsOffcanvasOpenDx(!isOffcanvasOpenDx);
+    };
+    const handleDelete = (indexToDelete: number) => {
+        setEliminarDiagnosticoByCuenta(indexToDelete)
+    };
+    const fetchDx = useCallback(
+        debounce(async (nomdx) => {
+            try {
+                setIsLoading(true);
+                const response = await getData(`${process.env.apijimmynew}/diagnosticos/findByName/${nomdx}`);
 
-                        useEffect(() => {
-                                const getSubClasDx = async () => {
-                                    const data = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionce`);
-                                    setClasificacionDx(data);
-                                    if (data.length > 0) {
-                                        setValue('IdSubclasificacionDx', `${data[0].idSubclasificacionDx}`);
-                                    }
-                                };
-                                getSubClasDx();
-                                getLab();
-                            }, []);
-                
-  return (
-    <>
-     <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
+                const mappedOptions = response.map((est: any) => ({
+                    value: est.idDiagnostico,
+                    label: `${est.codigoCIE10} - ${est.descripcion}`,
+                    codigoCIE10: est.codigoCIE10
+                }));
+                setOptions(mappedOptions);
+            } catch (error) {
+                console.error("Error al cargar los datos:", error);
+                setOptions([]);
+            } finally {
+                setIsLoading(false);
+            }
+        }, 500),
+        []
+    );
+    const removeLab = (valueToRemove: any) => {
+        setArraLab((prevArrayLab) => prevArrayLab.filter((item) => item !== valueToRemove));
+    };
+    const FormDX: SubmitHandler<any> = async (data: any) => {
+       
+        const subClasificacion = clasificacionDx.find((item: any) => item.idSubclasificacionDx == data.IdSubclasificacionDx);
+        const obj={
+            labConfHIS:null,
+            idAtencion:datosEmergencia?.idatencion,
+            idDiagnostico:data.IdDiagnostico.value,
+            idUsuarioAuditoria:session?.user?.id,
+            idClasificacionDx:2,
+            idSubclasificacionDx:data?.IdSubclasificacionDx,
+        }
+     
+         if (arraLab.length > 0) {
+            for (const datalab of arraLab) {
+                console.log("entrando aca")
+                await setDiagnosticoByCuenta(
+                    data.IdDiagnostico.value,
+                    data.IdDiagnostico.label,
+                    data.IdDiagnostico.codigoCIE10,
+                    data.IdSubclasificacionDx,
+                    subClasificacion.descripcion,
+                    datalab
+                );
+            }
+            ToasterMsj("Exito", "success", "Añadio un diagnostico.")
+        }
+         else {
+            await checkAndAddDiagnostico(
+                data.IdDiagnostico.value,
+                data.IdDiagnostico.label,
+                data.IdDiagnostico.codigoCIE10,
+                data.IdSubclasificacionDx,
+                subClasificacion.descripcion,
+                datosEmergencia,
+                setDiagnosticoByCuenta
+            );
+        }
+    }
+
+    const checkAndAddDiagnostico =
+        async (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, datosEmergencia: any, setDiagnosticoByCuenta: Function) => {
+            const diagnosticoExiste = datosEmergencia.diagnosticos.some((diagnostico: any) => diagnostico.IdDiagnostico === IdDiagnostico);
+            if (diagnosticoExiste) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Diagnóstico duplicado',
+                    text: 'El diagnóstico con este CIE10 ya ha sido agregado.',
+                    confirmButtonText: 'Aceptar'
+                });
+            } else {
+                await setDiagnosticoByCuenta(IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion);
+             
+         
+            }
+        };
+
+    useEffect(() => {
+        const getSubClasDx = async () => {
+            const data = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionEmergencia`);
+            setClasificacionDx(data);
+            if (data.length > 0) {
+                setValue('IdSubclasificacionDx', `${data[0].idSubclasificacionDx}`);
+            }
+        };
+        getSubClasDx();
+        
+      
+    }, []);
+
+
+
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return; // Evita la ejecución en el primer render
+        }
+        if(datosEmergencia.diagnosticos.length > 0){
+            getAddDx()
+        }
+    }, [datosEmergencia.diagnosticos])
+
+
+    const getAddDx=async()=>{
+        await axios.delete(`${process.env.apijimmynew}/consultaexterna/deletedxbyidatencion/${datosEmergencia?.idatencion}`);
+        const requests = datosEmergencia.diagnosticos.map((data:any) => {
+            const DxSend = {
+                labConfHIS: "",
+                idAtencion: datosEmergencia?.idatencion,
+                idDiagnostico: data?.IdDiagnostico,
+                idSubclasificacionDx: data?.idSubclasificacionDx,
+                idClasificacionDx: 2,
+                idAtencionDiagnostico: datosEmergencia?.idatencion,
+                idUsuarioAuditoria: session?.user?.id,
+            };
+            return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
+        });
+        ToasterMsj("Exito", "success", "Actualización diagnostico.")
+    }
+    
+
+    return (
+        <>
+           
+            <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                    <span className="flex-grow">Diagnostico</span>
+                    <span className="flex-grow">Diagnostico de Ingreso</span>
                     <button
                         onClick={toggleOffcanvasDx}
-                        className={cuentaDatos.diagnosticos?.length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
+                        className={datosEmergencia.diagnosticos?.length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
                     >
                         Agregar
                     </button>
                 </h2>
 
-                <div className={cuentaDatos.diagnosticos?.length === 0 ? "flex flex-col items-center justify-center mt-6" : "hidden"}>
+                <div className={datosEmergencia.diagnosticos?.length === 0 ? "flex flex-col items-center justify-center mt-6" : "hidden"}>
                     <div className="mb-4">
                         <FaFileMedical size={36} className="text-gray-400" />
                     </div>
@@ -175,17 +180,17 @@ export const DiagnosticoIngreso = () => {
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className={cuentaDatos.diagnosticos?.length > 0 ? "tableT  w-3/4" : "hidden"}>
+                    <table className={datosEmergencia.diagnosticos?.length > 0 ? "tableT  w-3/4" : "hidden"}>
                         <thead>
                             <tr>
                                 <th scope="col" className="tableth">Clasificacion</th>
                                 <th scope="col" className="tableth ">Diagnostico</th>
-                                <th scope="col" className="tableth">Lab</th>
+                              
                                 <th scope="col" className="tableth">Accion</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                            {cuentaDatos.diagnosticos
+                            {datosEmergencia.diagnosticos
                                 .sort((a: any, b: any) => {
                                     // Ordenar por nomdx (lexicográficamente)
                                     if (a?.nomdx < b?.nomdx) return -1;  // Orden ascendente
@@ -198,9 +203,7 @@ export const DiagnosticoIngreso = () => {
                                         <td>
                                             {data?.nomdx}
                                         </td>
-                                        <td className={`w-10 tabletd`}>
-                                            {data?.labConfHIS}
-                                        </td>
+                                     
                                         <td className="tabletd">
                                             <button type="button" className="aAzul" onClick={() => handleDelete(data.IdDiagnostico)}>
                                                 Eliminar
@@ -269,29 +272,6 @@ export const DiagnosticoIngreso = () => {
                                 />
                             )}
                         />
-                        <p className="font-semibold">
-                            Campo Lab:
-                        </p>
-                        <div className="flex justify-center items-center">
-                            <span onClick={addLab} className="bg-blue-600 text-white p-2 w-1/5 justify-center items-center flex rounded">
-                                <FaPlus />
-                            </span>
-                            <Controller
-                                name="labs"
-                                control={control}
-                                defaultValue=""
-                                render={({ field }) => (
-                                    <Select
-                                        instanceId="unique-select-id"
-                                        {...field}
-                                        className="mt-2 mb-2 ml-2 w-4/5"
-                                        options={optionsLab}
-                                        placeholder={isLoading ? 'Cargando...' : 'Seleccionar campo lab'}
-                                        isLoading={isLoading}
-                                    />
-                                )}
-                            />
-                        </div>
 
                         {isCustomInputVisible && (
                             <div className="mt-2">
@@ -343,6 +323,6 @@ export const DiagnosticoIngreso = () => {
                     )}
                 </div>
             </div>
-    </>
-  )
+        </>
+    )
 }

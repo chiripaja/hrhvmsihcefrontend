@@ -77,7 +77,7 @@ export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion }: a
                         idSubclasificacionDx: data?.idSubclasificacionDx,
                         idClasificacionDx: 1,
                         idAtencionDiagnostico: cuentaDatos?.idatencion,
-                        idUsuarioAuditoria: 4898,
+                        idUsuarioAuditoria: session?.user?.id,
                     };
                     return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
                 });

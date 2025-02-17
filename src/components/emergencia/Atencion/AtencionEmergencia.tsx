@@ -4,7 +4,6 @@ import { CabeceraEmergencia } from "./CabeceraEmergencia"
 import { TriajeBusqueda } from "@/components/Triaje/TriajeBusqueda";
 import { Anamnesis } from "./Anamnesis/Anamnesis";
 import { ExamenFisicoEmergencia } from "./ExamenFisicoEmergencia/ExamenFisicoEmergencia";
-import { OrdenesFarmacia } from "./OrdenesFarmacia/OrdenesFarmacia";
 import { CEDiagnostico } from "@/components/ConsultaExterna/consultamedica/CEDiagnostico";
 import { CEConsultaGeneral } from "@/components/ConsultaExterna";
 
@@ -14,6 +13,7 @@ import axios from "axios";
 import { getData } from "@/components/helper/axiosHelper";
 import { Transferencias } from "./Transferencias/Transferencias";
 import { DiagnosticoIngreso } from "./Diagnostico/DiagnosticoIngreso";
+import { Ordenes } from "./Ordenes/Ordenes";
 export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
   const [dataPx, setDataPx] = useState<any>();
   const [activeTab, setActiveTab] = useState(1);
@@ -22,10 +22,10 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
   const setDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setDiagnosticoByCuenta);
   const setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago = useEmergenciaDatosStore((state: any) => state.setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago);
   const [datosAtencion, setDatosAtencion] = useState<any>();
+  const resetdatosemergencia=useEmergenciaDatosStore((state:any)=>state.resetdatosemergencia);
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
-      
       setIdAtencionv2(
         data?.idAtencion,
         data?.idCuentaAtencion,
@@ -73,8 +73,12 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
       }
     }
   useEffect(() => {
+    const ejecutarFunciones = async () => {
+      await resetdatosemergencia();
     getDatos();
     getDatosConsulta();
+  }
+  ejecutarFunciones();
   }, [])
   
   return (
@@ -121,7 +125,7 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
           } focus:outline-none`}
           onClick={() => setActiveTab(4)}
         >
-          Ordenes
+          Ordenes Medicas
         </button>
 
         {/* Tab 5 */}
@@ -163,14 +167,14 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
         {/* Contenido de Tab 3 */}
         {activeTab === 3 && (
           <div className="p-4 bg-white border rounded-md shadow-md">
-            <DiagnosticoIngreso/>
+            <DiagnosticoIngreso datosEmergencia={emergenciaCuentaDatos} session={ session }/>
           </div>
         )}
 
          {/* Contenido de Tab 4 */}
          {activeTab === 4 && (
           <div className="p-4 bg-white border rounded-md shadow-md">
-            <OrdenesFarmacia session={session}/>
+            <Ordenes datosEmergencia={emergenciaCuentaDatos} session={ session }/>
           </div>
         )}
 
