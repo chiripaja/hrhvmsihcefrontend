@@ -184,13 +184,11 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
 
    useEffect(() => {
     const ejecutarFunciones = async () => {
-     
       if (procesado) return;
       const recetaCabezera = cuentaDatos?.recetaCabezera || [];
       const RecetaCabezeraFarmacia = recetaCabezera.filter(
         (data: RecetaCabecera) => data.IdPuntoCarga === 5
       );
-      
       if (RecetaCabezeraFarmacia?.[0]?.idReceta && cuentaDatos?.idFormaPago) {           
         await getMedicamentosbyIdRecetaCabeceraFarmacia(
           RecetaCabezeraFarmacia[0].idReceta,

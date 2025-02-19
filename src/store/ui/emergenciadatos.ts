@@ -243,19 +243,20 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
 
 
 
-  updateMedicamentos: async (idrecetacabecera: any) => {
-    set((state: any) => ({
-      datosemergencia: {
-        ...state.datosemergencia,
-        medicamentos: state.datosemergencia.medicamentos.map((medicamento: MedicamentosCE) => ({
-          ...medicamento,
-          idrecetacabecera,
-        })),
-      },
-    }));
-    const updatedMedicamentos = get().datosemergencia.medicamentos;
-    return updatedMedicamentos;
-  },
+    updateMedicamentos: async (idrecetacabecera: any) => {
+      set((state: any) => ({
+        datosemergencia: {
+          ...state.datosemergencia,
+          medicamentos: state.datosemergencia.medicamentos.map((medicamento: MedicamentosCE) =>
+            medicamento.idrecetacabecera === "" 
+              ? { ...medicamento, idrecetacabecera } 
+              : medicamento
+          ),
+        },
+      }));
+      const updatedMedicamentos = get().datosemergencia.medicamentos;
+      return updatedMedicamentos;
+    },
 
   setIdAtencionv2: (newIdCuenta: any, newIdCuentaIdatencion: any, newIdPaciente: any, newhc: any, CitaMotivo: any, CitaExamenClinico: any, IdTipoSexo: any, CitaObservaciones: any) =>
     set((state: any) => ({

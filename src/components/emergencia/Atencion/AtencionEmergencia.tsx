@@ -14,6 +14,8 @@ import { getData } from "@/components/helper/axiosHelper";
 import { Transferencias } from "./Transferencias/Transferencias";
 import { DiagnosticoIngreso } from "./Diagnostico/DiagnosticoIngreso";
 import { Ordenes } from "./Ordenes/Ordenes";
+import { MedicamentosCE } from "@/interfaces/MedicamentosCe";
+import { RecetaCabecera } from "@/interfaces/RecetaCabezeraI";
 export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
   const [dataPx, setDataPx] = useState<any>();
   const [activeTab, setActiveTab] = useState(1);
@@ -23,6 +25,12 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
   const setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago = useEmergenciaDatosStore((state: any) => state.setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago);
   const [datosAtencion, setDatosAtencion] = useState<any>();
   const resetdatosemergencia=useEmergenciaDatosStore((state:any)=>state.resetdatosemergencia);
+  const createMedicamento = useEmergenciaDatosStore((state: any) => state.createMedicamento);
+  const [procesado, setProcesado] = useState(false);
+  const setRecetaCabezera = useEmergenciaDatosStore((state: any) => state.setRecetaCabezera);
+  const setRecetaCabezeraProcedimientos = useEmergenciaDatosStore((state: any) => state.setRecetaCabezeraProcedimientos);
+  const [recetaUpdateValidador, setrecetaUpdateValidador] = useState<any>()
+  const createordenesOtros = useEmergenciaDatosStore((state: any) => state.createordenesOtros);
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
@@ -50,7 +58,6 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
       try {
         const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
      
-        console.log(datosAtencion?.servicio?.idProducto)
         setDatosAtencion(datosAtencion)
         setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,datosAtencion?.edad,datosAtencion?.idCondicionMaterna,datosAtencion?.idDestinoAtencion,datosAtencion?.servicio?.idProducto)
         if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
@@ -72,18 +79,96 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
         console.error("Error fetching data:", error);
       }
     }
+
+    const getOtros = async (idcuenta: any) => {
+      try {
+     
+        const data = await getData(`${process.env.apijimmynew}/recetas/ApiObtenerProcedimientosPorCuenta/${idcuenta}`)
+        data.map((datos: any) => {
+          createordenesOtros(datos);
+        })
+  
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+
   useEffect(() => {
     const ejecutarFunciones = async () => {
       await resetdatosemergencia();
-    getDatos();
-    getDatosConsulta();
+      if (idcuentaatencion) {
+        await getDatos();
+        await getDatosRecetaCabecera();
+        await getOtros(idcuentaatencion);
+        await getDatosConsulta();
+      }
   }
   ejecutarFunciones();
   }, [])
+
+//cabecera
+const getDatosRecetaCabecera = async () => {
+  try {
+    const DatosRecetaCabecera: RecetaCabecera[] = await getData(`${process.env.apijimmynew}/recetas/findRecetaCabezeraByIdCuentaAtencion/${idcuentaatencion}`)
+    const DatosRecetaCabeceraProcedimientos: [] = await getData(`${process.env.apijimmynew}/recetas/FactOrdenServicioSeleccionarPorIdCuenta/${idcuentaatencion}`)
+    if (DatosRecetaCabeceraProcedimientos.length > 0) {
+      const FiltadorDatosRecetaCabeceraProcedimientos = DatosRecetaCabeceraProcedimientos.filter((data: any) => data.IdPuntoCarga == 1);
+      
+      FiltadorDatosRecetaCabeceraProcedimientos.length > 0 && setRecetaCabezeraProcedimientos(FiltadorDatosRecetaCabeceraProcedimientos)
+    }
+    
+    setrecetaUpdateValidador(DatosRecetaCabecera)
+    DatosRecetaCabecera.length > 0 && setRecetaCabezera(DatosRecetaCabecera);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+
+
+  //farmacia
+   const getMedicamentosbyIdRecetaCabeceraFarmacia = async (idrecetacabecera: number, idFormaPago: number) => {
+      try {
+        //await limpiarMedicamento(); 
+        const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdReceta/${idrecetacabecera}/${idFormaPago}/4`)
+
+        data.forEach((info: MedicamentosCE) => {
+          createMedicamento(info); 
+        });
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    useEffect(() => {
+        const ejecutarFunciones = async () => {
+      
+          if(emergenciaCuentaDatos?.recetaCabezera.length>0){
+            const recetaCabezera = emergenciaCuentaDatos?.recetaCabezera || [];
+            const RecetaCabezeraFarmacia = recetaCabezera.filter(
+              (data: RecetaCabecera) => data.IdPuntoCarga === 5
+            );
+           
+            RecetaCabezeraFarmacia.map((data:any)=>{
+              if (emergenciaCuentaDatos?.idFormaPago) { 
+                getMedicamentosbyIdRecetaCabeceraFarmacia(
+                  data?.idReceta,
+                  emergenciaCuentaDatos.idFormaPago
+                );
+              }
+            })
+          }
+          
+
+         
+        };
+        ejecutarFunciones(); 
+      }, [emergenciaCuentaDatos?.idFormaPago]);
   
   return (
     <>
- 
+
     <CabeceraEmergencia idcuentaatencion={idcuentaatencion}/>
     <div className="p-4">
       {/* Contenedor de los Tabs */}
