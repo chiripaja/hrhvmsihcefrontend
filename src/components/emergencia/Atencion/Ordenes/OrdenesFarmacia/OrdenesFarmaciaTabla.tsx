@@ -2,14 +2,26 @@
 import { Tooltip } from "@/components/ui/Tooltip";
 import { GoTrash } from "react-icons/go";
 import { useEmergenciaDatosStore } from "@/store/ui/emergenciadatos";
+import { showConfirmDeleteAlert, showDeleteAlert } from "@/components/utils/alertHelper";
+import axios from "axios";
 
 export const OrdenesFarmaciaTabla= ({ modificar = 0,datosEmergencia ,recetaIdTemporal}:
      { modificar?: number,datosEmergencia:any,recetaIdTemporal:any }) => {
-
     const deleteMedicamento = useEmergenciaDatosStore((state: any) => state.deleteMedicamento);
-    const handleDelete = (indexToDelete: number) => {
-        deleteMedicamento(indexToDelete)
+    const handleDelete = async(indexToDelete: number) => {
+        showConfirmDeleteAlert().then(async(result) => {
+            if (result.isConfirmed) {
+                showDeleteAlert();
+                console.log(recetaIdTemporal)
+                const data=await axios.delete(`${process.env.apijimmynew}/recetas/apiDeleteRecetaDetalleByIdRecetaAndIdItem/${recetaIdTemporal}/${indexToDelete}`)
+                deleteMedicamento(indexToDelete)
+            }
+            else{
+                console.log("no elimino")
+            }
+        });
     };
+
   return (
     <div className="max-h-[300px] overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
     
@@ -17,7 +29,6 @@ export const OrdenesFarmaciaTabla= ({ modificar = 0,datosEmergencia ,recetaIdTem
         <thead>
             <tr>
                 <th scope="col" className="tableth">Medicamento
-    
                 </th>
                 <th scope="col" className="tableth">Cantidad</th>
                 {(modificar===1) && 

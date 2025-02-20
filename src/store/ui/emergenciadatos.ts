@@ -23,6 +23,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     recetaCabezera: [] as RecetaCabecera[],
     recetaCabezeraProcedimientos: [],
     medicamentos: [] as MedicamentosCE[],
+    ordenesPatologiaClinica: [] as any[],
     ordenesLaboratorio: [],
     ordenesImagenes: [],
     ordenesOtros: [],
@@ -51,6 +52,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         recetaCabezera: [] as RecetaCabecera[],
         recetaCabezeraProcedimientos: [],
         medicamentos: [] as MedicamentosCE[],
+        ordenesPatologiaClinica: [] as any[],
         ordenesLaboratorio: [],
         ordenesImagenes: [],
         ordenesOtros: [],
@@ -205,6 +207,9 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     const updatedOrdenes = get().datosemergencia.ordenesImagenes;
     return updatedOrdenes;
   },
+
+
+
   createMedicamento: (nuevoMedicamento: MedicamentosCE) =>
     set((state: any) => ({
       datosemergencia: {
@@ -212,6 +217,23 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         medicamentos: [...state.datosemergencia.medicamentos, { ...nuevoMedicamento }]
       }
     })),
+
+  updateMedicamentos: async (idrecetacabecera: any) => {
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        medicamentos: state.datosemergencia.medicamentos.map((medicamento: MedicamentosCE) =>
+          medicamento.idrecetacabecera === ""
+            ? { ...medicamento, idrecetacabecera }
+            : medicamento
+        ),
+      },
+    }));
+    const updatedMedicamentos = get().datosemergencia.medicamentos;
+    return updatedMedicamentos;
+  },
+
+
   limpiarMedicamento: () =>
     set((state: any) => ({
       datosemergencia: {
@@ -239,24 +261,20 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       },
     })),
 
-
-
-
-
-    updateMedicamentos: async (idrecetacabecera: any) => {
-      set((state: any) => ({
-        datosemergencia: {
-          ...state.datosemergencia,
-          medicamentos: state.datosemergencia.medicamentos.map((medicamento: MedicamentosCE) =>
-            medicamento.idrecetacabecera === "" 
-              ? { ...medicamento, idrecetacabecera } 
-              : medicamento
-          ),
-        },
-      }));
-      const updatedMedicamentos = get().datosemergencia.medicamentos;
-      return updatedMedicamentos;
+  deleteRecetaCabecera: (idreceta: number) => set((state: any) => ({
+    datosemergencia: {
+      ...state.datosemergencia,
+      recetaCabezera: state.datosemergencia.recetaCabezera.filter(
+        (data: any) => data.idReceta !== idreceta
+      ),
     },
+  })),
+
+
+
+
+
+
 
   setIdAtencionv2: (newIdCuenta: any, newIdCuentaIdatencion: any, newIdPaciente: any, newhc: any, CitaMotivo: any, CitaExamenClinico: any, IdTipoSexo: any, CitaObservaciones: any) =>
     set((state: any) => ({
@@ -316,7 +334,32 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
           (diagnostico: any) => diagnostico.IdDiagnostico !== IdDiagnostico
         )
       }
-    }))
+    })),
 
+
+
+
+  createOrdenesPatologiaClinica: (data: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesPatologiaClinica: [...state.datosemergencia.ordenesPatologiaClinica, { ...data }]
+      }
+    })),
+
+  updateOrdenesPatologiaClinica: async (idrecetacabecera: any) => {
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesPatologiaClinica: state.datosemergencia.ordenesPatologiaClinica.map((data: any) =>
+          data.idrecetacabecera === ""
+            ? { ...data, idrecetacabecera }
+            : data
+        ),
+      },
+    }));
+    const updatedOrdenes = get().datosemergencia.ordenesPatologiaClinica;
+    return updatedOrdenes;
+  },
 
 }));

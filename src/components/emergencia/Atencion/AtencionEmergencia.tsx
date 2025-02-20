@@ -3,10 +3,7 @@ import { useEffect, useState } from "react";
 import { CabeceraEmergencia } from "./CabeceraEmergencia"
 import { TriajeBusqueda } from "@/components/Triaje/TriajeBusqueda";
 import { Anamnesis } from "./Anamnesis/Anamnesis";
-import { ExamenFisicoEmergencia } from "./ExamenFisicoEmergencia/ExamenFisicoEmergencia";
-import { CEDiagnostico } from "@/components/ConsultaExterna/consultamedica/CEDiagnostico";
 import { CEConsultaGeneral } from "@/components/ConsultaExterna";
-
 
 import { useEmergenciaDatosStore } from "@/store/ui/emergenciadatos";
 import axios from "axios";
@@ -16,15 +13,15 @@ import { DiagnosticoIngreso } from "./Diagnostico/DiagnosticoIngreso";
 import { Ordenes } from "./Ordenes/Ordenes";
 import { MedicamentosCE } from "@/interfaces/MedicamentosCe";
 import { RecetaCabecera } from "@/interfaces/RecetaCabezeraI";
-export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
-  const [dataPx, setDataPx] = useState<any>();
+export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
+
   const [activeTab, setActiveTab] = useState(1);
-  const emergenciaCuentaDatos=useEmergenciaDatosStore((state:any)=>state.datosemergencia)
-  const setIdAtencionv2=useEmergenciaDatosStore((state:any)=>state.setIdAtencionv2);
+  const emergenciaCuentaDatos = useEmergenciaDatosStore((state: any) => state.datosemergencia)
+  const setIdAtencionv2 = useEmergenciaDatosStore((state: any) => state.setIdAtencionv2);
   const setDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setDiagnosticoByCuenta);
   const setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago = useEmergenciaDatosStore((state: any) => state.setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago);
   const [datosAtencion, setDatosAtencion] = useState<any>();
-  const resetdatosemergencia=useEmergenciaDatosStore((state:any)=>state.resetdatosemergencia);
+  const resetdatosemergencia = useEmergenciaDatosStore((state: any) => state.resetdatosemergencia);
   const createMedicamento = useEmergenciaDatosStore((state: any) => state.createMedicamento);
   const [procesado, setProcesado] = useState(false);
   const setRecetaCabezera = useEmergenciaDatosStore((state: any) => state.setRecetaCabezera);
@@ -44,54 +41,52 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
         data?.IdTipoSexo,
         data?.CitaObservaciones
       )
-      setDataPx(data);
+ 
     } catch (error: any) {
       if (error.response && error.response.status === 404) {
         console.error("Recurso no encontrado (404)");
-        setDataPx(null);
+      
       } else {
         console.error("Ocurrió un error inesperado", error);
       }
     }
   }
   const getDatosConsulta = async () => {
-      try {
-        const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
-     
-        setDatosAtencion(datosAtencion)
-        setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,datosAtencion?.edad,datosAtencion?.idCondicionMaterna,datosAtencion?.idDestinoAtencion,datosAtencion?.servicio?.idProducto)
-        if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
-          datosAtencion.atencionesDiagnosticos.map((data: any) => {
-            setDiagnosticoByCuenta(
-              data.diagnostico.idDiagnostico,
-              data.diagnostico.codigoCIE10+' - '+data.diagnostico.descripcion,
-              data.diagnostico.codigoCIE10,
-              data.idSubclasificacionDx,
-              data.subclasificacionDiagnosticos.descripcion,
-              data.labConfHIS,
-              data.idClasificacionDx
-            );
-          });
-        } else {
-          console.error("datosAtencion.atencionesDiagnosticos no es un array");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+    try {
+      const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
+      setDatosAtencion(datosAtencion)
+      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad, datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion, datosAtencion?.servicio?.idProducto)
+      if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
+        datosAtencion.atencionesDiagnosticos.map((data: any) => {
+          setDiagnosticoByCuenta(
+            data.diagnostico.idDiagnostico,
+            data.diagnostico.codigoCIE10 + ' - ' + data.diagnostico.descripcion,
+            data.diagnostico.codigoCIE10,
+            data.idSubclasificacionDx,
+            data.subclasificacionDiagnosticos.descripcion,
+            data.labConfHIS,
+            data.idClasificacionDx
+          );
+        });
+      } else {
+        console.error("datosAtencion.atencionesDiagnosticos no es un array");
       }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
+  }
 
-    const getOtros = async (idcuenta: any) => {
-      try {
-     
-        const data = await getData(`${process.env.apijimmynew}/recetas/ApiObtenerProcedimientosPorCuenta/${idcuenta}`)
-        data.map((datos: any) => {
-          createordenesOtros(datos);
-        })
-  
-      } catch (error) {
-        console.log(error)
-      }
+  const getOtros = async (idcuenta: any) => {
+    try {
+      const data = await getData(`${process.env.apijimmynew}/recetas/ApiObtenerProcedimientosPorCuenta/${idcuenta}`)
+      data.map((datos: any) => {
+        createordenesOtros(datos);
+      })
+
+    } catch (error) {
+      console.log(error)
     }
+  }
 
 
   useEffect(() => {
@@ -103,184 +98,178 @@ export const AtencionEmergencia = ({session,idcuentaatencion}:any) => {
         await getOtros(idcuentaatencion);
         await getDatosConsulta();
       }
-  }
-  ejecutarFunciones();
+    }
+    ejecutarFunciones();
   }, [])
 
-//cabecera
-const getDatosRecetaCabecera = async () => {
-  try {
-    const DatosRecetaCabecera: RecetaCabecera[] = await getData(`${process.env.apijimmynew}/recetas/findRecetaCabezeraByIdCuentaAtencion/${idcuentaatencion}`)
-    const DatosRecetaCabeceraProcedimientos: [] = await getData(`${process.env.apijimmynew}/recetas/FactOrdenServicioSeleccionarPorIdCuenta/${idcuentaatencion}`)
-    if (DatosRecetaCabeceraProcedimientos.length > 0) {
-      const FiltadorDatosRecetaCabeceraProcedimientos = DatosRecetaCabeceraProcedimientos.filter((data: any) => data.IdPuntoCarga == 1);
-      
-      FiltadorDatosRecetaCabeceraProcedimientos.length > 0 && setRecetaCabezeraProcedimientos(FiltadorDatosRecetaCabeceraProcedimientos)
+  //cabecera
+  const getDatosRecetaCabecera = async () => {
+    try {
+      const DatosRecetaCabecera: RecetaCabecera[] = await getData(`${process.env.apijimmynew}/recetas/findRecetaCabezeraByIdCuentaAtencion/${idcuentaatencion}`)
+      const DatosRecetaCabeceraProcedimientos: [] = await getData(`${process.env.apijimmynew}/recetas/FactOrdenServicioSeleccionarPorIdCuenta/${idcuentaatencion}`)
+      if (DatosRecetaCabeceraProcedimientos.length > 0) {
+        const FiltadorDatosRecetaCabeceraProcedimientos = DatosRecetaCabeceraProcedimientos.filter((data: any) => data.IdPuntoCarga == 1);
+        FiltadorDatosRecetaCabeceraProcedimientos.length > 0 && setRecetaCabezeraProcedimientos(FiltadorDatosRecetaCabeceraProcedimientos)
+      }
+
+      setrecetaUpdateValidador(DatosRecetaCabecera)
+      DatosRecetaCabecera.length > 0 && setRecetaCabezera(DatosRecetaCabecera);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
-    
-    setrecetaUpdateValidador(DatosRecetaCabecera)
-    DatosRecetaCabecera.length > 0 && setRecetaCabezera(DatosRecetaCabecera);
-  } catch (error) {
-    console.error("Error fetching data:", error);
   }
-}
 
 
 
   //farmacia
-   const getMedicamentosbyIdRecetaCabeceraFarmacia = async (idrecetacabecera: number, idFormaPago: number) => {
-      try {
-        //await limpiarMedicamento(); 
-        const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdReceta/${idrecetacabecera}/${idFormaPago}/4`)
+  const getMedicamentosbyIdRecetaCabeceraFarmacia = async (idrecetacabecera: number, idFormaPago: number) => {
+    try {
+      //await limpiarMedicamento(); 
+    
+      const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdReceta/${idrecetacabecera}/${idFormaPago}/8`)
 
-        data.forEach((info: MedicamentosCE) => {
-          createMedicamento(info); 
-        });
-      } catch (error) {
-        console.log(error)
-      }
+      data.forEach((info: MedicamentosCE) => {
+        createMedicamento(info);
+      });
+    } catch (error) {
+      console.log(error)
     }
+  }
 
-    useEffect(() => {
-        const ejecutarFunciones = async () => {
-      
-          if(emergenciaCuentaDatos?.recetaCabezera.length>0){
-            const recetaCabezera = emergenciaCuentaDatos?.recetaCabezera || [];
-            const RecetaCabezeraFarmacia = recetaCabezera.filter(
-              (data: RecetaCabecera) => data.IdPuntoCarga === 5
+  useEffect(() => {
+    const ejecutarFunciones = async () => {
+
+      if (emergenciaCuentaDatos?.recetaCabezera.length > 0) {
+        const recetaCabezera = emergenciaCuentaDatos?.recetaCabezera || [];
+        const RecetaCabezeraFarmacia = recetaCabezera.filter(
+          (data: RecetaCabecera) => data.IdPuntoCarga === 5
+        );
+
+        RecetaCabezeraFarmacia.map((data: any) => {
+          if (emergenciaCuentaDatos?.idFormaPago) {
+            getMedicamentosbyIdRecetaCabeceraFarmacia(
+              data?.idReceta,
+              emergenciaCuentaDatos.idFormaPago
             );
-           
-            RecetaCabezeraFarmacia.map((data:any)=>{
-              if (emergenciaCuentaDatos?.idFormaPago) { 
-                getMedicamentosbyIdRecetaCabeceraFarmacia(
-                  data?.idReceta,
-                  emergenciaCuentaDatos.idFormaPago
-                );
-              }
-            })
           }
-          
+        })
+      }
 
-         
-        };
-        ejecutarFunciones(); 
-      }, [emergenciaCuentaDatos?.idFormaPago]);
-  
+
+
+    };
+    ejecutarFunciones();
+  }, [emergenciaCuentaDatos?.idFormaPago]);
+
   return (
     <>
 
-    <CabeceraEmergencia idcuentaatencion={idcuentaatencion}/>
-    <div className="p-4">
-      {/* Contenedor de los Tabs */}
-      <div className="flex border-b">
-        {/* Tab 1 */}
-        <button
-          className={`py-2 px-4 text-sm font-semibold ${
-            activeTab === 1 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-          } focus:outline-none`}
-          onClick={() => setActiveTab(1)}
-        >
-          Triaje
-        </button>
+      <CabeceraEmergencia idcuentaatencion={idcuentaatencion} />
+      <div className="p-4">
+        {/* Contenedor de los Tabs */}
+        <div className="flex border-b">
+          {/* Tab 1 */}
+          <button
+            className={`py-2 px-4 text-sm font-semibold ${activeTab === 1 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+              } focus:outline-none`}
+            onClick={() => setActiveTab(1)}
+          >
+            Triaje
+          </button>
 
-        {/* Tab 2 */}
-        <button
-          className={`py-2 px-4 text-sm font-semibold ${
-            activeTab === 2 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-          } focus:outline-none`}
-          onClick={() => setActiveTab(2)}
-        >
-          Anamnesis
-        </button>
+          {/* Tab 2 */}
+          <button
+            className={`py-2 px-4 text-sm font-semibold ${activeTab === 2 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+              } focus:outline-none`}
+            onClick={() => setActiveTab(2)}
+          >
+            Anamnesis
+          </button>
 
-         {/* Tab 3 */}
-         <button
-          className={`py-2 px-4 text-sm font-semibold ${
-            activeTab === 3 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-          } focus:outline-none`}
-          onClick={() => setActiveTab(3)}
-        >
-          Diagnostico Ingreso
-        </button>
+          {/* Tab 3 */}
+          <button
+            className={`py-2 px-4 text-sm font-semibold ${activeTab === 3 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+              } focus:outline-none`}
+            onClick={() => setActiveTab(3)}
+          >
+            Diagnostico Ingreso
+          </button>
 
-        {/* Tab 4 */}
-        <button
-          className={`py-2 px-4 text-sm font-semibold ${
-            activeTab === 4 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-          } focus:outline-none`}
-          onClick={() => setActiveTab(4)}
-        >
-          Ordenes Medicas
-        </button>
+          {/* Tab 4 */}
+          <button
+            className={`py-2 px-4 text-sm font-semibold ${activeTab === 4 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+              } focus:outline-none`}
+            onClick={() => setActiveTab(4)}
+          >
+            Ordenes Medicas
+          </button>
 
-        {/* Tab 5 */}
-        <button
-          className={`py-2 px-4 text-sm font-semibold ${
-            activeTab === 5 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-          } focus:outline-none`}
-          onClick={() => setActiveTab(5)}
-        >
-          Ordenes 
-        </button>
+          {/* Tab 5 */}
+          <button
+            className={`py-2 px-4 text-sm font-semibold ${activeTab === 5 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+              } focus:outline-none`}
+            onClick={() => setActiveTab(5)}
+          >
+            Ordenes
+          </button>
 
-        <button
-          className={`py-2 px-4 text-sm font-semibold ${
-            activeTab === 6 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-          } focus:outline-none`}
-          onClick={() => setActiveTab(6)}
-        >
-          Transferencias 
-        </button>
-      </div>
+          <button
+            className={`py-2 px-4 text-sm font-semibold ${activeTab === 6 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+              } focus:outline-none`}
+            onClick={() => setActiveTab(6)}
+          >
+            Transferencias
+          </button>
+        </div>
 
-      {/* Contenedor del contenido de los tabs */}
-      <div className="mt-4">
-        {/* Contenido de Tab 1 */}
-        {activeTab === 1 && (
-          <div className="p-4 bg-white border rounded-md shadow-md">
-            <TriajeBusqueda/>
-          </div>
-        )}
+        {/* Contenedor del contenido de los tabs */}
+        <div className="mt-4">
+          {/* Contenido de Tab 1 */}
+          {activeTab === 1 && (
+            <div className="p-4 bg-white border rounded-md shadow-md">
+              <TriajeBusqueda />
+            </div>
+          )}
 
-        {/* Contenido de Tab 2 */}
-        {activeTab === 2 && (
-          <div className="p-4 bg-white border rounded-md shadow-md">
-            <Anamnesis/>
-          </div>
-        )}
+          {/* Contenido de Tab 2 */}
+          {activeTab === 2 && (
+            <div className="p-4 bg-white border rounded-md shadow-md">
+              <Anamnesis />
+            </div>
+          )}
 
-        {/* Contenido de Tab 3 */}
-        {activeTab === 3 && (
-          <div className="p-4 bg-white border rounded-md shadow-md">
-            <DiagnosticoIngreso datosEmergencia={emergenciaCuentaDatos} session={ session }/>
-          </div>
-        )}
+          {/* Contenido de Tab 3 */}
+          {activeTab === 3 && (
+            <div className="p-4 bg-white border rounded-md shadow-md">
+              <DiagnosticoIngreso datosEmergencia={emergenciaCuentaDatos} session={session} />
+            </div>
+          )}
 
-         {/* Contenido de Tab 4 */}
-         {activeTab === 4 && (
-          <div className="p-4 bg-white border rounded-md shadow-md">
-            <Ordenes datosEmergencia={emergenciaCuentaDatos} session={ session }/>
-          </div>
-        )}
+          {/* Contenido de Tab 4 */}
+          {activeTab === 4 && (
+            <div className="p-4 bg-white border rounded-md shadow-md">
+              <Ordenes datosEmergencia={emergenciaCuentaDatos} session={session} />
+            </div>
+          )}
 
           {/* Contenido de Tab 5 */}
           {activeTab === 5 && (
-          <div className="p-4 bg-white border rounded-md shadow-md">
-            <CEConsultaGeneral />
-          </div>
-        )}
+            <div className="p-4 bg-white border rounded-md shadow-md">
+              <CEConsultaGeneral />
+            </div>
+          )}
 
-        {/* Contenido de Tab 6 */}
-        {activeTab === 6 && (
-          <div className="p-4 bg-white border rounded-md shadow-md">
-            {emergenciaCuentaDatos && 
-            <Transferencias datosEmergencia={emergenciaCuentaDatos} session={ session }/>
-            }
-            
-          </div>
-        )}
+          {/* Contenido de Tab 6 */}
+          {activeTab === 6 && (
+            <div className="p-4 bg-white border rounded-md shadow-md">
+              {emergenciaCuentaDatos &&
+                <Transferencias datosEmergencia={emergenciaCuentaDatos} session={session} />
+              }
+
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </>
   )
 }

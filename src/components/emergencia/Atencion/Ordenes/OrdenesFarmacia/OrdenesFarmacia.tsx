@@ -11,7 +11,7 @@ import { RecetaCabecera } from '@/interfaces/RecetaCabezeraI';
 import { MedicamentosCE } from '@/interfaces/MedicamentosCe';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
 
-import {OrdenesFarmaciaTabla} from './OrdenesFarmaciaTabla'
+import { OrdenesFarmaciaTabla } from './OrdenesFarmaciaTabla'
 
 import Swal from 'sweetalert2';
 import { useEmergenciaDatosStore } from '@/store/ui/emergenciadatos';
@@ -20,7 +20,7 @@ interface Option {
     value: string;
     label: string;
 }
-export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
+export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
     const [isOffcanvasOpenFarmacia, setIsOffcanvasOpenFarmacia] = useState(false);
     const [options, setOptions] = useState<Option[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -29,42 +29,40 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
     const setRecetaCabezera = useEmergenciaDatosStore((state: any) => state.setRecetaCabezera);
     const createMedicamento = useEmergenciaDatosStore((state: any) => state.createMedicamento);
     const updateMedicamentos = useEmergenciaDatosStore((state: any) => state.updateMedicamentos);
-
     const [recetaIdTemporal, setRecetaIdTemporal] = useState<any>(0)
     const toggleOffcanvasFarmacia = () => {
-        
-        if(isOffcanvasOpenFarmacia) 
-            {
-             
-                setRecetaIdTemporal(0)
-            }
-            
+    
+        if (isOffcanvasOpenFarmacia) {
+
+            setRecetaIdTemporal(0)
+        }
+
         setIsOffcanvasOpenFarmacia(!isOffcanvasOpenFarmacia);
     };
     const FormFarmacia: SubmitHandler<any> = async (data: any) => {
-        if(recetaIdTemporal==0){
+        if (recetaIdTemporal == 0) {
  /**/const datosMedicamentos: any = {
-            idrecetacabecera: "",
-            idproducto: data?.idproductoFarmacia?.value,
-            cantidad: data?.cantmedicamento,
-            precio: data?.idproductoFarmacia?.PrecioUnitario,
-            total: (data?.cantmedicamento * data?.idproductoFarmacia?.PrecioUnitario)?.toFixed(4),
-            cantidadFarmSaldo: data?.idproductoFarmacia?.cantidad,
-            idDosisRecetada: 1,
-            observaciones: data?.frecuencia,
-            idViaAdministracion: data?.viaadministracion == 0 ? null : data?.viaadministracion,
-            iddiagnostico: data?.diagnostico,
-            nombre: data?.idproductoFarmacia?.label,
-            usuarioauditoria: 0,
-            idEstadoDetalle:1
-        }
-      
-        createMedicamento(datosMedicamentos); 
-        ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
-        reset();
-       
-        }else{
-      
+                idrecetacabecera: "",
+                idproducto: data?.idproductoFarmacia?.value,
+                cantidad: data?.cantmedicamento,
+                precio: data?.idproductoFarmacia?.PrecioUnitario,
+                total: (data?.cantmedicamento * data?.idproductoFarmacia?.PrecioUnitario)?.toFixed(4),
+                cantidadFarmSaldo: data?.idproductoFarmacia?.cantidad,
+                idDosisRecetada: 1,
+                observaciones: data?.frecuencia,
+                idViaAdministracion: data?.viaadministracion == 0 ? null : data?.viaadministracion,
+                iddiagnostico: data?.diagnostico,
+                nombre: data?.idproductoFarmacia?.label,
+                usuarioauditoria: 0,
+                idEstadoDetalle: 1
+            }
+
+            createMedicamento(datosMedicamentos);
+            ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
+            reset();
+
+        } else {
+
             const datosMedicamentos: any = {
                 idrecetacabecera: recetaIdTemporal,
                 idproducto: data?.idproductoFarmacia?.value,
@@ -78,15 +76,15 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
                 iddiagnostico: data?.diagnostico,
                 nombre: data?.idproductoFarmacia?.label,
                 usuarioauditoria: 0,
-                idEstadoDetalle:1
+                idEstadoDetalle: 1
             }
-            createMedicamento(datosMedicamentos); 
+            createMedicamento(datosMedicamentos);
             ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
             reset();
-           
+
         }
-       
-       
+
+
     }
 
     const GetTiposViasAdministracion = async () => {
@@ -101,26 +99,20 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
 
 
     const handleCanasta = async () => {
-        const dataMedicamentos=datosEmergencia?.medicamentos.filter((data:any)=>data.idrecetacabecera=="")
-        if(recetaIdTemporal==0){
-            
+
+        if (recetaIdTemporal == 0) {
             crearNuevaReceta()
         }
-        else{
-            console.log("entro al actualizar")
+        else {
             updateReceta()
         }
-     
+
     }
 
-    const updateReceta=async()=>{
+    const updateReceta = async () => {
         try {
-            const data=datosEmergencia?.medicamentos.filter((data:any)=>data.idrecetacabecera==recetaIdTemporal);
-       
-
-
+            const data = datosEmergencia?.medicamentos.filter((data: any) => data.idrecetacabecera == recetaIdTemporal);
             await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${recetaIdTemporal}`);
-
             const promises = data.map((medicamento: any) =>
                 axios.post(`${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`, medicamento)
             );
@@ -140,7 +132,7 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
     }
 
 
-    const crearNuevaReceta=async()=>{
+    const crearNuevaReceta = async () => {
         const datosCabecera = {
             idPuntoCarga: 5,
             fechaReceta: new Date().toISOString(),
@@ -157,7 +149,7 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
             })(),
             idUsuarioAuditoria: 1,
         }
-        
+
         try {
             const datosCabeceraCreado = await axios.post(
                 `${process.env.apijimmynew}/recetas/recetacabezeraadd`,
@@ -166,19 +158,19 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
             const DatosRecetaCabecera: RecetaCabecera[] = await getData(
                 `${process.env.apijimmynew}/recetas/findRecetaCabezeraByIdCuentaAtencion/${datosEmergencia?.idcuentaatencion}`
             );
-            
+
             const RecetaCabezeraFarmacia = DatosRecetaCabecera?.filter(
                 (data: RecetaCabecera) => data.IdPuntoCarga === 5// && data.idReceta ==datosCabeceraCreado?.data
             );
             if (RecetaCabezeraFarmacia.length === 0) {
                 throw new Error("No se encontraron recetas con IdPuntoCarga === 5.");
             }
-            
+
             const updatedMedicamentos = await updateMedicamentos(
                 datosCabeceraCreado?.data
             );
-            const updatedMedicamentosFiltrado=updatedMedicamentos.filter((data:any)=>data.idrecetacabecera===datosCabeceraCreado?.data)
-            
+            const updatedMedicamentosFiltrado = updatedMedicamentos.filter((data: any) => data.idrecetacabecera === datosCabeceraCreado?.data)
+
             const promises = updatedMedicamentosFiltrado.map((medicamento: any) =>
                 axios.post(
                     `${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`,
@@ -190,7 +182,7 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
                 console.log("Medicamento enviado exitosamente:", response.data);
             });
             setRecetaCabezera(DatosRecetaCabecera);
-        
+
             Swal.fire({
                 icon: "success",
                 title: "Orden de farmacia creada exitosamente",
@@ -238,38 +230,34 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
     );
 
 
-    const handleOpenMenu=(idReceta: number)=>{
-        
+    const handleOpenMenu = (idReceta: number) => {
         setRecetaIdTemporal(idReceta)
     }
 
 
-    
+
 
 
     useEffect(() => {
-      if(recetaIdTemporal>0){
-        toggleOffcanvasFarmacia()
-      }
+        if (recetaIdTemporal > 0) {
+            toggleOffcanvasFarmacia()
+        }
     }, [recetaIdTemporal])
 
 
-    
-    
+
+
 
     return (
         <>
-     <pre>
-        {JSON.stringify(datosEmergencia?.medicamentos,null,2)}
-     </pre>
-            <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
+            <div className="bg-white rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
                     <span className="flex-grow">Farmacia</span>
                     <button
                         onClick={toggleOffcanvasFarmacia}
                         className={
-                            datosEmergencia?.medicamentos.length > 0
+                            datosEmergencia?.recetaCabezera.length > 0
                                 ? "text-blue-500 hover:underline text-sm"
                                 : "hidden"
                         }
@@ -277,21 +265,21 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
                         Agregar
                     </button>
                 </h2>
-                <div className={datosEmergencia?.medicamentos.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
+                <div className={datosEmergencia?.recetaCabezera.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
                     <div className="mb-4">
                         <GiMedicines size={36} className="text-gray-400" />
                     </div>
                     <p className="text-gray-500 text-sm mb-4">
-                        No hay medicamentos activos para mostrar para este paciente
+                        No hay recetas activas para mostrar para este paciente
                     </p>
                     <button
                         onClick={toggleOffcanvasFarmacia}
                         className="text-blue-500 hover:underline text-sm"
                     >
-                        Registrar medicamentos activos
+                        Registrar recetas activos
                     </button>
                 </div>
-                <OrdenesFarmaciaTablaRecetasCabecera modificar={1} datosEmergencia={datosEmergencia} handleOpenMenu={handleOpenMenu}/>
+                <OrdenesFarmaciaTablaRecetasCabecera datosEmergencia={datosEmergencia} handleOpenMenu={handleOpenMenu} />
             </div>
             {isOffcanvasOpenFarmacia && (
                 <div
@@ -391,7 +379,7 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
                         </form>
                     </div>
 
-                    <OrdenesFarmaciaTabla datosEmergencia={datosEmergencia}  recetaIdTemporal={recetaIdTemporal}/>
+                    <OrdenesFarmaciaTabla datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
                     <div className={datosEmergencia?.medicamentos.length > 0 ? "block" : "hidden"}>
                         <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden
@@ -400,11 +388,6 @@ export const OrdenesFarmacia = ({datosEmergencia,session}:any) => {
                     </div>
                 </div>
             </div>
-
-            <pre className='hidden'>
-            {JSON.stringify(datosEmergencia?.medicamentos,null,2)}
-        </pre>
-     
         </>
     )
 }
