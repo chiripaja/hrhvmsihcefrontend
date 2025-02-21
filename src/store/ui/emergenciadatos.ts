@@ -24,6 +24,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     recetaCabezeraProcedimientos: [],
     medicamentos: [] as MedicamentosCE[],
     ordenesPatologiaClinica: [] as any[],
+    ordenesAnatomiaPatologica: [] as any[],
     ordenesLaboratorio: [],
     ordenesImagenes: [],
     ordenesOtros: [],
@@ -53,6 +54,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         recetaCabezeraProcedimientos: [],
         medicamentos: [] as MedicamentosCE[],
         ordenesPatologiaClinica: [] as any[],
+        ordenesAnatomiaPatologica: [] as any[],
         ordenesLaboratorio: [],
         ordenesImagenes: [],
         ordenesOtros: [],
@@ -290,7 +292,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     set((state: any) => ({
       datosemergencia: { ...state.datosemergencia, CitaMotivo, CitaExamenClinico }
     })),
-  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any, newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any, idProducto: any) =>
+  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any, newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any, idProducto: any,idServicioEgreso:any) =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
@@ -302,7 +304,8 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         edad: newEdad,
         idCondicionMaterna,
         idDestinoAtencion,
-        idProducto
+        idProducto,
+        idServicioEgreso
       }
     })),
   setIdCuentaAtencion: (newIdCuentaAtencion: any) =>
@@ -361,5 +364,54 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     const updatedOrdenes = get().datosemergencia.ordenesPatologiaClinica;
     return updatedOrdenes;
   },
+
+  deleteOrdenesPatologiaClinica: (idproducto: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesPatologiaClinica: state.datosemergencia.ordenesPatologiaClinica.filter(
+          (data: any) => data.idproducto !== idproducto
+        ),
+      },
+    })),
+
+
+  createordenesAnatomiaPatologica: (data: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesAnatomiaPatologica: [...state.datosemergencia.ordenesAnatomiaPatologica, { ...data }]
+      }
+    })),
+
+  updateordenesAnatomiaPatologica: async (idrecetacabecera: any) => {
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesAnatomiaPatologica: state.datosemergencia.ordenesAnatomiaPatologica.map((data: any) =>
+          data.idrecetacabecera === ""
+            ? { ...data, idrecetacabecera }
+            : data
+        ),
+      },
+    }));
+    const updatedOrdenes = get().datosemergencia.ordenesAnatomiaPatologica;
+    return updatedOrdenes;
+  },
+
+
+  deleteOrdenesAnatomiaPatologica: (idproducto: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesAnatomiaPatologica: state.datosemergencia.ordenesAnatomiaPatologica.filter(
+          (data: any) => data.idproducto !== idproducto
+        ),
+      },
+    })),
+
+
+
+
 
 }));

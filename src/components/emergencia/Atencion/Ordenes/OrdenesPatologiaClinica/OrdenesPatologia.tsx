@@ -57,6 +57,7 @@ export const OrdenesPatologia = ({ datosEmergencia, session }: any) => {
     }
 
     const FormLaboratorio: SubmitHandler<any> = async (data: any) => {
+        if (recetaIdTemporal == 0) {
         const datosServicios = {
             idrecetacabecera: "",
             idproducto: data?.factservicio?.value,
@@ -76,6 +77,27 @@ export const OrdenesPatologia = ({ datosEmergencia, session }: any) => {
         createOrdenesPatologiaClinica(datosServicios)
         ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
         reset();
+    }else {
+        const datosServicios = {
+            idrecetacabecera: recetaIdTemporal,
+            idproducto: data?.factservicio?.value,
+            cantidad: data?.cantlaboratorio,
+            precio: data?.factservicio?.PrecioUnitario,
+            total: (data?.cantlaboratorio * data?.factservicio?.PrecioUnitario)?.toFixed(4),
+            cantidadFarmSaldo: 0,
+            idDosisRecetada: 0,
+            observaciones: data?.frecuencia,
+            idViaAdministracion: 0,
+            iddiagnostico: data?.diagnostico,
+            nombre: data?.factservicio?.label,
+            usuarioauditoria: 0,
+            puntoCarga: data?.puntoCarga,
+            idEstadoDetalle: 1
+        }
+        createOrdenesPatologiaClinica(datosServicios)
+        ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
+        reset();
+    }
     }
 
 
@@ -86,9 +108,31 @@ export const OrdenesPatologia = ({ datosEmergencia, session }: any) => {
             crearNuevaReceta()
         }
         else {
-           // updateReceta()
+            updateReceta()
         }
 
+    }
+
+    const updateReceta=async()=>{
+        try {
+            const data = datosEmergencia?.ordenesPatologiaClinica.filter((data: any) => data.idrecetacabecera == recetaIdTemporal);
+            await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${recetaIdTemporal}`);
+            const promises = data.map((medicamento: any) =>
+                axios.post(`${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`, medicamento)
+            );
+            const responses = await Promise.all(promises);
+            responses.forEach((response) => {
+                console.log('Medicamento enviado exitosamente:', response.data);
+            });
+        } catch (error) {
+            console.error('Error procesando la receta:', error);
+        }
+        Swal.fire({
+            icon: "success",
+            title: "Orden de farmacia creada exitosamente",
+            showConfirmButton: false,
+            timer: 1500
+        });
     }
 
 
@@ -169,9 +213,7 @@ export const OrdenesPatologia = ({ datosEmergencia, session }: any) => {
 
     return (
         <>
-        <pre>
-            {JSON.stringify(datosEmergencia?.ordenesPatologiaClinica,null,2)}
-        </pre>
+        
             <div className="bg-white rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
@@ -288,7 +330,7 @@ export const OrdenesPatologia = ({ datosEmergencia, session }: any) => {
                     </div>
 
                     <OrdenesPatologiaTabla datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
-                    <div className={datosEmergencia?.medicamentos.length > 0 ? "block" : "hidden"}>
+                    <div className={datosEmergencia?.ordenesPatologiaClinica.length > 0 ? "block" : "hidden"}>
                         <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden
                             <CgAdd />

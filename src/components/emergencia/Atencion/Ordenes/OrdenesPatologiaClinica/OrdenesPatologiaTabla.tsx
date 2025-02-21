@@ -7,14 +7,13 @@ import { GoTrash } from 'react-icons/go';
 
 export const OrdenesPatologiaTabla = ({ modificar = 0,datosEmergencia ,recetaIdTemporal}:
     { modificar?: number,datosEmergencia:any,recetaIdTemporal:any }) => {
-      const deleteMedicamento = useEmergenciaDatosStore((state: any) => state.deleteMedicamento);
+      const deleteOrdenesPatologiaClinica = useEmergenciaDatosStore((state: any) => state.deleteOrdenesPatologiaClinica);
       const handleDelete = async(indexToDelete: number) => {
           showConfirmDeleteAlert().then(async(result) => {
               if (result.isConfirmed) {
                   showDeleteAlert();
-          
                   const data=await axios.delete(`${process.env.apijimmynew}/recetas/apiDeleteRecetaDetalleByIdRecetaAndIdItem/${recetaIdTemporal}/${indexToDelete}`)
-                  deleteMedicamento(indexToDelete)
+                  deleteOrdenesPatologiaClinica(indexToDelete)
               }
               else{
                   console.log("no elimino")
@@ -52,22 +51,13 @@ export const OrdenesPatologiaTabla = ({ modificar = 0,datosEmergencia ,recetaIdT
                       <td className="tabletd">
                            {data.observaciones}
                       </td>}
-                      {(modificar===0) && 
+          
                       <td className="tabletd">
-                           {data?.idEstadoDetalle=="1" ?
-                           <> 
-                           <Tooltip text="Eliminar">
+                          <Tooltip text="Eliminar">
                            <GoTrash  size={24} className="text-red-400 hover:text-red-700 cursor-pointer" onClick={() => handleDelete(data?.idproducto)}/>
                            </Tooltip>
-                           </>
-                           :
-                                  <span className="text-blue-500 text-xs">
-                                      Receta 
-                                      Despachada
-                                  </span>
-                              }
                       </td>
-  }
+ 
                   </tr>
               ))}
           </tbody>

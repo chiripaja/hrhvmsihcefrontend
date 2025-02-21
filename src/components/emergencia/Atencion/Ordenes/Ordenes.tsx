@@ -6,6 +6,7 @@ import { CEProcedimientosConsultorio } from '@/components/ConsultaExterna/orders
 import React, { useState } from 'react'
 import { OrdenesFarmacia } from './OrdenesFarmacia/OrdenesFarmacia'
 import { OrdenesPatologia } from './OrdenesPatologiaClinica/OrdenesPatologia'
+import { OrdenesAnatomiaPatologica } from './OrdenesAnatomiaPatologica/OrdenesAnatomiaPatologica'
 
 export const Ordenes = ({ datosEmergencia, session }: any) => {
     const [activeTab, setActiveTab] = useState(1);
@@ -38,7 +39,7 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                         } focus:outline-none`}
                     onClick={() => setActiveTab(3)}
                 >
-                    Diagnostico Ingreso
+                    Anatomia Patologica
                 </button>
 
                 {/* Tab 4 */}
@@ -80,14 +81,14 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                 {/* Contenido de Tab 2 */}
                 {activeTab === 2 && (
                     <div className="p-4 bg-white border rounded-md shadow-md">
-                        <OrdenesPatologia datosEmergencia={datosEmergencia}/>
-                    </div>
+                        <OrdenesPatologia datosEmergencia={datosEmergencia} session={session}/>
+                    </div> 
                 )}
 
                 {/* Contenido de Tab 3 */}
                 {activeTab === 3 && (
                     <div className="p-4 bg-white border rounded-md shadow-md">
-                        <CEImagenes />
+                        <OrdenesAnatomiaPatologica datosEmergencia={datosEmergencia} session={session}/>
                     </div>
                 )}
 

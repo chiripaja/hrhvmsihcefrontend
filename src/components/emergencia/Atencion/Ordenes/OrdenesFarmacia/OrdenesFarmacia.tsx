@@ -31,17 +31,14 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
     const updateMedicamentos = useEmergenciaDatosStore((state: any) => state.updateMedicamentos);
     const [recetaIdTemporal, setRecetaIdTemporal] = useState<any>(0)
     const toggleOffcanvasFarmacia = () => {
-    
         if (isOffcanvasOpenFarmacia) {
-
             setRecetaIdTemporal(0)
         }
-
         setIsOffcanvasOpenFarmacia(!isOffcanvasOpenFarmacia);
     };
     const FormFarmacia: SubmitHandler<any> = async (data: any) => {
         if (recetaIdTemporal == 0) {
- /**/const datosMedicamentos: any = {
+        const datosMedicamentos: any = {
                 idrecetacabecera: "",
                 idproducto: data?.idproductoFarmacia?.value,
                 cantidad: data?.cantmedicamento,
@@ -56,7 +53,6 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
                 usuarioauditoria: 0,
                 idEstadoDetalle: 1
             }
-
             createMedicamento(datosMedicamentos);
             ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
             reset();
@@ -137,7 +133,7 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
             idPuntoCarga: 5,
             fechaReceta: new Date().toISOString(),
             idCuentaAtencion: datosEmergencia?.idcuentaatencion,
-            idServicioReceta: datosEmergencia?.idServicio,
+            idServicioReceta: datosEmergencia?.idServicioEgreso ? datosEmergencia?.idServicioEgreso : datosEmergencia?.idServicio,
             idEstado: 1,
             idComprobantePago: null,
             idMedicoReceta: datosEmergencia?.idMedicoIngreso,

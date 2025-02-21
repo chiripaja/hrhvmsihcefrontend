@@ -28,6 +28,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const setRecetaCabezeraProcedimientos = useEmergenciaDatosStore((state: any) => state.setRecetaCabezeraProcedimientos);
   const [recetaUpdateValidador, setrecetaUpdateValidador] = useState<any>()
   const createordenesOtros = useEmergenciaDatosStore((state: any) => state.createordenesOtros);
+  const createOrdenesPatologiaClinica=useEmergenciaDatosStore((state:any)=>state.createOrdenesPatologiaClinica);
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
@@ -55,7 +56,8 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
     try {
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
       setDatosAtencion(datosAtencion)
-      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad, datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion, datosAtencion?.servicio?.idProducto)
+      console.log(datosAtencion)
+      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad, datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion, datosAtencion?.servicio?.idProducto,datosAtencion?.idServicioEgreso)
       if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
         datosAtencion.atencionesDiagnosticos.map((data: any) => {
           setDiagnosticoByCuenta(
@@ -124,13 +126,22 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   //farmacia
   const getMedicamentosbyIdRecetaCabeceraFarmacia = async (idrecetacabecera: number, idFormaPago: number) => {
     try {
-      //await limpiarMedicamento(); 
-    
       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdReceta/${idrecetacabecera}/${idFormaPago}/8`)
-
       data.forEach((info: MedicamentosCE) => {
         createMedicamento(info);
       });
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getPatologiaClinicaOrdenes = async (idrecetacabecera: number, idFormaPago: number) => {
+    try {
+      const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
+      
+      data.map((info: MedicamentosCE) => {
+        createOrdenesPatologiaClinica(info)
+      })
     } catch (error) {
       console.log(error)
     }
@@ -145,6 +156,11 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
           (data: RecetaCabecera) => data.IdPuntoCarga === 5
         );
 
+        const RecetaCabezeraPatologiaClinica = recetaCabezera.filter(
+          (data: RecetaCabecera) => data.IdPuntoCarga === 2
+        );
+
+
         RecetaCabezeraFarmacia.map((data: any) => {
           if (emergenciaCuentaDatos?.idFormaPago) {
             getMedicamentosbyIdRecetaCabeceraFarmacia(
@@ -153,6 +169,17 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
             );
           }
         })
+
+        RecetaCabezeraPatologiaClinica.map((data: any) => {
+          if (emergenciaCuentaDatos?.idFormaPago) {
+            getPatologiaClinicaOrdenes(
+              data?.idReceta,
+              emergenciaCuentaDatos.idFormaPago
+            );
+          }
+        })
+
+
       }
 
 
@@ -164,6 +191,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   return (
     <>
 
+  
       <CabeceraEmergencia idcuentaatencion={idcuentaatencion} />
       <div className="p-4">
         {/* Contenedor de los Tabs */}

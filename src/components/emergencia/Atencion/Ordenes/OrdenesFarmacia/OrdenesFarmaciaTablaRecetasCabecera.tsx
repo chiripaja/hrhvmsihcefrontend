@@ -13,7 +13,6 @@ export const OrdenesFarmaciaTablaRecetasCabecera = ({ datosEmergencia, handleOpe
             if (result.isConfirmed) {
                 showDeleteAlert();
                 const data = await axios.delete(`${process.env.apijimmynew}/recetas/apiDeleteRecetaCabeceraByIdReceta/${indexToDelete}`)
-
                 deleteRecetaCabecera(indexToDelete)
             }
             else {
