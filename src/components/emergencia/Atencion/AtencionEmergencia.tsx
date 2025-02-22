@@ -29,6 +29,10 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const [recetaUpdateValidador, setrecetaUpdateValidador] = useState<any>()
   const createordenesOtros = useEmergenciaDatosStore((state: any) => state.createordenesOtros);
   const createOrdenesPatologiaClinica=useEmergenciaDatosStore((state:any)=>state.createOrdenesPatologiaClinica);
+  const createordenesAnatomiaPatologica = useEmergenciaDatosStore((state: any) => state.createordenesAnatomiaPatologica);
+  const createordenesBancoSangre = useEmergenciaDatosStore((state: any) => state.createordenesBancoSangre);
+  const createordenesRayosX= useEmergenciaDatosStore((state: any) => state.createordenesRayosX);
+  const createordenesTomografia= useEmergenciaDatosStore((state: any) => state.createordenesTomografia);
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
@@ -147,6 +151,59 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
     }
   }
 
+  const getAnatomiaPatologicaOrdenes = async (idrecetacabecera: number, idFormaPago: number) => {
+    try {
+      const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
+      
+      data.map((info: MedicamentosCE) => {
+        createordenesAnatomiaPatologica(info)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+
+  const getBancoSangreOrdenes = async (idrecetacabecera: number, idFormaPago: number) => {
+    try {
+      const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
+      
+      data.map((info: MedicamentosCE) => {
+        createordenesBancoSangre(info)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getDatosImagenes=async(idrecetacabecera: number, idFormaPago: number,idpuntoCarga: number)=>{
+    try {
+      const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
+      switch (idpuntoCarga) {
+        case 21:
+          data.map((info: MedicamentosCE) => {
+            createordenesRayosX(info)
+          })
+          break;
+        case 22:
+            data.map((info: MedicamentosCE) => {
+              createordenesTomografia(info)
+            })
+            break;
+        default:
+          console.log("Es fin de semana.");
+      }
+
+      
+      
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   useEffect(() => {
     const ejecutarFunciones = async () => {
 
@@ -175,6 +232,42 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
             getPatologiaClinicaOrdenes(
               data?.idReceta,
               emergenciaCuentaDatos.idFormaPago
+            );
+          }
+        })
+        recetaCabezera.filter((data: RecetaCabecera) => data.IdPuntoCarga === 3).map((data: any) => {
+          if (emergenciaCuentaDatos?.idFormaPago) {
+            getAnatomiaPatologicaOrdenes(
+              data?.idReceta,
+              emergenciaCuentaDatos.idFormaPago
+            );
+          }
+        })
+        
+        recetaCabezera.filter((data: RecetaCabecera) => data.IdPuntoCarga === 11).map((data: any) => {
+          if (emergenciaCuentaDatos?.idFormaPago) {
+            getBancoSangreOrdenes(
+              data?.idReceta,
+              emergenciaCuentaDatos.idFormaPago
+            );
+          }
+        })
+
+        recetaCabezera.filter((data: RecetaCabecera) => data.IdPuntoCarga === 21).map((data: any) => {
+          if (emergenciaCuentaDatos?.idFormaPago) {
+            getDatosImagenes(
+              data?.idReceta,
+              emergenciaCuentaDatos.idFormaPago,
+              21
+            );
+          }
+        })
+        recetaCabezera.filter((data: RecetaCabecera) => data.IdPuntoCarga === 22).map((data: any) => {
+          if (emergenciaCuentaDatos?.idFormaPago) {
+            getDatosImagenes(
+              data?.idReceta,
+              emergenciaCuentaDatos.idFormaPago,
+              22
             );
           }
         })

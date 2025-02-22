@@ -25,6 +25,10 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     medicamentos: [] as MedicamentosCE[],
     ordenesPatologiaClinica: [] as any[],
     ordenesAnatomiaPatologica: [] as any[],
+    ordenesBancoSangre: [] as any[],
+    ordenesRayosX: [] as any[],
+    ordenesTomografia: [] as any[],
+
     ordenesLaboratorio: [],
     ordenesImagenes: [],
     ordenesOtros: [],
@@ -55,6 +59,10 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         medicamentos: [] as MedicamentosCE[],
         ordenesPatologiaClinica: [] as any[],
         ordenesAnatomiaPatologica: [] as any[],
+        ordenesBancoSangre: [] as any[],
+        ordenesRayosX: [] as any[],
+        ordenesTomografia: [] as any[],
+
         ordenesLaboratorio: [],
         ordenesImagenes: [],
         ordenesOtros: [],
@@ -292,7 +300,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     set((state: any) => ({
       datosemergencia: { ...state.datosemergencia, CitaMotivo, CitaExamenClinico }
     })),
-  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any, newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any, idProducto: any,idServicioEgreso:any) =>
+  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any, newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any, idProducto: any, idServicioEgreso: any) =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
@@ -410,8 +418,109 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       },
     })),
 
+  createordenesBancoSangre: (data: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesBancoSangre: [...state.datosemergencia.ordenesBancoSangre, { ...data }]
+      }
+    })),
+
+  updateordenesBancoSangre: async (idrecetacabecera: any) => {
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesBancoSangre: state.datosemergencia.ordenesBancoSangre.map((data: any) =>
+          data.idrecetacabecera === ""
+            ? { ...data, idrecetacabecera }
+            : data
+        ),
+      },
+    }));
+    const updatedOrdenes = get().datosemergencia.ordenesBancoSangre;
+    return updatedOrdenes;
+  },
 
 
+  deleteOrdenesBancoSangre: (idproducto: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesBancoSangre: state.datosemergencia.ordenesBancoSangre.filter(
+          (data: any) => data.idproducto !== idproducto
+        ),
+      },
+    })),
+
+  createordenesRayosX: (data: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesRayosX: [...state.datosemergencia.ordenesRayosX, { ...data }]
+      }
+    })),
+
+  updateordenesRayosX: async (idrecetacabecera: any) => {
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesRayosX: state.datosemergencia.ordenesRayosX.map((data: any) =>
+          data.idrecetacabecera === ""
+            ? { ...data, idrecetacabecera }
+            : data
+        ),
+      },
+    }));
+    const updatedOrdenes = get().datosemergencia.ordenesRayosX;
+    return updatedOrdenes;
+  },
+
+
+  deleteOrdenesRayosX: (idproducto: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesRayosX: state.datosemergencia.ordenesRayosX.filter(
+          (data: any) => data.idproducto !== idproducto
+        ),
+      },
+    })),
+
+
+
+    createordenesTomografia: (data: any) =>
+      set((state: any) => ({
+        datosemergencia: {
+          ...state.datosemergencia,
+          ordenesTomografia: [...state.datosemergencia.ordenesTomografia, { ...data }]
+        }
+      })),
+  
+    updateordenesTomografia: async (idrecetacabecera: any) => {
+      set((state: any) => ({
+        datosemergencia: {
+          ...state.datosemergencia,
+          ordenesTomografia: state.datosemergencia.ordenesTomografia.map((data: any) =>
+            data.idrecetacabecera === ""
+              ? { ...data, idrecetacabecera }
+              : data
+          ),
+        },
+      }));
+      const updatedOrdenes = get().datosemergencia.ordenesTomografia;
+      return updatedOrdenes;
+    },
+  
+  
+    deleteOrdenesTomografia: (idproducto: any) =>
+      set((state: any) => ({
+        datosemergencia: {
+          ...state.datosemergencia,
+          ordenesTomografia: state.datosemergencia.ordenesTomografia.filter(
+            (data: any) => data.idproducto !== idproducto
+          ),
+        },
+      })),
 
 
 }));

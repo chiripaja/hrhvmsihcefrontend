@@ -116,7 +116,8 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
 
     const updateReceta=async()=>{
         try {
-            const data = datosEmergencia?.ordenesPatologiaClinica.filter((data: any) => data.idrecetacabecera == recetaIdTemporal);
+            const data = datosEmergencia?.ordenesAnatomiaPatologica.filter((data: any) => data.idrecetacabecera == recetaIdTemporal);
+            console.log(data)
             await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${recetaIdTemporal}`);
             const promises = data.map((medicamento: any) =>
                 axios.post(`${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`, medicamento)
@@ -134,6 +135,7 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
             showConfirmButton: false,
             timer: 1500
         });
+        toggleOffcanvas()
     }
 
 
@@ -185,7 +187,7 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
 
             Swal.fire({
                 icon: "success",
-                title: "Orden de Patologia Clinica creada exitosamente",
+                title: "Orden creada exitosamente",
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -214,11 +216,11 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
 
     return (
         <>
-        
+     
         <div className="bg-white rounded-md shadow-sm p-4">
             <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                 <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                <span className="flex-grow">Patologia Clinica</span>
+                <span className="flex-grow">Anatomia Patologica</span>
                 <button
                     onClick={toggleOffcanvas}
                     className={
@@ -266,8 +268,8 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
                 >
                     Modulo de Patologia Clinica
                 </h3>
-                <span className={`flex items-center ${datosEmergencia?.medicamentos.length === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
-                    <TbShoppingCart />({datosEmergencia?.medicamentos.length})
+                <span className={`flex items-center ${datosEmergencia?.ordenesAnatomiaPatologica.length === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+                    <TbShoppingCart />({datosEmergencia?.ordenesAnatomiaPatologica.length})
                 </span>
                 <button type="button" onClick={toggleOffcanvas} className="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600" aria-label="Close" data-hs-overlay="#hs-offcanvas-right">
                     <span className="sr-only">Close</span>
@@ -331,7 +333,7 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
                 </div>
 
                 <OrdenesAnatomiaPatologicaTabla datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
-                <div className={datosEmergencia?.ordenesPatologiaClinica.length > 0 ? "block" : "hidden"}>
+                <div className={datosEmergencia?.ordenesAnatomiaPatologica.length > 0 ? "block" : "hidden"}>
                     <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                         Confirmar Orden
                         <CgAdd />

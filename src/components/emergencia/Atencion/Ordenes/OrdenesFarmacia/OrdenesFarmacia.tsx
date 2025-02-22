@@ -125,6 +125,7 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
             showConfirmButton: false,
             timer: 1500
         });
+        toggleOffcanvasFarmacia()
     }
 
 

@@ -7,11 +7,14 @@ import React, { useState } from 'react'
 import { OrdenesFarmacia } from './OrdenesFarmacia/OrdenesFarmacia'
 import { OrdenesPatologia } from './OrdenesPatologiaClinica/OrdenesPatologia'
 import { OrdenesAnatomiaPatologica } from './OrdenesAnatomiaPatologica/OrdenesAnatomiaPatologica'
+import { OrdenesBancoSangre } from './OrdenesBancoSangre/OrdenesBancoSangre'
+import { OrdenesRayosX } from './OrdenesRayosX/OrdenesRayosX'
+import { OrdenesTomografia } from './OrdenesTomografia/OrdenesTomografia'
 
 export const Ordenes = ({ datosEmergencia, session }: any) => {
     const [activeTab, setActiveTab] = useState(1);
     return (<>
-        
+
         <div className="p-4">
             {/* Contenedor de los Tabs */}
             <div className="flex border-b">
@@ -48,7 +51,7 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                         } focus:outline-none`}
                     onClick={() => setActiveTab(4)}
                 >
-                    Ordenes Medicas
+                    Banco de Sangre
                 </button>
 
                 {/* Tab 5 */}
@@ -57,7 +60,7 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                         } focus:outline-none`}
                     onClick={() => setActiveTab(5)}
                 >
-                    Ordenes
+                    Rayos X
                 </button>
 
                 <button
@@ -65,7 +68,7 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                         } focus:outline-none`}
                     onClick={() => setActiveTab(6)}
                 >
-                    Transferencias
+                    Tomografia
                 </button>
             </div>
 
@@ -81,14 +84,14 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                 {/* Contenido de Tab 2 */}
                 {activeTab === 2 && (
                     <div className="p-4 bg-white border rounded-md shadow-md">
-                        <OrdenesPatologia datosEmergencia={datosEmergencia} session={session}/>
-                    </div> 
+                        <OrdenesPatologia datosEmergencia={datosEmergencia} session={session} />
+                    </div>
                 )}
 
                 {/* Contenido de Tab 3 */}
                 {activeTab === 3 && (
                     <div className="p-4 bg-white border rounded-md shadow-md">
-                        <OrdenesAnatomiaPatologica datosEmergencia={datosEmergencia} session={session}/>
+                        <OrdenesAnatomiaPatologica datosEmergencia={datosEmergencia} session={session} />
                     </div>
                 )}
 
@@ -96,17 +99,22 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                 {activeTab === 4 && (
                     <div className="p-4 bg-white border rounded-md shadow-md">
 
-                        <CEOtros session={session} />
+                        <OrdenesBancoSangre datosEmergencia={datosEmergencia} session={session} />
                     </div>
                 )}
 
                 {/* Contenido de Tab 5 */}
                 {activeTab === 5 && (
                     <div className="p-4 bg-white border rounded-md shadow-md">
-                        <CEProcedimientosConsultorio session={session} />{/**/}
+                        <OrdenesRayosX datosEmergencia={datosEmergencia} session={session} />{/**/}
                     </div>
                 )}
-
+                {/* Contenido de Tab 6 */}
+                {activeTab === 6 && (
+                    <div className="p-4 bg-white border rounded-md shadow-md">
+                        <OrdenesTomografia datosEmergencia={datosEmergencia} session={session} />{/**/}
+                    </div>
+                )}
 
             </div>
         </div>
