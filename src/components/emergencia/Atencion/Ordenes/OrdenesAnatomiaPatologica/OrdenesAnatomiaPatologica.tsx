@@ -131,7 +131,7 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
         }
         Swal.fire({
             icon: "success",
-            title: "Orden de farmacia creada exitosamente",
+            title: "Orden creada exitosamente",
             showConfirmButton: false,
             timer: 1500
         });

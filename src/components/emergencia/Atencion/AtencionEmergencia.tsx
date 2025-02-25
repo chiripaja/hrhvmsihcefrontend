@@ -28,11 +28,13 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const setRecetaCabezeraProcedimientos = useEmergenciaDatosStore((state: any) => state.setRecetaCabezeraProcedimientos);
   const [recetaUpdateValidador, setrecetaUpdateValidador] = useState<any>()
   const createordenesOtros = useEmergenciaDatosStore((state: any) => state.createordenesOtros);
-  const createOrdenesPatologiaClinica=useEmergenciaDatosStore((state:any)=>state.createOrdenesPatologiaClinica);
+  const createOrdenesPatologiaClinica = useEmergenciaDatosStore((state: any) => state.createOrdenesPatologiaClinica);
   const createordenesAnatomiaPatologica = useEmergenciaDatosStore((state: any) => state.createordenesAnatomiaPatologica);
   const createordenesBancoSangre = useEmergenciaDatosStore((state: any) => state.createordenesBancoSangre);
-  const createordenesRayosX= useEmergenciaDatosStore((state: any) => state.createordenesRayosX);
-  const createordenesTomografia= useEmergenciaDatosStore((state: any) => state.createordenesTomografia);
+  const createordenesRayosX = useEmergenciaDatosStore((state: any) => state.createordenesRayosX);
+  const createordenesTomografia = useEmergenciaDatosStore((state: any) => state.createordenesTomografia);
+  const createordenesEcografiaGeneral = useEmergenciaDatosStore((state: any) => state.createordenesEcografiaGeneral);
+  const createordenesEcografiaObstetrica = useEmergenciaDatosStore((state: any) => state.createordenesEcografiaObstetrica);
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
@@ -46,11 +48,11 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
         data?.IdTipoSexo,
         data?.CitaObservaciones
       )
- 
+
     } catch (error: any) {
       if (error.response && error.response.status === 404) {
         console.error("Recurso no encontrado (404)");
-      
+
       } else {
         console.error("Ocurrió un error inesperado", error);
       }
@@ -61,7 +63,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
       setDatosAtencion(datosAtencion)
       console.log(datosAtencion)
-      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad, datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion, datosAtencion?.servicio?.idProducto,datosAtencion?.idServicioEgreso)
+      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad, datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion, datosAtencion?.servicio?.idProducto, datosAtencion?.idServicioEgreso)
       if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
         datosAtencion.atencionesDiagnosticos.map((data: any) => {
           setDiagnosticoByCuenta(
@@ -142,7 +144,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const getPatologiaClinicaOrdenes = async (idrecetacabecera: number, idFormaPago: number) => {
     try {
       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
-      
+
       data.map((info: MedicamentosCE) => {
         createOrdenesPatologiaClinica(info)
       })
@@ -154,7 +156,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const getAnatomiaPatologicaOrdenes = async (idrecetacabecera: number, idFormaPago: number) => {
     try {
       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
-      
+
       data.map((info: MedicamentosCE) => {
         createordenesAnatomiaPatologica(info)
       })
@@ -168,7 +170,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const getBancoSangreOrdenes = async (idrecetacabecera: number, idFormaPago: number) => {
     try {
       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
-      
+
       data.map((info: MedicamentosCE) => {
         createordenesBancoSangre(info)
       })
@@ -177,7 +179,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
     }
   }
 
-  const getDatosImagenes=async(idrecetacabecera: number, idFormaPago: number,idpuntoCarga: number)=>{
+  const getDatosImagenes = async (idrecetacabecera: number, idFormaPago: number, idpuntoCarga: number) => {
     try {
       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
       switch (idpuntoCarga) {
@@ -187,17 +189,27 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
           })
           break;
         case 22:
-            data.map((info: MedicamentosCE) => {
-              createordenesTomografia(info)
-            })
-            break;
+          data.map((info: MedicamentosCE) => {
+            createordenesTomografia(info)
+          })
+          break;
+        case 20:
+          data.map((info: MedicamentosCE) => {
+            createordenesEcografiaGeneral(info)
+          })
+          break;
+        case 23:
+          data.map((info: MedicamentosCE) => {
+            createordenesEcografiaObstetrica(info)
+          })
+          break;
         default:
-          console.log("Es fin de semana.");
+          console.log("No encontro punto de carga.");
       }
 
-      
-      
-      
+
+
+
     } catch (error) {
       console.log(error)
     }
@@ -243,7 +255,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
             );
           }
         })
-        
+
         recetaCabezera.filter((data: RecetaCabecera) => data.IdPuntoCarga === 11).map((data: any) => {
           if (emergenciaCuentaDatos?.idFormaPago) {
             getBancoSangreOrdenes(
@@ -262,12 +274,33 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
             );
           }
         })
+
+        recetaCabezera.filter((data: RecetaCabecera) => data.IdPuntoCarga === 20).map((data: any) => {
+          if (emergenciaCuentaDatos?.idFormaPago) {
+            getDatosImagenes(
+              data?.idReceta,
+              emergenciaCuentaDatos.idFormaPago,
+              20
+            );
+          }
+        })
+
         recetaCabezera.filter((data: RecetaCabecera) => data.IdPuntoCarga === 22).map((data: any) => {
           if (emergenciaCuentaDatos?.idFormaPago) {
             getDatosImagenes(
               data?.idReceta,
               emergenciaCuentaDatos.idFormaPago,
               22
+            );
+          }
+        })
+
+        recetaCabezera.filter((data: RecetaCabecera) => data.IdPuntoCarga === 23).map((data: any) => {
+          if (emergenciaCuentaDatos?.idFormaPago) {
+            getDatosImagenes(
+              data?.idReceta,
+              emergenciaCuentaDatos.idFormaPago,
+              23
             );
           }
         })
@@ -284,7 +317,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   return (
     <>
 
-  
+
       <CabeceraEmergencia idcuentaatencion={idcuentaatencion} />
       <div className="p-4">
         {/* Contenedor de los Tabs */}

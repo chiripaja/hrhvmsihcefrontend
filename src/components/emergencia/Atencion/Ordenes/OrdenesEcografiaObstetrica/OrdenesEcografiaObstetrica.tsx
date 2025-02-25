@@ -1,26 +1,28 @@
-import { getData } from '@/components/helper/axiosHelper';
-import { RecetaCabecera } from '@/interfaces/RecetaCabezeraI';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
 import { useEmergenciaDatosStore } from '@/store/ui/emergenciadatos';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
-import { OrdenesBancoSangreTablaRecetasCabecera } from './OrdenesBancoSangreTablaRecetasCabecera';
 import { TbShoppingCart } from 'react-icons/tb';
 import Select from 'react-select';
 import { PiJarLabel } from 'react-icons/pi';
-import { OrdenesBancoSangreTabla } from './OrdenesBancoSangreTabla';
 import { CgAdd } from 'react-icons/cg';
-export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
+import { RecetaCabecera } from '@/interfaces/RecetaCabezeraI';
+import { getData } from '@/components/helper/axiosHelper';
+import { OrdenesEcografiaObstetricaTablaRecetasCabecera } from './OrdenesEcografiaObstetricaTablaRecetasCabecera';
+import { OrdenesEcografiaObstetricaTabla } from './OrdenesEcografiaObstetricaTabla';
+
+export const OrdenesEcografiaObstetrica = ({ datosEmergencia, session }: any) => {
+
   const [isOffcanvasOpenPatologiaClinica, setIsOffcanvasOpenPatologiaClinica] = useState(false);
   const [options, setOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [tiposViasAdministracion, setTiposViasAdministracion] = useState<any[]>([]);
   const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
   const setRecetaCabezera = useEmergenciaDatosStore((state: any) => state.setRecetaCabezera);
-  const createordenesBancoSangre = useEmergenciaDatosStore((state: any) => state.createordenesBancoSangre);
-  const updateordenesBancoSangre = useEmergenciaDatosStore((state: any) => state.updateordenesBancoSangre);
+  const createordenesEcografiaObstetrica = useEmergenciaDatosStore((state: any) => state.createordenesEcografiaObstetrica);
+  const updateordenesEcografiaObstetrica = useEmergenciaDatosStore((state: any) => state.updateordenesEcografiaObstetrica);
   const [recetaIdTemporal, setRecetaIdTemporal] = useState<any>(0)
 
   const toggleOffcanvas = () => {
@@ -38,8 +40,7 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
               return;
           }
           setIsLoading(true);
-          const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/factaCatalogoServicioByIdPuntoCargaAndFormaPago/11/${datosEmergencia?.idFormaPago}`);
-      
+          const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/factaCatalogoServicioByIdPuntoCargaAndFormaPago/23/${datosEmergencia?.idFormaPago}`);
           const mappedOptions = response.map((est: any) => ({
               value: est.IdProducto,
               label: `${est.Nombre.trim()}`,
@@ -56,46 +57,46 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
 
   const FormLaboratorio: SubmitHandler<any> = async (data: any) => {
       if (recetaIdTemporal == 0) {
-      const datosServicios = {
-          idrecetacabecera: "",
-          idproducto: data?.factservicio?.value,
-          cantidad: data?.cantlaboratorio,
-          precio: data?.factservicio?.PrecioUnitario,
-          total: (data?.cantlaboratorio * data?.factservicio?.PrecioUnitario)?.toFixed(4),
-          cantidadFarmSaldo: 0,
-          idDosisRecetada: 0,
-          observaciones: data?.frecuencia,
-          idViaAdministracion: 0,
-          iddiagnostico: data?.diagnostico,
-          nombre: data?.factservicio?.label,
-          usuarioauditoria: 0,
-          puntoCarga: data?.puntoCarga,
-          idEstadoDetalle: 1
+          const datosServicios = {
+              idrecetacabecera: "",
+              idproducto: data?.factservicio?.value,
+              cantidad: data?.cantlaboratorio,
+              precio: data?.factservicio?.PrecioUnitario,
+              total: (data?.cantlaboratorio * data?.factservicio?.PrecioUnitario)?.toFixed(4),
+              cantidadFarmSaldo: 0,
+              idDosisRecetada: 0,
+              observaciones: data?.frecuencia,
+              idViaAdministracion: 0,
+              iddiagnostico: data?.diagnostico,
+              nombre: data?.factservicio?.label,
+              usuarioauditoria: 0,
+              puntoCarga: data?.puntoCarga,
+              idEstadoDetalle: 1
+          }
+          createordenesEcografiaObstetrica(datosServicios)
+          ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
+          reset();
+      } else {
+          const datosServicios = {
+              idrecetacabecera: recetaIdTemporal,
+              idproducto: data?.factservicio?.value,
+              cantidad: data?.cantlaboratorio,
+              precio: data?.factservicio?.PrecioUnitario,
+              total: (data?.cantlaboratorio * data?.factservicio?.PrecioUnitario)?.toFixed(4),
+              cantidadFarmSaldo: 0,
+              idDosisRecetada: 0,
+              observaciones: data?.frecuencia,
+              idViaAdministracion: 0,
+              iddiagnostico: data?.diagnostico,
+              nombre: data?.factservicio?.label,
+              usuarioauditoria: 0,
+              puntoCarga: data?.puntoCarga,
+              idEstadoDetalle: 1
+          }
+          createordenesEcografiaObstetrica(datosServicios)
+          ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
+          reset();
       }
-      createordenesBancoSangre(datosServicios)
-      ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
-      reset();
-  }else {
-      const datosServicios = {
-          idrecetacabecera: recetaIdTemporal,
-          idproducto: data?.factservicio?.value,
-          cantidad: data?.cantlaboratorio,
-          precio: data?.factservicio?.PrecioUnitario,
-          total: (data?.cantlaboratorio * data?.factservicio?.PrecioUnitario)?.toFixed(4),
-          cantidadFarmSaldo: 0,
-          idDosisRecetada: 0,
-          observaciones: data?.frecuencia,
-          idViaAdministracion: 0,
-          iddiagnostico: data?.diagnostico,
-          nombre: data?.factservicio?.label,
-          usuarioauditoria: 0,
-          puntoCarga: data?.puntoCarga,
-          idEstadoDetalle: 1
-      }
-      createordenesBancoSangre(datosServicios)
-      ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
-      reset();
-  }
   }
 
 
@@ -109,17 +110,20 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
       }
   }
 
-  const updateReceta=async()=>{
+  const updateReceta = async () => {
       try {
-          const data = datosEmergencia?.ordenesBancoSangre.filter((data: any) => data.idrecetacabecera == recetaIdTemporal);
-          await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${recetaIdTemporal}`);
-          const promises = data.map((medicamento: any) =>
-              axios.post(`${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`, medicamento)
-          );
-          const responses = await Promise.all(promises);
-          responses.forEach((response) => {
-              console.log('Medicamento enviado exitosamente:', response.data);
-          });
+          if (recetaIdTemporal > 0) {
+              const data = datosEmergencia?.ordenesEcografiaObstetrica.filter((data: any) => data.idrecetacabecera == recetaIdTemporal);
+              await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${recetaIdTemporal}`);
+              const promises = data.map((data: any) =>
+                  axios.post(`${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`, data)
+              );
+              const responses = await Promise.all(promises);
+              responses.forEach((response) => {
+                  console.log('Examen enviado exitosamente:', response.data);
+              });
+          }
+
       } catch (error) {
           console.error('Error procesando la receta:', error);
       }
@@ -135,7 +139,7 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
 
   const crearNuevaReceta = async () => {
       const datosCabecera = {
-          idPuntoCarga: 11,
+          idPuntoCarga: 23,
           fechaReceta: new Date().toISOString(),
           idCuentaAtencion: datosEmergencia?.idcuentaatencion,
           idServicioReceta: datosEmergencia?.idServicio,
@@ -159,14 +163,10 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
           const DatosRecetaCabecera: RecetaCabecera[] = await getData(
               `${process.env.apijimmynew}/recetas/findRecetaCabezeraByIdCuentaAtencion/${datosEmergencia?.idcuentaatencion}`
           );
-
-          
-          const updatedOrdenes = await updateordenesBancoSangre(
+          const updatedOrdenes = await updateordenesEcografiaObstetrica(
               datosCabeceraCreado?.data
           );
-          console.log(updatedOrdenes)
           const updatedOrdenesFiltrado = updatedOrdenes.filter((data: any) => data.idrecetacabecera === datosCabeceraCreado?.data)
-
           const promises = updatedOrdenesFiltrado.map((data: any) =>
               axios.post(
                   `${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`,
@@ -175,10 +175,9 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
           );
           const responses = await Promise.all(promises);
           responses.forEach((response) => {
-              console.log("Medicamento enviado exitosamente:", response.data);
+              console.log("Examen enviado exitosamente:", response.data);
           });
           setRecetaCabezera(DatosRecetaCabecera);
-
           Swal.fire({
               icon: "success",
               title: "Orden creada exitosamente",
@@ -188,7 +187,6 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
       } catch (error) {
           console.log(error)
       }
-
       toggleOffcanvas()
   }
 
@@ -197,24 +195,22 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
       setRecetaIdTemporal(idReceta)
   }
   useEffect(() => {
-          if (recetaIdTemporal > 0) {
-              toggleOffcanvas()
-          }
-      }, [recetaIdTemporal])
+      if (recetaIdTemporal > 0) {
+          toggleOffcanvas()
+      }
+  }, [recetaIdTemporal])
 
 
   useEffect(() => {
-    fecthExamenesSelect()
+      fecthExamenesSelect()
   }, [])
-
 
   return (
     <>
-        
     <div className="bg-white rounded-md shadow-sm p-4">
         <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
             <span className="border-l-4 borderfondo h-6 mr-2"></span>
-            <span className="flex-grow">Banco de Sangre</span>
+            <span className="flex-grow">Ecografia Obstetrica</span>
             <button
                 onClick={toggleOffcanvas}
                 className={
@@ -240,7 +236,7 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
                 Registrar recetas activos
             </button>
         </div>
-        <OrdenesBancoSangreTablaRecetasCabecera datosEmergencia={datosEmergencia} handleOpenMenu={handleOpenMenu} />
+        <OrdenesEcografiaObstetricaTablaRecetasCabecera datosEmergencia={datosEmergencia} handleOpenMenu={handleOpenMenu} />
     </div>
     {isOffcanvasOpenPatologiaClinica && (
         <div
@@ -260,10 +256,10 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
                 id="hs-offcanvas-right-label"
                 className="font-bold text-gray-800 dark:text-white flex justify-between"
             >
-                Modulo de Patologia Clinica
+                Modulo de Ecografia
             </h3>
-            <span className={`flex items-center ${datosEmergencia?.ordenesBancoSangre.length === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
-                <TbShoppingCart />({datosEmergencia?.ordenesBancoSangre.length})
+            <span className={`flex items-center ${datosEmergencia?.ordenesEcografiaObstetrica.length === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+                <TbShoppingCart />({datosEmergencia?.medicamentos.length})
             </span>
             <button type="button" onClick={toggleOffcanvas} className="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600" aria-label="Close" data-hs-overlay="#hs-offcanvas-right">
                 <span className="sr-only">Close</span>
@@ -307,10 +303,9 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
                                 {...field}
                                 className="mt-2 mb-2"
                                 options={options}
-                                placeholder="Medicamento"
+                                placeholder="Examen"
                                 required={true}
                                 isLoading={isLoading}
-
                             />
                         )}
                     />
@@ -326,8 +321,8 @@ export const OrdenesBancoSangre = ({ datosEmergencia, session }: any) => {
                 </form>
             </div>
 
-            <OrdenesBancoSangreTabla datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
-            <div className={datosEmergencia?.ordenesBancoSangre.length > 0 ? "block" : "hidden"}>
+            <OrdenesEcografiaObstetricaTabla datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
+            <div className={datosEmergencia?.ordenesEcografiaObstetrica.length > 0 ? "block" : "hidden"}>
                 <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                     Confirmar Orden
                     <CgAdd />

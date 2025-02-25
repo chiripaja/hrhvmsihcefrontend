@@ -10,6 +10,8 @@ import { OrdenesAnatomiaPatologica } from './OrdenesAnatomiaPatologica/OrdenesAn
 import { OrdenesBancoSangre } from './OrdenesBancoSangre/OrdenesBancoSangre'
 import { OrdenesRayosX } from './OrdenesRayosX/OrdenesRayosX'
 import { OrdenesTomografia } from './OrdenesTomografia/OrdenesTomografia'
+import { OrdenesEcografiaGeneral } from './OrdenesEcografiaGeneral/OrdenesEcografiaGeneral'
+import { OrdenesEcografiaObstetrica } from './OrdenesEcografiaObstetrica/OrdenesEcografiaObstetrica'
 
 export const Ordenes = ({ datosEmergencia, session }: any) => {
     const [activeTab, setActiveTab] = useState(1);
@@ -70,6 +72,20 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                 >
                     Tomografia
                 </button>
+                <button
+                    className={`py-2 px-4 text-sm font-semibold ${activeTab === 7 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+                        } focus:outline-none`}
+                    onClick={() => setActiveTab(7)}
+                >
+                    Ecografia General
+                </button>
+                <button
+                    className={`py-2 px-4 text-sm font-semibold ${activeTab === 8 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+                        } focus:outline-none`}
+                    onClick={() => setActiveTab(8)}
+                >
+                    Ecografia Obstetrica
+                </button>
             </div>
 
             {/* Contenedor del contenido de los tabs */}
@@ -115,7 +131,21 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                         <OrdenesTomografia datosEmergencia={datosEmergencia} session={session} />{/**/}
                     </div>
                 )}
+                {/* Contenido de Tab 7 */}
+                
+                {activeTab === 7 && (
+                    <div className="p-4 bg-white border rounded-md shadow-md">
+                        <OrdenesEcografiaGeneral datosEmergencia={datosEmergencia} session={session} />{/**/}
+                    </div>
+                )}
 
+                {/* Contenido de Tab 7 */}
+                
+                {activeTab === 8 && (
+                    <div className="p-4 bg-white border rounded-md shadow-md">
+                        <OrdenesEcografiaObstetrica datosEmergencia={datosEmergencia} session={session} />{/**/}
+                    </div>
+                )}
             </div>
         </div>
 

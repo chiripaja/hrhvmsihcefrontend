@@ -5,25 +5,24 @@ import { useEmergenciaDatosStore } from "@/store/ui/emergenciadatos";
 import { showConfirmDeleteAlert, showDeleteAlert } from "@/components/utils/alertHelper";
 import axios from "axios";
 
-export const OrdenesEcografiaGeneralTabla = ({ modificar = 0, datosEmergencia, recetaIdTemporal }:
-  { modificar?: number, datosEmergencia: any, recetaIdTemporal: any }) => {
-  const deleteOrdenesEcografiaGeneral = useEmergenciaDatosStore((state: any) => state.deleteOrdenesEcografiaGeneral);
-  const handleDelete = async (indexToDelete: number) => {
-    showConfirmDeleteAlert().then(async (result) => {
-      if (result.isConfirmed) {
-        showDeleteAlert();
-        const data = await axios.delete(`${process.env.apijimmynew}/recetas/apiDeleteRecetaDetalleByIdRecetaAndIdItem/${recetaIdTemporal}/${indexToDelete}`)
-        deleteOrdenesEcografiaGeneral(indexToDelete)
-      }
-      else {
-        console.log("no elimino")
-      }
-    });
-  };
+export const OrdenesEcografiaObstetricaTabla = ({ modificar = 0, datosEmergencia, recetaIdTemporal }:
+    { modificar?: number, datosEmergencia: any, recetaIdTemporal: any }) => {
+        const deleteordenesEcografiaObstetrica = useEmergenciaDatosStore((state: any) => state.deleteordenesEcografiaObstetrica);
+        const handleDelete = async (indexToDelete: number) => {
+          showConfirmDeleteAlert().then(async (result) => {
+            if (result.isConfirmed) {
+              showDeleteAlert();
+              const data = await axios.delete(`${process.env.apijimmynew}/recetas/apiDeleteRecetaDetalleByIdRecetaAndIdItem/${recetaIdTemporal}/${indexToDelete}`)
+              deleteordenesEcografiaObstetrica(indexToDelete)
+            }
+            else {
+              console.log("no elimino")
+            }
+          });
+        };
   return (
     <div className="max-h-[300px] overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-    
-    <table className={datosEmergencia?.ordenesEcografiaGeneral.length > 0 ? "tableT" : "hidden"} >
+    <table className={datosEmergencia?.ordenesEcografiaObstetrica.length > 0 ? "tableT" : "hidden"} >
         <thead>
             <tr>
                 <th scope="col" className="tableth">Examen
@@ -38,7 +37,7 @@ export const OrdenesEcografiaGeneralTabla = ({ modificar = 0, datosEmergencia, r
             </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-            {datosEmergencia?.ordenesEcografiaGeneral.filter((data: any) => data.idrecetacabecera == recetaIdTemporal).map((data: any, index: any) => (
+            {datosEmergencia?.ordenesEcografiaObstetrica.filter((data: any) => data.idrecetacabecera == recetaIdTemporal).map((data: any, index: any) => (
                 <tr key={`${data.idproducto}-${data.nombre}`}>
                     <td className="tabletd w-1/3">
                         {data.nombre} </td>

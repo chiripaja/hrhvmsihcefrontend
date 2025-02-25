@@ -131,7 +131,7 @@ export const OrdenesRayosX = ({ datosEmergencia, session }: any) => {
         }
         Swal.fire({
             icon: "success",
-            title: "Orden de farmacia creada exitosamente",
+            title: "Orden creada exitosamente",
             showConfirmButton: false,
             timer: 1500
         });
@@ -187,7 +187,7 @@ export const OrdenesRayosX = ({ datosEmergencia, session }: any) => {
   
             Swal.fire({
                 icon: "success",
-                title: "Orden de Patologia Clinica creada exitosamente",
+                title: "Orden creada exitosamente",
                 showConfirmButton: false,
                 timer: 1500
             });
