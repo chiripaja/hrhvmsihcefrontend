@@ -11,207 +11,209 @@ import { CgAdd } from 'react-icons/cg';
 import { RecetaCabecera } from '@/interfaces/RecetaCabezeraI';
 import { getData } from '@/components/helper/axiosHelper';
 import { OrdenesTomografiaTablaRecetaCabecera } from './OrdenesTomografiaTablaRecetaCabecera';
+import { OrdenesTomografiaTabla } from './OrdenesTomografiaTabla';
 
 
 export const OrdenesTomografia = ({ datosEmergencia, session }: any) => {
-  const [isOffcanvasOpenPatologiaClinica, setIsOffcanvasOpenPatologiaClinica] = useState(false);
-  const [options, setOptions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [tiposViasAdministracion, setTiposViasAdministracion] = useState<any[]>([]);
-  const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
-  const setRecetaCabezera = useEmergenciaDatosStore((state: any) => state.setRecetaCabezera);
-  const [recetaIdTemporal, setRecetaIdTemporal] = useState<any>(0)
-  const createordenesTomografia= useEmergenciaDatosStore((state: any) => state.createordenesTomografia);
-  const updateordenesTomografia=useEmergenciaDatosStore((state: any) => state.updateordenesTomografia);
-  const toggleOffcanvas = () => {
-      if (isOffcanvasOpenPatologiaClinica) {
-          setRecetaIdTemporal(0)
-      }
-      setIsOffcanvasOpenPatologiaClinica(!isOffcanvasOpenPatologiaClinica);
-  };
+    const [isOffcanvasOpenPatologiaClinica, setIsOffcanvasOpenPatologiaClinica] = useState(false);
+    const [options, setOptions] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [tiposViasAdministracion, setTiposViasAdministracion] = useState<any[]>([]);
+    const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
+    const setRecetaCabezera = useEmergenciaDatosStore((state: any) => state.setRecetaCabezera);
+    const createordenesTomografia = useEmergenciaDatosStore((state: any) => state.createordenesTomografia);
+    const updateordenesTomografia = useEmergenciaDatosStore((state: any) => state.updateordenesTomografia);
+    const [recetaIdTemporal, setRecetaIdTemporal] = useState<any>(0)
+  
+    const toggleOffcanvas = () => {
+        if (isOffcanvasOpenPatologiaClinica) {
+            setRecetaIdTemporal(0)
+        }
+        setIsOffcanvasOpenPatologiaClinica(!isOffcanvasOpenPatologiaClinica);
+    };
+  
+  
+    const fecthExamenesSelect = async () => {
+        try {
+            if (!datosEmergencia?.idFormaPago) {
+                console.error("ID Forma Pago no disponible en datosEmergencia");
+                return;
+            }
+            setIsLoading(true);
+           
 
-
-  const fecthExamenesSelect = async () => {
-      try {
-          if (!datosEmergencia?.idFormaPago) {
-              console.error("ID Forma Pago no disponible en datosEmergencia");
-              return;
-          }
-          setIsLoading(true);
-         
-
-const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/factaCatalogoServicioByIdPuntoCargaAndFormaPago/22/${datosEmergencia?.idFormaPago}`);
-      
-          const mappedOptions = response.map((est: any) => ({
-              value: est.IdProducto,
-              label: `${est.Nombre.trim()}`,
-              PrecioUnitario: est.PrecioUnitario,
-          }));
-          setOptions(mappedOptions);
-      } catch (error) {
-          console.error("Error al cargar los datos:", error);
-          setOptions([]);
-      } finally {
-          setIsLoading(false);
-      }
-  }
-
-  const FormLaboratorio: SubmitHandler<any> = async (data: any) => {
-      if (recetaIdTemporal == 0) {
-      const datosServicios = {
-          idrecetacabecera: "",
-          idproducto: data?.factservicio?.value,
-          cantidad: data?.cantlaboratorio,
-          precio: data?.factservicio?.PrecioUnitario,
-          total: (data?.cantlaboratorio * data?.factservicio?.PrecioUnitario)?.toFixed(4),
-          cantidadFarmSaldo: 0,
-          idDosisRecetada: 0,
-          observaciones: data?.frecuencia,
-          idViaAdministracion: 0,
-          iddiagnostico: data?.diagnostico,
-          nombre: data?.factservicio?.label,
-          usuarioauditoria: 0,
-          puntoCarga: data?.puntoCarga,
-          idEstadoDetalle: 1
-      }
-      createordenesTomografia(datosServicios)
-      ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
-      reset();
-  }else {
-      const datosServicios = {
-          idrecetacabecera: recetaIdTemporal,
-          idproducto: data?.factservicio?.value,
-          cantidad: data?.cantlaboratorio,
-          precio: data?.factservicio?.PrecioUnitario,
-          total: (data?.cantlaboratorio * data?.factservicio?.PrecioUnitario)?.toFixed(4),
-          cantidadFarmSaldo: 0,
-          idDosisRecetada: 0,
-          observaciones: data?.frecuencia,
-          idViaAdministracion: 0,
-          iddiagnostico: data?.diagnostico,
-          nombre: data?.factservicio?.label,
-          usuarioauditoria: 0,
-          puntoCarga: data?.puntoCarga,
-          idEstadoDetalle: 1
-      }
-      createordenesTomografia(datosServicios)
-      ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
-      reset();
-  }
-  }
-
-
-
-  const handleCanasta = async () => {
-      if (recetaIdTemporal == 0) {
-          crearNuevaReceta()
-      }
-      else {
-          updateReceta()
-      }
-  }
-
-  const updateReceta=async()=>{
-      try {
-          if(recetaIdTemporal>0){
-              const data = datosEmergencia?.ordenesTomografia.filter((data: any) => data.idrecetacabecera == recetaIdTemporal);
-              await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${recetaIdTemporal}`);
-              const promises = data.map((data: any) =>
-                  axios.post(`${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`, data)
-              );
-              const responses = await Promise.all(promises);
-              responses.forEach((response) => {
-                  console.log('Examen enviado exitosamente:', response.data);
-              });
-          }
-          
-      } catch (error) {
-          console.error('Error procesando la receta:', error);
-      }
-      Swal.fire({
-          icon: "success",
-          title: "Orden de farmacia creada exitosamente",
-          showConfirmButton: false,
-          timer: 1500
-      });
-      toggleOffcanvas()
-  }
-
-
-  const crearNuevaReceta = async () => {
-      const datosCabecera = {
-          idPuntoCarga: 22,
-          fechaReceta: new Date().toISOString(),
-          idCuentaAtencion: datosEmergencia?.idcuentaatencion,
-          idServicioReceta: datosEmergencia?.idServicio,
-          idEstado: 1,
-          idComprobantePago: null,
-          idMedicoReceta: datosEmergencia?.idMedicoIngreso,
-          fechaVigencia: (() => {
-              const fecha = new Date();
-              fecha.setDate(fecha.getDate() + 1);
-              fecha.setHours(0, 0, 0, 0);
-              return fecha.toISOString();
-          })(),
-          idUsuarioAuditoria: 1,
-      }
-
-      try {
-          const datosCabeceraCreado = await axios.post(
-              `${process.env.apijimmynew}/recetas/recetacabezeraadd`,
-              datosCabecera
-          );
-          const DatosRecetaCabecera: RecetaCabecera[] = await getData(
-              `${process.env.apijimmynew}/recetas/findRecetaCabezeraByIdCuentaAtencion/${datosEmergencia?.idcuentaatencion}`
-          );
-
-          
-          const updatedOrdenes = await updateordenesTomografia(
-              datosCabeceraCreado?.data
-          );
-          console.log(updatedOrdenes)
-          const updatedOrdenesFiltrado = updatedOrdenes.filter((data: any) => data.idrecetacabecera === datosCabeceraCreado?.data)
-
-          const promises = updatedOrdenesFiltrado.map((data: any) =>
-              axios.post(
-                  `${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`,
-                  data
-              )
-          );
-          const responses = await Promise.all(promises);
-          responses.forEach((response) => {
-              console.log("Examen enviado exitosamente:", response.data);
-          });
-          setRecetaCabezera(DatosRecetaCabecera);
-
-          Swal.fire({
-              icon: "success",
-              title: "Orden de Patologia Clinica creada exitosamente",
-              showConfirmButton: false,
-              timer: 1500
-          });
-      } catch (error) {
-          console.log(error)
-      }
-
-      toggleOffcanvas()
-  }
-
-  const handleOpenMenu = (idReceta: number) => {
-      console.log(idReceta)
-      setRecetaIdTemporal(idReceta)
-  }
-  useEffect(() => {
-          if (recetaIdTemporal > 0) {
-              toggleOffcanvas()
-          }
-      }, [recetaIdTemporal])
-
-
-  useEffect(() => {
-    fecthExamenesSelect()
-  }, [])
-
+ const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/factaCatalogoServicioByIdPuntoCargaAndFormaPago/22/${datosEmergencia?.idFormaPago}`);
+        
+            const mappedOptions = response.map((est: any) => ({
+                value: est.IdProducto,
+                label: `${est.Nombre.trim()}`,
+                PrecioUnitario: est.PrecioUnitario,
+            }));
+            setOptions(mappedOptions);
+        } catch (error) {
+            console.error("Error al cargar los datos:", error);
+            setOptions([]);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+  
+    const FormLaboratorio: SubmitHandler<any> = async (data: any) => {
+        if (recetaIdTemporal == 0) {
+        const datosServicios = {
+            idrecetacabecera: "",
+            idproducto: data?.factservicio?.value,
+            cantidad: data?.cantlaboratorio,
+            precio: data?.factservicio?.PrecioUnitario,
+            total: (data?.cantlaboratorio * data?.factservicio?.PrecioUnitario)?.toFixed(4),
+            cantidadFarmSaldo: 0,
+            idDosisRecetada: 0,
+            observaciones: data?.frecuencia,
+            idViaAdministracion: 0,
+            iddiagnostico: data?.diagnostico,
+            nombre: data?.factservicio?.label,
+            usuarioauditoria: 0,
+            puntoCarga: data?.puntoCarga,
+            idEstadoDetalle: 1
+        }
+        createordenesTomografia(datosServicios)
+        ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
+        reset();
+    }else {
+        const datosServicios = {
+            idrecetacabecera: recetaIdTemporal,
+            idproducto: data?.factservicio?.value,
+            cantidad: data?.cantlaboratorio,
+            precio: data?.factservicio?.PrecioUnitario,
+            total: (data?.cantlaboratorio * data?.factservicio?.PrecioUnitario)?.toFixed(4),
+            cantidadFarmSaldo: 0,
+            idDosisRecetada: 0,
+            observaciones: data?.frecuencia,
+            idViaAdministracion: 0,
+            iddiagnostico: data?.diagnostico,
+            nombre: data?.factservicio?.label,
+            usuarioauditoria: 0,
+            puntoCarga: data?.puntoCarga,
+            idEstadoDetalle: 1
+        }
+        createordenesTomografia(datosServicios)
+        ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
+        reset();
+    }
+    }
+  
+  
+  
+    const handleCanasta = async () => {
+        if (recetaIdTemporal == 0) {
+            crearNuevaReceta()
+        }
+        else {
+            updateReceta()
+        }
+    }
+  
+    const updateReceta=async()=>{
+        try {
+            if(recetaIdTemporal>0){
+                const data = datosEmergencia?.ordenesTomografia.filter((data: any) => data.idrecetacabecera == recetaIdTemporal);
+                await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${recetaIdTemporal}`);
+                const promises = data.map((data: any) =>
+                    axios.post(`${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`, data)
+                );
+                const responses = await Promise.all(promises);
+                responses.forEach((response) => {
+                    console.log('Examen enviado exitosamente:', response.data);
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error procesando la receta:', error);
+        }
+        Swal.fire({
+            icon: "success",
+            title: "Orden de farmacia creada exitosamente",
+            showConfirmButton: false,
+            timer: 1500
+        });
+        toggleOffcanvas()
+    }
+  
+  
+    const crearNuevaReceta = async () => {
+        const datosCabecera = {
+            idPuntoCarga: 22,
+            fechaReceta: new Date().toISOString(),
+            idCuentaAtencion: datosEmergencia?.idcuentaatencion,
+            idServicioReceta: datosEmergencia?.idServicio,
+            idEstado: 1,
+            idComprobantePago: null,
+            idMedicoReceta: datosEmergencia?.idMedicoIngreso,
+            fechaVigencia: (() => {
+                const fecha = new Date();
+                fecha.setDate(fecha.getDate() + 1);
+                fecha.setHours(0, 0, 0, 0);
+                return fecha.toISOString();
+            })(),
+            idUsuarioAuditoria: 1,
+        }
+  
+        try {
+            const datosCabeceraCreado = await axios.post(
+                `${process.env.apijimmynew}/recetas/recetacabezeraadd`,
+                datosCabecera
+            );
+            const DatosRecetaCabecera: RecetaCabecera[] = await getData(
+                `${process.env.apijimmynew}/recetas/findRecetaCabezeraByIdCuentaAtencion/${datosEmergencia?.idcuentaatencion}`
+            );
+  
+            
+            const updatedOrdenes = await updateordenesTomografia(
+                datosCabeceraCreado?.data
+            );
+            console.log(updatedOrdenes)
+            const updatedOrdenesFiltrado = updatedOrdenes.filter((data: any) => data.idrecetacabecera === datosCabeceraCreado?.data)
+  
+            const promises = updatedOrdenesFiltrado.map((data: any) =>
+                axios.post(
+                    `${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`,
+                    data
+                )
+            );
+            const responses = await Promise.all(promises);
+            responses.forEach((response) => {
+                console.log("Examen enviado exitosamente:", response.data);
+            });
+            setRecetaCabezera(DatosRecetaCabecera);
+  
+            Swal.fire({
+                icon: "success",
+                title: "Orden de Patologia Clinica creada exitosamente",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } catch (error) {
+            console.log(error)
+        }
+  
+        toggleOffcanvas()
+    }
+  
+    const handleOpenMenu = (idReceta: number) => {
+        console.log(idReceta)
+        setRecetaIdTemporal(idReceta)
+    }
+    useEffect(() => {
+            if (recetaIdTemporal > 0) {
+                toggleOffcanvas()
+            }
+        }, [recetaIdTemporal])
+  
+  
+    useEffect(() => {
+      fecthExamenesSelect()
+    }, [])
+  
   return (
     <>
         
@@ -266,7 +268,7 @@ const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios
             >
                 Modulo de Tomografia
             </h3>
-            <span className={`flex items-center ${datosEmergencia?.ordenesTomografia.length === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+            <span className={`flex items-center ${datosEmergencia?.ordenesRayosX.length === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
                 <TbShoppingCart />({datosEmergencia?.medicamentos.length})
             </span>
             <button type="button" onClick={toggleOffcanvas} className="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600" aria-label="Close" data-hs-overlay="#hs-offcanvas-right">
@@ -330,7 +332,7 @@ const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios
                 </form>
             </div>
 
-            <OrdenesTomografia datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
+            <OrdenesTomografiaTabla datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
             <div className={datosEmergencia?.ordenesTomografia.length > 0 ? "block" : "hidden"}>
                 <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                     Confirmar Orden

@@ -28,6 +28,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     ordenesBancoSangre: [] as any[],
     ordenesRayosX: [] as any[],
     ordenesTomografia: [] as any[],
+    ordenesEcografiaGeneral: [] as any[],
 
     ordenesLaboratorio: [],
     ordenesImagenes: [],
@@ -62,6 +63,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         ordenesBancoSangre: [] as any[],
         ordenesRayosX: [] as any[],
         ordenesTomografia: [] as any[],
+        ordenesEcografiaGeneral: [] as any[],
 
         ordenesLaboratorio: [],
         ordenesImagenes: [],
@@ -521,6 +523,42 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
           ),
         },
       })),
+
+
+
+      createordenesEcografiaGeneral: (data: any) =>
+        set((state: any) => ({
+          datosemergencia: {
+            ...state.datosemergencia,
+            ordenesEcografiaGeneral: [...state.datosemergencia.ordenesEcografiaGeneral, { ...data }]
+          }
+        })),
+    
+      updateordenesEcografiaGeneral: async (idrecetacabecera: any) => {
+        set((state: any) => ({
+          datosemergencia: {
+            ...state.datosemergencia,
+            ordenesEcografiaGeneral: state.datosemergencia.ordenesEcografiaGeneral.map((data: any) =>
+              data.idrecetacabecera === ""
+                ? { ...data, idrecetacabecera }
+                : data
+            ),
+          },
+        }));
+        const updatedOrdenes = get().datosemergencia.ordenesEcografiaGeneral;
+        return updatedOrdenes;
+      },
+    
+    
+      deleteOrdenesEcografiaGeneral: (idproducto: any) =>
+        set((state: any) => ({
+          datosemergencia: {
+            ...state.datosemergencia,
+            ordenesEcografiaGeneral: state.datosemergencia.ordenesEcografiaGeneral.filter(
+              (data: any) => data.idproducto !== idproducto
+            ),
+          },
+        })),
 
 
 }));
