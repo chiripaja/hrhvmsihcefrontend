@@ -35,6 +35,8 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const createordenesTomografia = useEmergenciaDatosStore((state: any) => state.createordenesTomografia);
   const createordenesEcografiaGeneral = useEmergenciaDatosStore((state: any) => state.createordenesEcografiaGeneral);
   const createordenesEcografiaObstetrica = useEmergenciaDatosStore((state: any) => state.createordenesEcografiaObstetrica);
+    const createordenesProcedimiento = useEmergenciaDatosStore((state: any) => state.createordenesProcedimiento);
+     const limpiarordenesProcedimiento=useEmergenciaDatosStore((state:any)=>state.limpiarordenesProcedimiento)
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
@@ -214,8 +216,22 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
       console.log(error)
     }
   }
-
-
+  const getOrdenesProcedimientosByIdOrden = async (idorden: number) => {
+    try {
+      limpiarordenesProcedimiento()
+      const data = await getData(`${process.env.apijimmynew}/recetas/ApiObtenerDetallesFacturacionProcedimientos/${idorden}`)
+      data.map((info: any) => {
+        createordenesProcedimiento(info)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    if (emergenciaCuentaDatos?.recetaCabezeraProcedimientos[0]?.IdOrden) {
+        getOrdenesProcedimientosByIdOrden(emergenciaCuentaDatos?.recetaCabezeraProcedimientos[0]?.IdOrden)
+      }
+    }, [emergenciaCuentaDatos?.recetaCabezeraProcedimientos])
   useEffect(() => {
     const ejecutarFunciones = async () => {
 

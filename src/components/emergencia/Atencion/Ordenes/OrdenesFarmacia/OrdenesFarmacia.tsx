@@ -240,7 +240,9 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
             toggleOffcanvasFarmacia()
         }
     }, [recetaIdTemporal])
-
+    const recetaCabeceraF = datosEmergencia?.recetaCabezera.filter(
+        (data: any) => data.IdPuntoCarga === 5
+    );
 
 
 
@@ -254,7 +256,7 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
                     <button
                         onClick={toggleOffcanvasFarmacia}
                         className={
-                            datosEmergencia?.recetaCabezera.length > 0
+                            recetaCabeceraF.length > 0
                                 ? "text-blue-500 hover:underline text-sm"
                                 : "hidden"
                         }
@@ -262,7 +264,7 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
                         Agregar
                     </button>
                 </h2>
-                <div className={datosEmergencia?.recetaCabezera.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
+                <div className={recetaCabeceraF.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
                     <div className="mb-4">
                         <GiMedicines size={36} className="text-gray-400" />
                     </div>

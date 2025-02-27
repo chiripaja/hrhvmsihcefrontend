@@ -142,7 +142,7 @@ export const OrdenesEcografiaObstetrica = ({ datosEmergencia, session }: any) =>
           idPuntoCarga: 23,
           fechaReceta: new Date().toISOString(),
           idCuentaAtencion: datosEmergencia?.idcuentaatencion,
-          idServicioReceta: datosEmergencia?.idServicio,
+          idServicioReceta: datosEmergencia?.idServicioEgreso ? datosEmergencia?.idServicioEgreso : datosEmergencia?.idServicio,
           idEstado: 1,
           idComprobantePago: null,
           idMedicoReceta: datosEmergencia?.idMedicoIngreso,
@@ -204,7 +204,9 @@ export const OrdenesEcografiaObstetrica = ({ datosEmergencia, session }: any) =>
   useEffect(() => {
       fecthExamenesSelect()
   }, [])
-
+  const recetaCabeceraF = datosEmergencia?.recetaCabezera.filter(
+    (data: any) => data.IdPuntoCarga === 23
+);
   return (
     <>
     <div className="bg-white rounded-md shadow-sm p-4">
@@ -214,7 +216,7 @@ export const OrdenesEcografiaObstetrica = ({ datosEmergencia, session }: any) =>
             <button
                 onClick={toggleOffcanvas}
                 className={
-                    datosEmergencia?.recetaCabezera.length > 0
+                    recetaCabeceraF.length > 0
                         ? "text-blue-500 hover:underline text-sm"
                         : "hidden"
                 }
@@ -222,7 +224,7 @@ export const OrdenesEcografiaObstetrica = ({ datosEmergencia, session }: any) =>
                 Agregar
             </button>
         </h2>
-        <div className={datosEmergencia?.recetaCabezera.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
+        <div className={recetaCabeceraF.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
             <div className="mb-4">
                 <PiJarLabel size={36} className="text-gray-400" />
             </div>
@@ -256,7 +258,7 @@ export const OrdenesEcografiaObstetrica = ({ datosEmergencia, session }: any) =>
                 id="hs-offcanvas-right-label"
                 className="font-bold text-gray-800 dark:text-white flex justify-between"
             >
-                Modulo de Ecografia
+                Modulo de Ecografia Obstetrico
             </h3>
             <span className={`flex items-center ${datosEmergencia?.ordenesEcografiaObstetrica.length === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
                 <TbShoppingCart />({datosEmergencia?.medicamentos.length})

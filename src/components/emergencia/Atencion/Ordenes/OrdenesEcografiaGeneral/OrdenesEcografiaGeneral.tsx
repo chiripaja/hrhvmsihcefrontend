@@ -144,7 +144,7 @@ export const OrdenesEcografiaGeneral = ({ datosEmergencia, session }: any) => {
           idPuntoCarga: 20,
           fechaReceta: new Date().toISOString(),
           idCuentaAtencion: datosEmergencia?.idcuentaatencion,
-          idServicioReceta: datosEmergencia?.idServicio,
+          idServicioReceta: datosEmergencia?.idServicioEgreso ? datosEmergencia?.idServicioEgreso : datosEmergencia?.idServicio,
           idEstado: 1,
           idComprobantePago: null,
           idMedicoReceta: datosEmergencia?.idMedicoIngreso,
@@ -212,7 +212,9 @@ export const OrdenesEcografiaGeneral = ({ datosEmergencia, session }: any) => {
   useEffect(() => {
       fecthExamenesSelect()
   }, [])
-
+  const recetaCabeceraF = datosEmergencia?.recetaCabezera.filter(
+    (data: any) => data.IdPuntoCarga === 20
+);
   return (
     <>
 
@@ -224,7 +226,7 @@ export const OrdenesEcografiaGeneral = ({ datosEmergencia, session }: any) => {
             <button
                 onClick={toggleOffcanvas}
                 className={
-                    datosEmergencia?.recetaCabezera.length > 0
+                    recetaCabeceraF.length > 0
                         ? "text-blue-500 hover:underline text-sm"
                         : "hidden"
                 }
@@ -232,7 +234,7 @@ export const OrdenesEcografiaGeneral = ({ datosEmergencia, session }: any) => {
                 Agregar
             </button>
         </h2>
-        <div className={datosEmergencia?.recetaCabezera.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
+        <div className={recetaCabeceraF.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
             <div className="mb-4">
                 <PiJarLabel size={36} className="text-gray-400" />
             </div>
@@ -266,7 +268,7 @@ export const OrdenesEcografiaGeneral = ({ datosEmergencia, session }: any) => {
                 id="hs-offcanvas-right-label"
                 className="font-bold text-gray-800 dark:text-white flex justify-between"
             >
-                Modulo de Ecografia
+                Modulo de Ecografia General
             </h3>
             <span className={`flex items-center ${datosEmergencia?.ordenesRayosX.length === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
                 <TbShoppingCart />({datosEmergencia?.medicamentos.length})

@@ -144,7 +144,7 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
             idPuntoCarga: 3,
             fechaReceta: new Date().toISOString(),
             idCuentaAtencion: datosEmergencia?.idcuentaatencion,
-            idServicioReceta: datosEmergencia?.idServicio,
+            idServicioReceta: datosEmergencia?.idServicioEgreso ? datosEmergencia?.idServicioEgreso : datosEmergencia?.idServicio,
             idEstado: 1,
             idComprobantePago: null,
             idMedicoReceta: datosEmergencia?.idMedicoIngreso,
@@ -212,11 +212,13 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
     useEffect(() => {
         fetchAnatomiaPatologica()
     }, [])
-
+    const recetaCabeceraF = datosEmergencia?.recetaCabezera.filter(
+        (data: any) => data.IdPuntoCarga === 3
+    );
 
     return (
         <>
-     
+
         <div className="bg-white rounded-md shadow-sm p-4">
             <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                 <span className="border-l-4 borderfondo h-6 mr-2"></span>
@@ -224,7 +226,7 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
                 <button
                     onClick={toggleOffcanvas}
                     className={
-                        datosEmergencia?.recetaCabezera.length > 0
+                        recetaCabeceraF.length > 0
                             ? "text-blue-500 hover:underline text-sm"
                             : "hidden"
                     }
@@ -232,7 +234,7 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
                     Agregar
                 </button>
             </h2>
-            <div className={datosEmergencia?.recetaCabezera.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
+            <div className={recetaCabeceraF.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
                 <div className="mb-4">
                     <PiJarLabel size={36} className="text-gray-400" />
                 </div>
@@ -266,7 +268,7 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
                     id="hs-offcanvas-right-label"
                     className="font-bold text-gray-800 dark:text-white flex justify-between"
                 >
-                    Modulo de Patologia Clinica
+                    Modulo de Anatomia Patologica
                 </h3>
                 <span className={`flex items-center ${datosEmergencia?.ordenesAnatomiaPatologica.length === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
                     <TbShoppingCart />({datosEmergencia?.ordenesAnatomiaPatologica.length})

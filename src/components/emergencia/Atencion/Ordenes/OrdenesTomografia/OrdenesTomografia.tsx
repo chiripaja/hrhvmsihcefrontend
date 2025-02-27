@@ -145,7 +145,7 @@ export const OrdenesTomografia = ({ datosEmergencia, session }: any) => {
             idPuntoCarga: 22,
             fechaReceta: new Date().toISOString(),
             idCuentaAtencion: datosEmergencia?.idcuentaatencion,
-            idServicioReceta: datosEmergencia?.idServicio,
+            idServicioReceta: datosEmergencia?.idServicioEgreso ? datosEmergencia?.idServicioEgreso : datosEmergencia?.idServicio,
             idEstado: 1,
             idComprobantePago: null,
             idMedicoReceta: datosEmergencia?.idMedicoIngreso,
@@ -213,7 +213,9 @@ export const OrdenesTomografia = ({ datosEmergencia, session }: any) => {
     useEffect(() => {
       fecthExamenesSelect()
     }, [])
-  
+    const recetaCabeceraF = datosEmergencia?.recetaCabezera.filter(
+        (data: any) => data.IdPuntoCarga === 22
+    );
   return (
     <>
         
@@ -224,7 +226,7 @@ export const OrdenesTomografia = ({ datosEmergencia, session }: any) => {
             <button
                 onClick={toggleOffcanvas}
                 className={
-                    datosEmergencia?.recetaCabezera.length > 0
+                    recetaCabeceraF.length > 0
                         ? "text-blue-500 hover:underline text-sm"
                         : "hidden"
                 }
@@ -232,7 +234,7 @@ export const OrdenesTomografia = ({ datosEmergencia, session }: any) => {
                 Agregar
             </button>
         </h2>
-        <div className={datosEmergencia?.recetaCabezera.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
+        <div className={recetaCabeceraF.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
             <div className="mb-4">
                 <PiJarLabel size={36} className="text-gray-400" />
             </div>

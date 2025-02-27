@@ -12,6 +12,8 @@ import { OrdenesRayosX } from './OrdenesRayosX/OrdenesRayosX'
 import { OrdenesTomografia } from './OrdenesTomografia/OrdenesTomografia'
 import { OrdenesEcografiaGeneral } from './OrdenesEcografiaGeneral/OrdenesEcografiaGeneral'
 import { OrdenesEcografiaObstetrica } from './OrdenesEcografiaObstetrica/OrdenesEcografiaObstetrica'
+import { OrdenesOtrosProcedimientos } from './OrdenesOtrosProcedimientos/OrdenesOtrosProcedimientos'
+import { OrdenesProcedimientosConsultorio } from './OrdenesProcedimientosConsultorio/OrdenesProcedimientosConsultorio'
 
 export const Ordenes = ({ datosEmergencia, session }: any) => {
     const [activeTab, setActiveTab] = useState(1);
@@ -86,6 +88,22 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                 >
                     Ecografia Obstetrica
                 </button>
+
+                <button
+                    className={`py-2 px-4 text-sm font-semibold ${activeTab === 9 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+                        } focus:outline-none`}
+                    onClick={() => setActiveTab(9)}
+                >
+                    Otros Procedimientos
+                </button>
+
+                <button
+                    className={`py-2 px-4 text-sm font-semibold ${activeTab === 10 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+                        } focus:outline-none`}
+                    onClick={() => setActiveTab(10)}
+                >
+                    Procedimientos En el Servicio
+                </button>
             </div>
 
             {/* Contenedor del contenido de los tabs */}
@@ -139,11 +157,23 @@ export const Ordenes = ({ datosEmergencia, session }: any) => {
                     </div>
                 )}
 
-                {/* Contenido de Tab 7 */}
-                
+                {/* Contenido de Tab 8 */}
                 {activeTab === 8 && (
                     <div className="p-4 bg-white border rounded-md shadow-md">
                         <OrdenesEcografiaObstetrica datosEmergencia={datosEmergencia} session={session} />{/**/}
+                    </div>
+                )}
+
+                {/* Contenido de Tab 9 */}
+                {activeTab === 9 && (
+                    <div className="p-4 bg-white border rounded-md shadow-md">
+                        <OrdenesOtrosProcedimientos datosEmergencia={datosEmergencia} session={session} />{/**/}
+                    </div>
+                )}
+                 {/* Contenido de Tab 10 */}
+                 {activeTab === 10 && (
+                    <div className="p-4 bg-white border rounded-md shadow-md">
+                        <OrdenesProcedimientosConsultorio  datosEmergencia={datosEmergencia} session={session}  />
                     </div>
                 )}
             </div>
