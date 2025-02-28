@@ -35,8 +35,11 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const createordenesTomografia = useEmergenciaDatosStore((state: any) => state.createordenesTomografia);
   const createordenesEcografiaGeneral = useEmergenciaDatosStore((state: any) => state.createordenesEcografiaGeneral);
   const createordenesEcografiaObstetrica = useEmergenciaDatosStore((state: any) => state.createordenesEcografiaObstetrica);
-    const createordenesProcedimiento = useEmergenciaDatosStore((state: any) => state.createordenesProcedimiento);
-     const limpiarordenesProcedimiento=useEmergenciaDatosStore((state:any)=>state.limpiarordenesProcedimiento)
+  const createordenesProcedimiento = useEmergenciaDatosStore((state: any) => state.createordenesProcedimiento);
+  
+  const createatencionesEmergencia = useEmergenciaDatosStore((state: any) => state.createatencionesEmergencia);
+
+  const limpiarordenesProcedimiento=useEmergenciaDatosStore((state:any)=>state.limpiarordenesProcedimiento)
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
@@ -64,6 +67,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
     try {
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
       setDatosAtencion(datosAtencion)
+      createatencionesEmergencia(datosAtencion?.atencionesEmergencia)
       console.log(datosAtencion)
       setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad, datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion, datosAtencion?.servicio?.idProducto, datosAtencion?.idServicioEgreso)
       if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
@@ -347,14 +351,6 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
             Triaje
           </button>
 
-          {/* Tab 2 */}
-          <button
-            className={`py-2 px-4 text-sm font-semibold ${activeTab === 2 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-              } focus:outline-none`}
-            onClick={() => setActiveTab(2)}
-          >
-            Anamnesis
-          </button>
 
           {/* Tab 3 */}
           <button
@@ -380,7 +376,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
               } focus:outline-none`}
             onClick={() => setActiveTab(5)}
           >
-            Ordenes
+            Anamnesis
           </button>
 
           <button
@@ -401,12 +397,6 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
             </div>
           )}
 
-          {/* Contenido de Tab 2 */}
-          {activeTab === 2 && (
-            <div className="p-4 bg-white border rounded-md shadow-md">
-              <Anamnesis />
-            </div>
-          )}
 
           {/* Contenido de Tab 3 */}
           {activeTab === 3 && (
@@ -425,7 +415,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
           {/* Contenido de Tab 5 */}
           {activeTab === 5 && (
             <div className="p-4 bg-white border rounded-md shadow-md">
-              <CEConsultaGeneral />
+              <Anamnesis datosEmergencia={emergenciaCuentaDatos} session={session} />
             </div>
           )}
 

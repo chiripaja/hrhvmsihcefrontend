@@ -30,6 +30,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     ordenesTomografia: [] as any[],
     ordenesEcografiaGeneral: [] as any[],
     ordenesEcografiaObstetrica: [] as any[],
+    atencionesEmergencia:{},
     ordenesLaboratorio: [],
     ordenesImagenes: [],
     ordenesOtros: [],
@@ -65,6 +66,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         ordenesTomografia: [] as any[],
         ordenesEcografiaGeneral: [] as any[],
         ordenesEcografiaObstetrica: [] as any[],
+        atencionesEmergencia:[] as any[],
         ordenesLaboratorio: [],
         ordenesImagenes: [],
         ordenesOtros: [],
@@ -595,6 +597,16 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
           ),
         },
       })),
+
+
+
+      createatencionesEmergencia: (data: any) =>
+        set((state: any) => ({
+          datosemergencia: {
+            ...state.datosemergencia,
+            atencionesEmergencia: { ...data }
+          }
+        })),
 
 
 }));
