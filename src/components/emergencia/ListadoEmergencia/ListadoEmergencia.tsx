@@ -132,12 +132,7 @@ export const ListadoEmergencia = () => {
 
                         Atender
                       </button>
-                      <button type="button" onClick={() => handleTransferencias(item.IdCuentaAtencion)} className="w-40 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-cyan-700 text-white hover:bg-cyan-600 focus:outline-none  disabled:opacity-50 disabled:pointer-events-none ">
-
-                        <MdOutlineTransferWithinAStation />
-
-                        Transferencias
-                      </button>
+                 
 
                     </td>
                   </tr>

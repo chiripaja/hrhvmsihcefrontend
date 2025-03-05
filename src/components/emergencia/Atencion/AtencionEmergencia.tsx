@@ -13,6 +13,7 @@ import { DiagnosticoIngreso } from "./Diagnostico/DiagnosticoIngreso";
 import { Ordenes } from "./Ordenes/Ordenes";
 import { MedicamentosCE } from "@/interfaces/MedicamentosCe";
 import { RecetaCabecera } from "@/interfaces/RecetaCabezeraI";
+import { AtencionMedica } from "./AtencionMedica/AtencionMedica";
 export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
 
   const [activeTab, setActiveTab] = useState(1);
@@ -386,6 +387,15 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
           >
             Transferencias
           </button>
+
+
+          <button
+            className={`py-2 px-4 text-sm font-semibold ${activeTab === 7 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+              } focus:outline-none`}
+            onClick={() => setActiveTab(7)}
+          >
+            Atención Medica
+          </button>
         </div>
 
         {/* Contenedor del contenido de los tabs */}
@@ -424,6 +434,16 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
             <div className="p-4 bg-white border rounded-md shadow-md">
               {emergenciaCuentaDatos &&
                 <Transferencias datosEmergencia={emergenciaCuentaDatos} session={session} />
+              }
+
+            </div>
+          )}
+
+          {/* Contenido de Tab 7 */}
+          {activeTab === 7 && (
+            <div className="p-4 bg-white border rounded-md shadow-md">
+              {emergenciaCuentaDatos &&
+                <AtencionMedica datosEmergencia={emergenciaCuentaDatos} session={session} />
               }
 
             </div>

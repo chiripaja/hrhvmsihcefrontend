@@ -6,7 +6,7 @@ import { AiFillFileText, AiOutlineHeart, AiOutlineHistory } from "react-icons/ai
 import { MdOutlineDescription, MdAccessTime, MdOutlineAssignment, MdHistory } from "react-icons/md";
 
 export const Anamnesis = ({ datosEmergencia, session }: any) => {
-     const { register, handleSubmit ,reset } = useForm();
+    const { register, handleSubmit ,reset } = useForm();
   
     const onSubmit = async(data:any) => {
       const objeto={
