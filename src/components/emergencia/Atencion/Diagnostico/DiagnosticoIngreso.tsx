@@ -135,8 +135,15 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
 
 
     const getAddDx=async()=>{
-        await axios.delete(`${process.env.apijimmynew}/consultaexterna/deletedxbyidatencion/${datosEmergencia?.idatencion}`);
+        //await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/2`);
+        try {
+            await axios.delete(`http://192.168.236.166:9797/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/275240/2`);
+        } catch (error) {
+            console.log("no pasa nada")
+        }
+       
         const requests = datosEmergencia.diagnosticos.map((data:any) => {
+          
             const DxSend = {
                 labConfHIS: "",
                 idAtencion: datosEmergencia?.idatencion,
@@ -146,6 +153,7 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
                 idAtencionDiagnostico: datosEmergencia?.idatencion,
                 idUsuarioAuditoria: session?.user?.id,
             };
+            console.log(DxSend)
             return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
         });
         ToasterMsj("Exito", "success", "Actualización diagnostico.")
@@ -154,7 +162,9 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
 
     return (
         <>
-           
+           <pre>
+  {JSON.stringify(datosEmergencia?.diagnosticos,null,2)}
+</pre>
             <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
