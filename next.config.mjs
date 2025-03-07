@@ -4,13 +4,13 @@ const nextConfig = {
   reactStrictMode: false,
   env: {
 
-     apiws: 'ws://192.168.210.215:6060', // ..produccion manuel
-      apiurl: 'http://192.168.210.215:6060',//  .. produccion manuel,
+     apiws: 'ws://192.168.210.225:6060', // ..produccion manuel
+      apiurl: 'http://192.168.210.225:6060',//  .. produccion manuel,
 
  //     apiws: 'ws://192.168.236.166:6060', // ..produccion manuel
   //    apiurl: 'http://192.168.236.166:6060',//  .. produccion manuel,
     apimanuel: 'http://192.168.11.242:4500',
-    apiauditoriosis: 'http://192.168.210.215:8081',
+    apiauditoriosis: 'http://192.168.210.225:8081',
     apijimmynew: "http://192.168.236.166:9797",
    // apijimmynew: "http://192.168.210.215:6062", produccion
     AUTH_SECRET: 'J8Jt9JPwxJGObxxbFXda/ncOyYi9RigtqTZts5NS/Aw=',

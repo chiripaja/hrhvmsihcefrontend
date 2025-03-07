@@ -341,15 +341,17 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         diagnosticos: [...state.datosemergencia.diagnosticos, { IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion, labConfHIS, idClasificacionDx }]
       }
     })),
-  setEliminarDiagnosticoByCuenta: (IdDiagnostico: any) =>
-    set((state: any) => ({
-      datosemergencia: {
-        ...state.datosemergencia,
-        diagnosticos: state.datosemergencia.diagnosticos.filter(
-          (diagnostico: any) => diagnostico.IdDiagnostico !== IdDiagnostico
-        )
-      }
-    })),
+    setEliminarDiagnosticoByCuenta: (IdDiagnostico: any, idClasificacionDx: any) =>
+      set((state: any) => ({
+        datosemergencia: {
+          ...state.datosemergencia,
+          diagnosticos: state.datosemergencia.diagnosticos.filter(
+            (diagnostico: any) =>
+              diagnostico.IdDiagnostico !== IdDiagnostico ||
+              diagnostico.idClasificacionDx !== idClasificacionDx
+          )
+        }
+      })),
 
 
 

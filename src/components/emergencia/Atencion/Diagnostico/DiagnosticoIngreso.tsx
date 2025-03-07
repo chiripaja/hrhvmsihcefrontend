@@ -20,12 +20,24 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const setDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setDiagnosticoByCuenta)
     const setEliminarDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setEliminarDiagnosticoByCuenta);
+    const [eliminandoDiagnostico, setEliminandoDiagnostico] = useState(Boolean);
     const isFirstRender = useRef(true);
     const toggleOffcanvasDx = () => {
         setIsOffcanvasOpenDx(!isOffcanvasOpenDx);
     };
-    const handleDelete = (indexToDelete: number) => {
-        setEliminarDiagnosticoByCuenta(indexToDelete)
+    const handleDelete = async (IdDiagnostico: number,idClasificacionDx:number) => {
+        try {
+            setEliminandoDiagnostico(true); 
+            // Eliminar del backend
+            await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdDiagnosticoAndIdClasificacionDx/${IdDiagnostico}/${idClasificacionDx}`);
+            await setEliminarDiagnosticoByCuenta(IdDiagnostico, idClasificacionDx);
+        } catch (error) {
+            console.error("Error al eliminar diagnóstico:", error);
+        } finally {
+            setEliminandoDiagnostico(false);
+        }
+        
+        //console.log({IdDiagnostico,idClasificacionDx})
     };
     const fetchDx = useCallback(
         debounce(async (nomdx) => {
@@ -65,7 +77,6 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
      
          if (arraLab.length > 0) {
             for (const datalab of arraLab) {
-                console.log("entrando aca")
                 await setDiagnosticoByCuenta(
                     data.IdDiagnostico.value,
                     data.IdDiagnostico.label,
@@ -128,43 +139,41 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
             isFirstRender.current = false;
             return; // Evita la ejecución en el primer render
         }
-        if(datosEmergencia.diagnosticos.length > 0){
+        if(datosEmergencia.diagnosticos.length > 0  && !eliminandoDiagnostico){
             getAddDx()
         }
     }, [datosEmergencia.diagnosticos])
 
 
     const getAddDx=async()=>{
-        //await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/2`);
-        try {
-            await axios.delete(`http://192.168.236.166:9797/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/275240/2`);
-        } catch (error) {
-            console.log("no pasa nada")
-        }
        
-        const requests = datosEmergencia.diagnosticos.map((data:any) => {
+      
+           const data= await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/2`);
+           console.log(data)
+            const requests = datosEmergencia.diagnosticos.map((data:any) => {
           
-            const DxSend = {
-                labConfHIS: "",
-                idAtencion: datosEmergencia?.idatencion,
-                idDiagnostico: data?.IdDiagnostico,
-                idSubclasificacionDx: data?.idSubclasificacionDx,
-                idClasificacionDx: 2,
-                idAtencionDiagnostico: datosEmergencia?.idatencion,
-                idUsuarioAuditoria: session?.user?.id,
-            };
-            console.log(DxSend)
-            return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
-        });
-        ToasterMsj("Exito", "success", "Actualización diagnostico.")
+                const DxSend = {
+                    labConfHIS: "",
+                    idAtencion: datosEmergencia?.idatencion,
+                    idDiagnostico: data?.IdDiagnostico,
+                    idSubclasificacionDx: data?.idSubclasificacionDx,
+                    idClasificacionDx: 2,
+                    idAtencionDiagnostico: datosEmergencia?.idatencion,
+                    idUsuarioAuditoria: session?.user?.id,
+                };
+                console.log(DxSend)
+                return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
+            });
+            ToasterMsj("Exito", "success", "Actualización diagnostico.")
+        
+       
+       
     }
     
 
     return (
         <>
-           <pre>
-  {JSON.stringify(datosEmergencia?.diagnosticos,null,2)}
-</pre>
+      
             <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
@@ -212,10 +221,11 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
                                         <td className="tabletd w-10">{data?.subClasificacion}</td>
                                         <td>
                                             {data?.nomdx}
+                                           
                                         </td>
                                      
                                         <td className="tabletd">
-                                            <button type="button" className="aAzul" onClick={() => handleDelete(data.IdDiagnostico)}>
+                                            <button type="button" className="aAzul" onClick={() => handleDelete(data.IdDiagnostico,data.idClasificacionDx)}>
                                                 Eliminar
                                             </button>
                                         </td>
