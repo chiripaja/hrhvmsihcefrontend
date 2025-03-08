@@ -1,12 +1,17 @@
 import { getData } from '@/components/helper/axiosHelper';
+import { showConfirmDeleteAlert } from '@/components/utils/alertHelper';
 import SelectGenerico from '@/components/utils/SelectGenerico';
+import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import { debounce } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react'
+import axios from 'axios';
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Select from 'react-select';
+
+import { useEmergenciaDatosStore } from '@/store/ui/emergenciadatos';
 export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   const { handleSubmit, control, register } = useForm();
-  const { handleSubmit:handleSubmit2, control:control2, register:register2 } = useForm();
+  const { handleSubmit: handleSubmit2, control: control2, register: register2 } = useForm();
   const [opcionesDestinoAtencion, setopcionesDestinoAtencion] = useState<any[]>([]);
   const [opcionesAltas, setOpcionesAltas] = useState<any[]>([]);
   const [opcionesCondicion, setOpcionesCondicion] = useState<any[]>([]);
@@ -15,6 +20,10 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   const [optionsClasificacionDx, setOptionsClasificacionDx] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [optionsDx, setOptionsDx] = useState<any[]>([]);
+  const setEliminarDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setEliminarDiagnosticoByCuenta);
+  const isFirstRender = useRef(true);
+  const [eliminandoDiagnostico, setEliminandoDiagnostico] = useState(Boolean);
+  const setDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setDiagnosticoByCuenta)
   const GetDataIni = async () => {
     const responseDestino = await getData(`${process.env.apijimmynew}/emergencia/TiposDestinoAtencionSeleccionarDestinosDeConsultorioEmergencia`);
     setopcionesDestinoAtencion(responseDestino);
@@ -74,26 +83,75 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
       EnfermedadActual: data?.EnfermedadActual,
     }
   }
-  const FormDx:SubmitHandler<any>=async(data:any)=>{
-    console.log(data)
-    const obj={
-      labConfHIS:null,
-      idAtencion:datosEmergencia?.idatencion,
-      idDiagnostico:data.IdDiagnostico.value,
-      idUsuarioAuditoria:session?.user?.id,
-      idClasificacionDx:3,
-      idSubclasificacionDx:data?.TipoDx,
-  }
-  console.log(obj)
-  }
-  
 
+  const FormDx: SubmitHandler<any> = async (data: any) => {
+    const subClasificacion = optionsClasificacionDx.find((item: any) => item.idSubclasificacionDx == data.idSubclasificacionDx);
+    console.log(optionsClasificacionDx)
+    console.log("------------------")
+    console.log(data)
+    console.log("*****************")
+    console.log(subClasificacion)
+    /*await setDiagnosticoByCuenta(
+      data.IdDiagnostico.value,
+      data.IdDiagnostico.label,
+      data.IdDiagnostico.codigoCIE10,
+      data.IdSubclasificacionDx,
+      subClasificacion.descripcion,
+      ''
+    );*/
+  }
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return; // Evita la ejecución en el primer render
+    }
+    if (datosEmergencia.diagnosticos.length > 0 && !eliminandoDiagnostico) {
+      getAddDx()
+    }
+  }, [datosEmergencia.diagnosticos])
+  const getAddDx = async () => {
+    const data = await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/2`);
+    const requests = datosEmergencia.diagnosticos.map((data: any) => {
+      const DxSend = {
+        labConfHIS: "",
+        idAtencion: datosEmergencia?.idatencion,
+        idDiagnostico: data?.IdDiagnostico,
+        idSubclasificacionDx: data?.idSubclasificacionDx,
+        idClasificacionDx: 3,
+        idAtencionDiagnostico: datosEmergencia?.idatencion,
+        idUsuarioAuditoria: session?.user?.id,
+      };
+      return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
+    });
+    ToasterMsj("Exito", "success", "Actualización diagnostico.")
+  }
+  const handleDelete = async (IdDiagnostico: number, idClasificacionDx: number) => {
+    try {
+      showConfirmDeleteAlert().then(async (result) => {
+        if (result.isConfirmed) {
+          setEliminandoDiagnostico(true);
+          await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdDiagnosticoAndIdClasificacionDx/${IdDiagnostico}/3`);
+          await setEliminarDiagnosticoByCuenta(IdDiagnostico, idClasificacionDx);
+          ToasterMsj('Exito', 'success', 'Se elimino correctamente.');
+        }
+        else {
+          console.log("no elimino")
+        }
+      });
+    } catch (error) {
+      console.error("Error al eliminar diagnóstico:", error);
+    } finally {
+      setEliminandoDiagnostico(false);
+    }
+
+  };
   return (
     <>
-<pre>
-  {JSON.stringify(datosEmergencia?.diagnosticos,null,2)}
-</pre>
-        <div className="p-6 bg-white shadow-md rounded-md w-full max-w-7xl mx-auto">
+      <pre>
+        {JSON.stringify(datosEmergencia?.diagnosticos, null, 2)}
+      </pre>
+      <div className="p-6 bg-white shadow-md rounded-md w-full max-w-7xl mx-auto">
         <form className="p-4" onSubmit={handleSubmit(Form)}>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -187,8 +245,8 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
               <textarea className="w-full border rounded-md p-2 h-24"  {...register('EnfermedadActual')}></textarea>
             </div>
           </div>
-          </form>
-          <form onSubmit={handleSubmit2(FormDx)}>
+        </form>
+        <form onSubmit={handleSubmit2(FormDx)}>
           <h2 className="text-lg font-semibold mt-6">Diagnósticos de Egreso</h2>
           <div className="grid grid-cols-3 gap-4">
             <div>
@@ -248,31 +306,68 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
               Quitar
             </button>
           </div>
-          </form>
-          <table className="w-full border mt-4">
+        </form>
+
+        <div className="overflow-x-auto">
+          <table className={datosEmergencia.diagnosticos?.length > 0 ? "tableT  w-3/4" : "hidden"}>
             <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2">Tipo diagnóstico</th>
-                <th className="border p-2">CIE</th>
-                <th className="border p-2">Descripción</th>
-                <th className="border p-2">Orden</th>
+              <tr>
+                <th scope="col" className="tableth">Clasificacion</th>
+                <th scope="col" className="tableth ">Diagnostico</th>
+
+                <th scope="col" className="tableth">Accion</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td colSpan={4} className="border p-2 text-center text-gray-500">
-                  No hay diagnósticos agregados
-                </td>
-              </tr>
+            <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
+              {datosEmergencia.diagnosticos
+                .sort((a: any, b: any) => {
+                  // Ordenar por nomdx (lexicográficamente)
+                  if (a?.nomdx < b?.nomdx) return -1;  // Orden ascendente
+                  if (a?.nomdx > b?.nomdx) return 1;
+                  return 0;  // Si son iguales, no cambiar el orden
+                })
+                .map((data: any) => (
+                  <tr key={data?.codigoCIE10 + data?.labConfHIS}>
+                    <td className="tabletd w-10">{data?.subClasificacion}</td>
+                    <td>
+                      {data?.nomdx}
+
+                    </td>
+
+                    <td className="tabletd">
+                      <button type="button" className="aAzul" onClick={() => handleDelete(data.IdDiagnostico, data.idClasificacionDx)}>
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
-          <div className="mt-6 flex space-x-4">
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Papeleta de Alta</button>
-            <button className="bg-green-500 text-white px-4 py-2 rounded-md">Aceptar (F2)</button>
-            <button className="bg-gray-500 text-white px-4 py-2 rounded-md">Cancelar</button>
-          </div>
         </div>
-    
+        <table className="w-full border mt-4">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border p-2">Tipo diagnóstico</th>
+              <th className="border p-2">CIE</th>
+              <th className="border p-2">Descripción</th>
+              <th className="border p-2">Orden</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan={4} className="border p-2 text-center text-gray-500">
+                No hay diagnósticos agregados
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div className="mt-6 flex space-x-4">
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Papeleta de Alta</button>
+          <button className="bg-green-500 text-white px-4 py-2 rounded-md">Aceptar (F2)</button>
+          <button className="bg-gray-500 text-white px-4 py-2 rounded-md">Cancelar</button>
+        </div>
+      </div>
+
     </>
   )
 }

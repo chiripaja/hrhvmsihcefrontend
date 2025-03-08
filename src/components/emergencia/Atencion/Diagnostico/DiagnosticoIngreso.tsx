@@ -1,4 +1,5 @@
 import { getData } from '@/components/helper/axiosHelper';
+import { showConfirmDeleteAlert } from '@/components/utils/alertHelper';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
 
 import { useEmergenciaDatosStore } from '@/store/ui/emergenciadatos';
@@ -10,7 +11,7 @@ import { FaFileMedical, FaPlus } from 'react-icons/fa';
 import { RiDeleteBin3Line } from 'react-icons/ri';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
-export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
+export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
     const [isOffcanvasOpenDx, setIsOffcanvasOpenDx] = useState(false);
     const [arraLab, setArraLab] = useState<any[]>([]);
     const [options, setOptions] = useState<any[]>([]);
@@ -25,26 +26,31 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
     const toggleOffcanvasDx = () => {
         setIsOffcanvasOpenDx(!isOffcanvasOpenDx);
     };
-    const handleDelete = async (IdDiagnostico: number,idClasificacionDx:number) => {
+    const handleDelete = async (IdDiagnostico: number, idClasificacionDx: number) => {
         try {
-            setEliminandoDiagnostico(true); 
-            // Eliminar del backend
-            await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdDiagnosticoAndIdClasificacionDx/${IdDiagnostico}/${idClasificacionDx}`);
-            await setEliminarDiagnosticoByCuenta(IdDiagnostico, idClasificacionDx);
+            showConfirmDeleteAlert().then(async (result) => {
+                if (result.isConfirmed) {
+                    setEliminandoDiagnostico(true);
+                    await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdDiagnosticoAndIdClasificacionDx/${IdDiagnostico}/2`);
+                    await setEliminarDiagnosticoByCuenta(IdDiagnostico, idClasificacionDx);
+                    ToasterMsj('Exito', 'success', 'Se elimino correctamente.');
+                }
+                else {
+                    console.log("no elimino")
+                }
+            });
         } catch (error) {
             console.error("Error al eliminar diagnóstico:", error);
         } finally {
             setEliminandoDiagnostico(false);
         }
-        
-        //console.log({IdDiagnostico,idClasificacionDx})
+
     };
     const fetchDx = useCallback(
         debounce(async (nomdx) => {
             try {
                 setIsLoading(true);
                 const response = await getData(`${process.env.apijimmynew}/diagnosticos/findByName/${nomdx}`);
-
                 const mappedOptions = response.map((est: any) => ({
                     value: est.idDiagnostico,
                     label: `${est.codigoCIE10} - ${est.descripcion}`,
@@ -64,18 +70,18 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
         setArraLab((prevArrayLab) => prevArrayLab.filter((item) => item !== valueToRemove));
     };
     const FormDX: SubmitHandler<any> = async (data: any) => {
-       
+
         const subClasificacion = clasificacionDx.find((item: any) => item.idSubclasificacionDx == data.IdSubclasificacionDx);
-        const obj={
-            labConfHIS:null,
-            idAtencion:datosEmergencia?.idatencion,
-            idDiagnostico:data.IdDiagnostico.value,
-            idUsuarioAuditoria:session?.user?.id,
-            idClasificacionDx:2,
-            idSubclasificacionDx:data?.IdSubclasificacionDx,
+        const obj = {
+            labConfHIS: null,
+            idAtencion: datosEmergencia?.idatencion,
+            idDiagnostico: data.IdDiagnostico.value,
+            idUsuarioAuditoria: session?.user?.id,
+            idClasificacionDx: 2,
+            idSubclasificacionDx: data?.IdSubclasificacionDx,
         }
-     
-         if (arraLab.length > 0) {
+
+        if (arraLab.length > 0) {
             for (const datalab of arraLab) {
                 await setDiagnosticoByCuenta(
                     data.IdDiagnostico.value,
@@ -88,7 +94,7 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
             }
             ToasterMsj("Exito", "success", "Añadio un diagnostico.")
         }
-         else {
+        else {
             await checkAndAddDiagnostico(
                 data.IdDiagnostico.value,
                 data.IdDiagnostico.label,
@@ -113,8 +119,8 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
                 });
             } else {
                 await setDiagnosticoByCuenta(IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion);
-             
-         
+
+
             }
         };
 
@@ -127,8 +133,8 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
             }
         };
         getSubClasDx();
-        
-      
+
+
     }, []);
 
 
@@ -139,41 +145,37 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
             isFirstRender.current = false;
             return; // Evita la ejecución en el primer render
         }
-        if(datosEmergencia.diagnosticos.length > 0  && !eliminandoDiagnostico){
+        if (datosEmergencia.diagnosticos.length > 0 && !eliminandoDiagnostico) {
             getAddDx()
         }
     }, [datosEmergencia.diagnosticos])
 
 
-    const getAddDx=async()=>{
-       
-      
-           const data= await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/2`);
-           console.log(data)
-            const requests = datosEmergencia.diagnosticos.map((data:any) => {
-          
-                const DxSend = {
-                    labConfHIS: "",
-                    idAtencion: datosEmergencia?.idatencion,
-                    idDiagnostico: data?.IdDiagnostico,
-                    idSubclasificacionDx: data?.idSubclasificacionDx,
-                    idClasificacionDx: 2,
-                    idAtencionDiagnostico: datosEmergencia?.idatencion,
-                    idUsuarioAuditoria: session?.user?.id,
-                };
-                console.log(DxSend)
-                return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
-            });
-            ToasterMsj("Exito", "success", "Actualización diagnostico.")
-        
-       
-       
+    const getAddDx = async () => {
+        const data = await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/2`);
+        const requests = datosEmergencia.diagnosticos.map((data: any) => {
+            const DxSend = {
+                labConfHIS: "",
+                idAtencion: datosEmergencia?.idatencion,
+                idDiagnostico: data?.IdDiagnostico,
+                idSubclasificacionDx: data?.idSubclasificacionDx,
+                idClasificacionDx: 2,
+                idAtencionDiagnostico: datosEmergencia?.idatencion,
+                idUsuarioAuditoria: session?.user?.id,
+            };
+
+            return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
+        });
+        ToasterMsj("Exito", "success", "Actualización diagnostico.")
+
+
+
     }
-    
+
 
     return (
         <>
-      
+
             <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
@@ -204,7 +206,7 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
                             <tr>
                                 <th scope="col" className="tableth">Clasificacion</th>
                                 <th scope="col" className="tableth ">Diagnostico</th>
-                              
+
                                 <th scope="col" className="tableth">Accion</th>
                             </tr>
                         </thead>
@@ -221,11 +223,11 @@ export const DiagnosticoIngreso = ({datosEmergencia,session}:any) => {
                                         <td className="tabletd w-10">{data?.subClasificacion}</td>
                                         <td>
                                             {data?.nomdx}
-                                           
+
                                         </td>
-                                     
+
                                         <td className="tabletd">
-                                            <button type="button" className="aAzul" onClick={() => handleDelete(data.IdDiagnostico,data.idClasificacionDx)}>
+                                            <button type="button" className="aAzul" onClick={() => handleDelete(data.IdDiagnostico, data.idClasificacionDx)}>
                                                 Eliminar
                                             </button>
                                         </td>
