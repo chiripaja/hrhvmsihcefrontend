@@ -72,57 +72,19 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
     const FormDX: SubmitHandler<any> = async (data: any) => {
 
         const subClasificacion = clasificacionDx.find((item: any) => item.idSubclasificacionDx == data.IdSubclasificacionDx);
-        const obj = {
-            labConfHIS: null,
-            idAtencion: datosEmergencia?.idatencion,
-            idDiagnostico: data.IdDiagnostico.value,
-            idUsuarioAuditoria: session?.user?.id,
-            idClasificacionDx: 2,
-            idSubclasificacionDx: data?.IdSubclasificacionDx,
-        }
-
-        if (arraLab.length > 0) {
-            for (const datalab of arraLab) {
-                await setDiagnosticoByCuenta(
-                    data.IdDiagnostico.value,
-                    data.IdDiagnostico.label,
-                    data.IdDiagnostico.codigoCIE10,
-                    data.IdSubclasificacionDx,
-                    subClasificacion.descripcion,
-                    datalab
-                );
-            }
-            ToasterMsj("Exito", "success", "Añadio un diagnostico.")
-        }
-        else {
-            await checkAndAddDiagnostico(
-                data.IdDiagnostico.value,
-                data.IdDiagnostico.label,
-                data.IdDiagnostico.codigoCIE10,
-                data.IdSubclasificacionDx,
-                subClasificacion.descripcion,
-                datosEmergencia,
-                setDiagnosticoByCuenta
-            );
-        }
+        await setDiagnosticoByCuenta(
+            data.IdDiagnostico.value,
+            data.IdDiagnostico.label,
+            data.IdDiagnostico.codigoCIE10,
+            data.IdSubclasificacionDx,
+            subClasificacion.descripcion,
+            '',
+            2,
+            null
+          ); 
     }
 
-    const checkAndAddDiagnostico =
-        async (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, datosEmergencia: any, setDiagnosticoByCuenta: Function) => {
-            const diagnosticoExiste = datosEmergencia.diagnosticos.some((diagnostico: any) => diagnostico.IdDiagnostico === IdDiagnostico);
-            if (diagnosticoExiste) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Diagnóstico duplicado',
-                    text: 'El diagnóstico con este CIE10 ya ha sido agregado.',
-                    confirmButtonText: 'Aceptar'
-                });
-            } else {
-                await setDiagnosticoByCuenta(IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion);
 
-
-            }
-        };
 
     useEffect(() => {
         const getSubClasDx = async () => {
@@ -153,7 +115,7 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
 
     const getAddDx = async () => {
         const data = await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/2`);
-        const requests = datosEmergencia.diagnosticos.map((data: any) => {
+        const requests = datosEmergencia.diagnosticos.filter((data:any)=>data.idClasificacionDx==2).map((data: any) => {
             const DxSend = {
                 labConfHIS: "",
                 idAtencion: datosEmergencia?.idatencion,
@@ -163,7 +125,7 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
                 idAtencionDiagnostico: datosEmergencia?.idatencion,
                 idUsuarioAuditoria: session?.user?.id,
             };
-
+            console.log(DxSend)
             return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
         });
         ToasterMsj("Exito", "success", "Actualización diagnostico.")
@@ -201,7 +163,7 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className={datosEmergencia.diagnosticos?.length > 0 ? "tableT  w-3/4" : "hidden"}>
+                    <table className={datosEmergencia.diagnosticos?.filter((data:any)=>data.idClasificacionDx==2).length > 0 ? "tableT  w-3/4" : "hidden"}>
                         <thead>
                             <tr>
                                 <th scope="col" className="tableth">Clasificacion</th>
@@ -211,7 +173,7 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                            {datosEmergencia.diagnosticos
+                            {datosEmergencia.diagnosticos.filter((data:any)=>data.idClasificacionDx==2)
                                 .sort((a: any, b: any) => {
                                     // Ordenar por nomdx (lexicográficamente)
                                     if (a?.nomdx < b?.nomdx) return -1;  // Orden ascendente

@@ -78,9 +78,10 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
             data.diagnostico.codigoCIE10 + ' - ' + data.diagnostico.descripcion,
             data.diagnostico.codigoCIE10,
             data.idSubclasificacionDx,
-            data.subclasificacionDiagnosticos.descripcion,
+            data.subclasificacionDiagnosticos?.descripcion,
             data.labConfHIS,
-            data.idClasificacionDx
+            data.idClasificacionDx,
+            data.idordenDx
           );
         });
       } else {

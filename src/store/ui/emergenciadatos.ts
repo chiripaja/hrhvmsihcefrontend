@@ -334,11 +334,11 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       recetaCabezera: newRecetaCabezera,
     }
   })),
-  setDiagnosticoByCuenta: (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, labConfHIS: any = null, idClasificacionDx: any) =>
+  setDiagnosticoByCuenta: (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, labConfHIS: any = null, idClasificacionDx: any,idordenDx:any) =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
-        diagnosticos: [...state.datosemergencia.diagnosticos, { IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion, labConfHIS, idClasificacionDx }]
+        diagnosticos: [...state.datosemergencia.diagnosticos, { IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion, labConfHIS, idClasificacionDx,idordenDx }]
       }
     })),
     setEliminarDiagnosticoByCuenta: (IdDiagnostico: any, idClasificacionDx: any) =>

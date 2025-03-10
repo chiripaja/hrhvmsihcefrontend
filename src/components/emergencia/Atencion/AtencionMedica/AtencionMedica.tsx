@@ -85,20 +85,19 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   }
 
   const FormDx: SubmitHandler<any> = async (data: any) => {
+  
     const subClasificacion = optionsClasificacionDx.find((item: any) => item.idSubclasificacionDx == data.idSubclasificacionDx);
-    console.log(optionsClasificacionDx)
-    console.log("------------------")
-    console.log(data)
-    console.log("*****************")
-    console.log(subClasificacion)
-    /*await setDiagnosticoByCuenta(
+
+   await setDiagnosticoByCuenta(
       data.IdDiagnostico.value,
       data.IdDiagnostico.label,
       data.IdDiagnostico.codigoCIE10,
-      data.IdSubclasificacionDx,
+      data.idSubclasificacionDx,
       subClasificacion.descripcion,
-      ''
-    );*/
+      '',
+      3,
+      data.idOrdenDx
+    ); 
   }
 
   useEffect(() => {
@@ -111,8 +110,8 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     }
   }, [datosEmergencia.diagnosticos])
   const getAddDx = async () => {
-    const data = await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/2`);
-    const requests = datosEmergencia.diagnosticos.map((data: any) => {
+    const data = await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/3`);
+    const requests = datosEmergencia.diagnosticos.filter((data:any)=>data.idClasificacionDx==3).map((data: any) => {
       const DxSend = {
         labConfHIS: "",
         idAtencion: datosEmergencia?.idatencion,
@@ -121,10 +120,13 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
         idClasificacionDx: 3,
         idAtencionDiagnostico: datosEmergencia?.idatencion,
         idUsuarioAuditoria: session?.user?.id,
+        idordenDx:data?.idordenDx,
       };
+      console.log("data envio")
+      console.log(DxSend)
       return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
     });
-    ToasterMsj("Exito", "success", "Actualización diagnostico.")
+    ToasterMsj("Exito", "success", "Actualización diagnostico.")/**/
   }
   const handleDelete = async (IdDiagnostico: number, idClasificacionDx: number) => {
     try {
@@ -148,9 +150,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   };
   return (
     <>
-      <pre>
-        {JSON.stringify(datosEmergencia?.diagnosticos, null, 2)}
-      </pre>
+ 
       <div className="p-6 bg-white shadow-md rounded-md w-full max-w-7xl mx-auto">
         <form className="p-4" onSubmit={handleSubmit(Form)}>
           <div className="grid grid-cols-2 gap-4">
@@ -280,7 +280,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
               <SelectGenerico
                 opciones={optionsClasificacionDx}
                 control={control2}
-                name="TipoDx"
+                name="idSubclasificacionDx"
                 idKey="idSubclasificacionDx"
                 labelKey="descripcion"
                 rules={{ required: "Este campo es obligatorio" }}
@@ -291,7 +291,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
               <SelectGenerico
                 opciones={optionsOrdenDx}
                 control={control2}
-                name="tipoOrden"
+                name="idOrdenDx"
                 idKey="idOrdenDx"
                 labelKey="descripcion"
                 rules={{ required: "Este campo es obligatorio" }}
@@ -309,7 +309,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
         </form>
 
         <div className="overflow-x-auto">
-          <table className={datosEmergencia.diagnosticos?.length > 0 ? "tableT  w-3/4" : "hidden"}>
+          <table className={datosEmergencia.diagnosticos?.filter((data:any)=>data.idClasificacionDx==3).length > 0 ? "tableT  w-3/4" : "hidden"}>
             <thead>
               <tr>
                 <th scope="col" className="tableth">Clasificacion</th>
@@ -319,7 +319,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-              {datosEmergencia.diagnosticos
+              {datosEmergencia.diagnosticos.filter((data:any)=>data.idClasificacionDx==3)
                 .sort((a: any, b: any) => {
                   // Ordenar por nomdx (lexicográficamente)
                   if (a?.nomdx < b?.nomdx) return -1;  // Orden ascendente
