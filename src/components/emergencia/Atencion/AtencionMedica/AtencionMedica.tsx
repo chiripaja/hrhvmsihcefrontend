@@ -76,18 +76,19 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     }
   };
   const Form: SubmitHandler<any> = async (data: any) => {
-    console.log(data)
     const objeto = {
-      Pronostico: data?.Pronostico,
-      RecomendacionesyTratamiento: data?.RecomendacionesyTratamiento,
-      EnfermedadActual: data?.EnfermedadActual,
+      pronostico: data?.Pronostico,
+      recomendacionesyTratamiento: data?.RecomendacionesyTratamiento,
+      enfermedadActual: data?.EnfermedadActual,
+      idAtencion:datosEmergencia?.idatencion
     }
+    axios.put(`${process.env.apijimmynew}/emergencia/AtencionesDatosAdicionalesAltaInsertar`,objeto);
+    axios.put(`${process.env.apijimmynew}/emergencia/GenerarCuentasEmergHospi/${datosEmergencia?.idpaciente}/${datosEmergencia?.idatencion}`);
+    console.log(objeto)
   }
 
   const FormDx: SubmitHandler<any> = async (data: any) => {
-  
-    const subClasificacion = optionsClasificacionDx.find((item: any) => item.idSubclasificacionDx == data.idSubclasificacionDx);
-
+   const subClasificacion = optionsClasificacionDx.find((item: any) => item.idSubclasificacionDx == data.idSubclasificacionDx);
    await setDiagnosticoByCuenta(
       data.IdDiagnostico.value,
       data.IdDiagnostico.label,
@@ -148,9 +149,14 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     }
 
   };
+  const handleButtonClick = () => {
+    handleSubmit(Form)();
+};
   return (
     <>
- 
+<pre>
+  {JSON.stringify(datosEmergencia?.idpaciente,null,2)}
+</pre>
       <div className="p-6 bg-white shadow-md rounded-md w-full max-w-7xl mx-auto">
         <form className="p-4" onSubmit={handleSubmit(Form)}>
           <div className="grid grid-cols-2 gap-4">
@@ -363,7 +369,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
         </table>
         <div className="mt-6 flex space-x-4">
           <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Papeleta de Alta</button>
-          <button className="bg-green-500 text-white px-4 py-2 rounded-md">Aceptar (F2)</button>
+          <button className="bg-green-500 text-white px-4 py-2 rounded-md"   onClick={handleButtonClick} >Aceptar (F2)</button>
           <button className="bg-gray-500 text-white px-4 py-2 rounded-md">Cancelar</button>
         </div>
       </div>
