@@ -154,9 +154,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
 };
   return (
     <>
-<pre>
-  {JSON.stringify(datosEmergencia?.idpaciente,null,2)}
-</pre>
+
       <div className="p-6 bg-white shadow-md rounded-md w-full max-w-7xl mx-auto">
         <form className="p-4" onSubmit={handleSubmit(Form)}>
           <div className="grid grid-cols-2 gap-4">
