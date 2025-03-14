@@ -33,8 +33,11 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     setOpcionesCondicion(responseCondicion);
     const responseOrdenDx = await getData(`${process.env.apijimmynew}/diagnosticos/OrdenDiagnosticos`);
     setOptionsOrdenDx(responseOrdenDx);
-    const responseClasificacionDx = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionEmergencia`);
-    setOptionsClasificacionDx(responseClasificacionDx);
+    const responseClasificacionDx = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionEmergenciaEgreso`);
+    const filtradoClasificacion=responseClasificacionDx.filter((data:any)=>
+      ['D', 'P','R'].includes(data?.codigo)
+    )
+    setOptionsClasificacionDx(filtradoClasificacion);
   }
   const fetchDx = useCallback(
     debounce(async (nomdx) => {
@@ -77,14 +80,24 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   };
   const Form: SubmitHandler<any> = async (data: any) => {
     const objeto = {
+      idDestinoAtencion:parseInt(data?.destino, 10),
+      idMedicoEgreso:data?.idmedico?.value,
+      fechaEgreso:data?.fechaEgreso,
+      horaEgreso:data?.horaEgreso,
+      idCondicionAlta:parseInt(data?.idCondicionAlta),
+      idTipoAlta:parseInt(data?.idTipoAlta),
+      idEstadoAtencion:1,
+      idPaciente:datosEmergencia?.idpaciente,
       pronostico: data?.Pronostico,
       recomendacionesyTratamiento: data?.RecomendacionesyTratamiento,
       enfermedadActual: data?.EnfermedadActual,
       idAtencion:datosEmergencia?.idatencion
     }
-    axios.put(`${process.env.apijimmynew}/emergencia/AtencionesDatosAdicionalesAltaInsertar`,objeto);
-    axios.put(`${process.env.apijimmynew}/emergencia/GenerarCuentasEmergHospi/${datosEmergencia?.idpaciente}/${datosEmergencia?.idatencion}`);
     console.log(objeto)
+    const dataresponse=await axios.put(`${process.env.apijimmynew}/emergencia/AltasEmergencia/${datosEmergencia?.idcuentaatencion}`,objeto);
+    console.log(dataresponse)
+    
+  
   }
 
   const FormDx: SubmitHandler<any> = async (data: any) => {
@@ -154,7 +167,9 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
 };
   return (
     <>
-
+    <pre>
+      {JSON.stringify(datosEmergencia?.idcuentaatencion,null,2)}
+    </pre>
       <div className="p-6 bg-white shadow-md rounded-md w-full max-w-7xl mx-auto">
         <form className="p-4" onSubmit={handleSubmit(Form)}>
           <div className="grid grid-cols-2 gap-4">
@@ -174,7 +189,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
               <SelectGenerico
                 opciones={opcionesAltas}
                 control={control}
-                name="TiposAltas"
+                name="idTipoAlta"
                 idKey="idTipoAlta"
                 labelKey="descripcion"
                 rules={{ required: "Este campo es obligatorio" }}
@@ -194,16 +209,28 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
               <SelectGenerico
                 opciones={opcionesCondicion}
                 control={control}
-                name="TiposCondicion"
+                name="idCondicionAlta"
                 idKey="idCondicionAlta"
                 labelKey="descripcion"
                 rules={{ required: "Este campo es obligatorio" }}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium">Fecha alta</label>
-              <input type="date" className="w-full border rounded-md p-2" />
+            <div >
+              <label className="block text-sm font-medium">Fecha y hora alta</label>
+              <div className='flex gap-2'>
+              <input type="date" 
+              {...register('fechaEgreso')}
+              className="w-full border rounded-md p-2 basis-2/3" />
+                <input
+    type="time"
+    {...register('horaEgreso')}
+    className="w-full border rounded-md p-2 basis-1/3"
+  />
+
+              </div>
+             
             </div>
+          
             <div>
               <label className="block text-sm font-medium">Médico egreso</label>
               <Controller
