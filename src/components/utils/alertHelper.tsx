@@ -11,6 +11,13 @@ export const showSuccessAlert=(message = "Se agregó correctamente")=>{
     });
 }
 
+export const showSuccessError=(message = "Error comunicarse con el administrador")=>{
+    Swal.fire({
+        icon: "error",
+        title: message
+    });
+}
+
 export const showConfirmDeleteAlert = (message = "¿Estás seguro de eliminar?") => {
     return Swal.fire({
         title: message,

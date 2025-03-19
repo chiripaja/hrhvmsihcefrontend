@@ -17,8 +17,9 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     idFuenteFinanciamiento: "",
     idFormaPago: "",
     idDestinoAtencion: "",
-    idCondicionMaterna: "",
+    idCondicionMaterna: "",    
     idPuntoCargaProcDentroConsultorio: "",
+    idTipoAlta:"",
     diagnosticos: [],
     recetaCabezera: [] as RecetaCabecera[],
     recetaCabezeraProcedimientos: [],
@@ -55,6 +56,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         idPuntoCargaProcDentroConsultorio: "",
         CitaMotivo: "",
         CitaExamenClinico: "",
+        idTipoAlta:"",
         diagnosticos: [],
         recetaCabezera: [] as RecetaCabecera[],
         recetaCabezeraProcedimientos: [],
@@ -304,7 +306,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     set((state: any) => ({
       datosemergencia: { ...state.datosemergencia, CitaMotivo, CitaExamenClinico }
     })),
-  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any, newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any, idProducto: any, idServicioEgreso: any) =>
+  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any, newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any, idProducto: any, idServicioEgreso: any,idTipoAlta:any) =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
@@ -317,7 +319,8 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         idCondicionMaterna,
         idDestinoAtencion,
         idProducto,
-        idServicioEgreso
+        idServicioEgreso,
+        idTipoAlta
       }
     })),
   setIdCuentaAtencion: (newIdCuentaAtencion: any) =>

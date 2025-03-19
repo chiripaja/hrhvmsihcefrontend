@@ -67,10 +67,13 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const getDatosConsulta = async () => {
     try {
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
+      console.log("********")
+      console.log(datosAtencion?.idTipoAlta)
+      console.log("********")
       setDatosAtencion(datosAtencion)
       createatencionesEmergencia(datosAtencion?.atencionesEmergencia)
       console.log(datosAtencion)
-      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad, datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion, datosAtencion?.servicio?.idProducto, datosAtencion?.idServicioEgreso)
+      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad, datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion, datosAtencion?.servicio?.idProducto, datosAtencion?.idServicioEgreso,datosAtencion?.idTipoAlta)
       if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
         datosAtencion.atencionesDiagnosticos.map((data: any) => {
           setDiagnosticoByCuenta(
@@ -338,7 +341,9 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
 
   return (
     <>
-
+  <pre>
+    {JSON.stringify(emergenciaCuentaDatos?.idTipoAlta,null,2)}
+  </pre>
 
       <CabeceraEmergencia idcuentaatencion={idcuentaatencion} />
       <div className="p-4">

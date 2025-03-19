@@ -1,5 +1,5 @@
 import { getData } from '@/components/helper/axiosHelper';
-import { showConfirmDeleteAlert } from '@/components/utils/alertHelper';
+import { showConfirmDeleteAlert, showSuccessAlert, showSuccessError } from '@/components/utils/alertHelper';
 import SelectGenerico from '@/components/utils/SelectGenerico';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import { debounce } from '@mui/material';
@@ -20,6 +20,8 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   const [optionsClasificacionDx, setOptionsClasificacionDx] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [optionsDx, setOptionsDx] = useState<any[]>([]);
+  const [estadoAlta, setestadoAlta] = useState();
+
   const setEliminarDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setEliminarDiagnosticoByCuenta);
   const isFirstRender = useRef(true);
   const [eliminandoDiagnostico, setEliminandoDiagnostico] = useState(Boolean);
@@ -93,11 +95,20 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
       enfermedadActual: data?.EnfermedadActual,
       idAtencion:datosEmergencia?.idatencion
     }
-    console.log(objeto)
-    const dataresponse=await axios.put(`${process.env.apijimmynew}/emergencia/AltasEmergencia/${datosEmergencia?.idcuentaatencion}`,objeto);
-    console.log(dataresponse)
-    
-  
+ 
+    if(datosEmergencia.diagnosticos?.filter((data:any)=>data.idClasificacionDx==3).length > 0){
+      try {
+        const dataresponse=await axios.put(`${process.env.apijimmynew}/emergencia/AltasEmergencia/${datosEmergencia?.idcuentaatencion}`,objeto);
+        showSuccessAlert("Se dio de Alta Correctamente")
+      } catch (error) {
+        showSuccessError(`${error}`)
+      }
+     
+    }else{
+      showSuccessError(`Ingrese un diagnostico de salida`)
+    }
+   
+ 
   }
 
   const FormDx: SubmitHandler<any> = async (data: any) => {
@@ -117,7 +128,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      return; // Evita la ejecución en el primer render
+      return; 
     }
     if (datosEmergencia.diagnosticos.length > 0 && !eliminandoDiagnostico) {
       getAddDx()
@@ -167,9 +178,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
 };
   return (
     <>
-    <pre>
-      {JSON.stringify(datosEmergencia,null,2)}
-    </pre>
+   
       <div className="p-6 bg-white shadow-md rounded-md w-full max-w-7xl mx-auto">
         <form className="p-4" onSubmit={handleSubmit(Form)}>
           <div className="grid grid-cols-2 gap-4">
@@ -330,11 +339,8 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
             </div>
           </div>
           <div className="mt-4 flex space-x-2">
-            <button className="bg-green-500 text-white px-4 py-2 rounded-md flex items-center">
-              Agregar
-            </button>
-            <button className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center">
-              Quitar
+            <button className="bg-cyan-700 text-white px-4 py-2 rounded-md flex items-center">
+              Agregar Dx
             </button>
           </div>
         </form>
@@ -375,27 +381,23 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
             </tbody>
           </table>
         </div>
-        <table className="w-full border mt-4">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border p-2">Tipo diagnóstico</th>
-              <th className="border p-2">CIE</th>
-              <th className="border p-2">Descripción</th>
-              <th className="border p-2">Orden</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colSpan={4} className="border p-2 text-center text-gray-500">
-                No hay diagnósticos agregados
-              </td>
-            </tr>
-          </tbody>
-        </table>
+       
         <div className="mt-6 flex space-x-4">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Papeleta de Alta</button>
-          <button className="bg-green-500 text-white px-4 py-2 rounded-md"   onClick={handleButtonClick} >Aceptar (F2)</button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded-md">Cancelar</button>
+          {datosEmergencia?.idTipoAlta==null ?(
+            <button className="bg-green-500 text-white px-4 py-2 rounded-md"   onClick={handleButtonClick} >Aceptar (F2)</button>
+          ):(
+            <>
+              <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Papeleta de Alta</button>
+              <button className="bg-green-500 text-white px-4 py-2 rounded-md"   onClick={handleButtonClick} >Revertir alta</button>
+            </>
+            
+          )
+         
+        
+        }
+        
+          
+
         </div>
       </div>
 

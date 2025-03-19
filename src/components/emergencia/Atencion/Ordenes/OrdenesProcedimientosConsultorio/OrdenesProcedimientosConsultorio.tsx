@@ -1,12 +1,10 @@
 import { getData } from "@/components/helper/axiosHelper";
 import { ToasterMsj } from "@/components/utils/ToasterMsj";
-
 import Select from 'react-select';
 import { useCallback, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { CgAdd } from "react-icons/cg";
 import { CiImageOn } from "react-icons/ci"
-import { Loading } from "@/components/utils/Loading";
 import axios from "axios";
 import { debounce } from "@mui/material";
 import Swal from "sweetalert2";
@@ -26,8 +24,8 @@ export const OrdenesProcedimientosConsultorio = ({ datosEmergencia, session }: a
             idOrden: '',
             idProducto: data?.factservicio?.value,
             cantidad: data?.cantidad,
-            precio: data?.factservicio?.PrecioUnitario,
-            total: (data?.cantidad * data?.factservicio?.PrecioUnitario)?.toFixed(4),
+            precio: parseFloat(data?.factservicio?.PrecioUnitario),
+            total: parseFloat((data?.cantidad * data?.factservicio?.PrecioUnitario)?.toFixed(4)),
             idUsuario: session?.user?.id,
             idDiagnostico: data?.diagnostico,
             idFuenteFinanciamiento: datosEmergencia?.idFuenteFinanciamiento,
@@ -44,13 +42,14 @@ export const OrdenesProcedimientosConsultorio = ({ datosEmergencia, session }: a
             try {
                 await axios.delete(`${process.env.apijimmynew}/recetas/ApiEliminarFacturacionPorOrden/${idorden}`);
                 const procedimientosOrdenesEnvio = updateProcedimientosIdOrden(idorden);
+                console.log(procedimientosOrdenesEnvio)
                 const promises = procedimientosOrdenesEnvio.map((data: any) =>
                     axios.post(`${process.env.apijimmynew}/recetas/FacturacionServicioDespachoAgregar`, data)
                 );
                 const responses = await Promise.all(promises);
                 responses.forEach((response) => {
                     console.log('Procedimientos enviado exitosamente:', response.data);
-                });/**/
+                });
             } catch (error) {
                 console.error('Error procesando la receta:', error);
             }
@@ -84,7 +83,7 @@ export const OrdenesProcedimientosConsultorio = ({ datosEmergencia, session }: a
                 console.error('Error procesando la receta:', error);
             }
         }
-        toggleOffcanvasProcedimientos()
+        toggleOffcanvasProcedimientos()/**/
     }
 
     const fetchFarmacia = useCallback(
@@ -96,6 +95,7 @@ export const OrdenesProcedimientosConsultorio = ({ datosEmergencia, session }: a
                 }
                 setIsLoading(true);
                 const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/apiCatalogoServiciosSeleccionarSoloConPreciosEnParticularByNombre/${datosEmergencia?.idPuntoCargaProcDentroConsultorio}/${datosEmergencia?.idFormaPago}/${nom}`);
+                console.log(`${process.env.apijimmynew}/FactCatalogoServicios/apiCatalogoServiciosSeleccionarSoloConPreciosEnParticularByNombre/${datosEmergencia?.idPuntoCargaProcDentroConsultorio}/${datosEmergencia?.idFormaPago}/${nom}`)
                 const mappedOptions = response.map((est: any) => ({
                     value: est.IdProducto,
                     label: `${est.Nombre.trim()}`,
@@ -116,32 +116,24 @@ export const OrdenesProcedimientosConsultorio = ({ datosEmergencia, session }: a
     };
   return (
     <>
-
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4 col-span-2">
         <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
             <span className="border-l-4 borderfondo h-6 mr-2"></span>
             <span className="flex-grow">Procedimientos en Consultorio</span>
-
             <button
                 onClick={toggleOffcanvasProcedimientos}
                 className={datosEmergencia?.ordenesProcedimiento.length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
             >
                 Agregar
             </button>
-
         </h2>
-
-
         <div className={datosEmergencia?.ordenesProcedimiento.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
             <div className="mb-4">
-
                 <CiImageOn size={36} className="text-gray-400" />
             </div>
-
             <p className="text-gray-500 text-sm mb-4">
                 No hay examenes activos para mostrar para este paciente
             </p>
-
             <button onClick={toggleOffcanvasProcedimientos} 
                 className="text-blue-500 hover:underline text-sm">
                 Registrar examenes activos
