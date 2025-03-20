@@ -120,12 +120,14 @@ export const OrdenesProcedimientosConsultorio = ({ datosEmergencia, session }: a
         <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
             <span className="border-l-4 borderfondo h-6 mr-2"></span>
             <span className="flex-grow">Procedimientos en Consultorio</span>
+            {datosEmergencia?.idTipoAlta==null &&(
             <button
                 onClick={toggleOffcanvasProcedimientos}
                 className={datosEmergencia?.ordenesProcedimiento.length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
             >
                 Agregar
             </button>
+            )}
         </h2>
         <div className={datosEmergencia?.ordenesProcedimiento.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
             <div className="mb-4">
@@ -134,10 +136,12 @@ export const OrdenesProcedimientosConsultorio = ({ datosEmergencia, session }: a
             <p className="text-gray-500 text-sm mb-4">
                 No hay examenes activos para mostrar para este paciente
             </p>
+            {datosEmergencia?.idTipoAlta==null &&(
             <button onClick={toggleOffcanvasProcedimientos} 
                 className="text-blue-500 hover:underline text-sm">
                 Registrar examenes activos
             </button>
+            )}
         </div>
         <OrdenesProcedimientosConsultorioTabla modificar={1} datosEmergencia={datosEmergencia}/>
     </div>
@@ -212,14 +216,18 @@ export const OrdenesProcedimientosConsultorio = ({ datosEmergencia, session }: a
                     )}
                 />
                 <input type="number" className='inputSelect mt-2 mb-1' {...register('cantidad')} placeholder="Cantidad" />
-                <button type="submit" className="btnprimario mt-2">Guardar</button>
+                {datosEmergencia?.idTipoAlta==null &&(
+                    <button type="submit" className="btnprimario mt-2">Guardar</button>
+                )}
             </form>
             <OrdenesProcedimientosConsultorioTabla datosEmergencia={datosEmergencia}/>
             <div className={datosEmergencia?.ordenesProcedimiento.length > 0 ? "block" : "hidden"}>
+            {datosEmergencia?.idTipoAlta==null &&(
                 <button onClick={handleCanastaProcedimientos} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                     Confirmar Orden
                     <CgAdd />
                 </button>
+            )}
             </div>
         </div>
     </div>

@@ -32,9 +32,9 @@ export const OrdenesEcografiaGeneralTabla = ({ modificar = 0, datosEmergencia, r
                 {(modificar === 1) &&
                     <th scope="col" className="tableth">Observaciones</th>
                 }
-                {(modificar === 0) &&
+       {datosEmergencia?.idTipoAlta==null &&(
                     <th scope="col" className="tableth">Accion</th>
-                }
+                )}
             </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
@@ -47,13 +47,13 @@ export const OrdenesEcografiaGeneralTabla = ({ modificar = 0, datosEmergencia, r
                         <td className="tabletd">
                             {data.observaciones}
                         </td>}
-                    {(modificar === 0) &&
+                        {datosEmergencia?.idTipoAlta==null &&(
                         <td className="tabletd">
                             <Tooltip text="Eliminar">
                                 <GoTrash size={24} className="text-red-400 hover:text-red-700 cursor-pointer" onClick={() => handleDelete(data?.idproducto)} />
                             </Tooltip>
                         </td>
-                    }
+                    )}
                 </tr>
             ))}
         </tbody>

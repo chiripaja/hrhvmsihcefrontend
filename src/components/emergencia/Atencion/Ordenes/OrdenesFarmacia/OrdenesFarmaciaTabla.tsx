@@ -34,9 +34,9 @@ export const OrdenesFarmaciaTabla= ({ modificar = 0,datosEmergencia ,recetaIdTem
                 {(modificar===1) && 
                  <th scope="col" className="tableth">Observaciones</th>
                 }
-                {(modificar===0) && 
+               {datosEmergencia?.idTipoAlta==null &&(
                  <th scope="col" className="tableth">Accion</th>
-                }
+               )}
                
                
             </tr>
@@ -53,7 +53,7 @@ export const OrdenesFarmaciaTabla= ({ modificar = 0,datosEmergencia ,recetaIdTem
                     <td className="tabletd">
                          {data.observaciones}
                     </td>}
-                    {(modificar===0) && 
+                    {datosEmergencia?.idTipoAlta==null &&(
                     <td className="tabletd">
                          {data?.idEstadoDetalle=="1" ?
                          <> 
@@ -68,7 +68,7 @@ export const OrdenesFarmaciaTabla= ({ modificar = 0,datosEmergencia ,recetaIdTem
                                 </span>
                             }
                     </td>
-}
+                    )}
                 </tr>
             ))}
         </tbody>

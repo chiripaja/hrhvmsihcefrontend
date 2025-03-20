@@ -7,10 +7,29 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Select from 'react-select';
-
 import { useEmergenciaDatosStore } from '@/store/ui/emergenciadatos';
+
+
+
+const formatDate = (dateString:any) => {
+  if (!dateString) return "";
+  return new Date(dateString).toISOString().split("T")[0];
+};
+
 export const AtencionMedica = ({ datosEmergencia, session }: any) => {
-  const { handleSubmit, control, register } = useForm();
+  const { handleSubmit, control, register,setValue } = useForm({
+    defaultValues: {
+      destino: datosEmergencia?.idDestinoAtencion || "",
+      idTipoAlta: datosEmergencia?.idTipoAlta || "",
+      idCondicionAlta: datosEmergencia?.idCondicionAlta || "",
+      fechaEgreso: formatDate(datosEmergencia?.fechaEgreso) || "",
+      horaEgreso: datosEmergencia?.horaEgreso || "",
+      idmedico: datosEmergencia?.idMedicoEgreso || null,
+      Pronostico: datosEmergencia?.atencionesDatosAdicionalesAlta?.pronostico || "",
+      RecomendacionesyTratamiento: datosEmergencia?.atencionesDatosAdicionalesAlta?.recomendacionesyTratamiento || "",
+      EnfermedadActual: datosEmergencia?.atencionesDatosAdicionalesAlta?.enfermedadActual || ""
+    }
+  });
   const { handleSubmit: handleSubmit2, control: control2, register: register2 } = useForm();
   const [opcionesDestinoAtencion, setopcionesDestinoAtencion] = useState<any[]>([]);
   const [opcionesAltas, setOpcionesAltas] = useState<any[]>([]);
@@ -26,6 +45,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   const isFirstRender = useRef(true);
   const [eliminandoDiagnostico, setEliminandoDiagnostico] = useState(Boolean);
   const setDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setDiagnosticoByCuenta)
+
   const GetDataIni = async () => {
     const responseDestino = await getData(`${process.env.apijimmynew}/emergencia/TiposDestinoAtencionSeleccionarDestinosDeConsultorioEmergencia`);
     setopcionesDestinoAtencion(responseDestino);
@@ -36,8 +56,8 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     const responseOrdenDx = await getData(`${process.env.apijimmynew}/diagnosticos/OrdenDiagnosticos`);
     setOptionsOrdenDx(responseOrdenDx);
     const responseClasificacionDx = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionEmergenciaEgreso`);
-    const filtradoClasificacion=responseClasificacionDx.filter((data:any)=>
-      ['D', 'P','R'].includes(data?.codigo)
+    const filtradoClasificacion = responseClasificacionDx.filter((data: any) =>
+      ['D', 'P', 'R'].includes(data?.codigo)
     )
     setOptionsClasificacionDx(filtradoClasificacion);
   }
@@ -82,38 +102,38 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   };
   const Form: SubmitHandler<any> = async (data: any) => {
     const objeto = {
-      idDestinoAtencion:parseInt(data?.destino, 10),
-      idMedicoEgreso:data?.idmedico?.value,
-      fechaEgreso:data?.fechaEgreso,
-      horaEgreso:data?.horaEgreso,
-      idCondicionAlta:parseInt(data?.idCondicionAlta),
-      idTipoAlta:parseInt(data?.idTipoAlta),
-      idEstadoAtencion:1,
-      idPaciente:datosEmergencia?.idpaciente,
+      idDestinoAtencion: parseInt(data?.destino, 10),
+      idMedicoEgreso: data?.idmedico?.value,
+      fechaEgreso: data?.fechaEgreso,
+      horaEgreso: data?.horaEgreso,
+      idCondicionAlta: parseInt(data?.idCondicionAlta),
+      idTipoAlta: parseInt(data?.idTipoAlta),
+      idEstadoAtencion: 1,
+      idPaciente: datosEmergencia?.idpaciente,
       pronostico: data?.Pronostico,
       recomendacionesyTratamiento: data?.RecomendacionesyTratamiento,
       enfermedadActual: data?.EnfermedadActual,
-      idAtencion:datosEmergencia?.idatencion
+      idAtencion: datosEmergencia?.idatencion
     }
- 
-    if(datosEmergencia.diagnosticos?.filter((data:any)=>data.idClasificacionDx==3).length > 0){
+
+    if (datosEmergencia.diagnosticos?.filter((data: any) => data.idClasificacionDx == 3).length > 0) {
       try {
-        const dataresponse=await axios.put(`${process.env.apijimmynew}/emergencia/AltasEmergencia/${datosEmergencia?.idcuentaatencion}`,objeto);
+        const dataresponse = await axios.put(`${process.env.apijimmynew}/emergencia/AltasEmergencia/${datosEmergencia?.idcuentaatencion}`, objeto);
         showSuccessAlert("Se dio de Alta Correctamente")
       } catch (error) {
         showSuccessError(`${error}`)
       }
-     
-    }else{
-      showSuccessError(`Ingrese un diagnostico de salida`)
+
+    } else {
+      showSuccessError(`Ingrese un diagnostico de Egreso`)
     }
-   
- 
+
+
   }
 
   const FormDx: SubmitHandler<any> = async (data: any) => {
-   const subClasificacion = optionsClasificacionDx.find((item: any) => item.idSubclasificacionDx == data.idSubclasificacionDx);
-   await setDiagnosticoByCuenta(
+    const subClasificacion = optionsClasificacionDx.find((item: any) => item.idSubclasificacionDx == data.idSubclasificacionDx);
+    await setDiagnosticoByCuenta(
       data.IdDiagnostico.value,
       data.IdDiagnostico.label,
       data.IdDiagnostico.codigoCIE10,
@@ -122,13 +142,13 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
       '',
       3,
       data.idOrdenDx
-    ); 
+    );
   }
 
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      return; 
+      return;
     }
     if (datosEmergencia.diagnosticos.length > 0 && !eliminandoDiagnostico) {
       getAddDx()
@@ -136,7 +156,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   }, [datosEmergencia.diagnosticos])
   const getAddDx = async () => {
     const data = await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/3`);
-    const requests = datosEmergencia.diagnosticos.filter((data:any)=>data.idClasificacionDx==3).map((data: any) => {
+    const requests = datosEmergencia.diagnosticos.filter((data: any) => data.idClasificacionDx == 3).map((data: any) => {
       const DxSend = {
         labConfHIS: "",
         idAtencion: datosEmergencia?.idatencion,
@@ -145,7 +165,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
         idClasificacionDx: 3,
         idAtencionDiagnostico: datosEmergencia?.idatencion,
         idUsuarioAuditoria: session?.user?.id,
-        idordenDx:data?.idordenDx,
+        idordenDx: data?.idordenDx,
       };
       console.log("data envio")
       console.log(DxSend)
@@ -175,10 +195,28 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   };
   const handleButtonClick = () => {
     handleSubmit(Form)();
-};
+  };
+  const loadDefaultMedico = async () => {
+    if (datosEmergencia?.idMedicoEgreso) {
+      try {
+        const response = await getData(
+          `${process.env.apijimmynew}/medicos/${datosEmergencia.idMedicoEgreso}`
+        );
+        const defaultMedico = {
+          value: response.empleado.IdMedico,
+          label: response.empleado.nombres+' '+response.empleado.apellidoPaterno+' '+response.empleado.apellidomaterno,
+        };
+        setValue("idmedico", defaultMedico); // Seteamos el valor por defecto en el formulario
+      } catch (error) {
+        console.error("Error al cargar el médico por defecto:", error);
+      }
+    }
+  };
+  useEffect(() => {
+    loadDefaultMedico();
+  }, []);
   return (
     <>
-   
       <div className="p-6 bg-white shadow-md rounded-md w-full max-w-7xl mx-auto">
         <form className="p-4" onSubmit={handleSubmit(Form)}>
           <div className="grid grid-cols-2 gap-4">
@@ -227,46 +265,41 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
             <div >
               <label className="block text-sm font-medium">Fecha y hora alta</label>
               <div className='flex gap-2'>
-              <input type="date" 
-              {...register('fechaEgreso')}
-              className="w-full border rounded-md p-2 basis-2/3" />
+                <input type="date"
+                  {...register('fechaEgreso')}
+                  className="w-full border rounded-md p-2 basis-2/3" />
                 <input
-    type="time"
-    {...register('horaEgreso')}
-    className="w-full border rounded-md p-2 basis-1/3"
-  />
-
+                  type="time"
+                  {...register('horaEgreso')}
+                  className="w-full border rounded-md p-2 basis-1/3"
+                />
               </div>
-             
             </div>
-          
             <div>
               <label className="block text-sm font-medium">Médico egreso</label>
               <Controller
-                name="idmedico"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <Select
-                    instanceId="unique-select-id"
-                    {...field}
-                    options={optionMedicosG}
-                    placeholder="Médicos"
-                    className="w-full"
-                    required
-                    isClearable
-                    isSearchable
-                    onInputChange={(inputValue) => {
-                      if (inputValue.length > 2) {
-                        getMedicosGeneral(inputValue);
-                      }
-                    }}
-                    onChange={(selectedOption) => {
-                      field.onChange(selectedOption);
-                    }}
-                  />
-                )}
-              />
+  name="idmedico"
+  control={control}
+  render={({ field }) => (
+    <Select
+      instanceId="unique-select-id"
+      {...field}
+      options={optionMedicosG}
+      placeholder="Médicos"
+      className="w-full"
+      required
+      isClearable
+      isSearchable
+      value={field.value}
+      onInputChange={(inputValue) => {
+        if (inputValue.length > 2) {
+          getMedicosGeneral(inputValue);
+        }
+      }}
+      onChange={(selectedOption) => field.onChange(selectedOption)}
+    />
+  )}
+/>
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
@@ -344,19 +377,19 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
             </button>
           </div>
         </form>
-
         <div className="overflow-x-auto">
-          <table className={datosEmergencia.diagnosticos?.filter((data:any)=>data.idClasificacionDx==3).length > 0 ? "tableT  w-3/4" : "hidden"}>
+          <table className={datosEmergencia.diagnosticos?.filter((data: any) => data.idClasificacionDx == 3).length > 0 ? "tableT  w-3/4" : "hidden"}>
             <thead>
               <tr>
                 <th scope="col" className="tableth">Clasificacion</th>
                 <th scope="col" className="tableth ">Diagnostico</th>
-
-                <th scope="col" className="tableth">Accion</th>
+                {datosEmergencia?.idTipoAlta == null && (
+                  <th scope="col" className="tableth">Accion</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-              {datosEmergencia.diagnosticos.filter((data:any)=>data.idClasificacionDx==3)
+              {datosEmergencia.diagnosticos.filter((data: any) => data.idClasificacionDx == 3)
                 .sort((a: any, b: any) => {
                   // Ordenar por nomdx (lexicográficamente)
                   if (a?.nomdx < b?.nomdx) return -1;  // Orden ascendente
@@ -370,34 +403,27 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
                       {data?.nomdx}
 
                     </td>
-
-                    <td className="tabletd">
-                      <button type="button" className="aAzul" onClick={() => handleDelete(data.IdDiagnostico, data.idClasificacionDx)}>
-                        Eliminar
-                      </button>
-                    </td>
+                    {datosEmergencia?.idTipoAlta == null && (
+                      <td className="tabletd">
+                        <button type="button" className="aAzul" onClick={() => handleDelete(data.IdDiagnostico, data.idClasificacionDx)}>
+                          Eliminar
+                        </button>
+                      </td>)}
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
-       
         <div className="mt-6 flex space-x-4">
-          {datosEmergencia?.idTipoAlta==null ?(
-            <button className="bg-green-500 text-white px-4 py-2 rounded-md"   onClick={handleButtonClick} >Aceptar (F2)</button>
-          ):(
+          {datosEmergencia?.idTipoAlta == null ? (
+            <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleButtonClick} >Aceptar (F2)</button>
+          ) : (
             <>
               <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Papeleta de Alta</button>
-              <button className="bg-green-500 text-white px-4 py-2 rounded-md"   onClick={handleButtonClick} >Revertir alta</button>
+              <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleButtonClick} >Revertir alta</button>
             </>
-            
           )
-         
-        
-        }
-        
-          
-
+          }
         </div>
       </div>
 

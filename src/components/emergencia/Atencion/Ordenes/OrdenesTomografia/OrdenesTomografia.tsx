@@ -223,6 +223,7 @@ export const OrdenesTomografia = ({ datosEmergencia, session }: any) => {
         <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
             <span className="border-l-4 borderfondo h-6 mr-2"></span>
             <span className="flex-grow">Tomografia</span>
+            {datosEmergencia?.idTipoAlta==null &&(
             <button
                 onClick={toggleOffcanvas}
                 className={
@@ -232,7 +233,7 @@ export const OrdenesTomografia = ({ datosEmergencia, session }: any) => {
                 }
             >
                 Agregar
-            </button>
+            </button>)}
         </h2>
         <div className={recetaCabeceraF.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
             <div className="mb-4">
@@ -241,12 +242,13 @@ export const OrdenesTomografia = ({ datosEmergencia, session }: any) => {
             <p className="text-gray-500 text-sm mb-4">
                 No hay recetas activas para mostrar para este paciente
             </p>
+            {datosEmergencia?.idTipoAlta==null &&(
             <button
                 onClick={toggleOffcanvas}
                 className="text-blue-500 hover:underline text-sm"
             >
                 Registrar recetas activos
-            </button>
+            </button>)}
         </div>
         <OrdenesTomografiaTablaRecetaCabecera datosEmergencia={datosEmergencia} handleOpenMenu={handleOpenMenu} />
     </div>
@@ -330,16 +332,18 @@ export const OrdenesTomografia = ({ datosEmergencia, session }: any) => {
                         })}
                         placeholder="Cantidad" />
                     <textarea {...register('frecuencia')} className='w-full border shadow mt-2 p-1' placeholder='Observaciones' ></textarea>
-                    <button type="submit" className="btnprimario mt-2">Guardar</button>
+                    {datosEmergencia?.idTipoAlta==null &&(
+                        <button type="submit" className="btnprimario mt-2">Guardar</button>
+                    )}
                 </form>
             </div>
 
             <OrdenesTomografiaTabla datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
             <div className={datosEmergencia?.ordenesTomografia.length > 0 ? "block" : "hidden"}>
-                <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+            {datosEmergencia?.idTipoAlta==null &&( <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                     Confirmar Orden
                     <CgAdd />
-                </button>
+                </button>)}
             </div>
         </div>
     </div>

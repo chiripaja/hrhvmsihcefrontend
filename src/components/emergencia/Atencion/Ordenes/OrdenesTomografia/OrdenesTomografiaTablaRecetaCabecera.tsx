@@ -31,9 +31,9 @@ export const OrdenesTomografiaTablaRecetaCabecera = ({ datosEmergencia, handleOp
             
                                     <th scope="col" className="tableth">Nro. Receta</th>
             
-            
+                                    {datosEmergencia?.idTipoAlta==null &&(
                                     <th scope="col" className="tableth">Accion</th>
-            
+                                    )}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
@@ -52,6 +52,7 @@ export const OrdenesTomografiaTablaRecetaCabecera = ({ datosEmergencia, handleOp
                                         <td className="tabletd">
                                             {data.idReceta}
                                         </td>
+                                        {datosEmergencia?.idTipoAlta==null &&(
                                         <td className="tabletd">
                                             {data?.idEstado == "1" ?
                                                 <div className="flex items-center gap-4">
@@ -81,6 +82,7 @@ export const OrdenesTomografiaTablaRecetaCabecera = ({ datosEmergencia, handleOp
                                                 </span>
                                             }
                                         </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>

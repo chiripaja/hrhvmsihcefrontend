@@ -142,12 +142,14 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
                     <span className="flex-grow">Diagnostico de Ingreso</span>
+                    {datosEmergencia?.idTipoAlta==null &&(
                     <button
                         onClick={toggleOffcanvasDx}
                         className={datosEmergencia.diagnosticos?.length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
                     >
                         Agregar
                     </button>
+                    )}
                 </h2>
 
                 <div className={datosEmergencia.diagnosticos?.length === 0 ? "flex flex-col items-center justify-center mt-6" : "hidden"}>
@@ -168,8 +170,9 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
                             <tr>
                                 <th scope="col" className="tableth">Clasificacion</th>
                                 <th scope="col" className="tableth ">Diagnostico</th>
-
+                                {datosEmergencia?.idTipoAlta==null &&(
                                 <th scope="col" className="tableth">Accion</th>
+                                )}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
@@ -187,12 +190,12 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
                                             {data?.nomdx}
 
                                         </td>
-
+                                        {datosEmergencia?.idTipoAlta==null &&(
                                         <td className="tabletd">
                                             <button type="button" className="aAzul" onClick={() => handleDelete(data.IdDiagnostico, data.idClasificacionDx)}>
                                                 Eliminar
                                             </button>
-                                        </td>
+                                        </td>)}
                                     </tr>
                                 ))}
                         </tbody>

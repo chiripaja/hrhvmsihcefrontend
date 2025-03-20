@@ -32,7 +32,7 @@ export const OrdenesRayosXTablaRecetasCabecera = ({ datosEmergencia, handleOpenM
                                  <th scope="col" className="tableth">Nro. Receta</th>
          
          
-                                 <th scope="col" className="tableth">Accion</th>
+                                 {datosEmergencia?.idTipoAlta==null &&(  <th scope="col" className="tableth">Accion</th>)}
          
                              </tr>
                          </thead>
@@ -52,6 +52,7 @@ export const OrdenesRayosXTablaRecetasCabecera = ({ datosEmergencia, handleOpenM
                                      <td className="tabletd">
                                          {data.idReceta}
                                      </td>
+                                     {datosEmergencia?.idTipoAlta==null &&(
                                      <td className="tabletd">
                                          {data?.idEstado == "1" ?
                                              <div className="flex items-center gap-4">
@@ -80,7 +81,7 @@ export const OrdenesRayosXTablaRecetasCabecera = ({ datosEmergencia, handleOpenM
                                                  Despachada
                                              </span>
                                          }
-                                     </td>
+                                     </td>)}
                                  </tr>
                              ))}
                          </tbody>

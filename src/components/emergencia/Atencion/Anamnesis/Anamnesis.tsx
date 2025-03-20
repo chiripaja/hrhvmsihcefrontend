@@ -128,9 +128,11 @@ export const Anamnesis = ({ datosEmergencia, session }: any) => {
       </div>
 
       {/* Botón de envío */}
+      {datosEmergencia?.idTipoAlta==null &&(
       <button type="submit" className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 flex items-center justify-center gap-2">
         Enviar
       </button>
+      )}
     </form>
     )
 }

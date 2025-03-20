@@ -37,10 +37,11 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const createordenesEcografiaGeneral = useEmergenciaDatosStore((state: any) => state.createordenesEcografiaGeneral);
   const createordenesEcografiaObstetrica = useEmergenciaDatosStore((state: any) => state.createordenesEcografiaObstetrica);
   const createordenesProcedimiento = useEmergenciaDatosStore((state: any) => state.createordenesProcedimiento);
-  
+
   const createatencionesEmergencia = useEmergenciaDatosStore((state: any) => state.createatencionesEmergencia);
 
-  const limpiarordenesProcedimiento=useEmergenciaDatosStore((state:any)=>state.limpiarordenesProcedimiento)
+  const limpiarordenesProcedimiento = useEmergenciaDatosStore((state: any) => state.limpiarordenesProcedimiento)
+  const createAtencionesDatosAdicionalesAlta=useEmergenciaDatosStore((state: any) => state.createAtencionesDatosAdicionalesAlta)
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
@@ -68,12 +69,21 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
     try {
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
       console.log("********")
-      console.log(datosAtencion?.idTipoAlta)
+      console.log(datosAtencion?.idDestinoAtencion)
       console.log("********")
       setDatosAtencion(datosAtencion)
       createatencionesEmergencia(datosAtencion?.atencionesEmergencia)
       console.log(datosAtencion)
-      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad, datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion, datosAtencion?.servicio?.idProducto, datosAtencion?.idServicioEgreso,datosAtencion?.idTipoAlta)
+      createAtencionesDatosAdicionalesAlta(datosAtencion?.atencionesDatosAdicionalesAlta)
+      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(
+        datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio,
+        datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago,
+        datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga, datosAtencion?.edad,
+        datosAtencion?.idCondicionMaterna, datosAtencion?.idDestinoAtencion,
+        datosAtencion?.servicio?.idProducto, datosAtencion?.idServicioEgreso,
+        datosAtencion?.idTipoAlta, datosAtencion?.idCondicionAlta,
+        datosAtencion?.idMedicoEgreso, datosAtencion?.fechaEgreso, datosAtencion?.horaEgreso
+      )
       if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
         datosAtencion.atencionesDiagnosticos.map((data: any) => {
           setDiagnosticoByCuenta(
@@ -238,9 +248,9 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   }
   useEffect(() => {
     if (emergenciaCuentaDatos?.recetaCabezeraProcedimientos[0]?.IdOrden) {
-        getOrdenesProcedimientosByIdOrden(emergenciaCuentaDatos?.recetaCabezeraProcedimientos[0]?.IdOrden)
-      }
-    }, [emergenciaCuentaDatos?.recetaCabezeraProcedimientos])
+      getOrdenesProcedimientosByIdOrden(emergenciaCuentaDatos?.recetaCabezeraProcedimientos[0]?.IdOrden)
+    }
+  }, [emergenciaCuentaDatos?.recetaCabezeraProcedimientos])
   useEffect(() => {
     const ejecutarFunciones = async () => {
 
@@ -341,9 +351,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
 
   return (
     <>
-  <pre>
-    {JSON.stringify(emergenciaCuentaDatos?.idTipoAlta,null,2)}
-  </pre>
+     
 
       <CabeceraEmergencia idcuentaatencion={idcuentaatencion} />
       <div className="p-4">

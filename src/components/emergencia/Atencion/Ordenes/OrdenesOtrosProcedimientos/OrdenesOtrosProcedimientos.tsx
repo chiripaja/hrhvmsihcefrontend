@@ -127,14 +127,14 @@ export const OrdenesOtrosProcedimientos = ({ datosEmergencia, session }: any) =>
         <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
             <span className="border-l-4 borderfondo h-6 mr-2"></span>
             <span className="flex-grow">Otros Procedimientos</span>
-
+            {datosEmergencia?.idTipoAlta==null &&(
             <button
                 onClick={toggleOffcanvasOtros} 
                 className={datosEmergencia?.ordenesOtros.length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
             >
                 Agregar
             </button>
-
+            )}
         </h2>
 
 
@@ -147,12 +147,13 @@ export const OrdenesOtrosProcedimientos = ({ datosEmergencia, session }: any) =>
             <p className="text-gray-500 text-sm mb-4">
                 No hay procedimientos activos para mostrar para este paciente
             </p>
-
+            {datosEmergencia?.idTipoAlta==null &&(
             <button 
             onClick={toggleOffcanvasOtros} 
             className="text-blue-500 hover:underline text-sm">
                 Registrar procedimientos
             </button>
+            )}
         </div>
         <OrdenesOtrosProcedimientosTabla modificar={1}  datosEmergencia={datosEmergencia}/>
     </div>
@@ -214,10 +215,10 @@ export const OrdenesOtrosProcedimientos = ({ datosEmergencia, session }: any) =>
                 </form>
                 <OrdenesOtrosProcedimientosTabla datosEmergencia={datosEmergencia}/>
                 <div className={datosEmergencia?.ordenesOtros.length > 0 ? "block" : "hidden"}>
-                    <button onClick={handleCanastaOtros} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                {datosEmergencia?.idTipoAlta==null &&( <button onClick={handleCanastaOtros} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                         Confirmar Orden
                         <CgAdd />
-                    </button>
+                    </button>)}
                 </div>
             </div>
         </div>

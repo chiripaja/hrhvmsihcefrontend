@@ -241,12 +241,12 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
                 <p className="text-gray-500 text-sm mb-4">
                     No hay recetas activas para mostrar para este paciente
                 </p>
-                <button
+                {datosEmergencia?.idTipoAlta==null &&(<button
                     onClick={toggleOffcanvas}
                     className="text-blue-500 hover:underline text-sm"
                 >
                     Registrar recetas activos
-                </button>
+                </button>)}
             </div>
             <OrdenesAnatomiaPatologicaRecetasCabecera datosEmergencia={datosEmergencia} handleOpenMenu={handleOpenMenu} />
         </div>
@@ -330,16 +330,16 @@ export const OrdenesAnatomiaPatologica = ({ datosEmergencia, session }: any) => 
                             })}
                             placeholder="Cantidad" />
                         <textarea {...register('frecuencia')} className='w-full border shadow mt-2 p-1' placeholder='Observaciones' ></textarea>
-                        <button type="submit" className="btnprimario mt-2">Guardar</button>
+                        {datosEmergencia?.idTipoAlta==null &&(  <button type="submit" className="btnprimario mt-2">Guardar</button>)}
                     </form>
                 </div>
 
                 <OrdenesAnatomiaPatologicaTabla datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
                 <div className={datosEmergencia?.ordenesAnatomiaPatologica.length > 0 ? "block" : "hidden"}>
-                    <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                {datosEmergencia?.idTipoAlta==null &&(<button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                         Confirmar Orden
                         <CgAdd />
-                    </button>
+                    </button>)}
                 </div>
             </div>
         </div>

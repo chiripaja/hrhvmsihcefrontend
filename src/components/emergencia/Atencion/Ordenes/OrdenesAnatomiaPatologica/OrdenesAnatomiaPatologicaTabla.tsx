@@ -31,9 +31,9 @@ export const OrdenesAnatomiaPatologicaTabla = ({ modificar = 0,datosEmergencia ,
                       {(modificar===1) && 
                        <th scope="col" className="tableth">Observaciones</th>
                       }
-                      {(modificar===0) && 
+                    {datosEmergencia?.idTipoAlta==null &&(
                        <th scope="col" className="tableth">Accion</th>
-                      }
+                     )}
                      
                      
                   </tr>
@@ -50,7 +50,7 @@ export const OrdenesAnatomiaPatologicaTabla = ({ modificar = 0,datosEmergencia ,
                           <td className="tabletd">
                                {data.observaciones}
                           </td>}
-                          {(modificar===0) && 
+                          {datosEmergencia?.idTipoAlta==null &&(
                           <td className="tabletd">
                                {data?.idEstadoDetalle=="1" ?
                                <> 
@@ -65,7 +65,7 @@ export const OrdenesAnatomiaPatologicaTabla = ({ modificar = 0,datosEmergencia ,
                                       </span>
                                   }
                           </td>
-      }
+      )}
                       </tr>
                   ))}
               </tbody>

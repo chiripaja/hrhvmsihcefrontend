@@ -307,9 +307,12 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
 
           {/* Botones */}
           <div className="flex space-x-4">
+          {datosEmergencia?.idTipoAlta==null &&(
+            
             <button type='submit' className="flex items-center justify-center bg-green-500 text-white px-4 py-2 rounded-md shadow hover:bg-green-600">
               Agregar
             </button>
+          )}
           </div>
         </form>
 
@@ -324,7 +327,9 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
                 <th className="border border-gray-300 px-4 py-2 text-left">Hora</th>
                 <th className="border border-gray-300 px-4 py-2 text-left">Servicio</th>
                 <th className="border border-gray-300 px-4 py-2 text-left">Médico Ordena</th>
+                {datosEmergencia?.idTipoAlta==null &&(
                 <th className="border border-gray-300 px-4 py-2 text-left">Acciones</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -336,14 +341,16 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
                       <td className="border border-gray-300 px-4 py-2">{data?.HoraOcupacion}</td>
                       <td className="border border-gray-300 px-4 py-2">{data?.NombreServicio}</td>
                       <td className="border border-gray-300 px-4 py-2">{data?.NomMedico}</td>
+                      {datosEmergencia?.idTipoAlta==null &&(
                       <td className="border border-gray-300 px-4 py-2">
+                   
                         <button
                           className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition"
                           onClick={() => eliminarPorId(data?.IdEstanciaHospitalaria)}
                         >
                           Eliminar
                         </button>
-                      </td>
+                      </td>)}
                     </tr>
                   ) : null
                 )}
