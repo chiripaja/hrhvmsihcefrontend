@@ -17,13 +17,13 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     idFuenteFinanciamiento: "",
     idFormaPago: "",
     idDestinoAtencion: "",
-    idCondicionMaterna: "",    
+    idCondicionMaterna: "",
     idPuntoCargaProcDentroConsultorio: "",
-    idTipoAlta:"",
-    idCondicionAlta:"",
-    idMedicoEgreso:"",
-    fechaEgreso:"",
-    horaEgreso:"",
+    idTipoAlta: "",
+    idCondicionAlta: "",
+    idMedicoEgreso: "",
+    fechaEgreso: "",
+    horaEgreso: "",
     diagnosticos: [],
     recetaCabezera: [] as RecetaCabecera[],
     recetaCabezeraProcedimientos: [],
@@ -35,12 +35,12 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
     ordenesTomografia: [] as any[],
     ordenesEcografiaGeneral: [] as any[],
     ordenesEcografiaObstetrica: [] as any[],
-    atencionesEmergencia:{},
+    atencionesEmergencia: {},
     ordenesLaboratorio: [],
     ordenesImagenes: [],
     ordenesOtros: [],
     ordenesProcedimiento: [] as OrdenProcedimiento[],
-    atencionesDatosAdicionalesAlta:[]
+    atencionesDatosAdicionalesAlta: []
   },
   resetdatosemergencia: () => {
     set(() => ({
@@ -57,13 +57,13 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         idFuenteFinanciamiento: "",
         idFormaPago: "",
         idDestinoAtencion: "",
-        idCondicionMaterna: "",    
+        idCondicionMaterna: "",
         idPuntoCargaProcDentroConsultorio: "",
-        idTipoAlta:"",
-        idCondicionAlta:"",
-        idMedicoEgreso:"",
-        fechaEgreso:"",
-        horaEgreso:"",
+        idTipoAlta: "",
+        idCondicionAlta: "",
+        idMedicoEgreso: "",
+        fechaEgreso: "",
+        horaEgreso: "",
         diagnosticos: [],
         recetaCabezera: [] as RecetaCabecera[],
         recetaCabezeraProcedimientos: [],
@@ -75,12 +75,12 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
         ordenesTomografia: [] as any[],
         ordenesEcografiaGeneral: [] as any[],
         ordenesEcografiaObstetrica: [] as any[],
-        atencionesEmergencia:{},
+        atencionesEmergencia: {},
         ordenesLaboratorio: [],
         ordenesImagenes: [],
         ordenesOtros: [],
         ordenesProcedimiento: [] as OrdenProcedimiento[],
-        atencionesDatosAdicionalesAlta:[]
+        atencionesDatosAdicionalesAlta: []
       },
 
     }));
@@ -315,11 +315,11 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       datosemergencia: { ...state.datosemergencia, CitaMotivo, CitaExamenClinico }
     })),
   setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any,
-     newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any,
-     newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any, idProducto: any,
-      idServicioEgreso: any,idTipoAlta:any,idCondicionAlta:any,idMedicoEgreso:any,fechaEgreso:any,
-      horaEgreso:any
-    ) =>
+    newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any,
+    newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any, idProducto: any,
+    idServicioEgreso: any, idTipoAlta: any, idCondicionAlta: any, idMedicoEgreso: any, fechaEgreso: any,
+    horaEgreso: any
+  ) =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
@@ -354,24 +354,24 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       recetaCabezera: newRecetaCabezera,
     }
   })),
-  setDiagnosticoByCuenta: (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, labConfHIS: any = null, idClasificacionDx: any,idordenDx:any) =>
+  setDiagnosticoByCuenta: (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, labConfHIS: any = null, idClasificacionDx: any, idordenDx: any) =>
     set((state: any) => ({
       datosemergencia: {
         ...state.datosemergencia,
-        diagnosticos: [...state.datosemergencia.diagnosticos, { IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion, labConfHIS, idClasificacionDx,idordenDx }]
+        diagnosticos: [...state.datosemergencia.diagnosticos, { IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion, labConfHIS, idClasificacionDx, idordenDx }]
       }
     })),
-    setEliminarDiagnosticoByCuenta: (IdDiagnostico: any, idClasificacionDx: any) =>
-      set((state: any) => ({
-        datosemergencia: {
-          ...state.datosemergencia,
-          diagnosticos: state.datosemergencia.diagnosticos.filter(
-            (diagnostico: any) =>
-              diagnostico.IdDiagnostico !== IdDiagnostico ||
-              diagnostico.idClasificacionDx !== idClasificacionDx
-          )
-        }
-      })),
+  setEliminarDiagnosticoByCuenta: (IdDiagnostico: any, idClasificacionDx: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        diagnosticos: state.datosemergencia.diagnosticos.filter(
+          (diagnostico: any) =>
+            diagnostico.IdDiagnostico !== IdDiagnostico ||
+            diagnostico.idClasificacionDx !== idClasificacionDx
+        )
+      }
+    })),
 
 
 
@@ -586,55 +586,78 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
 
 
 
-    createordenesEcografiaObstetrica: (data: any) =>
-      set((state: any) => ({
-        datosemergencia: {
-          ...state.datosemergencia,
-          ordenesEcografiaObstetrica: [...state.datosemergencia.ordenesEcografiaObstetrica, { ...data }]
-        }
-      })),
-  
-    updateordenesEcografiaObstetrica: async (idrecetacabecera: any) => {
-      set((state: any) => ({
-        datosemergencia: {
-          ...state.datosemergencia,
-          ordenesEcografiaObstetrica: state.datosemergencia.ordenesEcografiaObstetrica.map((data: any) =>
-            data.idrecetacabecera === ""
-              ? { ...data, idrecetacabecera }
-              : data
-          ),
-        },
-      }));
-      const updatedOrdenes = get().datosemergencia.ordenesEcografiaObstetrica;
-      return updatedOrdenes;
-    },
-  
-  
-    deleteordenesEcografiaObstetrica: (idproducto: any) =>
-      set((state: any) => ({
-        datosemergencia: {
-          ...state.datosemergencia,
-          ordenesEcografiaObstetrica: state.datosemergencia.ordenesEcografiaObstetrica.filter(
-            (data: any) => data.idproducto !== idproducto
-          ),
-        },
-      })),
+  createordenesEcografiaObstetrica: (data: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesEcografiaObstetrica: [...state.datosemergencia.ordenesEcografiaObstetrica, { ...data }]
+      }
+    })),
+
+  updateordenesEcografiaObstetrica: async (idrecetacabecera: any) => {
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesEcografiaObstetrica: state.datosemergencia.ordenesEcografiaObstetrica.map((data: any) =>
+          data.idrecetacabecera === ""
+            ? { ...data, idrecetacabecera }
+            : data
+        ),
+      },
+    }));
+    const updatedOrdenes = get().datosemergencia.ordenesEcografiaObstetrica;
+    return updatedOrdenes;
+  },
+
+
+  deleteordenesEcografiaObstetrica: (idproducto: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        ordenesEcografiaObstetrica: state.datosemergencia.ordenesEcografiaObstetrica.filter(
+          (data: any) => data.idproducto !== idproducto
+        ),
+      },
+    })),
 
 
 
-      createatencionesEmergencia: (data: any) =>
-        set((state: any) => ({
-          datosemergencia: {
-            ...state.datosemergencia,
-            atencionesEmergencia: { ...data }
+  createatencionesEmergencia: (data: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        atencionesEmergencia: { ...data }
+      }
+    })),
+  createAtencionesDatosAdicionalesAlta: (data: any) =>
+    set((state: any) => ({
+      datosemergencia: {
+        ...state.datosemergencia,
+        atencionesDatosAdicionalesAlta: { ...data }
+      }
+    })),
+
+
+    setDatosAltaMedica: (
+      idDestinoAtencion: any,idTipoAlta:any,idCondicionAlta:any,fechaEgreso:any,
+      horaEgreso:any,idMedicoEgreso:any,Pronostico:any,RecomendacionesyTratamiento:any,
+      enfermedadActual:any
+    ) =>
+      set((state: any) => ({
+        datosemergencia: { 
+          ...state.datosemergencia, 
+          idDestinoAtencion,
+          idTipoAlta,
+          idCondicionAlta,
+          fechaEgreso,
+          horaEgreso,
+          idMedicoEgreso,
+          atencionesDatosAdicionalesAlta : {
+            pronostico:Pronostico,
+            recomendacionesyTratamiento:RecomendacionesyTratamiento,
+            enfermedadActual:enfermedadActual
           }
-        })),
-        createAtencionesDatosAdicionalesAlta: (data: any) =>
-          set((state: any) => ({
-            datosemergencia: {
-              ...state.datosemergencia,
-              atencionesDatosAdicionalesAlta: { ...data }
-            }
-          })),
+         }
+      })),
 
 }));

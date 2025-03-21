@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { useEmergenciaDatosStore } from '@/store/ui/emergenciadatos';
+import { FaFileAlt, FaUndoAlt } from 'react-icons/fa';
 
 
 
@@ -45,7 +46,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   const isFirstRender = useRef(true);
   const [eliminandoDiagnostico, setEliminandoDiagnostico] = useState(Boolean);
   const setDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setDiagnosticoByCuenta)
-
+  const setDatosAltaMedica=useEmergenciaDatosStore((state:any)=>state.setDatosAltaMedica)
   const GetDataIni = async () => {
     const responseDestino = await getData(`${process.env.apijimmynew}/emergencia/TiposDestinoAtencionSeleccionarDestinosDeConsultorioEmergencia`);
     setopcionesDestinoAtencion(responseDestino);
@@ -115,11 +116,16 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
       enfermedadActual: data?.EnfermedadActual,
       idAtencion: datosEmergencia?.idatencion
     }
-
+    
     if (datosEmergencia.diagnosticos?.filter((data: any) => data.idClasificacionDx == 3).length > 0) {
       try {
         const dataresponse = await axios.put(`${process.env.apijimmynew}/emergencia/AltasEmergencia/${datosEmergencia?.idcuentaatencion}`, objeto);
         showSuccessAlert("Se dio de Alta Correctamente")
+        setDatosAltaMedica(
+          parseInt(data?.destino, 10),parseInt(data?.idTipoAlta),parseInt(data?.idCondicionAlta),
+          data?.fechaEgreso, data?.horaEgreso,data?.idmedico?.value,data?.Pronostico,data?.RecomendacionesyTratamiento,
+          data?.EnfermedadActual
+        )
       } catch (error) {
         showSuccessError(`${error}`)
       }
@@ -128,7 +134,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
       showSuccessError(`Ingrese un diagnostico de Egreso`)
     }
 
-
+/**/
   }
 
   const FormDx: SubmitHandler<any> = async (data: any) => {
@@ -196,6 +202,10 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   const handleButtonClick = () => {
     handleSubmit(Form)();
   };
+
+  const handleRevertirAlta=()=>{
+
+  }
   const loadDefaultMedico = async () => {
     if (datosEmergencia?.idMedicoEgreso) {
       try {
@@ -217,7 +227,10 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   }, []);
   return (
     <>
-      <div className="p-6 bg-white shadow-md rounded-md w-full max-w-7xl mx-auto">
+   
+      <div className="p-6 bg-white  w-full mx-auto">
+      <fieldset className='border p-3  rounded-lg'>
+      <legend className='font-bold'>Datos Egreso</legend>
         <form className="p-4" onSubmit={handleSubmit(Form)}>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -319,8 +332,11 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
             </div>
           </div>
         </form>
+      </fieldset>
+        <fieldset className='border p-3  rounded-lg mt-2'>
+        <legend className='font-bold'>Diagnósticos de Egreso</legend>
         <form onSubmit={handleSubmit2(FormDx)}>
-          <h2 className="text-lg font-semibold mt-6">Diagnósticos de Egreso</h2>
+
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium">Diagnóstico</label>
@@ -372,13 +388,14 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
             </div>
           </div>
           <div className="mt-4 flex space-x-2">
+          {datosEmergencia?.idTipoAlta==null &&(
             <button className="bg-cyan-700 text-white px-4 py-2 rounded-md flex items-center">
               Agregar Dx
-            </button>
+            </button>)}
           </div>
         </form>
         <div className="overflow-x-auto">
-          <table className={datosEmergencia.diagnosticos?.filter((data: any) => data.idClasificacionDx == 3).length > 0 ? "tableT  w-3/4" : "hidden"}>
+          <table className={datosEmergencia.diagnosticos?.filter((data: any) => data.idClasificacionDx == 3).length > 0 ? "tableT  w-3/4 mb-4" : "hidden"}>
             <thead>
               <tr>
                 <th scope="col" className="tableth">Clasificacion</th>
@@ -414,17 +431,34 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
             </tbody>
           </table>
         </div>
+        </fieldset>
+        
+       
+        <hr />
         <div className="mt-6 flex space-x-4">
           {datosEmergencia?.idTipoAlta == null ? (
             <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleButtonClick} >Aceptar (F2)</button>
           ) : (
             <>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Papeleta de Alta</button>
-              <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleButtonClick} >Revertir alta</button>
+            <button 
+  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2"
+>
+  <FaFileAlt />
+  Papeleta de Alta
+</button>
+              <button 
+  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md flex items-center gap-2" 
+  onClick={handleRevertirAlta}
+>
+  <FaUndoAlt />
+  Revertir alta
+</button>
             </>
           )
           }
         </div>
+
+    
       </div>
 
     </>

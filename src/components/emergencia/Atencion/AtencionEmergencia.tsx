@@ -449,7 +449,6 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
               {emergenciaCuentaDatos &&
                 <Transferencias datosEmergencia={emergenciaCuentaDatos} session={session} />
               }
-
             </div>
           )}
 
@@ -459,7 +458,6 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
               {emergenciaCuentaDatos &&
                 <AtencionMedica datosEmergencia={emergenciaCuentaDatos} session={session} />
               }
-
             </div>
           )}
         </div>
