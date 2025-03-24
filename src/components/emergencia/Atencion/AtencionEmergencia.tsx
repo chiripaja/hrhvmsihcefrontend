@@ -68,9 +68,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const getDatosConsulta = async () => {
     try {
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
-      console.log("********")
-      console.log(datosAtencion?.idDestinoAtencion)
-      console.log("********")
+   
       setDatosAtencion(datosAtencion)
       createatencionesEmergencia(datosAtencion?.atencionesEmergencia)
       console.log(datosAtencion)

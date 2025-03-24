@@ -6,6 +6,7 @@ import { ModalGeneric } from "../../ui/ModalGeneric/ModalGeneric";
 import style from './CECabezeraTriaje.module.css'
 import { CEHistoricosByDni } from "../historicos/CEHistoricosByDni";
 import Image from "next/image";
+import { CEFormatoRehabilitacion } from "../consultamedica/CEFormatoRehabilitacion";
 export const CECabezeraTriaje = ({ dataPx }: any) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => {
@@ -25,7 +26,7 @@ export const CECabezeraTriaje = ({ dataPx }: any) => {
                         <button onClick={openModal} className="letraFondo hover:letraFondo flex items-center">
                             (Ver Históricos <FaSearchPlus className="ml-2" />)
                         </button>
-
+                        <CEFormatoRehabilitacion/>
                     </div>
                     <div className={style.mainTriaje__body}>
                         <div className={style.mainTriaje__body__container}>

@@ -1,72 +1,94 @@
+import { getData } from "@/components/helper/axiosHelper";
 import { showSuccessAlert } from "@/components/utils/alertHelper";
+import SelectGenerico from "@/components/utils/SelectGenerico";
 import axios, { Axios } from "axios";
-import { useEffect } from "react";
+import { parse } from "path";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillFileText, AiOutlineHeart, AiOutlineHistory } from "react-icons/ai";
 import { MdOutlineDescription, MdAccessTime, MdOutlineAssignment, MdHistory } from "react-icons/md";
 
 export const Anamnesis = ({ datosEmergencia, session }: any) => {
-    const { register, handleSubmit ,reset } = useForm();
-  
-    const onSubmit = async(data:any) => {
-      const objeto={
-        idCausaExternaMorbilidad: 13,
-        idAtencion: datosEmergencia?.idatencion,
-        idAtencionEmergencia:datosEmergencia?.atencionesEmergencia?.idAtencionEmergencia,
-        idUsuarioAuditoria: parseInt(session?.user?.id),
-        motivo: data?.motivoConsulta,
-        te: data?.tiempoEnfermedad,
-        relato: data?.relato,
-        antecedentes: data?.antecedentes,
-        efGeneral: data?.general,
-        efRespiratorio: data?.respiratorio,
-        efCardiovascular: data?.cardiovascular,
-        efAbdomen: data?.abdomen,
-        efNeurologico: data?.neurológico,
-        efGentouriano: data?.genitourinario,
-        efLocomotor: data?.locomotor,
-        otros: data?.otros,
-        evolucion: data?.evolucion
-      }
-      console.log(objeto) 
-      try {
-        
-       const response=await axios.put(
-          `${process.env.apijimmynew}/emergencia/AtencionesEmergenciaModificar`,
-          objeto)
-          console.log(response)
-          showSuccessAlert("Guardado Correctamente.")
-      } catch (error) {
-          console.log(error)
-      }
+  const { register, handleSubmit, reset, control } = useForm();
+  const [opcionMorbilidad, setOpcionMorbilidad] = useState<any[]>([]);
+  const onSubmit = async (data: any) => {
+    console.log()
+    const objeto = {
+      idCausaExternaMorbilidad: parseInt(data?.idCausaExternaMorbilidad),
+      idAtencion: datosEmergencia?.idatencion,
+      idAtencionEmergencia: datosEmergencia?.atencionesEmergencia?.idAtencionEmergencia,
+      idUsuarioAuditoria: parseInt(session?.user?.id),
+      motivo: data?.motivoConsulta,
+      te: data?.tiempoEnfermedad,
+      relato: data?.relato,
+      antecedentes: data?.antecedentes,
+      efGeneral: data?.general,
+      efRespiratorio: data?.respiratorio,
+      efCardiovascular: data?.cardiovascular,
+      efAbdomen: data?.abdomen,
+      efNeurologico: data?.neurológico,
+      efGentouriano: data?.genitourinario,
+      efLocomotor: data?.locomotor,
+      otros: data?.otros,
+      evolucion: data?.evolucion
+    }
+    console.log(objeto)
+    /*try {
       
-    };
+     const response=await axios.put(
+        `${process.env.apijimmynew}/emergencia/AtencionesEmergenciaModificar`,
+        objeto)
+        console.log(response)
+        showSuccessAlert("Guardado Correctamente.")
+    } catch (error) {
+        console.log(error)
+    }*/
 
-    useEffect(() => {
-      if (datosEmergencia?.atencionesEmergencia) {
-        reset({
-          motivoConsulta: datosEmergencia.atencionesEmergencia.motivo || "",
-          tiempoEnfermedad: datosEmergencia.atencionesEmergencia.te || "",
-          relato: datosEmergencia.atencionesEmergencia.relato || "",
-          antecedentes: datosEmergencia.atencionesEmergencia.antecedentes || "",
-          general: datosEmergencia.atencionesEmergencia.efgeneral || "",
-          respiratorio: datosEmergencia.atencionesEmergencia.efrespiratorio || "",
-          cardiovascular: datosEmergencia.atencionesEmergencia.efcardiovascular || "",
-          abdomen: datosEmergencia.atencionesEmergencia.efabdomen || "",
-          neurológico: datosEmergencia.atencionesEmergencia.efneurologico || "",
-          genitourinario: datosEmergencia.atencionesEmergencia.efgentouriano || "",
-          locomotor: datosEmergencia.atencionesEmergencia.eflocomotor || "",
-          otros: datosEmergencia.atencionesEmergencia.otros || "",
-          evolucion: datosEmergencia.atencionesEmergencia.evolucion || "",
-        });
-      }
-    }, [datosEmergencia, reset]);
-    return (
-      <form onSubmit={handleSubmit(onSubmit)} className=" mx-auto bg-white p-6 ">
-   
-     
-      {/* Sección Anamnesis */}
+  };
+  const getMorbilidadExterna = async () => {
+    const responseAlta = await getData(`${process.env.apijimmynew}/emergencia/EmergenciaCausaExternaMorbilidadSeleccionarTodos`);
+    console.log(responseAlta)
+    setOpcionMorbilidad(responseAlta);
+  }
+
+  useEffect(() => {
+    if (datosEmergencia?.atencionesEmergencia) {
+      reset({
+        motivoConsulta: datosEmergencia.atencionesEmergencia.motivo || "",
+        tiempoEnfermedad: datosEmergencia.atencionesEmergencia.te || "",
+        relato: datosEmergencia.atencionesEmergencia.relato || "",
+        antecedentes: datosEmergencia.atencionesEmergencia.antecedentes || "",
+        general: datosEmergencia.atencionesEmergencia.efgeneral || "",
+        respiratorio: datosEmergencia.atencionesEmergencia.efrespiratorio || "",
+        cardiovascular: datosEmergencia.atencionesEmergencia.efcardiovascular || "",
+        abdomen: datosEmergencia.atencionesEmergencia.efabdomen || "",
+        neurológico: datosEmergencia.atencionesEmergencia.efneurologico || "",
+        genitourinario: datosEmergencia.atencionesEmergencia.efgentouriano || "",
+        locomotor: datosEmergencia.atencionesEmergencia.eflocomotor || "",
+        otros: datosEmergencia.atencionesEmergencia.otros || "",
+        evolucion: datosEmergencia.atencionesEmergencia.evolucion || "",
+      });
+    }
+    getMorbilidadExterna();
+  }, [datosEmergencia, reset]);
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className=" mx-auto bg-white p-6 ">
+      {/* Sección Causa Morbilidad Externa */}
       <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <AiFillFileText className="text-blue-500" /> Causa Morbilidad Externa
+      </h2>
+      <div>
+        <SelectGenerico
+          opciones={opcionMorbilidad}
+          control={control}
+          name="idCausaExternaMorbilidad"
+          idKey="IdCausaExternaMorbilidad"
+          labelKey="DescripcionLarga"
+          rules={{ required: "Este campo es obligatorio" }}
+        />
+      </div>
+      {/* Sección Anamnesis */}
+      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 mt-2">
         <AiFillFileText className="text-blue-500" /> Anamnesis
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -94,7 +116,7 @@ export const Anamnesis = ({ datosEmergencia, session }: any) => {
         <div>
           <label className="block text-sm font-medium">Antecedentes</label>
           <div className="flex items-center border rounded p-2">
-        
+
             <textarea {...register("antecedentes")} className="w-full outline-none" />
           </div>
         </div>
@@ -128,11 +150,11 @@ export const Anamnesis = ({ datosEmergencia, session }: any) => {
       </div>
 
       {/* Botón de envío */}
-      {datosEmergencia?.idTipoAlta==null &&(
-      <button type="submit" className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 flex items-center justify-center gap-2">
-        Enviar
-      </button>
+      {datosEmergencia?.idTipoAlta == null && (
+        <button type="submit" className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 flex items-center justify-center gap-2">
+          Enviar
+        </button>
       )}
     </form>
-    )
+  )
 }

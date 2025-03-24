@@ -39,7 +39,6 @@ const SelectGenerico: React.FC<SelectGenericoProps> = ({
         <option value="">Seleccione una opción</option>
         {opciones.map((opcion) => (
           <option key={opcion[idKey]} value={opcion[idKey]}>
-            {opcion[idKey]}-
             {opcion[labelKey]}
           </option>
         ))}

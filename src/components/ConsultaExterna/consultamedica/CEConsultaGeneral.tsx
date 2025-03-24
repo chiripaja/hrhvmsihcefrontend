@@ -9,6 +9,7 @@ import { useCEDatosStore } from '@/store';
 import axios from 'axios';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import Swal from 'sweetalert2';
+import { ModalProps } from '@/components/ui/ModalProps/ModalProps';
 
 export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion }: any) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -16,6 +17,7 @@ export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion }: a
     const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
     const formRef = useRef<HTMLFormElement>(null);
     const setAtencionMedica=useCEDatosStore((state:any)=>state.setAtencionMedica);
+   
     const getConcatenatedNomdx = (diagnosticos: any[]): string => {
         return diagnosticos
             .filter((diagnostico, index, self) => 
@@ -110,7 +112,7 @@ export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion }: a
     };
     return (
         <>
-      
+     
             <div className='grid grid-cols-2 gap-3 mt-4'>
                 <form ref={formRef} onSubmit={handleSubmit(FormMotivo)}>
                     <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
