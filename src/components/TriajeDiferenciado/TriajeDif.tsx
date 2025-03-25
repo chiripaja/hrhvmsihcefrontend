@@ -42,8 +42,8 @@ type Input = {
 type InputBusquedad = {
     numcuenta: string
 }
-export const TriajeDif = ({usuario,idusuario}:any) => {
-    console.log(idusuario)
+export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
+
     const {
         register: register2,
         handleSubmit: handleSubmit2,
@@ -120,6 +120,50 @@ export const TriajeDif = ({usuario,idusuario}:any) => {
         }
 
     }
+
+    const getDataEmergencia=async(numerocuenta:any)=>{
+        try {
+            setShowPrioridades(true)
+            reset()
+          
+            const { data } = await axios.get(`${process.env.apiurl}/Triaje/SolicitaAgregar/${numerocuenta}`)
+            console.log(data?.triajeSolicita?.tipoServicio==="Consultorios Externos")
+            if(data?.triajeSolicita?.tipoServicio!=="Consultorios Externos"){           
+                setShowPrioridades(false)
+            }
+            if (data?.triajeSolicita?.exito === 0) {
+                setEditable(false)
+               
+            }
+            if (data?.triajeSolicita === null) {
+                setEditable(false)
+                Swal.fire({
+                    icon: "error",
+                    title: `<h5 classname='text-base'>No existe </h5>`,
+                    html: `Ingrese numero de cuenta valido<br\>`,
+                });
+            }
+            if (data?.triajeSolicita?.exito === 1) {
+                setEditable(true)
+            }
+            setInfo(data)
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: `Incorrecto`,
+                html: `Ingreso numero de cuenta incorrecto.`,
+            });
+            setInfo("")
+        }
+    }
+
+    useEffect(() => {
+        if (idcuentaatencion>0) {
+            setValue2("numcuenta", idcuentaatencion.toString()) 
+           
+            getDataEmergencia(idcuentaatencion.toString()) 
+        }
+    }, [idcuentaatencion])
 
 
 
@@ -451,7 +495,7 @@ export const TriajeDif = ({usuario,idusuario}:any) => {
 
     return (
         <>
-        <h1>modificado</h1>
+       
        
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div  className={`${showPrioridades ? 'col-span-3':'col-span-2'}`}>

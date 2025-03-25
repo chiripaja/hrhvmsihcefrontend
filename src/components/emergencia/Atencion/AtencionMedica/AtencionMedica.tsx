@@ -33,6 +33,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     }
   });
   const { handleSubmit: handleSubmit2, control: control2, register: register2,reset:reset2 } = useForm();
+  
   const { handleSubmit: handleSubmitAlta, control: controlAlta, register: registerAlta, formState: { errors },reset:resetAlta } = useForm();
   const [opcionesDestinoAtencion, setopcionesDestinoAtencion] = useState<any[]>([]);
   const [opcionesAltas, setOpcionesAltas] = useState<any[]>([]);
@@ -59,6 +60,8 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     setOpcionesCondicion(responseCondicion);
     const responseOrdenDx = await getData(`${process.env.apijimmynew}/diagnosticos/OrdenDiagnosticos`);
     setOptionsOrdenDx(responseOrdenDx);
+ 
+
     const responseClasificacionDx = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionEmergenciaEgreso`);
     const filtradoClasificacion = responseClasificacionDx.filter((data: any) =>
       ['D', 'P', 'R'].includes(data?.codigo)
@@ -380,7 +383,6 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
         <fieldset className='border p-3  rounded-lg mt-2'>
           <legend className='font-bold'>Diagnósticos de Egreso</legend>
           <form onSubmit={handleSubmit2(FormDx)}>
-
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium">Diagnóstico</label>
@@ -476,9 +478,9 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
             </table>
           </div>
         </fieldset>
+      
 
-
-        <hr />
+       
         <div className="mt-6 flex space-x-4">
           {datosEmergencia?.idTipoAlta == null ? (
             <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleButtonClick} >Aceptar (F2)</button>

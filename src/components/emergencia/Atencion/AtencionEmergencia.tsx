@@ -14,6 +14,7 @@ import { Ordenes } from "./Ordenes/Ordenes";
 import { MedicamentosCE } from "@/interfaces/MedicamentosCe";
 import { RecetaCabecera } from "@/interfaces/RecetaCabezeraI";
 import { AtencionMedica } from "./AtencionMedica/AtencionMedica";
+import { TriajeDif } from "@/components/TriajeDiferenciado/TriajeDif";
 export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
 
   const [activeTab, setActiveTab] = useState(1);
@@ -71,7 +72,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
    
       setDatosAtencion(datosAtencion)
       createatencionesEmergencia(datosAtencion?.atencionesEmergencia)
-      console.log(datosAtencion)
+    
       createAtencionesDatosAdicionalesAlta(datosAtencion?.atencionesDatosAdicionalesAlta)
       setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(
         datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio,
@@ -346,11 +347,13 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
     };
     ejecutarFunciones();
   }, [emergenciaCuentaDatos?.idFormaPago]);
-
+  if (!emergenciaCuentaDatos?.idFormaPago) return    <div className="flex justify-center items-center h-screen">
+  <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
+</div>; 
   return (
     <>
      
-
+  
       <CabeceraEmergencia idcuentaatencion={idcuentaatencion} />
       <div className="p-4">
         {/* Contenedor de los Tabs */}
@@ -415,7 +418,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
           {/* Contenido de Tab 1 */}
           {activeTab === 1 && (
             <div className="p-4 bg-white border rounded-md shadow-md">
-              <TriajeBusqueda />
+              <TriajeDif idcuentaatencion={275247}/>
             </div>
           )}
 

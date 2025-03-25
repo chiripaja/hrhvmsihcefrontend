@@ -116,7 +116,7 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
       idUsuarioAuditoria: parseInt(session?.user?.id, 10) || null
     };
     const nuevoConObjeto = [...nuevo, objetoEnviar];
-    console.log(nuevoConObjeto)
+  
 
     await axios.put(`${process.env.apijimmynew}/emergencia/AtencionesEstanciaHospitalaria/${datosEmergencia?.idatencion}/${data.IdServicio.value}`)
     registroTransferencias(nuevoConObjeto);
@@ -187,7 +187,6 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
       );
       getTransferencias(datosEmergencia?.idatencion)
       if (response.status === 200 || response.status === 201) {
-        console.log("Guardado correctamente:", response.data);
         return response.data; // Retorna la respuesta si es necesario
       } else {
         console.error("Error al guardar: Código de estado inesperado", response.status);
