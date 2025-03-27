@@ -664,7 +664,7 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
           datosemergencia: {
             ...state.datosemergencia,
             diagnosticos: state.datosemergencia.diagnosticos.filter(
-              (dx:any) => dx.idClasificacionDx !== 3
+              (dx: any) => dx.idClasificacionDx !== 3 && dx.idClasificacionDx !== 4
             ),
           },
         })),

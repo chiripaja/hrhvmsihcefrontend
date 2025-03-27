@@ -10,6 +10,7 @@ import Select from 'react-select';
 import { useEmergenciaDatosStore } from '@/store/ui/emergenciadatos';
 import { FaFileAlt, FaUndoAlt } from 'react-icons/fa';
 import { ModalProps } from '@/components/ui/ModalProps/ModalProps';
+import { DiagnosticoMortalidad } from './DiagnosticoMortalidad';
 
 
 
@@ -19,7 +20,7 @@ const formatDate = (dateString: any) => {
 };
 
 export const AtencionMedica = ({ datosEmergencia, session }: any) => {
-  const { handleSubmit, control, register, setValue,reset } = useForm({
+  const { handleSubmit, control, register, setValue,reset,watch } = useForm({
     defaultValues: {
       destino: datosEmergencia?.idDestinoAtencion || "",
       idTipoAlta: datosEmergencia?.idTipoAlta || "",
@@ -37,6 +38,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   const { handleSubmit: handleSubmitAlta, control: controlAlta, register: registerAlta, formState: { errors },reset:resetAlta } = useForm();
   const [opcionesDestinoAtencion, setopcionesDestinoAtencion] = useState<any[]>([]);
   const [opcionesAltas, setOpcionesAltas] = useState<any[]>([]);
+  const [opcionesCondicionOriginal, setOpcionesCondicionOriginal] = useState<any[]>([]);
   const [opcionesCondicion, setOpcionesCondicion] = useState<any[]>([]);
   const [optionMedicosG, setoptionMedicosG] = useState<any[]>([]);
   const [optionsOrdenDx, setOptionsOrdenDx] = useState<any[]>([]);
@@ -57,7 +59,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     const responseAlta = await getData(`${process.env.apijimmynew}/emergencia/tiposAlta`);
     setOpcionesAltas(responseAlta);
     const responseCondicion = await getData(`${process.env.apijimmynew}/emergencia/TiposCondicionAlta`);
-    setOpcionesCondicion(responseCondicion);
+    setOpcionesCondicionOriginal(responseCondicion);
     const responseOrdenDx = await getData(`${process.env.apijimmynew}/diagnosticos/OrdenDiagnosticos`);
     setOptionsOrdenDx(responseOrdenDx);
  
@@ -220,8 +222,19 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
         idUsuarioAuditoria: session?.user?.id,
         idordenDx: data?.idordenDx,
       };
-      console.log("data envio")
-      console.log(DxSend)
+      return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
+    });
+    const requests2 = datosEmergencia.diagnosticos.filter((data: any) => data.idClasificacionDx == 4).map((data: any) => {
+      const DxSend = {
+        labConfHIS: "",
+        idAtencion: datosEmergencia?.idatencion,
+        idDiagnostico: data?.IdDiagnostico,
+        idSubclasificacionDx: data?.idSubclasificacionDx,
+        idClasificacionDx: 4,
+        idAtencionDiagnostico: datosEmergencia?.idatencion,
+        idUsuarioAuditoria: session?.user?.id,
+        idordenDx: data?.idordenDx,
+      };
       return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
     });
     ToasterMsj("Exito", "success", "Actualización diagnostico.")/**/
@@ -250,9 +263,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     handleSubmit(Form)();
   };
 
-  const handleRevertirAlta = () => {
-
-  }
+  
   const loadDefaultMedico = async () => {
     if (datosEmergencia?.idMedicoEgreso) {
       try {
@@ -272,9 +283,26 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   useEffect(() => {
     loadDefaultMedico();
   }, []);
+
+  const enviarFormulario=()=>{
+    console.log("envio el formulario")
+    handleSubmit(Form)();
+  }
+  
+
+  const destinow=watch('destino');
+  useEffect(() => {
+    if(destinow==25){
+      const dataOpcionesCondicion=opcionesCondicionOriginal.filter((data:any)=>data?.idCondicionAlta==4)
+      setOpcionesCondicion(dataOpcionesCondicion)
+    }else{
+      setOpcionesCondicion(opcionesCondicionOriginal.filter((data:any)=>data?.idCondicionAlta!=4))
+    }
+  }, [destinow])
+  
   return (
     <>
-
+  {JSON.stringify(destinow,null,2)}
       <div className="p-6 bg-white  w-full mx-auto">
         <fieldset className='border p-3  rounded-lg'>
           <legend className='font-bold'>Datos Egreso</legend>
@@ -326,11 +354,11 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
                 <label className="block text-sm font-medium">Fecha y hora alta</label>
                 <div className='flex gap-2'>
                   <input type="date"
-                    {...register('fechaEgreso')}
+                    {...register('fechaEgreso', { required: "La fecha de egreso es obligatoria" })}
                     className="w-full border rounded-md p-2 basis-2/3" />
                   <input
                     type="time"
-                    {...register('horaEgreso')}
+                    {...register('horaEgreso', { required: "La hora de egreso es obligatoria" })}
                     className="w-full border rounded-md p-2 basis-1/3"
                   />
                 </div>
@@ -483,7 +511,16 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
        
         <div className="mt-6 flex space-x-4">
           {datosEmergencia?.idTipoAlta == null ? (
-            <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleButtonClick} >Aceptar (F2)</button>
+            <>
+            {destinow==25?(
+               <DiagnosticoMortalidad datosEmergencia={datosEmergencia} enviarFormulario={enviarFormulario}/>
+            ):(
+              <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleButtonClick} >Aceptar </button>
+            )}
+               
+                
+            </>
+           
           ) : (
             <>
               <button
