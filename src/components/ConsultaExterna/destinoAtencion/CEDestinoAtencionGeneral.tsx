@@ -23,9 +23,8 @@ const opcionCondicionMaterna = [
   { id: 2, valor: "Puerpera" },
   { id: 3, valor: "Ninguna" }
 ]
-export const CEDestinoAtencionGeneral = ({ session }: any) => {
+export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const router = useRouter();
-  const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [listadoInterconsulta, setListadoInterconsulta] = useState<any[]>([])
   const [options, setOptions] = useState<any[]>([]);
@@ -245,7 +244,6 @@ export const CEDestinoAtencionGeneral = ({ session }: any) => {
               </button>
             </form>
             <details>
-
               <summary className='mt-3 cursor-pointer'>Lista interconsultas</summary>
               <table className={listadoInterconsulta?.length > 0 ? "tableT" : "hidden"} >
                 <thead>
@@ -254,8 +252,6 @@ export const CEDestinoAtencionGeneral = ({ session }: any) => {
                     <th scope="col" className="tableth">Servicio</th>
                     <th scope="col" className="tableth">Motivo</th>
                     <th scope="col" className="tableth">Accion</th>
-
-
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
@@ -269,7 +265,6 @@ export const CEDestinoAtencionGeneral = ({ session }: any) => {
                           <GoTrash size={24} className="text-red-400 hover:text-red-700 cursor-pointer" onClick={() => handleDeleteInterconsulta(data?.idsolicitudespecialidad)} />
                         </Tooltip>
                       </td>
-
                     </tr>
                   ))}
                 </tbody>
@@ -286,33 +281,33 @@ export const CEDestinoAtencionGeneral = ({ session }: any) => {
               <legend className="font-bold">Módulo Destino Atención</legend>
 
               {destinoAtencion?.length > 0 && (
- <Controller
- name="destinoAtencion"
- control={control2}
- rules={{ required: "Este campo es obligatorio" }}  // Reglas de validación
- defaultValue={cuentaDatos?.idDestinoAtencion || ""}
- render={({ field, fieldState }) => (
-   <div>
-     <select
-       {...field}
-       value={field.value || ""}
-       onChange={(e) => field.onChange(e.target.value)}
-       className="w-full border mt-2 p-2 rounded shadow-sm"
-     >
-       <option value="">Seleccione una opción</option>
-       {destinoAtencion.map((data: any) => (
-         <option key={data?.IdDestinoAtencion} value={data?.IdDestinoAtencion}>
-           {data?.DescripcionLarga}
-         </option>
-       ))}
-     </select>
-     {/* Mostrar mensaje de error */}
-     {fieldState?.error && <p className="text-red-500">{fieldState?.error?.message}</p>}
-   </div>
- )}
-/>
+                <Controller
+                  name="destinoAtencion"
+                  control={control2}
+                  rules={{ required: "Este campo es obligatorio" }}  // Reglas de validación
+                  defaultValue={cuentaDatos?.idDestinoAtencion || ""}
+                  render={({ field, fieldState }) => (
+                    <div>
+                      <select
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        className="w-full border mt-2 p-2 rounded shadow-sm"
+                      >
+                        <option value="">Seleccione una opción</option>
+                        {destinoAtencion.map((data: any) => (
+                          <option key={data?.IdDestinoAtencion} value={data?.IdDestinoAtencion}>
+                            {data?.DescripcionLarga}
+                          </option>
+                        ))}
+                      </select>
+                      {/* Mostrar mensaje de error */}
+                      {fieldState?.error && <p className="text-red-500">{fieldState?.error?.message}</p>}
+                    </div>
+                  )}
+                />
 
-)}
+              )}
             </fieldset>
 
             <fieldset className='border p-3 mt-8'>

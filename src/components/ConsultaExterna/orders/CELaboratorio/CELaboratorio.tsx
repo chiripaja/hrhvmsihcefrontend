@@ -13,8 +13,7 @@ import { CgAdd } from 'react-icons/cg';
 import { CELaboratorioTabla } from './CELaboratorioTabla';
 import { PiJarLabel } from 'react-icons/pi';
 
-export const CELaboratorio = () => {
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
+export const CELaboratorio = ({cuentaDatos}:any) => {
     const [isOffcanvasOpenLaboratorio, setIsOffcanvasOpenLaboratorio] = useState(false);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const [dataPuntosDeCargaLab, setDataPuntosDeCargaLab] = useState<any[]>([])
@@ -241,7 +240,7 @@ export const CELaboratorio = () => {
                         Registrar Examenes activos
                     </button>
                 </div>
-                <CELaboratorioTabla modificar={1} />
+                <CELaboratorioTabla modificar={1} cuentaDatos={cuentaDatos}/>
             </div>
             {isOffcanvasOpenLaboratorio && (
                 <div
@@ -347,7 +346,7 @@ export const CELaboratorio = () => {
                         <button type="submit" className="btnprimario mt-2">Guardar</button>
                     </form>
 
-                    <CELaboratorioTabla />
+                    <CELaboratorioTabla cuentaDatos={cuentaDatos}/>
                     <div className={cuentaDatos?.ordenesLaboratorio.length > 0 ? "block" : "hidden"}>
                         <button onClick={handleCanastaPorPuntoDeCarga} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden

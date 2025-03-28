@@ -84,8 +84,6 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
           ); 
     }
 
-
-
     useEffect(() => {
         const getSubClasDx = async () => {
             const data = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionEmergencia`);
@@ -99,9 +97,6 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
 
     }, []);
 
-
-
-
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
@@ -111,7 +106,6 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
             getAddDx()
         }
     }, [datosEmergencia.diagnosticos])
-
 
     const getAddDx = async () => {
         const data = await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdClasificacionDx/${datosEmergencia?.idatencion}/2`);
@@ -129,15 +123,10 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
             return axios.post(`${process.env.apijimmynew}/diagnosticos/agregarAtencionDiagnostico`, DxSend);
         });
         ToasterMsj("Exito", "success", "Actualización diagnostico.")
-
-
-
     }
-
 
     return (
         <>
-
             <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
@@ -145,7 +134,7 @@ export const DiagnosticoIngreso = ({ datosEmergencia, session }: any) => {
                     {datosEmergencia?.idTipoAlta==null &&(
                     <button
                         onClick={toggleOffcanvasDx}
-                        className={datosEmergencia.diagnosticos?.length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
+                        className={datosEmergencia?.diagnosticos?.filter((data: any) => data.idClasificacionDx === 2).length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
                     >
                         Agregar
                     </button>

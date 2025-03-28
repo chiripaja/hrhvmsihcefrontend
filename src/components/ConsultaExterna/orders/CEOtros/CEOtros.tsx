@@ -18,9 +18,8 @@ interface Option {
 }
 
 
-export const CEOtros = ({ session }: any) => {
+export const CEOtros = ({ session,cuentaDatos }: any) => {
     const [isOffcanvasOpenOtros, setIsOffcanvasOpenOtros] = useState(false);
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
     const [options, setOptions] = useState<Option[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
@@ -153,7 +152,7 @@ export const CEOtros = ({ session }: any) => {
                         Registrar procedimientos
                     </button>
                 </div>
-                <CEOtrosTabla modificar={1} />
+                <CEOtrosTabla modificar={1} cuentaDatos={cuentaDatos}/>
             </div>
 
             {isOffcanvasOpenOtros && (
@@ -211,7 +210,7 @@ export const CEOtros = ({ session }: any) => {
                             <textarea {...register('frecuencia')} className='w-full border shadow mt-2 p-1' placeholder='Observaciones' ></textarea>
                             <button type="submit" className="btnprimario mt-2">Guardar</button>
                         </form>
-                        <CEOtrosTabla />
+                        <CEOtrosTabla cuentaDatos={cuentaDatos}/>
                         <div className={cuentaDatos?.ordenesOtros.length > 0 ? "block" : "hidden"}>
                             <button onClick={handleCanastaOtros} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                                 Confirmar Orden

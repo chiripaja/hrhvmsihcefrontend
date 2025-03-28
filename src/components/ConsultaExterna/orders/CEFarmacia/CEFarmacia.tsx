@@ -17,9 +17,9 @@ interface Option {
     value: string;
     label: string;
 }
-export const CEFarmacia = () => {
+export const CEFarmacia = ({ cuentaDatos }: any) => {
     const [isOffcanvasOpenFarmacia, setIsOffcanvasOpenFarmacia] = useState(false);
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
+
     const [options, setOptions] = useState<Option[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [tiposViasAdministracion, setTiposViasAdministracion] = useState<any[]>([]);
@@ -44,13 +44,13 @@ export const CEFarmacia = () => {
             iddiagnostico: data?.diagnostico,
             nombre: data?.idproductoFarmacia?.label,
             usuarioauditoria: 0,
-            idEstadoDetalle:1
+            idEstadoDetalle: 1
         }
         const existeMedicamento = cuentaDatos?.medicamentos?.some(
             (medicamento: MedicamentosCE) => medicamento.idproducto === datosMedicamentos.idproducto
         );
         if (!existeMedicamento) {
-            createMedicamento(datosMedicamentos); 
+            createMedicamento(datosMedicamentos);
             ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
             reset();
         } else {
@@ -58,9 +58,9 @@ export const CEFarmacia = () => {
                 icon: "error",
                 title: "Advertencia",
                 text: "El medicamento ya está registrado."
-              });
+            });
         }
-       
+
     }
 
     const GetTiposViasAdministracion = async () => {
@@ -217,7 +217,7 @@ export const CEFarmacia = () => {
                         Registrar medicamentos activos
                     </button>
                 </div>
-                <CEFarmaciaTabla modificar={1} />
+                <CEFarmaciaTabla modificar={1} cuentaDatos={cuentaDatos} />
             </div>
             {isOffcanvasOpenFarmacia && (
                 <div
@@ -314,13 +314,12 @@ export const CEFarmacia = () => {
                                 })}
                                 placeholder="Cantidad"
                             />
-
                             <textarea {...register('frecuencia')} className='w-full border shadow mt-2 p-1' placeholder='Frecuencia' ></textarea>
                             <button type="submit" className="btnprimario m-2" >Agregar</button>
                         </form>
                     </div>
 
-                    <CEFarmaciaTabla />
+                    <CEFarmaciaTabla cuentaDatos={cuentaDatos} />
                     <div className={cuentaDatos?.medicamentos.length > 0 ? "block" : "hidden"}>
                         <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden

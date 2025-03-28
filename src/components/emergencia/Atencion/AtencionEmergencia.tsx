@@ -42,7 +42,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const createatencionesEmergencia = useEmergenciaDatosStore((state: any) => state.createatencionesEmergencia);
 
   const limpiarordenesProcedimiento = useEmergenciaDatosStore((state: any) => state.limpiarordenesProcedimiento)
-  const createAtencionesDatosAdicionalesAlta=useEmergenciaDatosStore((state: any) => state.createAtencionesDatosAdicionalesAlta)
+  const createAtencionesDatosAdicionalesAlta = useEmergenciaDatosStore((state: any) => state.createAtencionesDatosAdicionalesAlta)
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
@@ -69,10 +69,10 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
   const getDatosConsulta = async () => {
     try {
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
-   
+
       setDatosAtencion(datosAtencion)
       createatencionesEmergencia(datosAtencion?.atencionesEmergencia)
-    
+
       createAtencionesDatosAdicionalesAlta(datosAtencion?.atencionesDatosAdicionalesAlta)
       setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(
         datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio,
@@ -347,13 +347,13 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
     };
     ejecutarFunciones();
   }, [emergenciaCuentaDatos?.idFormaPago]);
-  if (!emergenciaCuentaDatos?.idFormaPago) return    <div className="flex justify-center items-center h-screen">
-  <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
-</div>; 
+  if (!emergenciaCuentaDatos?.idFormaPago) return <div className="flex justify-center items-center h-screen">
+    <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
+  </div>;
   return (
     <>
-     
-  
+
+
       <CabeceraEmergencia idcuentaatencion={idcuentaatencion} />
       <div className="p-4">
         {/* Contenedor de los Tabs */}
@@ -418,7 +418,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
           {/* Contenido de Tab 1 */}
           {activeTab === 1 && (
             <div className="p-4 bg-white border rounded-md shadow-md">
-              <TriajeDif idcuentaatencion={275247}/>
+              <TriajeDif idcuentaatencion={275247} />
             </div>
           )}
 

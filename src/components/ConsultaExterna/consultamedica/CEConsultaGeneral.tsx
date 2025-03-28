@@ -11,9 +11,8 @@ import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import Swal from 'sweetalert2';
 import { ModalProps } from '@/components/ui/ModalProps/ModalProps';
 
-export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion }: any) => {
+export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion,cuentaDatos }: any) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
     const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
     const formRef = useRef<HTMLFormElement>(null);
     const setAtencionMedica=useCEDatosStore((state:any)=>state.setAtencionMedica);

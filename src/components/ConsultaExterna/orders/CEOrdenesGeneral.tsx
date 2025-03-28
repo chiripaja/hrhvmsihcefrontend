@@ -14,7 +14,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { ModalGeneric } from '@/components/ui/ModalGeneric/ModalGeneric';
 import { CEPaquetes } from './CEPaquetes/CEPaquetes';
-export const CEOrdenesGeneral = ({ session, handleTabChange }: any) => {
+export const CEOrdenesGeneral = ({ session, handleTabChange,cuentaDatos }: any) => {
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,11 +46,11 @@ export const CEOrdenesGeneral = ({ session, handleTabChange }: any) => {
           
             </ModalGeneric>
             <div className='grid grid-cols-2 gap-3 mt-4' >
-                <CEFarmacia />
-                <CELaboratorio />
-                <CEImagenes />
-                <CEOtros session={session} />
-                <CEProcedimientosConsultorio session={session} />{/**/}
+                <CEFarmacia cuentaDatos={cuentaDatos}/>
+                <CELaboratorio cuentaDatos={cuentaDatos}/>
+                <CEImagenes cuentaDatos={cuentaDatos}/>
+                <CEOtros session={session} cuentaDatos={cuentaDatos}/>
+                <CEProcedimientosConsultorio session={session} cuentaDatos={cuentaDatos}/>
                 <div className="flex justify-end mt-6 col-span-2">
                     <button
                         type="button"

@@ -16,8 +16,8 @@ const NombrePuntoCarga = (id: any) => {
     }
     return "hola mundo"
 }
-export const CEImagenesTabla = ({ modificar = 0 }: { modificar?: number }) => {
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
+export const CEImagenesTabla = ({ modificar = 0,cuentaDatos }: { modificar?: number,cuentaDatos:any }) => {
+ 
     const deleteLaboratorio = useCEDatosStore((state: any) => state.deleteLaboratorio);
     const handleDelete = (indexToDelete: number, puntocarga: any) => {
         deleteLaboratorio(indexToDelete, puntocarga)

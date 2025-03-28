@@ -231,12 +231,12 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
   };
-  if (dataPx === undefined) {
-    return <Loading />
-  }
+  if (!cuentaDatos?.idFormaPago) return <div className="flex justify-center items-center h-screen">
+  <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
+</div>;
+
   return (
     <div className="flex flex-wrap bg-white p-3 rounded w-full shadow-2xl">
-
     
       <CECabezeraTriaje dataPx={dataPx} />
       <div className="border-e border-gray-200 dark:border-neutral-700">
@@ -312,7 +312,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           aria-labelledby="vertical-tab-with-border-item-1"
           className={activeTab === '1' ? '' : 'hidden'}
         >
-          <CEAntecedentesGeneral handleTabChange={handleTabChange} />
+          <CEAntecedentesGeneral handleTabChange={handleTabChange} cuentaDatos={cuentaDatos}/>
         </div>
         <div
           id="vertical-tab-with-border-2"
@@ -320,7 +320,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           role="tabpanel"
           aria-labelledby="vertical-tab-with-border-item-2"
         >
-          <CEConsultaGeneral handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion}/>
+          <CEConsultaGeneral handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion} cuentaDatos={cuentaDatos}/>
         </div>
         <div
           id="vertical-tab-with-border-3"
@@ -328,7 +328,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           role="tabpanel"
           aria-labelledby="vertical-tab-with-border-item-3"
         >
-          <CEOrdenesGeneral session={session} handleTabChange={handleTabChange}/>
+          <CEOrdenesGeneral session={session} handleTabChange={handleTabChange} cuentaDatos={cuentaDatos}/>
         </div>
         <div
           id="vertical-tab-with-border-4"
@@ -336,7 +336,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           role="tabpanel"
           aria-labelledby="vertical-tab-with-border-item-4"
         >
-          <CEDestinoAtencionGeneral session={session}/>
+          <CEDestinoAtencionGeneral session={session} cuentaDatos={cuentaDatos}/>
         </div>
       </div>
     </div>

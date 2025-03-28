@@ -12,10 +12,9 @@ import axios from "axios";
 import { debounce } from "@mui/material";
 import Swal from "sweetalert2";
 
-export const CEProcedimientosConsultorio = ({ session }: any) => {
+export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
     const [isOffcanvasOpenProcedimientos, setIsOffcanvasOpenProcedimientos] = useState(false);
     const [options, setOptions] = useState<any[]>([]);
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const createordenesProcedimiento = useCEDatosStore((state: any) => state.createordenesProcedimiento);
     const updateProcedimientosIdOrden = useCEDatosStore((state: any) => state.updateProcedimientosIdOrden);
@@ -148,7 +147,7 @@ export const CEProcedimientosConsultorio = ({ session }: any) => {
                         Registrar examenes activos
                     </button>
                 </div>
-                <CEProcedimientosConsultorioTabla modificar={1} />
+                <CEProcedimientosConsultorioTabla modificar={1} cuentaDatos={cuentaDatos}/>
             </div>
             {isOffcanvasOpenProcedimientos && (
                 <div
@@ -223,7 +222,7 @@ export const CEProcedimientosConsultorio = ({ session }: any) => {
                         <input type="number" className='inputSelect mt-2 mb-1' {...register('cantidad')} placeholder="Cantidad" />
                         <button type="submit" className="btnprimario mt-2">Guardar</button>
                     </form>
-                    <CEProcedimientosConsultorioTabla />
+                    <CEProcedimientosConsultorioTabla cuentaDatos={cuentaDatos}/>
                     <div className={cuentaDatos?.ordenesProcedimiento.length > 0 ? "block" : "hidden"}>
                         <button onClick={handleCanastaProcedimientos} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden

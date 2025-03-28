@@ -2,8 +2,8 @@ import { useCEDatosStore } from "@/store";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { GoTrash } from "react-icons/go";
 
-export const CEOtrosTabla = ({ modificar = 0 }: { modificar?: number }) => {
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
+export const CEOtrosTabla = ({ modificar = 0,cuentaDatos }: { modificar?: number,cuentaDatos:any }) => {
+
     const deleteordenesOtros = useCEDatosStore((state: any) => state.deleteordenesOtros);
     const handleDelete = (indexToDelete: number) => {
         console.log(indexToDelete)

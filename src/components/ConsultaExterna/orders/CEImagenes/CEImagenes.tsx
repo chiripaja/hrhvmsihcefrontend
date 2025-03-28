@@ -15,9 +15,8 @@ interface Option {
     value: string;
     label: string;
 }
-export const CEImagenes = () => {
+export const CEImagenes = ({cuentaDatos}:any) => {
     const [isOffcanvasOpenImagenes, setIsOffcanvasOpenImagenes] = useState(false);
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const setRecetaCabezera = useCEDatosStore((state: any) => state.setRecetaCabezera);
     const createOrdenesImagenes = useCEDatosStore((state: any) => state.createOrdenesImagenes);
@@ -234,7 +233,7 @@ export const CEImagenes = () => {
                     </button>
                 </div>
 
-                <CEImagenesTabla modificar={1} />
+                <CEImagenesTabla modificar={1} cuentaDatos={cuentaDatos}/>
             </div>
             {isOffcanvasOpenImagenes && (
                 <div
@@ -327,7 +326,7 @@ export const CEImagenes = () => {
                         <textarea {...register('frecuencia')} className='w-full border shadow mt-2 p-1' placeholder='Observaciones' ></textarea>
                         <button type="submit" className="btnprimario mt-2">Guardar</button>
                     </form>
-                    <CEImagenesTabla />
+                    <CEImagenesTabla cuentaDatos={cuentaDatos}/>
                     <div className={cuentaDatos?.ordenesImagenes.length > 0 ? "block" : "hidden"}>
                         <button onClick={handleCanastaPorPuntoDeCarga} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden

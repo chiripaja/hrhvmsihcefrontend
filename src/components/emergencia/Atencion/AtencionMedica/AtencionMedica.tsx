@@ -20,7 +20,7 @@ const formatDate = (dateString: any) => {
 };
 
 export const AtencionMedica = ({ datosEmergencia, session }: any) => {
-  const { handleSubmit, control, register, setValue,reset,watch } = useForm({
+  const { handleSubmit, control, register, setValue, reset, watch } = useForm({
     defaultValues: {
       destino: datosEmergencia?.idDestinoAtencion || "",
       idTipoAlta: datosEmergencia?.idTipoAlta || "",
@@ -33,9 +33,9 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
       EnfermedadActual: datosEmergencia?.atencionesDatosAdicionalesAlta?.enfermedadActual || ""
     }
   });
-  const { handleSubmit: handleSubmit2, control: control2, register: register2,reset:reset2 } = useForm();
-  
-  const { handleSubmit: handleSubmitAlta, control: controlAlta, register: registerAlta, formState: { errors },reset:resetAlta } = useForm();
+  const { handleSubmit: handleSubmit2, control: control2, register: register2, reset: reset2 } = useForm();
+
+  const { handleSubmit: handleSubmitAlta, control: controlAlta, register: registerAlta, formState: { errors }, reset: resetAlta } = useForm();
   const [opcionesDestinoAtencion, setopcionesDestinoAtencion] = useState<any[]>([]);
   const [opcionesAltas, setOpcionesAltas] = useState<any[]>([]);
   const [opcionesCondicionOriginal, setOpcionesCondicionOriginal] = useState<any[]>([]);
@@ -47,12 +47,13 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
   const [optionsDx, setOptionsDx] = useState<any[]>([]);
   const [estadoAlta, setestadoAlta] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [datoServicio, setDatoServicio] = useState<any>();
   const setEliminarDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setEliminarDiagnosticoByCuenta);
   const isFirstRender = useRef(true);
   const [eliminandoDiagnostico, setEliminandoDiagnostico] = useState(Boolean);
   const setDiagnosticoByCuenta = useEmergenciaDatosStore((state: any) => state.setDiagnosticoByCuenta)
   const setDatosAltaMedica = useEmergenciaDatosStore((state: any) => state.setDatosAltaMedica)
-  const eliminarDiagnosticosClasificacion3=useEmergenciaDatosStore((state:any)=>state.eliminarDiagnosticosClasificacion3)
+  const eliminarDiagnosticosClasificacion3 = useEmergenciaDatosStore((state: any) => state.eliminarDiagnosticosClasificacion3)
   const GetDataIni = async () => {
     const responseDestino = await getData(`${process.env.apijimmynew}/emergencia/TiposDestinoAtencionSeleccionarDestinosDeConsultorioEmergencia`);
     setopcionesDestinoAtencion(responseDestino);
@@ -62,7 +63,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     setOpcionesCondicionOriginal(responseCondicion);
     const responseOrdenDx = await getData(`${process.env.apijimmynew}/diagnosticos/OrdenDiagnosticos`);
     setOptionsOrdenDx(responseOrdenDx);
- 
+
 
     const responseClasificacionDx = await getData(`${process.env.apijimmynew}/diagnosticos/clasificacionEmergenciaEgreso`);
     const filtradoClasificacion = responseClasificacionDx.filter((data: any) =>
@@ -263,7 +264,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
     handleSubmit(Form)();
   };
 
-  
+
   const loadDefaultMedico = async () => {
     if (datosEmergencia?.idMedicoEgreso) {
       try {
@@ -280,29 +281,39 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
       }
     }
   };
+
+  const ServicioEgreso=async()=>{
+    const idservicio=datosEmergencia?.idServicioEgreso ? datosEmergencia?.idServicioEgreso: datosEmergencia?.idServicio
+    const response=await getData(`${process.env.apijimmynew}/servicios/${idservicio}`)
+
+
+    setDatoServicio(response)
+  
+  }
   useEffect(() => {
     loadDefaultMedico();
+    ServicioEgreso()
   }, []);
 
-  const enviarFormulario=()=>{
+  const enviarFormulario = () => {
     console.log("envio el formulario")
     handleSubmit(Form)();
   }
-  
 
-  const destinow=watch('destino');
+
+  const destinow = watch('destino');
   useEffect(() => {
-    if(destinow==25){
-      const dataOpcionesCondicion=opcionesCondicionOriginal.filter((data:any)=>data?.idCondicionAlta==4)
+    if (destinow == 25) {
+      const dataOpcionesCondicion = opcionesCondicionOriginal.filter((data: any) => data?.idCondicionAlta == 4)
       setOpcionesCondicion(dataOpcionesCondicion)
-    }else{
-      setOpcionesCondicion(opcionesCondicionOriginal.filter((data:any)=>data?.idCondicionAlta!=4))
+    } else {
+      setOpcionesCondicion(opcionesCondicionOriginal.filter((data: any) => data?.idCondicionAlta != 4))
     }
   }, [destinow])
-  
+
   return (
     <>
-  {JSON.stringify(destinow,null,2)}
+     
       <div className="p-6 bg-white  w-full mx-auto">
         <fieldset className='border p-3  rounded-lg'>
           <legend className='font-bold'>Datos Egreso</legend>
@@ -335,7 +346,7 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
                 <input
                   type="text"
                   className="w-full border rounded-md p-2"
-                  value="0005 EMER. DE TRAUMATOLOGÍA HRHV"
+                  value={datoServicio?.nombre}
                   readOnly
                 />
               </div>
@@ -506,21 +517,18 @@ export const AtencionMedica = ({ datosEmergencia, session }: any) => {
             </table>
           </div>
         </fieldset>
-      
 
-       
+
+
         <div className="mt-6 flex space-x-4">
           {datosEmergencia?.idTipoAlta == null ? (
             <>
-            {destinow==25?(
-               <DiagnosticoMortalidad datosEmergencia={datosEmergencia} enviarFormulario={enviarFormulario}/>
-            ):(
-              <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleButtonClick} >Aceptar </button>
-            )}
-               
-                
+              {destinow == 25 ? (
+                <DiagnosticoMortalidad datosEmergencia={datosEmergencia} enviarFormulario={enviarFormulario} />
+              ) : (
+                <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={handleButtonClick} >Aceptar </button>
+              )}
             </>
-           
           ) : (
             <>
               <button

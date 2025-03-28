@@ -12,11 +12,11 @@ import { Loading } from '@/components/utils/Loading'
 import { ToasterMsj } from '@/components/utils/ToasterMsj'
 
 
-export const CEAntecedentesGeneral = ({ handleTabChange }: any) => {
+export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
+
     useEffect(() => {
         if (cuentaDatos?.idpaciente) {
             getAntecedentes(cuentaDatos?.idpaciente);
