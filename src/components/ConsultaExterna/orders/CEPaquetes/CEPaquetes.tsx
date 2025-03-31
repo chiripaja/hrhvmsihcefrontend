@@ -1,51 +1,84 @@
 import { getData } from "@/components/helper/axiosHelper";
 import { Loading } from "@/components/utils/Loading";
 import { useCEDatosStore } from "@/store";
-
+import { HiX } from "react-icons/hi";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { GrFormNextLink } from "react-icons/gr";
+import { MedicamentosCE } from "@/interfaces/MedicamentosCe";
+import { CgKey } from "react-icons/cg";
 
-export const CEPaquetes = ({  onClose }: any) => {
-     const [OptionPuntoCarga, setOptionPuntoCarga] = useState<any[]>([]);
-        const [DatosPaquetes, setDatosPaquetes] = useState<any[]>([]);
-        const [OptionPaquetes, setOptionPaquetes] = useState<any[]>([]);
-        const [DatosKit, setDatosKit] = useState<any[]>([])
-     const getPuntoCarga = async () => {
-            const data = await getData(`${process.env.apijimmynew}/recetas/puntoscargapaquetes`);
-            setOptionPuntoCarga(data);
-            const datosPaq = await getData(`${process.env.apijimmynew}/recetas/paquetes`);
-            setDatosPaquetes(datosPaq);
-        }
-        useEffect(() => {
-            getPuntoCarga()
-        }, [])
-    
-    
-    
-    
-        const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-            const datosFiltrados = DatosPaquetes.filter((data: any) => data.idPuntoCarga == event.target.value)
-            setOptionPaquetes(datosFiltrados)
-        };
-        const MostrarPaquete = async (id: any) => {
-            const dato = await getData(`${process.env.apijimmynew}/recetas/FacturacionCatalogoPaquetesXpaquete/${id}`);
-            setDatosKit(dato)
-            
-        }
-    
-        const onSubmit = (data: any) => {
-            if (!data.idFactPaquete) {
-                alert("Por favor, seleccione un paquete.");
-                return;
-            }
-        };
-    
-    
-    const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
+export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
+    const [OptionPuntoCarga, setOptionPuntoCarga] = useState<any[]>([]);
+    const [DatosPaquetes, setDatosPaquetes] = useState<any[]>([]);
+    const [OptionPaquetes, setOptionPaquetes] = useState<any[]>([]);
+    const [DatosKit, setDatosKit] = useState<any[]>([])
+    const getPuntoCarga = async () => {
+        const data = await getData(`${process.env.apijimmynew}/recetas/puntoscargapaquetes`);
+        setOptionPuntoCarga(data);
+        const datosPaq = await getData(`${process.env.apijimmynew}/recetas/paquetes`);
+        setDatosPaquetes(datosPaq);
+    }
+    useEffect(() => {
+        getPuntoCarga()
+    }, [])
+
+
+
+
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const datosFiltrados = DatosPaquetes.filter((data: any) => data.idPuntoCarga == event.target.value)
+        setOptionPaquetes(datosFiltrados)
+    };
+    const MostrarPaquete = async (id: any) => {
+        const dato = await getData(`${process.env.apijimmynew}/recetas/FacturacionCatalogoPaquetesXpaquete/${id}`);
+        setDatosKit(dato)
+
+    }
+
+    const onSubmit = async (data: any) => {
+        const farmacia = DatosKit.filter((datos: any) => datos.idPuntoCarga == 5)
+        const farmaciaActualizado = await actualizarDatosFarmacia(farmacia)
+        const datosMedicamentosArray: MedicamentosCE[] = farmaciaActualizado.map((element: any) => ({
+            idrecetacabecera: "",
+            idproducto: element?.idProducto,
+            cantidad: element.Cantidad,
+            precio: element.Precio,
+            total: ((element.Cantidad || 0) * (element.Precio || 0))?.toFixed(4),
+            cantidadFarmSaldo: element.stock,
+            idDosisRecetada: 0,
+            observaciones: "",
+            idViaAdministracion: 0,
+            iddiagnostico: parseInt(data?.diagnostico),
+            nombre: element.Descripcion,
+            usuarioauditoria: session?.user?.id,
+            idEstadoDetalle: 1,
+        }));
+        console.log(datosMedicamentosArray)
+    };
+
+    const actualizarDatosFarmacia = async (farmacia: any) => {
+        const DatosKitFarmaciaActualizado = await Promise.all(
+            farmacia.map(async (data: any) => {
+                const response = await getData(
+                    `${process.env.apijimmynew}/farmacia/apiMedicamentosPrecioByIdProducto/4/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
+                );
+                return {
+                    ...data, // Mantiene los datos originales
+                    Precio: response?.PrecioUnitario, // Actualiza solo el precio si está disponible
+                    stock: response?.cantidad, // Puedes actualizar otros datos si es necesario
+                };
+            })
+        );
+
+        return DatosKitFarmaciaActualizado;
+    };
+
+
+
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { control, register, handleSubmit, watch,setValue, reset, formState: { errors } } = useForm<any>();
-    
+    const { control, register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<any>();
+
     const puntoCarga = (id: any) => {
         switch (id) {
             case 2:
@@ -68,21 +101,22 @@ export const CEPaquetes = ({  onClose }: any) => {
                 return "Número no reconocido";
         }
     }
-    const FormKits=(iddx:any)=>{
-     
-        const objFarmacia={}
+    const FormKits = (iddx: any) => {
+
+        const objFarmacia = {}
     }
-    const idFactPaqueteW=watch("idFactPaquete")
+    const idFactPaqueteW = watch("idFactPaquete")
     useEffect(() => {
-        console.log(idFactPaqueteW)
-        if(idFactPaqueteW){
-            console.log("entor")
+        if (idFactPaqueteW) {
             MostrarPaquete(idFactPaqueteW);
         }
     }, [idFactPaqueteW])
-    
+
     return (
         <>
+            <pre>
+                {JSON.stringify(session?.user?.id, null, 2)}
+            </pre>
             <form onSubmit={handleSubmit(onSubmit)} >
                 <select
 
@@ -98,7 +132,7 @@ export const CEPaquetes = ({  onClose }: any) => {
                         );
                     })}
                 </select>
-              
+
                 {/* Select para Paquetes */}
                 <div className="mt-4">
                     <select
@@ -121,81 +155,91 @@ export const CEPaquetes = ({  onClose }: any) => {
                         <p className="mt-1 text-sm text-red-500">{errors.idFactPaquete.message}</p>
                     )}
                 </div>
-             
-            </form>
+                <div>
+                    Seleccione Diagnostico:
+                    {cuentaDatos?.diagnosticos?.length > 0 && (
+                        <Controller
+                            name="diagnostico"
+                            control={control}
+                            defaultValue={cuentaDatos.diagnosticos[0]?.IdDiagnostico}
+                            render={({ field }) => (
+                                <select {...field} className="w-full border p-2 rounded shadow-sm">
+                                    <option value="">
+                                        Seleccione
+                                    </option>
+                                    {cuentaDatos.diagnosticos
+                                        .filter((value: any, index: any, self: any) =>
+                                            index === self.findIndex((t: any) => t.IdDiagnostico === value.IdDiagnostico)
+                                        )
+                                        .map((data: any) => (
+                                            <option key={data?.IdDiagnostico} value={data?.IdDiagnostico}>
+                                                {data?.nomdx}
+                                            </option>
+                                        ))}
+                                </select>
+                            )}
+                        />
+                    )}
+                </div>
 
-            {DatosKit.length>0 && 
-        <div className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Listado Adicionar</h2>
-            <div className="overflow-x-auto">
-                <table className="table-auto w-full border-collapse border border-gray-200 shadow-md rounded-lg">
-                    <thead>
-                        <tr className="bg-gray-100 text-left">
-                            <th className="px-4 py-2 border border-gray-300">Código</th>
-                            <th className="px-4 py-2 border border-gray-300">Descripción</th>
-                            <th className="px-4 py-2 border border-gray-300">Cantidad</th>
-                            <th className="px-4 py-2 border border-gray-300">Destino</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {DatosKit.map((item: any, index: number) => (
-                            <tr key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                                <td className="px-4 py-2 border border-gray-300">{item.Codigo}</td>
-                                <td className="px-4 py-2 border border-gray-300">{item.Descripcion}</td>
-                                <td className="px-4 py-2 border border-gray-300">{item.Cantidad}</td>
-                                <td className="px-4 py-2 border border-gray-300">{puntoCarga(item.idPuntoCarga)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        
-            <form>
-                Seleccione Diagnostico:
-                {cuentaDatos?.diagnosticos?.length > 0 && (
-                    <Controller
-                        name="diagnostico"
-                        control={control}
-                        defaultValue={cuentaDatos.diagnosticos[0]?.IdDiagnostico}
-                        render={({ field }) => (
-                            <select {...field} className="w-full border p-2 rounded shadow-sm">
-                                <option value="">
-                                    Seleccione
-                                </option>
-                                {cuentaDatos.diagnosticos
-                                    .filter((value: any, index: any, self: any) =>
-                                        index === self.findIndex((t: any) => t.IdDiagnostico === value.IdDiagnostico)
-                                    )
-                                    .map((data: any) => (
-                                        <option key={data?.IdDiagnostico} value={data?.IdDiagnostico}>
-                                            {data?.nomdx}
-                                        </option>
+
+                {DatosKit.length > 0 &&
+                    <div className="p-4">
+                        <h2 className="text-2xl font-bold mb-4">Listado Adicionar</h2>
+                        <div className="overflow-x-auto">
+                            <table className="table-auto w-full border-collapse border border-gray-200 shadow-md rounded-lg">
+                                <thead>
+                                    <tr className="bg-gray-100 text-left">
+                                        <th className="px-4 py-2 border border-gray-300">Código</th>
+                                        <th className="px-4 py-2 border border-gray-300">Descripción</th>
+                                        <th className="px-4 py-2 border border-gray-300">Cantidad</th>
+                                        <th className="px-4 py-2 border border-gray-300">Destino</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {DatosKit.map((item: any, index: number) => (
+                                        <tr key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                                            <td className="px-4 py-2 border border-gray-300">{item.Codigo}</td>
+                                            <td className="px-4 py-2 border border-gray-300">{item.Descripcion}</td>
+                                            <td className="px-4 py-2 border border-gray-300">{item.Cantidad}</td>
+                                            <td className="px-4 py-2 border border-gray-300">{puntoCarga(item.idPuntoCarga)}</td>
+                                        </tr>
                                     ))}
-                            </select>
-                        )}
-                    />
-                )}
-                <div className="flex justify-end mt-6 col-span-2">
+                                </tbody>
+                            </table>
+                        </div>
+
+
+
+                    </div>
+                }
+                <div className="flex justify-end mt-6 col-span-2 gap-2">
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`flex items-center px-4 py-2 rounded focus:outline-none ${isSubmitting ? 'bg-gray-400' : 'colorFondo'} text-white`}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium transition-all ${isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                            }`}
                     >
                         {isSubmitting ? (
                             <Loading />
                         ) : (
                             <>
                                 Agregar Kit de Medicamentos y Servicios
-                                <GrFormNextLink className="ml-2" />
+                                <GrFormNextLink className="w-5 h-5" />
                             </>
                         )}
                     </button>
-                    <button onClick={onClose}>Cerrar</button>
-                </div>
-            </form>
 
-        </div>
-}
+                    <button
+                        onClick={onClose}
+                        className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all"
+                    >
+                        <HiX className="w-5 h-5" />
+                        Cerrar
+                    </button>
+                </div>
+
+            </form>
         </>
     );
 };

@@ -35,13 +35,13 @@ export const CEOrdenesGeneral = ({ session, handleTabChange,cuentaDatos }: any) 
 
     return (
         <>
-         <button onClick={openModal} className="mt-4 px-4 py-2 hidden bg-blue-500 text-white rounded-md hover:bg-blue-600">
+         <button onClick={openModal} className=" mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
                     Kits Medicos
                 </button>
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
                 <label className="text-lg font-semibold text-gray-900">Kit Medicos</label>
                 <div className="text-sm text-gray-600">
-                    <CEPaquetes  onClose={closeModal}/>
+                    <CEPaquetes  onClose={closeModal} cuentaDatos={cuentaDatos} session={session}/>
                 </div>
           
             </ModalGeneric>

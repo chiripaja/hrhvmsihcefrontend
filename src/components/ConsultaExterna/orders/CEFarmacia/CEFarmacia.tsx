@@ -170,6 +170,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
                 }
                 setIsLoading(true);
                 const response = await getData(`${process.env.apijimmynew}/farmacia/findmedicamentoscebynombreCE/4/${cuentaDatos?.idFormaPago}/${nommed}`);
+                console.log(response)
                 const mappedOptions = response.map((est: any) => ({
                     value: est.IdProducto,
                     label: `${est.Nombre.trim()}`,
