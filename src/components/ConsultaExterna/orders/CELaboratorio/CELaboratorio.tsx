@@ -18,9 +18,10 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const [dataPuntosDeCargaLab, setDataPuntosDeCargaLab] = useState<any[]>([])
     const [datosExamenes, setDatosExamenes] = useState<any[]>([])
+    const createordenesLaboratorio = useCEDatosStore((state: any) => state.createordenesLaboratorio);
     const updateOrdenesLaboratorio = useCEDatosStore((state: any) => state.updateOrdenesLaboratorio);
     const setRecetaCabezera = useCEDatosStore((state: any) => state.setRecetaCabezera);
-    const createordenesLaboratorio = useCEDatosStore((state: any) => state.createordenesLaboratorio);
+  
     const FormLaboratorio: SubmitHandler<any> = async (data: any) => {
         
         const datosServicios = {

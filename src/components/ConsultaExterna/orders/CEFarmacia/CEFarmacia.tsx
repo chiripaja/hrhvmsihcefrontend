@@ -13,6 +13,7 @@ import { MedicamentosCE } from '../../../../interfaces/MedicamentosCe';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import { CEFarmaciaTabla } from './CEFarmaciaTabla';
 import Swal from 'sweetalert2';
+import { handleFarmacia } from './HandleFarmacia';
 interface Option {
     value: string;
     label: string;
@@ -74,89 +75,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
     }
 
 
-    const handleCanasta = async () => {
-        const RecetaCabezeraFarmacia = cuentaDatos?.recetaCabezera?.filter((data: RecetaCabecera) => data.IdPuntoCarga === 5)
-        if (RecetaCabezeraFarmacia[0]?.idReceta !== null && RecetaCabezeraFarmacia[0]?.idReceta !== undefined) {
-            const idReceta = RecetaCabezeraFarmacia[0].idReceta;
-            try {
-                await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${idReceta}`);
-                const updatedMedicamentos = await updateMedicamentos(idReceta);
-                const promises = updatedMedicamentos.map((medicamento: any) =>
-                    axios.post(`${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`, medicamento)
-                );
-                const responses = await Promise.all(promises);
-                responses.forEach((response) => {
-                    console.log('Medicamento enviado exitosamente:', response.data);
-                });
-            } catch (error) {
-                console.error('Error procesando la receta:', error);
-            }
-            Swal.fire({
-                icon: "success",
-                title: "Orden de farmacia creada exitosamente",
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }
-        else {
-            const datosCabecera = {
-                idPuntoCarga: 5,
-                fechaReceta: new Date().toISOString(),
-                idCuentaAtencion: cuentaDatos?.idcuentaatencion,
-                idServicioReceta: cuentaDatos?.idServicio,
-                idEstado: 1,
-                idComprobantePago: null,
-                idMedicoReceta: cuentaDatos?.idMedicoIngreso,
-                fechaVigencia: (() => {
-                    const fecha = new Date();
-                    fecha.setDate(fecha.getDate() + 1);
-                    fecha.setHours(0, 0, 0, 0);
-                    return fecha.toISOString();
-                })(),
-                idUsuarioAuditoria: 1,
-            }
-            try {
-                const datosCabeceraCreado = await axios.post(
-                    `${process.env.apijimmynew}/recetas/recetacabezeraadd`,
-                    datosCabecera
-                );
-                const DatosRecetaCabecera: RecetaCabecera[] = await getData(
-                    `${process.env.apijimmynew}/recetas/findRecetaCabezeraByIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`
-                );
-                const RecetaCabezeraFarmacia = DatosRecetaCabecera?.filter(
-                    (data: RecetaCabecera) => data.IdPuntoCarga === 5
-                );
-                if (RecetaCabezeraFarmacia.length === 0) {
-                    throw new Error("No se encontraron recetas con IdPuntoCarga === 5.");
-                }
-                const updatedMedicamentos = await updateMedicamentos(
-                    RecetaCabezeraFarmacia[0].idReceta
-                );
-                const promises = updatedMedicamentos.map((medicamento: any) =>
-                    axios.post(
-                        `${process.env.apijimmynew}/recetas/RecetaDetalleAgregar`,
-                        medicamento
-                    )
-                );
-                const responses = await Promise.all(promises);
-                responses.forEach((response) => {
-                    console.log("Medicamento enviado exitosamente:", response.data);
-                });
-                setRecetaCabezera(DatosRecetaCabecera);
-                Swal.fire({
-                    icon: "success",
-                    title: "Orden de farmacia creada exitosamente",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            } catch (error) {
-                console.log(error)
-            }
-
-        }
-        toggleOffcanvasFarmacia()
-    }
-
+   
     useEffect(() => {
         GetTiposViasAdministracion()
     }, [])
@@ -322,7 +241,10 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
 
                     <CEFarmaciaTabla cuentaDatos={cuentaDatos} />
                     <div className={cuentaDatos?.medicamentos.length > 0 ? "block" : "hidden"}>
-                        <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                        <button  onClick={() =>
+        handleFarmacia(cuentaDatos, updateMedicamentos, getData, setRecetaCabezera, toggleOffcanvasFarmacia)
+      }
+       type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden
                             <CgAdd />
                         </button>

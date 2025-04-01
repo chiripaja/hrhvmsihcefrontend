@@ -7,12 +7,18 @@ import { Controller, useForm } from "react-hook-form";
 import { GrFormNextLink } from "react-icons/gr";
 import { MedicamentosCE } from "@/interfaces/MedicamentosCe";
 import { CgKey } from "react-icons/cg";
+import { handleFarmacia } from "../CEFarmacia/HandleFarmacia";
 
 export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     const [OptionPuntoCarga, setOptionPuntoCarga] = useState<any[]>([]);
     const [DatosPaquetes, setDatosPaquetes] = useState<any[]>([]);
     const [OptionPaquetes, setOptionPaquetes] = useState<any[]>([]);
-    const [DatosKit, setDatosKit] = useState<any[]>([])
+    const setRecetaCabezera = useCEDatosStore((state: any) => state.setRecetaCabezera);
+    const [DatosKit, setDatosKit] = useState<any[]>([]);
+    const createMedicamento = useCEDatosStore((state: any) => state.createMedicamento);
+    const updateMedicamentos = useCEDatosStore((state: any) => state.updateMedicamentos);
+    const createordenesLaboratorio = useCEDatosStore((state: any) => state.createordenesLaboratorio);
+    const updateOrdenesLaboratorio = useCEDatosStore((state: any) => state.updateOrdenesLaboratorio);
     const getPuntoCarga = async () => {
         const data = await getData(`${process.env.apijimmynew}/recetas/puntoscargapaquetes`);
         setOptionPuntoCarga(data);
@@ -23,9 +29,6 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
         getPuntoCarga()
     }, [])
 
-
-
-
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const datosFiltrados = DatosPaquetes.filter((data: any) => data.idPuntoCarga == event.target.value)
         setOptionPaquetes(datosFiltrados)
@@ -33,11 +36,13 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     const MostrarPaquete = async (id: any) => {
         const dato = await getData(`${process.env.apijimmynew}/recetas/FacturacionCatalogoPaquetesXpaquete/${id}`);
         setDatosKit(dato)
-
     }
 
     const onSubmit = async (data: any) => {
         const farmacia = DatosKit.filter((datos: any) => datos.idPuntoCarga == 5)
+        const laboratorio = DatosKit.filter((datos: any) => [3, 2, 11].includes(datos.idPuntoCarga));
+
+        createordenesLaboratorio(laboratorio)
         const farmaciaActualizado = await actualizarDatosFarmacia(farmacia)
         const datosMedicamentosArray: MedicamentosCE[] = farmaciaActualizado.map((element: any) => ({
             idrecetacabecera: "",
@@ -54,7 +59,8 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             usuarioauditoria: session?.user?.id,
             idEstadoDetalle: 1,
         }));
-        console.log(datosMedicamentosArray)
+        await Promise.all(datosMedicamentosArray.map((medicamento) => createMedicamento(medicamento)));
+        // await handleFarmacia(cuentaDatos, updateMedicamentos, getData, setRecetaCabezera);
     };
 
     const actualizarDatosFarmacia = async (farmacia: any) => {
@@ -70,15 +76,12 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                 };
             })
         );
-
         return DatosKitFarmaciaActualizado;
     };
 
-
-
+    
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { control, register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<any>();
-
     const puntoCarga = (id: any) => {
         switch (id) {
             case 2:
@@ -114,12 +117,11 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     return (
         <>
-            <pre>
-                {JSON.stringify(session?.user?.id, null, 2)}
-            </pre>
+        <pre>
+            {JSON.stringify(cuentaDatos?.ordenesLaboratorio,null,2)}
+        </pre>
             <form onSubmit={handleSubmit(onSubmit)} >
                 <select
-
                     onChange={handleChange}
                     className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 }`}
                 >
@@ -132,7 +134,6 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                         );
                     })}
                 </select>
-
                 {/* Select para Paquetes */}
                 <div className="mt-4">
                     <select
@@ -181,8 +182,6 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                         />
                     )}
                 </div>
-
-
                 {DatosKit.length > 0 &&
                     <div className="p-4">
                         <h2 className="text-2xl font-bold mb-4">Listado Adicionar</h2>
@@ -208,9 +207,6 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                                 </tbody>
                             </table>
                         </div>
-
-
-
                     </div>
                 }
                 <div className="flex justify-end mt-6 col-span-2 gap-2">
@@ -229,7 +225,6 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                             </>
                         )}
                     </button>
-
                     <button
                         onClick={onClose}
                         className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all"
@@ -238,7 +233,6 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                         Cerrar
                     </button>
                 </div>
-
             </form>
         </>
     );
