@@ -39,10 +39,9 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     }
 
     const onSubmit = async (data: any) => {
-        const farmacia = DatosKit.filter((datos: any) => datos.idPuntoCarga == 5)
-        const laboratorio = DatosKit.filter((datos: any) => [3, 2, 11].includes(datos.idPuntoCarga));
+        /*farmacia*/
 
-        createordenesLaboratorio(laboratorio)
+        const farmacia = DatosKit.filter((datos: any) => datos.idPuntoCarga == 5)
         const farmaciaActualizado = await actualizarDatosFarmacia(farmacia)
         const datosMedicamentosArray: MedicamentosCE[] = farmaciaActualizado.map((element: any) => ({
             idrecetacabecera: "",
@@ -60,14 +59,35 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             idEstadoDetalle: 1,
         }));
         await Promise.all(datosMedicamentosArray.map((medicamento) => createMedicamento(medicamento)));
-        // await handleFarmacia(cuentaDatos, updateMedicamentos, getData, setRecetaCabezera);
+        /*  await handleFarmacia(cuentaDatos, updateMedicamentos, getData, setRecetaCabezera);*/
+        /*laboratorio*/
+        const laboratorio = DatosKit.filter((datos: any) => [2, 3, 11].includes(datos.idPuntoCarga));
+        const laboratorioActualizado = await actualizarDatosLaboratorio(laboratorio);
+        const laboratorioActualizadoArray: any[] = laboratorioActualizado.map((element: any) => ({
+            idrecetacabecera: "",
+            idproducto: element?.idProducto,
+            cantidad: element?.Cantidad,
+            precio: element?.Precio,
+            total: (element?.Cantidad * element?.Precio)?.toFixed(4),
+            cantidadFarmSaldo: 0,
+            idDosisRecetada: 0,
+            observaciones: "",
+            idViaAdministracion: 0,
+            iddiagnostico: parseInt(data?.diagnostico),
+            nombre: element?.Descripcion,
+            usuarioauditoria: session?.user?.id,
+            puntoCarga: element?.idPuntoCarga,
+            idEstadoDetalle: 1
+        }))
+        await Promise.all(laboratorioActualizadoArray.map((data) => createordenesLaboratorio(data)));
+        
     };
 
     const actualizarDatosFarmacia = async (farmacia: any) => {
         const DatosKitFarmaciaActualizado = await Promise.all(
             farmacia.map(async (data: any) => {
                 const response = await getData(
-                    `${process.env.apijimmynew}/farmacia/apiMedicamentosPrecioByIdProducto/4/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
+                    `${process.env.apijimmynew}/farmacia/apiMedicamentosPrecioByIdProducto/${cuentaDatos?.idFormaPago}/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
                 );
                 return {
                     ...data, // Mantiene los datos originales
@@ -79,7 +99,23 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
         return DatosKitFarmaciaActualizado;
     };
 
-    
+    const actualizarDatosLaboratorio = async (laboratorio: any) => {
+        console.log(laboratorio)
+        const DatosKitFarmaciaActualizado = await Promise.all(
+            laboratorio.map(async (data: any) => {
+                const response = await getData(
+                    `${process.env.apijimmynew}/FactCatalogoServicios/apiCatalogoServiciosSeleccionarSoloConPreciosEnParticularIdProducto/${data?.idPuntoCarga}/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
+                );
+                return {
+                    ...data, // Mantiene los datos originales
+                    precio: response?.PrecioUnitario, // Actualiza solo el precio si está disponible
+                };
+            })
+        );
+        return DatosKitFarmaciaActualizado;
+    };
+
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { control, register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<any>();
     const puntoCarga = (id: any) => {
@@ -117,9 +153,9 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     return (
         <>
-        <pre>
-            {JSON.stringify(cuentaDatos?.ordenesLaboratorio,null,2)}
-        </pre>
+            <pre>
+                {JSON.stringify(cuentaDatos?.ordenesLaboratorio, null, 2)}
+            </pre>
             <form onSubmit={handleSubmit(onSubmit)} >
                 <select
                     onChange={handleChange}

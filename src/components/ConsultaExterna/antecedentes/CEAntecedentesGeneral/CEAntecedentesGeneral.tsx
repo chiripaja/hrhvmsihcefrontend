@@ -1,7 +1,7 @@
 'use client'
 import { TfiBookmarkAlt, TfiClipboard, TfiRss, TfiWrite } from 'react-icons/tfi'
 import style from './CEAntecedentesGeneral.module.css'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useCEDatosStore } from '@/store'
 import { getData } from '@/components/helper/axiosHelper'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -16,14 +16,7 @@ export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
-
-    useEffect(() => {
-        if (cuentaDatos?.idpaciente) {
-            getAntecedentes(cuentaDatos?.idpaciente);
-        }
-    }, [cuentaDatos])
-
-    const getAntecedentes = async (idpaciente: any) => {
+    const getAntecedentes = useCallback(async (idpaciente: any) => {
         setLoading(true);
         const data = await getData(`${process.env.apijimmynew}/consultaexterna/findbyidpacienteantecedentes/${idpaciente}`);
         setValue('antecedQuirurgico', data.antecedQuirurgico || '');
@@ -33,7 +26,14 @@ export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
         setValue('antecedObstetrico', data.antecedObstetrico || '');
         setValue('antecedentes', data.antecedentes || '');
         setLoading(false);
-    }
+    }, []);
+    useEffect(() => {
+        if (cuentaDatos?.idpaciente) {
+            getAntecedentes(cuentaDatos?.idpaciente);
+        }
+    }, [cuentaDatos, getAntecedentes]);
+
+   
     const FormAntecedentes: SubmitHandler<any> = async (data: any) => {
         setIsSubmitting(true);
         try {

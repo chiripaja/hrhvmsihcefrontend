@@ -12,6 +12,8 @@ import { RecetaCabecera } from '@/interfaces/RecetaCabezeraI';
 import { CgAdd } from 'react-icons/cg';
 import { CELaboratorioTabla } from './CELaboratorioTabla';
 import { PiJarLabel } from 'react-icons/pi';
+import { handleCanastaPorPuntoDeCarga } from './HandleLaboratorio';
+//import { handleCanastaPorPuntoDeCarga } from './HandleLaboratorio';
 
 export const CELaboratorio = ({cuentaDatos}:any) => {
     const [isOffcanvasOpenLaboratorio, setIsOffcanvasOpenLaboratorio] = useState(false);
@@ -63,11 +65,7 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
     const getDataPuntoDeCarga = async () => {
         const datos = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/FactPuntosCargaFiltrar`)
         const idsPermitidos = ["3", "2", "11"];
-
         const puntoCargaLab = datos.filter((data: any) => idsPermitidos.includes(data.IdPuntoCarga))
-
-
-
         setDataPuntosDeCargaLab(puntoCargaLab)
     }
     const getDataPuntoDeCargaValidacion = async () => {
@@ -91,6 +89,7 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
 
     const getExamenesByPuntoCarga = async (idpuntocarga: any) => {
         const datos = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/factaCatalogoServicioByIdPuntoCargaAndFormaPago/${idpuntocarga}/${cuentaDatos?.idFormaPago}`);
+        console.log(`${process.env.apijimmynew}/FactCatalogoServicios/factaCatalogoServicioByIdPuntoCargaAndFormaPago/${idpuntocarga}/${cuentaDatos?.idFormaPago}`)
         const mappedOptions = datos.map((est: any) => ({
             value: est.IdProducto,
             label: `${est.Nombre.trim()}`,
@@ -121,6 +120,9 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
             getExamenesByPuntoCarga(dataPuntosDeCargaLab[0]?.IdPuntoCarga)
         }
     }, [dataPuntosDeCargaLab, cuentaDatos?.idFormaPago])
+
+
+   /*
     const handleCanastaPorPuntoDeCarga = async () => {
         const puntosDeCarga = [2, 3, 11];
         for (const puntoCarga of puntosDeCarga) {
@@ -166,6 +168,8 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
             const DatosRecetaCabecera: RecetaCabecera[] = await getData(
                 `${process.env.apijimmynew}/recetas/findRecetaCabezeraByIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`
             );
+            console.log("**************************")
+            console.log(DatosRecetaCabecera)
             setRecetaCabezera(DatosRecetaCabecera);
             if (response?.data) {
                 const ordenes = await updateOrdenesLaboratorio(response?.data, puntoCarga);
@@ -204,7 +208,7 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
         } catch (error) {
             console.error("Error enviando medicamentos:", error);
         }
-    };
+    };/**/
     const toggleOffcanvasLaboratorio = () => {
 
         setIsOffcanvasOpenLaboratorio(!isOffcanvasOpenLaboratorio);
@@ -349,10 +353,25 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
 
                     <CELaboratorioTabla cuentaDatos={cuentaDatos}/>
                     <div className={cuentaDatos?.ordenesLaboratorio.length > 0 ? "block" : "hidden"}>
-                        <button onClick={handleCanastaPorPuntoDeCarga} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                       {/* 
+                        */}
+                         <button onClick={
+                            ()=>handleCanastaPorPuntoDeCarga(
+                                cuentaDatos,
+                                updateOrdenesLaboratorio,
+                                getData,
+                                setRecetaCabezera,
+                                createordenesLaboratorio
+                                )} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden
                             <CgAdd />
                         </button>
+                        {/*
+                        <button type="button" onClick={ handleCanastaPorPuntoDeCarga} className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                            Confirmar Orden
+                            <CgAdd />
+                        </button>
+                        */}
                     </div>
                 </div>
             </div>

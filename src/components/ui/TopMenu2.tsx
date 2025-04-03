@@ -14,9 +14,11 @@ export const TopMenu2 = async () => {
   const webadmin = session?.user?.roles?.some(role => role.idRol === 1165);
   const cetriaje = session?.user?.roles?.some(role => role.idRol === 101);
   const CEAtencion = session?.user?.roles?.some(role => role.idRol === 143);
+  const CEAtencionProc = session?.user?.roles?.some(role => role.idRol === 1170);
   const menuItemsConsultaExterna = [
-    { href: "/sihce/consultaexterna", label: "CE Externo", condition: webadmin || CEAtencion },
-    { href: "/sihce/admision", label: "Admision", condition: webadmin || admisionista },
+    { href: "/sihce/consultaexterna", label: "CE Atencion", condition: webadmin || CEAtencion },
+    { href: "/sihce/admision", label: "Admision CE", condition: webadmin || admisionista },
+    { href: "/sihce/admisionproc", label: "Admision Proc", condition: webadmin || CEAtencionProc },
     { href: "/sihce/listapx", label: "Lista Citados", condition: webadmin },
     { href: "/sihce/nuevousuario", label: "Paciente Nuevo", condition: webadmin || admisionista },
     { href: "/sihce/triaje", label: "Triaje", condition: webadmin || cetriaje },

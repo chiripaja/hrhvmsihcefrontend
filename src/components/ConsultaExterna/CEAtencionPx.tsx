@@ -237,7 +237,18 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
 
   return (
     <div className="flex flex-wrap bg-white p-3 rounded w-full shadow-2xl">
-    
+         <p>
+         <pre>
+            {JSON.stringify(cuentaDatos?.recetaCabezera,null,2)}
+        </pre>
+         </p>
+        
+        <p>
+        <pre>
+            {JSON.stringify(cuentaDatos?.ordenesLaboratorio,null,2)}
+        </pre>
+        </p>
+        
       <CECabezeraTriaje dataPx={dataPx} />
       <div className="border-e border-gray-200 dark:border-neutral-700">
         <nav className="flex flex-col space-y-2">
