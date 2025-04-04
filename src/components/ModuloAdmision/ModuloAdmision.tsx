@@ -29,7 +29,7 @@ const agruparYCuposLibres = (citas: Cita[]): AgrupadoCitas => {
 
     const agrupado = citas.reduce((acc: AgrupadoCitas, cita: Cita) => {
         const { idEspecialidad, fecha, cuposLibres, total_Citas } = cita;
-
+        
         if (!acc[idEspecialidad]) {
             acc[idEspecialidad] = {};
         }
@@ -90,7 +90,6 @@ export const ModuloAdmision = ({ usuario }: any) => {
         return Array.from(medicos)
             .sort()
             .map(medico => ({ value: medico, label: medico }));
-
     };
 
     const citasFiltradas = medicoSeleccionado
@@ -110,6 +109,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
         setIsLoading(true);
         try {
             const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibres`);
+            
             setCitas(data);
 
         } catch (error) {
@@ -209,6 +209,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
     const medicoBuscadoW = watch('medicoBuscado')
     useEffect(() => {
         if (medicoBuscadoW) {
+           
             setMedicoSeleccionado(medicoBuscadoW?.value)
         }
     }, [medicoBuscadoW])
@@ -295,7 +296,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
     .filter((idEspecialidad) =>
       fechas.slice(0, daysToShow).some(
         (fecha) =>
-          citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres > 0
+          citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres >= 0
       )
     )
     .sort((a, b) => {
@@ -310,6 +311,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
       return nombreA.localeCompare(nombreB);
     })
     .map((idEspecialidad, index) => {
+      
       const citaEspecialidad: any = citasFiltradas.find(
         (cita) => cita.idEspecialidad === parseInt(idEspecialidad)
       );
@@ -320,6 +322,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
             className={`sticky left-0 z-10 px-4 py-2 
               ${index % 2 === 0 ? "bg-white" : "bg-gray-100"} dark:bg-neutral-800`}
           >
+            
             {citaEspecialidad ? citaEspecialidad.nombreEspecialidad : "No disponible"}
           </td>
           {fechas.slice(0, daysToShow).map((fecha) => {
