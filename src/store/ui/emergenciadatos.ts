@@ -164,13 +164,20 @@ export const useEmergenciaDatosStore = create<any>((set, get) => ({
       },
     })),
 
-  createordenesLaboratorio: (newOrdenesLaboratorio: any) =>
-    set((state: any) => ({
-      datosemergencia: {
-        ...state.datosemergencia,
-        ordenesLaboratorio: [...state.datosemergencia.ordenesLaboratorio, { ...newOrdenesLaboratorio }]
-      }
-    })),
+    createordenesLaboratorio: async (newOrdenesLaboratorio: any) => {
+      return new Promise((resolve) => {
+        set((state: any) => ({
+          datosemergencia: {
+            ...state.datosemergencia,
+            ordenesLaboratorio: [
+              ...state.datosemergencia.ordenesLaboratorio,
+              { ...newOrdenesLaboratorio },
+            ],
+          },
+        }));
+        resolve(true); // resolvemos inmediatamente, pero al menos ya es "awaitable"
+      });
+    },
 
 
   deleteLaboratorio: (idproducto: number, puntocarga: any) =>

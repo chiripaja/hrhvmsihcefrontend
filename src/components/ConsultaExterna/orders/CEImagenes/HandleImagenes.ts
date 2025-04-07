@@ -3,14 +3,14 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 // Función principal donde recibimos todos los datos que nos pides
-export const HandleLaboratorio = async (
+export const HandleImagenes = async (
     cuentaDatos: any, 
-    updateOrdenesLaboratorio: (idReceta: any,puntocarga:any) => Promise<any[]>, 
+    updateOrdenesImagenes: (idReceta: any,puntocarga:any) => Promise<any[]>, 
     getData: (url: string) => Promise<any[]>, 
     setRecetaCabezera: (data: any) => void,
-    createordenesLaboratorio: (receta: any, puntoCarga: number) => Promise<any[]>,
+    createordenesImagenes: (receta: any, puntoCarga: number) => Promise<any[]>,
     puntosDeCarga:any[],
-    toggleOffcanvasLaboratorio: () => void = () => {} // Valor por defecto vacío si no se manda
+    toggleOffcanvasImagenes: () => void = () => {} // Valor por defecto vacío si no se manda
 ) => {
     // Iterar sobre los puntos de carga
     for (const puntoCarga of puntosDeCarga) {
@@ -22,12 +22,12 @@ export const HandleLaboratorio = async (
                 recetaexistente.idReceta, 
                 puntoCarga, 
                 cuentaDatos, 
-                updateOrdenesLaboratorio, 
+                updateOrdenesImagenes, 
                 getData, 
                 setRecetaCabezera
             );
         } else {
-            const existeOrdenParaPuntoCarga = cuentaDatos?.ordenesLaboratorio?.some(
+            const existeOrdenParaPuntoCarga = cuentaDatos?.ordenesImagenes?.some(
                 (orden: any) => Number(orden.puntoCarga) === puntoCarga
             );
            
@@ -36,9 +36,9 @@ export const HandleLaboratorio = async (
                     puntoCarga, 
                     cuentaDatos, 
                     setRecetaCabezera, 
-                    updateOrdenesLaboratorio, 
+                    updateOrdenesImagenes, 
                     getData,
-                    createordenesLaboratorio
+                    createordenesImagenes
                 );
             }
         }
@@ -53,8 +53,8 @@ export const HandleLaboratorio = async (
     });
 
     // Llamamos a toggleOffcanvasFarmacia si está definido
-    if (toggleOffcanvasLaboratorio) {
-        toggleOffcanvasLaboratorio();
+    if (toggleOffcanvasImagenes) {
+        toggleOffcanvasImagenes();
     }
 };
 
@@ -63,9 +63,9 @@ const crearReceta = async (
     puntoCarga: number, 
     cuentaDatos: any, 
     setRecetaCabezera: (data: any) => void, 
-    updateOrdenesLaboratorio: (idReceta: number,puntocarga:any) => Promise<any[]>, 
+    updateOrdenesImagenes: (idReceta: number,puntocarga:any) => Promise<any[]>, 
     getData: (url: string) => Promise<any[]>,
-    createordenesLaboratorio: (receta: any, puntoCarga: number) => Promise<any[]>,
+    createordenesImagenes: (receta: any, puntoCarga: number) => Promise<any[]>,
 ) => {
     const datosCabecera = {
         idPuntoCarga: puntoCarga,
@@ -92,7 +92,7 @@ const crearReceta = async (
         setRecetaCabezera(DatosRecetaCabecera.data);
         // Si la respuesta contiene datos, procesamos las órdenes
         if (response?.data) {
-            const ordenes = await updateOrdenesLaboratorio(response?.data, puntoCarga);
+            const ordenes = await updateOrdenesImagenes(response?.data, puntoCarga);
             await enviarOrdenes(ordenes);
         }
     } catch (error) {
@@ -105,7 +105,7 @@ const actualizarReceta = async (
     idReceta: number, 
     puntoCarga: number, 
     cuentaDatos: any, 
-    updateOrdenesLaboratorio: (idReceta: number,puntocarga:any) => Promise<any[]>, 
+    updateOrdenesImagenes: (idReceta: number,puntocarga:any) => Promise<any[]>, 
     getData: (url: string) => Promise<any[]>, 
     setRecetaCabezera: (data: any) => void
 ) => {
@@ -116,8 +116,8 @@ const actualizarReceta = async (
             // Eliminar receta detalle
             await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${idReceta}`);
             
-            // Actualizar órdenes de laboratorio
-            const ordenes = await updateOrdenesLaboratorio(idReceta,puntoCarga);
+            // Actualizar órdenes de Imagenes
+            const ordenes = await updateOrdenesImagenes(idReceta,puntoCarga);
             if (ordenes) {
                 await enviarOrdenes(ordenes);
             }/**/

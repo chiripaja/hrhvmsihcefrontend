@@ -8,9 +8,11 @@ import { GrFormNextLink } from "react-icons/gr";
 import { MedicamentosCE } from "@/interfaces/MedicamentosCe";
 import { CgKey } from "react-icons/cg";
 import { handleFarmacia } from "../CEFarmacia/HandleFarmacia";
+import { HandleLaboratorio } from "../CELaboratorio/HandleLaboratorio";
 
 export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     const [OptionPuntoCarga, setOptionPuntoCarga] = useState<any[]>([]);
+
     const [DatosPaquetes, setDatosPaquetes] = useState<any[]>([]);
     const [OptionPaquetes, setOptionPaquetes] = useState<any[]>([]);
     const setRecetaCabezera = useCEDatosStore((state: any) => state.setRecetaCabezera);
@@ -19,6 +21,9 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     const updateMedicamentos = useCEDatosStore((state: any) => state.updateMedicamentos);
     const createordenesLaboratorio = useCEDatosStore((state: any) => state.createordenesLaboratorio);
     const updateOrdenesLaboratorio = useCEDatosStore((state: any) => state.updateOrdenesLaboratorio);
+
+     const createOrdenesImagenes = useCEDatosStore((state: any) => state.createOrdenesImagenes);
+        const updateOrdenesImagenes = useCEDatosStore((state: any) => state.updateOrdenesImagenes);
     const getPuntoCarga = async () => {
         const data = await getData(`${process.env.apijimmynew}/recetas/puntoscargapaquetes`);
         setOptionPuntoCarga(data);
@@ -40,9 +45,59 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     const onSubmit = async (data: any) => {
         /*farmacia*/
+     /*   await procesarFarmacia(
+            DatosKit,
+            actualizarDatosFarmacia,
+            createMedicamento,
+            session,
+            data,
+            cuentaDatos,
+            updateMedicamentos,
+            getData,
+            setRecetaCabezera
+        );
+        /*laboratorio*/
+       /* await procesarLaboratorio(
+            DatosKit,
+            data?.diagnostico,
+            session,
+            updateOrdenesLaboratorio,
+            getData,
+            setRecetaCabezera,
+            createordenesLaboratorio,
+            actualizarDatosLaboratorio,
+            HandleLaboratorio,
+            [2, 3, 11]
+        );
+         /*Imagenes*/
+        await procesarLaboratorio(
+            DatosKit,
+            data?.diagnostico,
+            session,
+            updateOrdenesImagenes,
+            getData,
+            setRecetaCabezera,
+            createOrdenesImagenes,
+            actualizarDatosLaboratorio,
+            HandleLaboratorio,
+            [20, 21, 22, 23]
+        );
+    };
 
-        const farmacia = DatosKit.filter((datos: any) => datos.idPuntoCarga == 5)
-        const farmaciaActualizado = await actualizarDatosFarmacia(farmacia)
+    const procesarFarmacia = async (
+        DatosKit: any[],
+        actualizarDatosFarmacia: (farmacia: any[]) => Promise<any[]>,
+        createMedicamento: (medicamento: MedicamentosCE) => Promise<any>,
+        session: any,
+        data: any,
+        cuentaDatos: any,
+        updateMedicamentos: any,
+        getData: any,
+        setRecetaCabezera: any
+    ) => {
+        const farmacia = DatosKit.filter((datos: any) => datos.idPuntoCarga == 5);
+        const farmaciaActualizado = await actualizarDatosFarmacia(farmacia);
+
         const datosMedicamentosArray: MedicamentosCE[] = farmaciaActualizado.map((element: any) => ({
             idrecetacabecera: "",
             idproducto: element?.idProducto,
@@ -58,12 +113,34 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             usuarioauditoria: session?.user?.id,
             idEstadoDetalle: 1,
         }));
+
         await Promise.all(datosMedicamentosArray.map((medicamento) => createMedicamento(medicamento)));
-        /*  await handleFarmacia(cuentaDatos, updateMedicamentos, getData, setRecetaCabezera);*/
-        /*laboratorio*/
-        const laboratorio = DatosKit.filter((datos: any) => [2, 3, 11].includes(datos.idPuntoCarga));
+        const cuentaDatosActualizado = useCEDatosStore.getState().datosce;
+        // Llamar a handleFarmacia al final
+        await handleFarmacia(cuentaDatosActualizado, updateMedicamentos, getData, setRecetaCabezera);
+    };
+
+
+
+    const procesarLaboratorio = async (
+        DatosKit: any[],
+        dataDiagnostico: any,
+        session: any,
+        updateOrdenesLaboratorio: any,
+        getData: any,
+        setRecetaCabezera: any,
+        createordenesLaboratorio: any,
+        actualizarDatosLaboratorio: any,
+        handleCanastaPorPuntoDeCarga: any,
+        puntosCarga:any[]
+    ) => {
+        const laboratorio = DatosKit.filter((datos: any) =>
+            puntosCarga.includes(datos.idPuntoCarga)
+        );
+
         const laboratorioActualizado = await actualizarDatosLaboratorio(laboratorio);
-        const laboratorioActualizadoArray: any[] = laboratorioActualizado.map((element: any) => ({
+
+        const laboratorioActualizadoArray = laboratorioActualizado.map((element: any) => ({
             idrecetacabecera: "",
             idproducto: element?.idProducto,
             cantidad: element?.Cantidad,
@@ -73,21 +150,36 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             idDosisRecetada: 0,
             observaciones: "",
             idViaAdministracion: 0,
-            iddiagnostico: parseInt(data?.diagnostico),
+            iddiagnostico: parseInt(dataDiagnostico),
             nombre: element?.Descripcion,
             usuarioauditoria: session?.user?.id,
             puntoCarga: element?.idPuntoCarga,
-            idEstadoDetalle: 1
-        }))
-        await Promise.all(laboratorioActualizadoArray.map((data) => createordenesLaboratorio(data)));
-        
+            idEstadoDetalle: 1,
+        }));
+
+        await Promise.all(
+            laboratorioActualizadoArray.map((item: any) => createordenesLaboratorio(item))
+        );
+
+
+        const cuentaDatosActualizado = useCEDatosStore.getState().datosce;
+ 
+        await handleCanastaPorPuntoDeCarga(
+            cuentaDatosActualizado,
+            updateOrdenesLaboratorio,
+            getData,
+            setRecetaCabezera,
+            createordenesLaboratorio,
+            puntosCarga
+        );/**/
     };
+
 
     const actualizarDatosFarmacia = async (farmacia: any) => {
         const DatosKitFarmaciaActualizado = await Promise.all(
             farmacia.map(async (data: any) => {
                 const response = await getData(
-                    `${process.env.apijimmynew}/farmacia/apiMedicamentosPrecioByIdProducto/${cuentaDatos?.idFormaPago}/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
+                    `${process.env.apijimmynew}/farmacia/apiMedicamentosPrecioByIdProducto/4/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
                 );
                 return {
                     ...data, // Mantiene los datos originales
@@ -100,7 +192,6 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     };
 
     const actualizarDatosLaboratorio = async (laboratorio: any) => {
-        console.log(laboratorio)
         const DatosKitFarmaciaActualizado = await Promise.all(
             laboratorio.map(async (data: any) => {
                 const response = await getData(
@@ -140,10 +231,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                 return "Número no reconocido";
         }
     }
-    const FormKits = (iddx: any) => {
 
-        const objFarmacia = {}
-    }
     const idFactPaqueteW = watch("idFactPaquete")
     useEffect(() => {
         if (idFactPaqueteW) {
@@ -153,9 +241,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     return (
         <>
-            <pre>
-                {JSON.stringify(cuentaDatos?.ordenesLaboratorio, null, 2)}
-            </pre>
+
             <form onSubmit={handleSubmit(onSubmit)} >
                 <select
                     onChange={handleChange}
