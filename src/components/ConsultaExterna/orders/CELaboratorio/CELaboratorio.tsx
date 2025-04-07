@@ -12,7 +12,8 @@ import { RecetaCabecera } from '@/interfaces/RecetaCabezeraI';
 import { CgAdd } from 'react-icons/cg';
 import { CELaboratorioTabla } from './CELaboratorioTabla';
 import { PiJarLabel } from 'react-icons/pi';
-import { handleCanastaPorPuntoDeCarga } from './HandleLaboratorio';
+import { HandleLaboratorio } from './HandleLaboratorio';
+
 //import { handleCanastaPorPuntoDeCarga } from './HandleLaboratorio';
 
 export const CELaboratorio = ({cuentaDatos}:any) => {
@@ -356,7 +357,7 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
                        {/* 
                         */}
                          <button onClick={
-                            ()=>handleCanastaPorPuntoDeCarga(
+                            ()=>HandleLaboratorio(
                                 cuentaDatos,
                                 updateOrdenesLaboratorio,
                                 getData,

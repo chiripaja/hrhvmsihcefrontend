@@ -10,6 +10,7 @@ import { CgKey } from "react-icons/cg";
 import { handleFarmacia } from "../CEFarmacia/HandleFarmacia";
 import { HandleLaboratorio } from "../CELaboratorio/HandleLaboratorio";
 
+
 export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     const [OptionPuntoCarga, setOptionPuntoCarga] = useState<any[]>([]);
 
@@ -45,7 +46,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     const onSubmit = async (data: any) => {
         /*farmacia*/
-     /*   await procesarFarmacia(
+        await procesarFarmacia(
             DatosKit,
             actualizarDatosFarmacia,
             createMedicamento,
@@ -57,7 +58,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             setRecetaCabezera
         );
         /*laboratorio*/
-       /* await procesarLaboratorio(
+        await procesarLaboratorio(
             DatosKit,
             data?.diagnostico,
             session,
@@ -241,7 +242,9 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     return (
         <>
-
+<pre>
+    {JSON.stringify(cuentaDatos)}
+</pre>
             <form onSubmit={handleSubmit(onSubmit)} >
                 <select
                     onChange={handleChange}
