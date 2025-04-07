@@ -17,6 +17,7 @@ export const HandleLaboratorio = async (
         const recetaexistente = cuentaDatos?.recetaCabezera?.find(
             (item: any) => item.IdPuntoCarga === puntoCarga
         );
+
         if (recetaexistente) {
             await actualizarReceta(
                 recetaexistente.idReceta, 
@@ -27,6 +28,7 @@ export const HandleLaboratorio = async (
                 setRecetaCabezera
             );
         } else {
+            //aqui crear otro y camibar cuentaDatos?.ordenesLaboratorio por imagenes
             const existeOrdenParaPuntoCarga = cuentaDatos?.ordenesLaboratorio?.some(
                 (orden: any) => Number(orden.puntoCarga) === puntoCarga
             );

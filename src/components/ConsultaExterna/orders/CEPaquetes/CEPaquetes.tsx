@@ -46,7 +46,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     const onSubmit = async (data: any) => {
         /*farmacia*/
-        await procesarFarmacia(
+      /*  await procesarFarmacia(
             DatosKit,
             actualizarDatosFarmacia,
             createMedicamento,
@@ -58,7 +58,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             setRecetaCabezera
         );
         /*laboratorio*/
-        await procesarLaboratorio(
+        /*await procesarLaboratorio(
             DatosKit,
             data?.diagnostico,
             session,
@@ -69,9 +69,9 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             actualizarDatosLaboratorio,
             HandleLaboratorio,
             [2, 3, 11]
-        );
+        );*/
          /*Imagenes*/
-        await procesarLaboratorio(
+        await procesarImagenes(
             DatosKit,
             data?.diagnostico,
             session,
@@ -138,7 +138,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
         const laboratorio = DatosKit.filter((datos: any) =>
             puntosCarga.includes(datos.idPuntoCarga)
         );
-
+   
         const laboratorioActualizado = await actualizarDatosLaboratorio(laboratorio);
 
         const laboratorioActualizadoArray = laboratorioActualizado.map((element: any) => ({
@@ -164,6 +164,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
 
         const cuentaDatosActualizado = useCEDatosStore.getState().datosce;
+       
  
         await handleCanastaPorPuntoDeCarga(
             cuentaDatosActualizado,
@@ -174,7 +175,59 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             puntosCarga
         );/**/
     };
+    const procesarImagenes = async (
+        DatosKit: any[],
+        dataDiagnostico: any,
+        session: any,
+        updateOrdenesImagenes: any,
+        getData: any,
+        setRecetaCabezera: any,
+        createordenesImagenes: any,
+        actualizarDatosImagenes: any,
+        handleCanastaPorPuntoDeCarga: any,
+        puntosCarga:any[]
+    ) => {
+        const imagenes = DatosKit.filter((datos: any) =>
+            puntosCarga.includes(datos.idPuntoCarga)
+        );
+       
+        const ImagenesActualizado = await actualizarDatosLaboratorio(imagenes);
 
+        const ImangeActualizadoArray = ImagenesActualizado.map((element: any) => ({
+            idrecetacabecera: "",
+            idproducto: element?.idProducto,
+            cantidad: element?.Cantidad,
+            precio: element?.Precio,
+            total: (element?.Cantidad * element?.Precio)?.toFixed(4),
+            cantidadFarmSaldo: 0,
+            idDosisRecetada: 0,
+            observaciones: "",
+            idViaAdministracion: 0,
+            iddiagnostico: parseInt(dataDiagnostico),
+            nombre: element?.Descripcion,
+            usuarioauditoria: session?.user?.id,
+            puntoCarga: element?.idPuntoCarga,
+            idEstadoDetalle: 1,
+        }));
+        console.log(ImangeActualizadoArray)
+
+        await Promise.all(
+            ImangeActualizadoArray.map((item: any) => createordenesImagenes(item))
+        );
+
+
+        const cuentaDatosActualizado = useCEDatosStore.getState().datosce;
+       
+ 
+        await handleCanastaPorPuntoDeCarga(
+            cuentaDatosActualizado,
+            updateOrdenesImagenes,
+            getData,
+            setRecetaCabezera,
+            createOrdenesImagenes,
+            puntosCarga
+        );/**/
+    };
 
     const actualizarDatosFarmacia = async (farmacia: any) => {
         const DatosKitFarmaciaActualizado = await Promise.all(
@@ -198,6 +251,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                 const response = await getData(
                     `${process.env.apijimmynew}/FactCatalogoServicios/apiCatalogoServiciosSeleccionarSoloConPreciosEnParticularIdProducto/${data?.idPuntoCarga}/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
                 );
+               
                 return {
                     ...data, // Mantiene los datos originales
                     precio: response?.PrecioUnitario, // Actualiza solo el precio si está disponible
@@ -242,9 +296,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     return (
         <>
-<pre>
-    {JSON.stringify(cuentaDatos)}
-</pre>
+
             <form onSubmit={handleSubmit(onSubmit)} >
                 <select
                     onChange={handleChange}
