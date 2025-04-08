@@ -30,7 +30,6 @@ export const HandleImagenes = async (
             const existeOrdenParaPuntoCarga = cuentaDatos?.ordenesImagenes?.some(
                 (orden: any) => Number(orden.puntoCarga) === puntoCarga
             );
-           
             if (existeOrdenParaPuntoCarga) {
                 await crearReceta(
                     puntoCarga, 
@@ -111,7 +110,6 @@ const actualizarReceta = async (
 ) => {
     try {
         const data = cuentaDatos?.recetaCabezera.filter((datos: any) => datos?.idReceta === idReceta);
-
         if (data && data.length > 0 && data[0].idEstado === 1) {
             // Eliminar receta detalle
             await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${idReceta}`);

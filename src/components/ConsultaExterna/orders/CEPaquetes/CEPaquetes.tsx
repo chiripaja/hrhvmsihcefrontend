@@ -9,6 +9,8 @@ import { MedicamentosCE } from "@/interfaces/MedicamentosCe";
 import { CgKey } from "react-icons/cg";
 import { handleFarmacia } from "../CEFarmacia/HandleFarmacia";
 import { HandleLaboratorio } from "../CELaboratorio/HandleLaboratorio";
+import { HandleImagenes } from "../CEImagenes/HandleImagenes";
+import Swal from "sweetalert2";
 
 
 export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
@@ -37,6 +39,8 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const datosFiltrados = DatosPaquetes.filter((data: any) => data.idPuntoCarga == event.target.value)
+        setDatosKit([])
+        console.log(datosFiltrados)
         setOptionPaquetes(datosFiltrados)
     };
     const MostrarPaquete = async (id: any) => {
@@ -46,7 +50,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     const onSubmit = async (data: any) => {
         /*farmacia*/
-      /*  await procesarFarmacia(
+       await procesarFarmacia(
             DatosKit,
             actualizarDatosFarmacia,
             createMedicamento,
@@ -58,7 +62,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             setRecetaCabezera
         );
         /*laboratorio*/
-        /*await procesarLaboratorio(
+        await procesarLaboratorio(
             DatosKit,
             data?.diagnostico,
             session,
@@ -69,7 +73,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             actualizarDatosLaboratorio,
             HandleLaboratorio,
             [2, 3, 11]
-        );*/
+        );/**/
          /*Imagenes*/
         await procesarImagenes(
             DatosKit,
@@ -83,6 +87,8 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             HandleLaboratorio,
             [20, 21, 22, 23]
         );
+        /*cerar*/
+        onClose()
     };
 
     const procesarFarmacia = async (
@@ -98,7 +104,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     ) => {
         const farmacia = DatosKit.filter((datos: any) => datos.idPuntoCarga == 5);
         const farmaciaActualizado = await actualizarDatosFarmacia(farmacia);
-
+        
         const datosMedicamentosArray: MedicamentosCE[] = farmaciaActualizado.map((element: any) => ({
             idrecetacabecera: "",
             idproducto: element?.idProducto,
@@ -209,7 +215,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             puntoCarga: element?.idPuntoCarga,
             idEstadoDetalle: 1,
         }));
-        console.log(ImangeActualizadoArray)
+  
 
         await Promise.all(
             ImangeActualizadoArray.map((item: any) => createordenesImagenes(item))
@@ -219,7 +225,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
         const cuentaDatosActualizado = useCEDatosStore.getState().datosce;
        
  
-        await handleCanastaPorPuntoDeCarga(
+        await HandleImagenes(
             cuentaDatosActualizado,
             updateOrdenesImagenes,
             getData,
@@ -230,20 +236,46 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     };
 
     const actualizarDatosFarmacia = async (farmacia: any) => {
+        const noDisponibles: any[] = [];
         const DatosKitFarmaciaActualizado = await Promise.all(
             farmacia.map(async (data: any) => {
-                const response = await getData(
-                    `${process.env.apijimmynew}/farmacia/apiMedicamentosPrecioByIdProducto/4/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
-                );
-                return {
-                    ...data, // Mantiene los datos originales
-                    Precio: response?.PrecioUnitario, // Actualiza solo el precio si está disponible
-                    stock: response?.cantidad, // Puedes actualizar otros datos si es necesario
-                };
+                try {
+                    const response = await getData(
+                        `${process.env.apijimmynew}/farmacia/apiMedicamentosPrecioByIdProducto/4/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
+                    );
+                    if (!response || !response?.PrecioUnitario) {
+                        noDisponibles.push(data?.Descripcion || `ID: ${data?.idProducto}`);
+                        return null;
+                    }
+                    return {
+                        ...data,
+                        Precio: response?.PrecioUnitario,
+                        stock: response?.cantidad,
+                    };
+                } catch (error) {
+                    console.error(`Error obteniendo datos para idProducto ${data?.idProducto}`, error);
+                    noDisponibles.push(data?.Descripcion || `ID: ${data?.idProducto}`);
+                    return null;
+                }
             })
         );
-        return DatosKitFarmaciaActualizado;
+        
+        // Mostrar alerta si hay productos no disponibles
+        if (noDisponibles.length > 0) {
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Producto(s) no disponible(s) en farmacia',
+                html: `<ul style="text-align: left;">${noDisponibles.map(item => `<li>${item}</li>`).join('')}</ul>`,
+                confirmButtonText: 'Aceptar',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+            });
+        }
+    
+        // Retornar solo los disponibles
+        return DatosKitFarmaciaActualizado.filter(item => item !== null);
     };
+    
 
     const actualizarDatosLaboratorio = async (laboratorio: any) => {
         const DatosKitFarmaciaActualizado = await Promise.all(

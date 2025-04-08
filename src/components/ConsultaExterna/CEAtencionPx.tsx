@@ -146,7 +146,6 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   const getLaboratoriobyIdRecetaCabecera = async (idrecetacabecera: number, idFormaPago: number, idpuntocarga: any) => {
     try {
       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
-      
       data.map((info: MedicamentosCE) => {
         createordenesLaboratorio(info)
       })
@@ -158,9 +157,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   const getImagenesbyIdRecetaCabecera = async (idrecetacabecera: number, idFormaPago: number) => {
     try {
       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
-      
       data.map((info: any) => {
-       
         createOrdenesImagenes(info)
       })
     } catch (error) {
@@ -237,9 +234,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
 
   return (
     <div className="flex flex-wrap bg-white p-3 rounded w-full shadow-2xl">
-<pre>
-    {JSON.stringify(cuentaDatos,null,2)}
-</pre>
+
         
       <CECabezeraTriaje dataPx={dataPx} />
       <div className="border-e border-gray-200 dark:border-neutral-700">
