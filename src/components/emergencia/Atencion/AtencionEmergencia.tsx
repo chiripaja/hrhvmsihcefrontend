@@ -357,61 +357,62 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
       <CabeceraEmergencia idcuentaatencion={idcuentaatencion} />
       <div className="p-4">
         {/* Contenedor de los Tabs */}
-        <div className="flex border-b">
-          {/* Tab 1 */}
-          <button
-            className={`py-2 px-4 text-sm font-semibold ${activeTab === 1 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-              } focus:outline-none`}
-            onClick={() => setActiveTab(1)}
-          >
-            Triaje
-          </button>
+        <div className="flex justify-between border-b">
+          {/* Tabs izquierda */}
+          <div className="flex">
+            {/* Tab 1 */}
+            <button
+              className={`py-2 px-4 text-sm font-semibold ${activeTab === 1 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'} focus:outline-none`}
+              onClick={() => setActiveTab(1)}
+            >
+              Triaje
+            </button>
 
+            {/* Tab 3 */}
+            <button
+              className={`py-2 px-4 text-sm font-semibold ${activeTab === 3 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'} focus:outline-none`}
+              onClick={() => setActiveTab(3)}
+            >
+              Diagnostico Ingreso
+            </button>
 
-          {/* Tab 3 */}
-          <button
-            className={`py-2 px-4 text-sm font-semibold ${activeTab === 3 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-              } focus:outline-none`}
-            onClick={() => setActiveTab(3)}
-          >
-            Diagnostico Ingreso
-          </button>
+            {/* Tab 4 */}
+            <button
+              className={`py-2 px-4 text-sm font-semibold ${activeTab === 4 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'} focus:outline-none`}
+              onClick={() => setActiveTab(4)}
+            >
+              Ordenes Medicas
+            </button>
 
-          {/* Tab 4 */}
-          <button
-            className={`py-2 px-4 text-sm font-semibold ${activeTab === 4 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-              } focus:outline-none`}
-            onClick={() => setActiveTab(4)}
-          >
-            Ordenes Medicas
-          </button>
+            {/* Tab 5 */}
+            <button
+              className={`py-2 px-4 text-sm font-semibold ${activeTab === 5 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'} focus:outline-none`}
+              onClick={() => setActiveTab(5)}
+            >
+              Anamnesis
+            </button>
+          </div>
 
-          {/* Tab 5 */}
-          <button
-            className={`py-2 px-4 text-sm font-semibold ${activeTab === 5 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-              } focus:outline-none`}
-            onClick={() => setActiveTab(5)}
-          >
-            Anamnesis
-          </button>
+          {/* Tabs derecha */}
+          <div className="flex">
+            {/* Tab 6 */}
+            <button
+              className={`py-2 px-4 text-sm font-semibold ${activeTab === 6 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'} focus:outline-none`}
+              onClick={() => setActiveTab(6)}
+            >
+              Transferencias
+            </button>
 
-          <button
-            className={`py-2 px-4 text-sm font-semibold ${activeTab === 6 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-              } focus:outline-none`}
-            onClick={() => setActiveTab(6)}
-          >
-            Transferencias
-          </button>
-
-
-          <button
-            className={`py-2 px-4 text-sm font-semibold ${activeTab === 7 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
-              } focus:outline-none`}
-            onClick={() => setActiveTab(7)}
-          >
-            Atención Medica
-          </button>
+            {/* Tab 7 */}
+            <button
+              className={`py-2 px-4 text-sm font-semibold ${activeTab === 7 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'} focus:outline-none`}
+              onClick={() => setActiveTab(7)}
+            >
+              Atención Medica
+            </button>
+          </div>
         </div>
+
 
         {/* Contenedor del contenido de los tabs */}
         <div className="mt-4">

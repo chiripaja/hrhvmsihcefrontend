@@ -15,6 +15,7 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
   }, [idcuentaatencion])
   const getDatosHC = async (idcuentaatencion: any) => {
     const { data } = await axios.get(`${process.env.apiWebOrigenNodeJs}api/reportes/imprimehc/${idcuentaatencion}`);
+  console.log(data)
     setdatosPx(data)
   }
 
@@ -208,17 +209,17 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
                 </tr>
                 <tr>
                   <td className="font-bold">Departamento:</td>
-                  <td>{datosPx?.departamentoproc}</td>
+                  <td>{datosPx?.departamentoProcedencia  || '-'}</td>
                 </tr>
 
                 <tr>
                   <td className="font-bold">Provincia:</td>
-                  <td>{datosPx?.provinciaproc}</td>
+                  <td>{datosPx?.provinciaProcedencia  || '-'}</td>
                 </tr>
 
                 <tr>
                   <td className="font-bold">Distrito:</td>
-                  <td>{datosPx?.distritoproc}</td>
+                  <td>{datosPx?.DistritoProcedencia || '-'}</td>
                 </tr>
 
                 <tr>
@@ -236,15 +237,15 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
                 </tr>
                 <tr>
                   <td className="font-bold">Departamento:</td>
-                  <td>{datosPx?.departamentonacimiento}</td>
+                  <td>{datosPx?.departamentoNacimiento}</td>
                 </tr>
                 <tr>
                   <td className="font-bold">Provincia:</td>
-                  <td>{datosPx?.provincianacimiento}</td>
+                  <td>{datosPx?.provinciaNacimiento}</td>
                 </tr>
                 <tr>
                   <td className="font-bold">Distrito:</td>
-                  <td>{datosPx?.distritonacimiento}</td>
+                  <td>{datosPx?.distritoNacimiento}</td>
                 </tr>
                 <tr>
                   <td className="font-bold">Centro Poblado:</td>

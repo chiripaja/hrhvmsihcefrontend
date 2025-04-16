@@ -4,8 +4,8 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import Select from 'react-select';
 import * as StompJs from '@stomp/stompjs';
-import { FormAdmision } from "./FormAdmision";
 import { Controller, useForm } from "react-hook-form";
+import { FormAdmision } from "../ModuloAdmision/FormAdmision";
 
 interface Cita {
     idEspecialidad: number;
@@ -29,7 +29,7 @@ const agruparYCuposLibres = (citas: Cita[]): AgrupadoCitas => {
 
     const agrupado = citas.reduce((acc: AgrupadoCitas, cita: Cita) => {
         const { idEspecialidad, fecha, cuposLibres, total_Citas } = cita;
-        
+
         if (!acc[idEspecialidad]) {
             acc[idEspecialidad] = {};
         }
@@ -61,7 +61,7 @@ const generarFechas = (citas: Cita[]): string[] => {
     return Array.from(fechas).sort();
 };
 
-export const ModuloAdmision = ({ usuario }: any) => {
+export const ModuloAdmisionImg = ({ usuario }: any) => {
     const [medicoSeleccionado, setMedicoSeleccionado] = useState<string | null>(null);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const diactual = new Date().toISOString().split('T')[0];
@@ -90,6 +90,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
         return Array.from(medicos)
             .sort()
             .map(medico => ({ value: medico, label: medico }));
+
     };
 
     const citasFiltradas = medicoSeleccionado
@@ -108,10 +109,9 @@ export const ModuloAdmision = ({ usuario }: any) => {
     const fetchProducts = async () => {
         setIsLoading(true);
         try {
-            const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibres`);
-            
-            setCitas(data);
-
+            const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibresProc`);
+            const filtrados=data.filter((data:any)=>data.nombreServicio.includes("APOY."));
+            setCitas(filtrados);
         } catch (error) {
             console.error('Error fetching products:', error);
         } finally {
@@ -122,8 +122,9 @@ export const ModuloAdmision = ({ usuario }: any) => {
     const fetchProductsActualizacionPosterior = async () => {
         settextoLoading("cargando");
         try {
-            const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibres`);
-            setCitas(data);
+            const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibresProc`);
+            const filtrados=data.filter((data:any)=>data.nombreServicio.includes("APOY."));
+            setCitas(filtrados);
         } catch (error) {
             console.error('Error fetching products:', error);
         } finally {
@@ -209,22 +210,20 @@ export const ModuloAdmision = ({ usuario }: any) => {
     const medicoBuscadoW = watch('medicoBuscado')
     useEffect(() => {
         if (medicoBuscadoW) {
-           
             setMedicoSeleccionado(medicoBuscadoW?.value)
         }
     }, [medicoBuscadoW])
 
 
     return (
-        <div className="px-2 bg-white rounded print:m-0 print:p-0 print:bg-transparent print:rounded-none">
-           
+        <div className="p-2 bg-white rounded print:m-0 print:p-0 print:bg-transparent print:rounded-none">
             {isLoading ? (
                 <div className="flex justify-center items-center h-screen">
                     <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
                 </div>
             ) : (
                 <>
-                    <div className="grid grid-cols-12 gap-4  h-[90vh] sm:overflow-hidden bg-white">
+                    <div className="grid grid-cols-12 gap-4   h-5/6">
                         <div className="col-span-12 print:hidden">
                             <h1>{TextoLoading}</h1>
                         </div>
@@ -232,30 +231,29 @@ export const ModuloAdmision = ({ usuario }: any) => {
                             <label htmlFor="medico" className=" block text-sm font-medium text-gray-700">
                                 Filtrar por Médico
                             </label>
-                                <Controller
-                                    name="medicoBuscado"
-                                    control={control}
-                                    defaultValue={null}
-                                    render={({ field }) => (
-                                        <Select
-                                            instanceId="unique-select-id"
-                                            {...field}
-                                            options={[
-                                                { value: "", label: "Todos" }, // Opción adicional para "Todos"
-                                                ...obtenerMedicosUnicos2(citas)
-                                            ]}
-                                            placeholder="Servicios Emergencia"
-                                            className="w-full z-30"
-                                            isLoading={isLoading}
-                                            required
-                                            onChange={(selectedOption) => {
-                                                field.onChange(selectedOption); // Mantiene la funcionalidad de react-hook-form
-                                                setMedicoSeleccionado(selectedOption?.value); // Actualiza el estado directamente
-                                            }}
-                                        />
-                                    )}
-                                />
-                        
+                            <Controller
+                                name="medicoBuscado"
+                                control={control}
+                                defaultValue={null}
+                                render={({ field }) => (
+                                    <Select
+                                        instanceId="unique-select-id"
+                                        {...field}
+                                        options={[
+                                            { value: "", label: "Todos" }, // Opción adicional para "Todos"
+                                            ...obtenerMedicosUnicos2(citas)
+                                        ]}
+                                        placeholder="Nombre del medico"
+                                        className="w-full z-30"
+                                        isLoading={isLoading}
+                                        required
+                                        onChange={(selectedOption) => {
+                                            field.onChange(selectedOption); // Mantiene la funcionalidad de react-hook-form
+                                            setMedicoSeleccionado(selectedOption?.value); // Actualiza el estado directamente
+                                        }}
+                                    />
+                                )}
+                            />
                         </div>
                         <div className="col-span-12 print:hidden">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
@@ -275,7 +273,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
                                 </button>
                             </div>
                         </div>
-                        <div className="col-span-12 md:col-span-8 gap-3 overflow-x-auto print:hidden  overflow-y-auto border h-[75vh]">
+                        <div className="col-span-12 md:col-span-8 gap-3 overflow-x-auto print:hidden h-fit overflow-y-auto border">
                             <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700 ">
                                 <thead>
                                     <tr>
@@ -290,84 +288,82 @@ export const ModuloAdmision = ({ usuario }: any) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-  {Object.keys(agruparYCuposLibres(citasFiltradas))
-    .filter((idEspecialidad) =>
-      fechas.slice(0, daysToShow).some(
-        (fecha) =>
-          citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres >= 0
-      )
-    )
-    .sort((a, b) => {
-      const nombreA =
-        citasFiltradas.find(
-          (cita) => cita.idEspecialidad === parseInt(a)
-        )?.nombreEspecialidad || "";
-      const nombreB =
-        citasFiltradas.find(
-          (cita) => cita.idEspecialidad === parseInt(b)
-        )?.nombreEspecialidad || "";
-      return nombreA.localeCompare(nombreB);
-    })
-    .map((idEspecialidad, index) => {
-      
-      const citaEspecialidad: any = citasFiltradas.find(
-        (cita) => cita.idEspecialidad === parseInt(idEspecialidad)
-      );
+                                    {Object.keys(agruparYCuposLibres(citasFiltradas))
+                                        .filter((idEspecialidad) =>
+                                            fechas.slice(0, daysToShow).some(
+                                                (fecha) =>
+                                                    citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres > 0
+                                            )
+                                        )
+                                        .sort((a, b) => {
+                                            const nombreA =
+                                                citasFiltradas.find(
+                                                    (cita) => cita.idEspecialidad === parseInt(a)
+                                                )?.nombreEspecialidad || "";
+                                            const nombreB =
+                                                citasFiltradas.find(
+                                                    (cita) => cita.idEspecialidad === parseInt(b)
+                                                )?.nombreEspecialidad || "";
+                                            return nombreA.localeCompare(nombreB);
+                                        })
+                                        .map((idEspecialidad, index) => {
+                                            const citaEspecialidad: any = citasFiltradas.find(
+                                                (cita) => cita.idEspecialidad === parseInt(idEspecialidad)
+                                            );
 
-      return (
-        <tr key={idEspecialidad} className="odd:bg-white even:bg-gray-100">
-          <td
-            className={`sticky left-0 z-10 px-4 py-2 
+                                            return (
+                                                <tr key={idEspecialidad} className="odd:bg-white even:bg-gray-100">
+                                                    <td
+                                                        className={`sticky left-0 z-10 px-4 py-2 
               ${index % 2 === 0 ? "bg-white" : "bg-gray-100"} dark:bg-neutral-800`}
-          >
-            
-            {citaEspecialidad ? citaEspecialidad.nombreEspecialidad : "No disponible"}
-          </td>
-          {fechas.slice(0, daysToShow).map((fecha) => {
-            const hoy = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
-            const esHoy = fecha === hoy;
-            const cuposLibres = citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres || 0;
+                                                    >
+                                                        {citaEspecialidad ? citaEspecialidad.nombreEspecialidad : "No disponible"}
+                                                    </td>
+                                                    {fechas.slice(0, daysToShow).map((fecha) => {
+                                                        const hoy = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
+                                                        const esHoy = fecha === hoy;
+                                                        const cuposLibres = citasAgrupadas[parseInt(idEspecialidad)]?.[fecha]?.cuposLibres || 0;
 
-            return (
-              <td key={fecha} className="p-1">
-                {citasAgrupadas[parseInt(idEspecialidad)]?.[fecha] ? (
-                  esHoy ? (
-                    <div
-                      onClick={() => ver(idEspecialidad, fecha)}
-                      className={`cursor-pointer text-center rounded  hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
+                                                        return (
+                                                            <td key={fecha} className="p-1">
+                                                                {citasAgrupadas[parseInt(idEspecialidad)]?.[fecha] ? (
+                                                                    esHoy ? (
+                                                                        <div
+                                                                            onClick={() => ver(idEspecialidad, fecha)}
+                                                                            className={`cursor-pointer text-center rounded  hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
                         ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}
-                        ${cuposLibres>0 ? "bg-teal-500":"bg-orange-600"}
+                        ${cuposLibres > 0 ? "bg-teal-500" : "bg-orange-600"}
                         `}
-                    >
-                      {/* Mostrar cupos libres si hay más de 0, de lo contrario mostrar 0 */}
-                      [{cuposLibres > 0 ? cuposLibres : 0}]
-                  
-                    </div>
-                  ) : cuposLibres > 0 ? (
-                    <div
-                      onClick={() => ver(idEspecialidad, fecha)}
-                      className={`cursor-pointer text-center rounded bg-teal-500 hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
+                                                                        >
+                                                                            {/* Mostrar cupos libres si hay más de 0, de lo contrario mostrar 0 */}
+                                                                            [{cuposLibres > 0 ? cuposLibres : 0}]
+
+                                                                        </div>
+                                                                    ) : cuposLibres > 0 ? (
+                                                                        <div
+                                                                            onClick={() => ver(idEspecialidad, fecha)}
+                                                                            className={`cursor-pointer text-center rounded bg-teal-500 hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
                         ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}`}
-                    >
-                      [{cuposLibres}] 
-                    </div>
-                  ) : (
-                    <div className="bg-gray-300 rounded">
-                      <button onClick={() => ver(idEspecialidad, fecha)}></button>
-                    </div>
-                  )
-                ) : (
-                  <div className="bg-gray-300 rounded">
-                    <button onClick={() => ver(idEspecialidad, fecha)}></button>
-                  </div>
-                )}
-              </td>
-            );
-          })}
-        </tr>
-      );
-    })}
-</tbody>
+                                                                        >
+                                                                            [{cuposLibres}]
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="bg-gray-300 rounded">
+                                                                            <button onClick={() => ver(idEspecialidad, fecha)}></button>
+                                                                        </div>
+                                                                    )
+                                                                ) : (
+                                                                    <div className="bg-gray-300 rounded">
+                                                                        <button onClick={() => ver(idEspecialidad, fecha)}></button>
+                                                                    </div>
+                                                                )}
+                                                            </td>
+                                                        );
+                                                    })}
+                                                </tr>
+                                            );
+                                        })}
+                                </tbody>
                             </table>
                         </div>
                         <div className="col-span-12 md:col-span-4 h-fit border rounded print:col-span-12 print:md:col-span-12 print:border-none print:rounded-none ">

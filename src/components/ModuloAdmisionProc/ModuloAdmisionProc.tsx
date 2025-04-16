@@ -110,7 +110,8 @@ export const ModuloAdmisionProc = ({ usuario }: any) => {
         setIsLoading(true);
         try {
             const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibresProc`);
-            setCitas(data);
+            const filtrados=data.filter((data:any)=>data.nombreServicio.includes("proc."));
+            setCitas(filtrados);
 
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -123,7 +124,8 @@ export const ModuloAdmisionProc = ({ usuario }: any) => {
         settextoLoading("cargando");
         try {
             const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibresProc`);
-            setCitas(data);
+            const filtrados=data.filter((data:any)=>data.nombreServicio.includes("proc."));
+            setCitas(filtrados);
         } catch (error) {
             console.error('Error fetching products:', error);
         } finally {
@@ -245,7 +247,7 @@ export const ModuloAdmisionProc = ({ usuario }: any) => {
                                                 { value: "", label: "Todos" }, // Opción adicional para "Todos"
                                                 ...obtenerMedicosUnicos2(citas)
                                             ]}
-                                            placeholder="Servicios Emergencia"
+                                            placeholder="Nombre del medico"
                                             className="w-full z-30"
                                             isLoading={isLoading}
                                             required

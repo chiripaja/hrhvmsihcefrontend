@@ -19,6 +19,7 @@ export const TopMenu2 = async () => {
     { href: "/sihce/consultaexterna", label: "CE Atencion", condition: webadmin || CEAtencion },
     { href: "/sihce/admision", label: "Admision CE", condition: webadmin || admisionista },
     { href: "/sihce/admisionproc", label: "Admision Proc", condition: webadmin || CEAtencionProc },
+    { href: "/sihce/admisionimg", label: "Admision Imagen", condition: webadmin || CEAtencionProc },
     { href: "/sihce/listapx", label: "Lista Citados", condition: webadmin },
     { href: "/sihce/nuevousuario", label: "Paciente Nuevo", condition: webadmin || admisionista },
     { href: "/sihce/triaje", label: "Triaje", condition: webadmin || cetriaje },
