@@ -259,22 +259,24 @@ export const EmergenciaAdmision = ({ session }: any) => {
         try {
             setIsLoading(true);
             const response = await getData(`${process.env.apijimmynew}/emergencia/ServiciosFiltrar`);
+            console.log(response)
             const mappedOptions = response.map((est: any) => ({
-                value: est.IdServicio,
-                label: `${est.Nombre.trim()}`,
-                IdEspecialidad: est.IdEspecialidad
+                value: est.idServicio,
+                label: `${est.nombre?.trim()}`,
+                IdEspecialidad: est.idEspecialidad
             }));
             setOptions(mappedOptions);
             const responseOrigenAtencion = await getData(`${process.env.apijimmynew}/emergencia/TiposOrigenAtencionSeleccionarViasDeConsultoriosEmergencia`)
             const mappedOptionsOrigenAtencion = responseOrigenAtencion.map((est: any) => ({
                 value: est.IdOrigenAtencion,
-                label: `${est.DescripcionLarga.trim()}`
+                label: `${est.DescripcionLarga?.trim()}`
             }));
             setOrigenAtencion(mappedOptionsOrigenAtencion)
             const responseGravedadAtencion = await getData(`${process.env.apijimmynew}/emergencia/tiposGravedadAtencion`);
+
             const mappedresponseGravedadAtencion = responseGravedadAtencion.map((est: any) => ({
                 value: est.idTipoGravedad,
-                label: `${est.descripcion.trim()}`
+                label: `${est.descripcion?.trim()}`
             }));
             setGravedadAtencion(mappedresponseGravedadAtencion)
         } catch (error) {
