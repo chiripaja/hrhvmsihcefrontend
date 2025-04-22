@@ -648,7 +648,7 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                         </div>
                                     ) : (
                                         <>
-                                            <div className=" h-[39vh] m-1 overflow-auto">
+                                            <div className=" h-[31vh] m-1 overflow-auto">
                                                 <table className="min-w-fit divide-y divide-gray-200 dark:divide-neutral-700 border ">
                                                     <thead>
                                                         <tr>
