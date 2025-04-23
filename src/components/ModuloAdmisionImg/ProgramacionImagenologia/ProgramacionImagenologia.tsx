@@ -7,6 +7,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Controller, useForm } from 'react-hook-form';
 import { getData } from '@/components/helper/axiosHelper';
 import Select from 'react-select';
+import axios from 'axios';
 type Programacion = {
   idDoctor: string;
   fecha: string;         // yyyy-MM-dd
@@ -37,7 +38,8 @@ const ProgramacionImagenologia = () => {
   const [optionPuntosImg, setoptionPuntosImg] = useState<any[]>([]);
   const [optionMedicosG, setoptionMedicosG] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const onSubmit = (data: any) => {
+  const onSubmit = async(data: any) => {
+    
     const nueva: Programacion = {
       idDoctor: data.idDoctor,
       fecha: data.fecha,
@@ -45,8 +47,22 @@ const ProgramacionImagenologia = () => {
       horaFin: data.horaFin,
       idServicio: data.idServicio,
     };
-    setProgramaciones([...programaciones, nueva]);
-    reset();
+    const objProgra={
+      idProgramacionOrdenes: 0,
+      idMedico: data.idmedico?.value,
+      idPuntoCarga: parseInt(data.idpuntocarga),
+      fecha: data.fecha,
+      horaInicio: data.horaInicio,
+      horaFin: data.horaFin
+    }
+    console.log(objProgra)
+    const datos=await axios.post( 
+      `${process.env.apijimmynew}/programacionordenes`,
+      objProgra
+    )
+    console.log(datos)
+    //setProgramaciones([...programaciones, nueva]);
+   // reset();
   };
 
   // Convertir a eventos para el calendario
