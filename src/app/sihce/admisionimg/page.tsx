@@ -1,6 +1,5 @@
 import { auth } from '@/auth';
-import { ModuloAdmisionImg } from '@/components/ModuloAdmisionImg/ModuloAdmisionImg';
-import { ModuloAdmisionImgLista } from '@/components/ModuloAdmisionImg/ModuloAdmisionImgLista';
+import { ModuloAdmisionImgLista } from '@/components/ModuloAdmisionImg/AdmisionImg/ModuloAdmisionImgLista';
 export default async function AdmisionImgPage() {
   const session = await auth()
   return (

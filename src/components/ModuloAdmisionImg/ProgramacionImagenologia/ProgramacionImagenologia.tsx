@@ -2,24 +2,19 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar, dateFnsLocalizer, Event } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
-import {es} from 'date-fns/locale/es';
+import { es } from 'date-fns/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Controller, useForm } from 'react-hook-form';
 import { getData } from '@/components/helper/axiosHelper';
 import Select from 'react-select';
 import axios from 'axios';
-type Programacion = {
-  idDoctor: string;
-  fecha: string;         // yyyy-MM-dd
-  horaInicio: string;    // HH:mm
-  horaFin: string;       // HH:mm
-  idServicio: string;
-};
+
 
 type CalendarioEvento = Event & {
   title: string;
   start: Date;
   end: Date;
+  servicio: string,
 };
 
 const locales = { es };
@@ -33,21 +28,13 @@ const localizer = dateFnsLocalizer({
 });
 
 const ProgramacionImagenologia = () => {
-  const {control, register, handleSubmit, reset, formState: { errors } } = useForm();
-  const [programaciones, setProgramaciones] = useState<Programacion[]>([]);
+  const { control, register, handleSubmit, reset, formState: { errors } } = useForm();
+  const [programaciones, setProgramaciones] = useState<any[]>([]);
   const [optionPuntosImg, setoptionPuntosImg] = useState<any[]>([]);
   const [optionMedicosG, setoptionMedicosG] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const onSubmit = async(data: any) => {
-    
-    const nueva: Programacion = {
-      idDoctor: data.idDoctor,
-      fecha: data.fecha,
-      horaInicio: data.horaInicio,
-      horaFin: data.horaFin,
-      idServicio: data.idServicio,
-    };
-    const objProgra={
+  const onSubmit = async (data: any) => {
+    const objProgra = {
       idProgramacionOrdenes: 0,
       idMedico: data.idmedico?.value,
       idPuntoCarga: parseInt(data.idpuntocarga),
@@ -55,14 +42,13 @@ const ProgramacionImagenologia = () => {
       horaInicio: data.horaInicio,
       horaFin: data.horaFin
     }
-    console.log(objProgra)
-    const datos=await axios.post( 
+    const datos = await axios.post(
       `${process.env.apijimmynew}/programacionordenes`,
       objProgra
     )
-    console.log(datos)
-    //setProgramaciones([...programaciones, nueva]);
-   // reset();
+
+    getFechaProgramacion()
+    // reset();
   };
 
   // Convertir a eventos para el calendario
@@ -72,23 +58,23 @@ const ProgramacionImagenologia = () => {
 
     return {
       id: index,
-      title: `Dr. ${p.idDoctor} - Serv: ${p.idServicio}`,
+      title: `Dr. ${p.medico?.empleado?.apellidoPaterno}`,
       start,
       end,
+      servicio: `Serv: ${p.idPuntoCarga}`, // agregamos más información
     };
   });
 
-  const OnLoadPointsOfLoad=async()=>{
-    const data= await getData(`${process.env.apijimmynew}/FactCatalogoServicios/FactPuntosCargaFiltrar`)
-    const imgfil=data.filter((dat:any)=>dat.IdUPS==1)
+  const OnLoadPointsOfLoad = async () => {
+    const data = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/FactPuntosCargaFiltrar`)
+    const imgfil = data.filter((dat: any) => dat.IdUPS == 1)
     setoptionPuntosImg(imgfil)
   }
-
   useEffect(() => {
     OnLoadPointsOfLoad()
   }, [])
-  
-const getMedicosGeneral = async (nom: string) => {
+
+  const getMedicosGeneral = async (nom: string) => {
     try {
       const response = await getData(`${process.env.apijimmynew}/apimedicobynomape/${nom}`);
       const mappedOptions = response.map((est: any) => ({
@@ -100,40 +86,45 @@ const getMedicosGeneral = async (nom: string) => {
       console.error("Error al obtener médicos:", error);
     }
   };
-
-
+  const getFechaProgramacion = async () => {
+    const data = await getData(`${process.env.apijimmynew}/programacionordenes`)
+    setProgramaciones(data);
+  }
+  useEffect(() => {
+    getFechaProgramacion()
+  }, [])
   return (
-    <div className=" mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className=" mx-auto p-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
       {/* Formulario */}
       <div className="bg-white shadow p-4 rounded lg:col-span-1">
         <h2 className="text-xl font-bold mb-4">Programar Imagenología</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-          <Controller
-                name="idmedico"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <Select
-                    instanceId="unique-select-id"
-                    {...field}
-                    options={optionMedicosG}
-                    placeholder="Médicos"
-                    className="w-full"
-                    required
-                    isClearable
-                    isSearchable
-                    onInputChange={(inputValue) => {
-                      if (inputValue.length > 2) {
-                        getMedicosGeneral(inputValue);
-                      }
-                    }}
-                    onChange={(selectedOption) => {
-                      field.onChange(selectedOption);
-                    }}
-                  />
-                )}
-              />
+            <Controller
+              name="idmedico"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <Select
+                  instanceId="unique-select-id"
+                  {...field}
+                  options={optionMedicosG}
+                  placeholder="Médicos"
+                  className="w-full"
+                  required
+                  isClearable
+                  isSearchable
+                  onInputChange={(inputValue) => {
+                    if (inputValue.length > 2) {
+                      getMedicosGeneral(inputValue);
+                    }
+                  }}
+                  onChange={(selectedOption) => {
+                    field.onChange(selectedOption);
+                  }}
+                />
+              )}
+            />
           </div>
 
           <div>
@@ -169,38 +160,38 @@ const getMedicosGeneral = async (nom: string) => {
           </div>
 
           <div>
-       
+
             {optionPuntosImg?.length > 0 && (
-                <Controller
-                    name="idpuntocarga"
-                    control={control}
-                    rules={{
-                        required: "El sexo es obligatorio",
-                    }}
-                    render={({ field }) => (
-                        <>
-                            <label className="block text-sm font-medium text-gray-600 dark:text-neutral-300">
-                                Servicio
-                            </label>
-                            <select
-                                {...field}
-                                className={`w-full mt-1 p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white ${errors.idpuntocarga ? "border-red-500" : "border-gray-300"}`}
-                            >
-                                <option value="">Selecciona un servicio</option>
-                                {optionPuntosImg.map((data: any) => (
-                                    <option key={data?.IdPuntoCarga} value={data?.IdPuntoCarga}>
-                                        {data?.Descripcion}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.idpuntocarga && (
-                                <span className="text-red-500 text-sm">
-                                    {typeof errors.idpuntocarga.message === 'string' ? errors.idpuntocarga.message : 'Error desconocido'}
-                                </span>
-                            )}
-                        </>
+              <Controller
+                name="idpuntocarga"
+                control={control}
+                rules={{
+                  required: "El sexo es obligatorio",
+                }}
+                render={({ field }) => (
+                  <>
+                    <label className="block text-sm font-medium text-gray-600 dark:text-neutral-300">
+                      Servicio
+                    </label>
+                    <select
+                      {...field}
+                      className={`w-full mt-1 p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white ${errors.idpuntocarga ? "border-red-500" : "border-gray-300"}`}
+                    >
+                      <option value="">Selecciona un servicio</option>
+                      {optionPuntosImg.map((data: any) => (
+                        <option key={data?.IdPuntoCarga} value={data?.IdPuntoCarga}>
+                          {data?.Descripcion}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.idpuntocarga && (
+                      <span className="text-red-500 text-sm">
+                        {typeof errors.idpuntocarga.message === 'string' ? errors.idpuntocarga.message : 'Error desconocido'}
+                      </span>
                     )}
-                />
+                  </>
+                )}
+              />
             )}
           </div>
 
@@ -214,14 +205,14 @@ const getMedicosGeneral = async (nom: string) => {
       </div>
 
       {/* Calendario */}
-      <div className="bg-white shadow p-4 rounded lg:col-span-2">
+      <div className="bg-white shadow p-4 rounded lg:col-span-4">
         <h2 className="text-xl font-bold mb-4">Calendario</h2>
         <Calendar
           localizer={localizer}
           events={eventosCalendario}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 700 }} // más grande
+          style={{ height: 700 }}
           views={['month', 'week', 'day', 'agenda']}
           messages={{
             today: 'Hoy',
@@ -237,7 +228,16 @@ const getMedicosGeneral = async (nom: string) => {
             noEventsInRange: 'No hay eventos en este rango.',
             allDay: 'Todo el día',
           }}
+          components={{
+            event: ({ event }) => (
+              <div>
+                <strong>{event.title}</strong>
+                <div>{event.servicio}</div>
+              </div>
+            ),
+          }}
         />
+
       </div>
     </div>
   );

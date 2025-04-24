@@ -1,17 +1,21 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 
-import { getData } from '../helper/axiosHelper';
+import { getData } from '../../helper/axiosHelper';
 import axios from 'axios';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, TextField } from '@mui/material';
-import { ModalGeneric } from '../ui/ModalGeneric/ModalGeneric';
+import { ModalGeneric } from '../../ui/ModalGeneric/ModalGeneric';
+import { Form } from 'react-hook-form';
+import { FormAdmisionImg } from './FormAdmisionImg';
 
 
 export const ModuloAdmisionImgLista = ({ usuario }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => {
-    setIsModalOpen(true);
+  const [numCuenta, setnumCuenta] = useState<any>();
+  const openModal = (idcuenta:any) => {
+     setnumCuenta(idcuenta)
+     setIsModalOpen(true);
   };
 
   const closeModal = () => {
@@ -70,8 +74,9 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
             variant="outlined"
             size="small"
             color="primary"
-            onClick={() => openModal()}
+            onClick={() => openModal(params.row.IdCuentaAtencion)}
           >
+            
             Admisionar
           </Button>
         </Box>
@@ -80,20 +85,7 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
   ];
   return (
     <div>
-      <ModalGeneric isOpen={isModalOpen} onClose={closeModal} >
-        <label className="text-lg font-semibold text-gray-900">Historial del Paciente</label>
-        <div className="text-sm text-gray-600">
-          dsds
-        </div>
-        <div className="mt-6 flex justify-end">
-          <button
-            className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-            onClick={closeModal}
-          >
-            Cerrar
-          </button>
-        </div>
-      </ModalGeneric>
+      <FormAdmisionImg isModalOpen={isModalOpen} closeModal={closeModal} numCuenta={numCuenta}/>
       <Box sx={{ width: "100%", backgroundColor: "white", p: 2 }}>
         <TextField
           label="Buscar..."
@@ -112,7 +104,6 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
             backgroundColor: "white", // Fondo blanco
             border: "1px solid #e0e0e0", // Borde suave opcional
           }}
-
         />
       </Box>
 

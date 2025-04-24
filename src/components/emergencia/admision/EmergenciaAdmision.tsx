@@ -659,7 +659,7 @@ export const EmergenciaAdmision = ({ session }: any) => {
                                     {...field}
                                     className='w-full'
                                     options={gravedadAtencion}
-                                    placeholder="Gravedad Atencion"
+                                    placeholder="ncion"
                                     required={true}
                                 />
                             )}
