@@ -36,7 +36,7 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
       FechaIngreso: item.FechaIngreso?.split("T")[0]
     }));
     setRows(datosFormateados);
-    console.log(data)
+   
   }
   useEffect(() => {
     GetListadosCitas()
