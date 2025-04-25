@@ -8,14 +8,27 @@ import { Box, Button, TextField } from '@mui/material';
 import { ModalGeneric } from '../../ui/ModalGeneric/ModalGeneric';
 import { Form } from 'react-hook-form';
 import { FormAdmisionImg } from './FormAdmisionImg';
+import { calcularEdad } from '@/components/utils/obtenerEdad';
 
 
 export const ModuloAdmisionImgLista = ({ usuario }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [numCuenta, setnumCuenta] = useState<any>();
-  const openModal = (idcuenta:any) => {
-     setnumCuenta(idcuenta)
-     setIsModalOpen(true);
+  const [datosPx, setdatosPx] = useState<any>();
+  const openModal = (data:any) => {
+
+    const obj={
+      IdPaciente:data?.IdPaciente,
+      NombreCompleto:data?.NombreCompleto,
+      Descripcion:data?.Descripcion,
+      NroDocumento:data?.NroDocumento,
+      NombreExamen:data?.Nombre,
+      nomServicio:data?.nomServicio,
+      edad:calcularEdad(data?.FechaNacimiento),
+      Telefono:data?.Telefono
+    }
+
+   setdatosPx(obj)
+      setIsModalOpen(true);/**/
   };
 
   const closeModal = () => {
@@ -28,6 +41,7 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
   const GetListadosCitas = async () => {
 
     const { data } = await axios.post(`${process.env.apijimmynew}/recetas/ListadoOrdenesByPuntoCargaImagenes`)
+    console.log(data)
     const datosFormateados = data.map((item: any, index: any) => ({
       id: index, // obligatorio para el DataGrid
       ...item,
@@ -54,15 +68,13 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
     // Puedes abrir un modal o redirigir
   };
   const columnas = [
-
     { field: "IdCuentaAtencion", headerName: "IdCuentaAtencion", width: 130 },
     { field: "NroDocumento", headerName: "Documento", width: 130 },
     { field: "NombreCompleto", headerName: "Paciente", width: 250 },
-    { field: "Nombre", headerName: "Estudio", width: 250 },
     { field: "Descripcion", headerName: "Servicio", width: 180 },
-    { field: "FechaIngreso", headerName: "F. Ingreso", width: 120 },
+    { field: "Nombre", headerName: "Estudio", width: 250 },
+  
     { field: "FechaReceta", headerName: "F. Receta", width: 120 },
-    { field: "observaciones", headerName: "Obs.", width: 200 },
     {
       field: "acciones",
       headerName: "Acciones",
@@ -74,9 +86,8 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
             variant="outlined"
             size="small"
             color="primary"
-            onClick={() => openModal(params.row.IdCuentaAtencion)}
+            onClick={() => openModal(params.row)}
           >
-            
             Admisionar
           </Button>
         </Box>
@@ -85,7 +96,7 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
   ];
   return (
     <div>
-      <FormAdmisionImg isModalOpen={isModalOpen} closeModal={closeModal} numCuenta={numCuenta}/>
+      <FormAdmisionImg isModalOpen={isModalOpen} closeModal={closeModal} datosPx={datosPx}/>
       <Box sx={{ width: "100%", backgroundColor: "white", p: 2 }}>
         <TextField
           label="Buscar..."

@@ -31,24 +31,30 @@ const ProgramacionImagenologia = () => {
   const { control, register, handleSubmit, reset, formState: { errors } } = useForm();
   const [programaciones, setProgramaciones] = useState<any[]>([]);
   const [optionPuntosImg, setoptionPuntosImg] = useState<any[]>([]);
-  const [optionMedicosG, setoptionMedicosG] = useState<any[]>([])
+  const [optionMedicosG, setoptionMedicosG] = useState<any[]>([]);
+  const [optionCatalogoOrdenes, setOptionCatalogoOrdenes] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const onSubmit = async (data: any) => {
-    const objProgra = {
-      idProgramacionOrdenes: 0,
-      idMedico: data.idmedico?.value,
-      idPuntoCarga: parseInt(data.idpuntocarga),
-      fecha: data.fecha,
-      horaInicio: data.horaInicio,
-      horaFin: data.horaFin
-    }
-    const datos = await axios.post(
-      `${process.env.apijimmynew}/programacionordenes`,
-      objProgra
-    )
 
-    getFechaProgramacion()
-    // reset();
+    try {
+      const objProgra = {
+        idProgramacionOrdenes: 0,
+        idMedico: data.idmedico?.value,
+        idPuntoCarga: parseInt(data.idpuntocarga.value),
+        fecha: data.fecha,
+        horaInicio: data.horaInicio,
+        horaFin: data.horaFin
+      }
+      const datos = await axios.post(
+        `${process.env.apijimmynew}/programacionordenes`,
+        objProgra
+      )
+      getFechaProgramacion()
+      reset();
+    } catch (error) {
+      console.log(error)
+    }
+    
   };
 
   // Convertir a eventos para el calendario
@@ -61,7 +67,7 @@ const ProgramacionImagenologia = () => {
       title: `Dr. ${p.medico?.empleado?.apellidoPaterno}`,
       start,
       end,
-      servicio: `Serv: ${p.idPuntoCarga}`, // agregamos más información
+      servicio: `Serv: ${p.catalogOrdenes?.nombreExamen}`, // agregamos más información
     };
   });
 
@@ -86,12 +92,28 @@ const ProgramacionImagenologia = () => {
       console.error("Error al obtener médicos:", error);
     }
   };
+
+  const getNomOrdenes = async () => {
+    try {
+      const response = await getData(`${process.env.apijimmynew}/programacionordenes/listaordenes`);
+      console.log(response)
+      const catalogoOrdenesOptions = response.map((est: any) => ({
+        value: est.id,
+        label: est.nombreExamen,
+      }));
+      setOptionCatalogoOrdenes(catalogoOrdenesOptions)
+    } catch (error) {
+      console.error("Error al obtener médicos:", error);
+    }
+  }
   const getFechaProgramacion = async () => {
     const data = await getData(`${process.env.apijimmynew}/programacionordenes`)
+    console.log(data)
     setProgramaciones(data);
   }
   useEffect(() => {
-    getFechaProgramacion()
+    getFechaProgramacion();
+    getNomOrdenes();
   }, [])
   return (
     <div className=" mx-auto p-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -99,6 +121,26 @@ const ProgramacionImagenologia = () => {
       <div className="bg-white shadow p-4 rounded lg:col-span-1">
         <h2 className="text-xl font-bold mb-4">Programar Imagenología</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <Controller
+              name="idpuntocarga"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <Select
+                  instanceId="unique-select-id"
+                  {...field}
+                  options={optionCatalogoOrdenes}
+                  placeholder="Catalogo"
+                  className="w-full"
+                  required
+                  isClearable
+                  isSearchable
+
+                />
+              )}
+            />
+          </div>
           <div>
             <Controller
               name="idmedico"
@@ -126,7 +168,6 @@ const ProgramacionImagenologia = () => {
               )}
             />
           </div>
-
           <div>
             <label className="block font-medium">Fecha</label>
             <input
@@ -136,7 +177,6 @@ const ProgramacionImagenologia = () => {
             />
             {errors.fecha && <p className="text-red-500 text-sm">Este campo es obligatorio</p>}
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block font-medium">Hora Inicio</label>
@@ -159,41 +199,7 @@ const ProgramacionImagenologia = () => {
             </div>
           </div>
 
-          <div>
 
-            {optionPuntosImg?.length > 0 && (
-              <Controller
-                name="idpuntocarga"
-                control={control}
-                rules={{
-                  required: "El sexo es obligatorio",
-                }}
-                render={({ field }) => (
-                  <>
-                    <label className="block text-sm font-medium text-gray-600 dark:text-neutral-300">
-                      Servicio
-                    </label>
-                    <select
-                      {...field}
-                      className={`w-full mt-1 p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white ${errors.idpuntocarga ? "border-red-500" : "border-gray-300"}`}
-                    >
-                      <option value="">Selecciona un servicio</option>
-                      {optionPuntosImg.map((data: any) => (
-                        <option key={data?.IdPuntoCarga} value={data?.IdPuntoCarga}>
-                          {data?.Descripcion}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.idpuntocarga && (
-                      <span className="text-red-500 text-sm">
-                        {typeof errors.idpuntocarga.message === 'string' ? errors.idpuntocarga.message : 'Error desconocido'}
-                      </span>
-                    )}
-                  </>
-                )}
-              />
-            )}
-          </div>
 
           <button
             type="submit"

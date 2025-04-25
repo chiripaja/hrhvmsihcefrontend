@@ -110,7 +110,9 @@ export const ModuloAdmisionProc = ({ usuario }: any) => {
         setIsLoading(true);
         try {
             const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibresProc`);
-            const filtrados=data.filter((data:any)=>data.nombreServicio.includes("proc."));
+            
+            const filtrados=data.filter((data:any)=>data.nombreServicio.includes("PROC"));
+            console.log(filtrados)
             setCitas(filtrados);
 
         } catch (error) {
@@ -121,9 +123,11 @@ export const ModuloAdmisionProc = ({ usuario }: any) => {
     };
 
     const fetchProductsActualizacionPosterior = async () => {
+        console.log("entro aca")
         settextoLoading("cargando");
         try {
             const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibresProc`);
+            console.log(data)
             const filtrados=data.filter((data:any)=>data.nombreServicio.includes("proc."));
             setCitas(filtrados);
         } catch (error) {
@@ -147,31 +151,8 @@ export const ModuloAdmisionProc = ({ usuario }: any) => {
         fetchProducts();
         obtenerff();
         getTipoDoc();
-        const conectarWS = () => {
-            const client = new StompJs.Client({
-                webSocketFactory: () => new WebSocket(`${process.env.apiws}/websocket`),
-                onConnect: () => {
-                    console.log('Conexión STOMP establecida');
-                    client.subscribe('/Actualiza/Cupos', (mensaje) => {
-                        actualizarCitas(mensaje.body);
-                    });
-                },
-                onStompError: (frame) => {
-                    console.error('Error en STOMP: ', frame);
-                },
-                onWebSocketClose: () => {
-                    console.log('Conexión WebSocket cerrada');
-                },
-            });
-            client.activate();
-            setStompClient(client);
-        };
-        conectarWS();
-        return () => {
-            if (stompClient) {
-                stompClient.deactivate();
-            }
-        };
+
+   
 
     }, []);
 
