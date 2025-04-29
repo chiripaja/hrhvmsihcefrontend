@@ -4,12 +4,12 @@ import { ModalGeneric } from '@/components/ui/ModalGeneric/ModalGeneric'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { showSuccessAlert } from '@/components/utils/alertHelper';
 export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx }: any) => {
     const [dataProgramaciones, setdataProgramaciones] = useState<any[]>([])
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const getProgramacion = async () => {
         const data = await getData(`${process.env.apijimmynew}/programacionordenes`)
-
         const mappedOptionsOrigenAtencion = data.map((est: any) => ({
             value: est.idProgramacionOrdenes,
             label: `${est.fecha?.trim() + " " + est.catalogOrdenes?.nombreExamen}`
@@ -29,8 +29,25 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx }: any) => {
         }
     }, [datosPx, reset]);
     const FormImg=async(data:any)=>{
-        console.log(data)
-
+        
+        const objImg={
+            id:0,
+            idProducto:1,
+            idPaciente:datosPx.IdPaciente,
+            idCuentaAtencion:1,
+            numReceta: String(datosPx.idReceta),
+            procedencia:datosPx?.nomServicio,
+            idempleado:1,
+            observacion:"",
+            fechaEntrega:null,
+            idprogramacionordenes:data?.idprogramacion.value
+        }
+       
+        const response=await axios.post(`${process.env.apijimmynew}/citasimagenologia`,objImg)
+        if(response.data.id){
+            showSuccessAlert("Guardado Correctamente.")
+        }
+     
     }
     return (
         <>
@@ -67,7 +84,7 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx }: any) => {
                             <span className="font-medium text-gray-800">Fecha Atención:</span>
                             <div className="mt-1">
                                 <Controller
-                                    name="IdOrigenAtencion"
+                                    name="idprogramacion"
                                     control={control}
                                     defaultValue=""
                                     rules={{ required: 'Este campo es obligatorio' }} 

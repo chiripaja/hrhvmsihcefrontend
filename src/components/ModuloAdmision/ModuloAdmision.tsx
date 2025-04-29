@@ -62,13 +62,13 @@ const generarFechas = (citas: Cita[]): string[] => {
 };
 
 export const ModuloAdmision = ({ usuario }: any) => {
+      const ws = useRef<WebSocket | null>(null);
+      const [idcuentaActualizacion, setidcuentaActualizacion] = useState();
     const [medicoSeleccionado, setMedicoSeleccionado] = useState<string | null>(null);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const diactual = new Date().toISOString().split('T')[0];
 
-    const [options, setoptions] = useState<any[]>([]);
-
-    const [stompClient, setStompClient] = useState<StompJs.Client | null>(null);
+ 
     const [citas, setCitas] = useState<Cita[]>([]);
     const [consultorio, setConsultorio] = useState<Cita[]>()
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -145,33 +145,39 @@ export const ModuloAdmision = ({ usuario }: any) => {
         fetchProducts();
         obtenerff();
         getTipoDoc();
-        const conectarWS = () => {
-            const client = new StompJs.Client({
-                webSocketFactory: () => new WebSocket(`${process.env.apiws}/websocket`),
-                onConnect: () => {
-                    console.log('Conexión STOMP establecida');
-                    client.subscribe('/Actualiza/Cupos', (mensaje) => {
-                        actualizarCitas(mensaje.body);
-                    });
-                },
-                onStompError: (frame) => {
-                    console.error('Error en STOMP: ', frame);
-                },
-                onWebSocketClose: () => {
-                    console.log('Conexión WebSocket cerrada');
-                },
-            });
-            client.activate();
-            setStompClient(client);
-        };
-        conectarWS();
-        return () => {
-            if (stompClient) {
-                stompClient.deactivate();
-            }
-        };
+       
 
     }, []);
+
+
+    useEffect(() => {
+        // Crear conexión WebSocket
+        ws.current = new WebSocket(`${process.env.apiws}/ws/chat`);
+    
+        ws.current.onopen = () => {
+          console.log('✅ Conectado al WebSocket');
+        };
+    
+        ws.current.onmessage = (event: MessageEvent) => {
+            setidcuentaActualizacion(event.data)
+          console.log('📩 Mensaje recibido:', event.data);
+      
+        };
+    
+        ws.current.onerror = (event: Event) => {
+          console.error('❌ Error en WebSocket:', event);
+        };
+    
+        ws.current.onclose = (event: CloseEvent) => {
+          console.log('🔌 Conexión cerrada:', event.reason);
+        };
+    
+        // Limpiar la conexión al desmontar
+        return () => {
+          ws.current?.close();
+        };
+      }, []);
+
 
     function toBoolean(value: any) {
         if (value === 'True') {
@@ -214,6 +220,14 @@ export const ModuloAdmision = ({ usuario }: any) => {
         }
     }, [medicoBuscadoW])
 
+    useEffect(() => {
+     if(idcuentaActualizacion){
+        
+        fetchProductsActualizacionPosterior()
+     }
+    }, [idcuentaActualizacion])
+    
+
 
     return (
         <div className="px-2 bg-white rounded print:m-0 print:p-0 print:bg-transparent print:rounded-none">
@@ -230,7 +244,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
                         </div>
                         <div className="col-span-12 print:hidden">
                             <label htmlFor="medico" className=" block text-sm font-medium text-gray-700">
-                                Filtrar por Médico
+                                Filtrar por Médico {idcuentaActualizacion}
                             </label>
                             <Controller
                                 name="medicoBuscado"

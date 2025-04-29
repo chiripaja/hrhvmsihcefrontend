@@ -254,6 +254,11 @@ export const FormAdmision = (data: any) => {
                     if (data?.data?.exito == '1') {
                         limpiarCampos();
                         impresionTicket(data?.data?.idCuentaAtencion);
+                        const idcuentaAtencionCreate=data?.data?.idCuentaAtencion
+                        const dataobj={
+                            idcuenta :idcuentaAtencionCreate
+                          }
+                        await axios.post(`${process.env.apiurl}/api/websocket/send/${idcuentaAtencionCreate}`,dataobj);
                     }
                     else {
                         showAlert("Atencion", data?.data?.mensaje)

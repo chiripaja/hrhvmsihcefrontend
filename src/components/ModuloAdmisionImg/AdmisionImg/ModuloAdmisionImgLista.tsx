@@ -24,7 +24,9 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
       NombreExamen:data?.Nombre,
       nomServicio:data?.nomServicio,
       edad:calcularEdad(data?.FechaNacimiento),
-      Telefono:data?.Telefono
+      Telefono:data?.Telefono,
+      IdCuentaAtencion:data?.IdCuentaAtencion,
+      idReceta:data?.idReceta
     }
 
    setdatosPx(obj)
