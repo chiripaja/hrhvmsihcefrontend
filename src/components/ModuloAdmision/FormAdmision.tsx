@@ -326,6 +326,10 @@ export const FormAdmision = (data: any) => {
             if (result.isConfirmed) {
                 try {
                     await axios.get(`${process.env.apiurl}/CitaAnula/${idcita}/${usuario.user.id}`);
+                    const dataobj={
+                        idcuenta :idcita
+                      }
+                    await axios.post(`${process.env.apiurl}/api/websocket/send/${idcita}`,dataobj);
                     cargarListadoProgramados(idprogramacion)
                     Swal.fire("Se eliminó la cuenta correctamente!", "", "success");
                 } catch (error) {

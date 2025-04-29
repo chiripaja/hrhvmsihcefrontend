@@ -120,7 +120,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
     };
 
     const fetchProductsActualizacionPosterior = async () => {
-        settextoLoading("cargando");
+        settextoLoading("sincronizando...");
         try {
             const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibres`);
             setCitas(data);
@@ -244,7 +244,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
                         </div>
                         <div className="col-span-12 print:hidden">
                             <label htmlFor="medico" className=" block text-sm font-medium text-gray-700">
-                                Filtrar por Médico {idcuentaActualizacion}
+                                Filtrar por Médico 
                             </label>
                             <Controller
                                 name="medicoBuscado"
