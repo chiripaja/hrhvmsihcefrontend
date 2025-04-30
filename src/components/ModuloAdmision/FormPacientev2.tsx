@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { FaUserAlt } from "react-icons/fa";
 import { format, parse } from 'date-fns';
 import dynamic from 'next/dynamic';
+import { stringify } from 'querystring';
 
 const Select = dynamic(() => import('react-select'), { ssr: false });
 
@@ -181,6 +182,7 @@ export const FormPacientev2 = ({ usuario }: any) => {
         select('pais')
     }, [])
 
+    const tipo_docver=watch('tipo_doc')
     //Tipos Documento    
     const tiposDocumento = async () => {
         try {
@@ -273,7 +275,8 @@ export const FormPacientev2 = ({ usuario }: any) => {
         setUbigeoNacimiento('')
         setImg('')
         const numerodocumentoactual = await watch('num_doc')
-        const tipo_doc = await watch('tipo_doc')
+     
+   
         let apellidoPaterno: any = ''
         let apellidoMaterno: any = ''
         let primer_nombre: any = ''
@@ -307,7 +310,7 @@ export const FormPacientev2 = ({ usuario }: any) => {
         let foto: any = ''
         let fecha_foto: any = ''
         let tiempo_pasado: any = ''
-        if (numerodocumentoactual != '' && tipo_doc != '') {
+        if (numerodocumentoactual != '' && tipo_docver != '') {
             //  BASE DE DATOS
             try {
 
@@ -319,10 +322,9 @@ export const FormPacientev2 = ({ usuario }: any) => {
                     tipoDocumento: "string",
                     numeroDocumento: "string"
                 }
+                const { data } = await axios.post(`${process.env.apiurl}/Publico/BuscarSis/${tipo_docver}/${numerodocumentoactual}?dni=${numerodocumentoactual}&tipo=${tipo_docver}`, dataEnvio)
 
-                const { data } = await axios.post(`${process.env.apiurl}/Publico/BuscarSis/${tipo_doc}/${numerodocumentoactual}?dni=${numerodocumentoactual}&tipo=${tipo_doc}`, dataEnvio)
-
-                if (data !== null && tipo_doc !== "1" && tipo_doc !== "2") {
+                if (data !== null && tipo_docver !== "1" && tipo_docver !== "2") {
                     apellidoPaterno = data.apellidoPaterno
                     apellidoMaterno = data.apellidoMaterno
                     primer_nombre = data.primerNombre
@@ -819,10 +821,9 @@ export const FormPacientev2 = ({ usuario }: any) => {
 
 
 
-
     return (
         <div className='bg-white p-10'>
-
+            {JSON.stringify(tipo_docver,null,2)}
             <form onSubmit={handleSubmit(onSubmit)} onKeyDown={handleKeyDown}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     <div className='col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4'>
