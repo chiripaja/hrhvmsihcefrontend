@@ -4,6 +4,7 @@ import { ModalGeneric } from '@/components/ui/ModalGeneric/ModalGeneric'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { showSuccessAlert } from '@/components/utils/alertHelper';
 
 export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes }: any) => {
 
@@ -35,7 +36,7 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
           }
     }, [isModalOpen,datosPx, reset]);
     const FormImg = async (data: any) => {
-        console.log(data)
+     console.log("verrrrrrrrrr")
         const objImg = {
             id: 0,
             idProducto: 1,
@@ -48,12 +49,12 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
             fechaEntrega: null,
             idprogramacionordenes: data?.idprogramacion.value
         }
-
-        /*    const response = await axios.post(`${process.env.apijimmynew}/citasimagenologia`, objImg)
+   
+          const response = await axios.post(`${process.env.apijimmynew}/citasimagenologia`, objImg)
             if (response.data.id) {
                 showSuccessAlert("Guardado Correctamente.")
             }
-    */
+     /* */
     }
     return (
         <>
@@ -118,11 +119,10 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                             </div>
                         </div>
                         <div className="space-y-2">
-                          
-                            <label className="font-semibold">Selecciona tus intereses:</label>
+                            <label className="font-semibold">Selecciona tus examenes:</label>
                             <Controller
                                 control={control}
-                                name="intereses"
+                                name="imgordenes"
                                 render={({ field }) => {
                                     const { value = [], onChange } = field;
 
@@ -153,10 +153,7 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                                     );
                                 }}
                             />
-
-
                         </div>
-
                         <div>
                             <button className="py-2 px-4 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Guardar</button>
                         </div>
