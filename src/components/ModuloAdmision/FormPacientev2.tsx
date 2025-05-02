@@ -823,7 +823,6 @@ export const FormPacientev2 = ({ usuario }: any) => {
 
     return (
         <div className='bg-white p-10'>
-            {JSON.stringify(tipo_docver,null,2)}
             <form onSubmit={handleSubmit(onSubmit)} onKeyDown={handleKeyDown}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     <div className='col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4'>

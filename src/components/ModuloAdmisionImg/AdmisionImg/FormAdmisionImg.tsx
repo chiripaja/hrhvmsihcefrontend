@@ -4,10 +4,15 @@ import { ModalGeneric } from '@/components/ui/ModalGeneric/ModalGeneric'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { showSuccessAlert } from '@/components/utils/alertHelper';
-export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx }: any) => {
+
+export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes }: any) => {
+
     const [dataProgramaciones, setdataProgramaciones] = useState<any[]>([])
-    const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
+    const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>({
+        defaultValues: {
+            intereses: [],
+        }
+    });
     const getProgramacion = async () => {
         const data = await getData(`${process.env.apijimmynew}/programacionordenes`)
         const mappedOptionsOrigenAtencion = data.map((est: any) => ({
@@ -22,39 +27,41 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx }: any) => {
     }, [])
 
     useEffect(() => {
-        if (datosPx) {
+        if (isModalOpen && datosPx) {
             reset({
-                Telefono: datosPx?.Telefono || '', // u otro nombre según lo que recibas
+              Telefono: datosPx?.Telefono || '',
+              intereses: [], // esto limpia los checkboxes
             });
-        }
-    }, [datosPx, reset]);
-    const FormImg=async(data:any)=>{
-        
-        const objImg={
-            id:0,
-            idProducto:1,
-            idPaciente:datosPx.IdPaciente,
-            idCuentaAtencion:1,
+          }
+    }, [isModalOpen,datosPx, reset]);
+    const FormImg = async (data: any) => {
+        console.log(data)
+        const objImg = {
+            id: 0,
+            idProducto: 1,
+            idPaciente: datosPx.IdPaciente,
+            idCuentaAtencion: 1,
             numReceta: String(datosPx.idReceta),
-            procedencia:datosPx?.nomServicio,
-            idempleado:1,
-            observacion:"",
-            fechaEntrega:null,
-            idprogramacionordenes:data?.idprogramacion.value
+            procedencia: datosPx?.nomServicio,
+            idempleado: 1,
+            observacion: "",
+            fechaEntrega: null,
+            idprogramacionordenes: data?.idprogramacion.value
         }
-       
-        const response=await axios.post(`${process.env.apijimmynew}/citasimagenologia`,objImg)
-        if(response.data.id){
-            showSuccessAlert("Guardado Correctamente.")
-        }
-     
+
+        /*    const response = await axios.post(`${process.env.apijimmynew}/citasimagenologia`, objImg)
+            if (response.data.id) {
+                showSuccessAlert("Guardado Correctamente.")
+            }
+    */
     }
     return (
         <>
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
-                <form 
-                onSubmit={handleSubmit(FormImg)}
-                className="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-4">
+
+                <form
+                    onSubmit={handleSubmit(FormImg)}
+                    className="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-4">
                     <div>
                         <h3 className="text-lg font-bold text-gray-800">Admisión a Imagenología</h3>
                         <p className="text-sm text-gray-500">Datos del paciente y origen de atención</p>
@@ -87,7 +94,7 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx }: any) => {
                                     name="idprogramacion"
                                     control={control}
                                     defaultValue=""
-                                    rules={{ required: 'Este campo es obligatorio' }} 
+                                    rules={{ required: 'Este campo es obligatorio' }}
                                     render={({ field }) => (
                                         <Select
                                             instanceId="unique-select-id2"
@@ -110,9 +117,48 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx }: any) => {
                                 <input type="text"  {...register('Telefono')} className='px-3 py-2 border border-gray-300  w-full rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500;' placeholder='Celular' />
                             </div>
                         </div>
+                        <div className="space-y-2">
+                          
+                            <label className="font-semibold">Selecciona tus intereses:</label>
+                            <Controller
+                                control={control}
+                                name="intereses"
+                                render={({ field }) => {
+                                    const { value = [], onChange } = field;
+
+                                    const handleCheckboxChange = (checkedValue: any) => {
+                                        const newValue = value.includes(checkedValue)
+                                            ? value.filter((val: any) => val !== checkedValue)
+                                            : [...value, checkedValue];
+                                        onChange(newValue);
+                                    };
+
+                                    return (
+                                        <div className="space-y-1">
+                                            {dataExamenes.map((item: any) => {
+                                              const itemValue = `${item.idReceta}-${item.IdProducto}`; // aquí se construye el valor deseado
+                                             
+                                                return (
+                                                    <label key={item.IdProducto} className="block">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={value.includes(itemValue)}
+                                                            onChange={() => handleCheckboxChange(itemValue)}
+                                                        />
+                                                        <span className="ml-2">{item.Nombre}</span>
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                    );
+                                }}
+                            />
+
+
+                        </div>
 
                         <div>
-                            <button  className="py-2 px-4 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Guardar</button>
+                            <button className="py-2 px-4 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Guardar</button>
                         </div>
 
                     </div>

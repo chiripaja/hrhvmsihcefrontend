@@ -130,7 +130,7 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
   ];
   return (
     <div>
-      <FormAdmisionImg isModalOpen={isModalOpen} closeModal={closeModal} datosPx={datosPx} />
+      <FormAdmisionImg isModalOpen={isModalOpen} closeModal={closeModal} datosPx={datosPx} dataExamenes={dataExamenes} />
       <Box sx={{ width: "100%", backgroundColor: "white", p: 2 }}>
         <TextField
           label="Buscar..."
