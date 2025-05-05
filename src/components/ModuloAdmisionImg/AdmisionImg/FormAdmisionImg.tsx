@@ -5,6 +5,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { showSuccessAlert } from '@/components/utils/alertHelper';
+import { showSuccessError } from '../../utils/alertHelper';
 
 export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes }: any) => {
 
@@ -36,30 +37,42 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
           }
     }, [isModalOpen,datosPx, reset]);
     const FormImg = async (data: any) => {
-     console.log("verrrrrrrrrr")
-        const objImg = {
-            id: 0,
-            idProducto: 1,
-            idPaciente: datosPx.IdPaciente,
-            idCuentaAtencion: 1,
-            numReceta: String(datosPx.idReceta),
-            procedencia: datosPx?.nomServicio,
-            idempleado: 1,
-            observacion: "",
-            fechaEntrega: null,
-            idprogramacionordenes: data?.idprogramacion.value
-        }
-   
-          const response = await axios.post(`${process.env.apijimmynew}/citasimagenologia`, objImg)
-            if (response.data.id) {
+
+        if(data.imgordenes){
+            for (const img of data.imgordenes) {
+                const [receta, idproducto] = img.split("-");
+                const objImg = {
+                    id: 0,
+                    idProducto: parseInt(idproducto,10),
+                    idPaciente: datosPx.IdPaciente,
+                    idCuentaAtencion: datosPx.IdCuentaAtencion,
+                    numReceta: String(datosPx.idReceta),
+                    procedencia: datosPx?.nomServicio,
+                    idempleado: 1,
+                    observacion: "",
+                    fechaEntrega: null,
+                    idprogramacionordenes: data?.idprogramacion.value,
+                    recetaFactCatServ:img
+                }
+               console.log(objImg)
+               const response = await axios.post(`${process.env.apijimmynew}/citasimagenologia`, objImg)
+               
+              }
                 showSuccessAlert("Guardado Correctamente.")
-            }
-     /* */
+        }else{
+            showSuccessError("Escoja algun examen")
+        }
+       
     }
+    const idprogramacionw=watch('idprogramacion')
     return (
         <>
-            <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
 
+     
+            <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
+            <pre>
+            {JSON.stringify(idprogramacionw,null,2)}
+        </pre>
                 <form
                     onSubmit={handleSubmit(FormImg)}
                     className="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-4">
