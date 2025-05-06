@@ -7,9 +7,12 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { showSuccessAlert } from '@/components/utils/alertHelper';
 import { showSuccessError } from '../../utils/alertHelper';
 
-export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes }: any) => {
-
+import { Box, Button, TextField } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes, GetListadosCitas }: any) => {
+    const [filtro, setFiltro] = useState("");
     const [dataProgramaciones, setdataProgramaciones] = useState<any[]>([])
+    const [ListaProgramaciones, setListaProgramaciones] = useState<any[]>([])
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>({
         defaultValues: {
             intereses: [],
@@ -31,19 +34,20 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
     useEffect(() => {
         if (isModalOpen && datosPx) {
             reset({
-              Telefono: datosPx?.Telefono || '',
-              intereses: [], // esto limpia los checkboxes
+                Telefono: datosPx?.Telefono || '',
+                intereses: [], // esto limpia los checkboxes
             });
-          }
-    }, [isModalOpen,datosPx, reset]);
+        }
+    }, [isModalOpen, datosPx, reset]);
     const FormImg = async (data: any) => {
-
-        if(data.imgordenes){
+        console.log(data.imgordenes)
+        if (data.imgordenes) {
             for (const img of data.imgordenes) {
                 const [receta, idproducto] = img.split("-");
+             
                 const objImg = {
                     id: 0,
-                    idProducto: parseInt(idproducto,10),
+                    idProducto: parseInt(idproducto, 10),
                     idPaciente: datosPx.IdPaciente,
                     idCuentaAtencion: datosPx.IdCuentaAtencion,
                     numReceta: String(datosPx.idReceta),
@@ -52,27 +56,76 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                     observacion: "",
                     fechaEntrega: null,
                     idprogramacionordenes: data?.idprogramacion.value,
-                    recetaFactCatServ:img
+                    recetaFactCatServ: img
                 }
-               console.log(objImg)
-               const response = await axios.post(`${process.env.apijimmynew}/citasimagenologia`, objImg)
-               
-              }
-                showSuccessAlert("Guardado Correctamente.")
-        }else{
+                const response = await axios.post(`${process.env.apijimmynew}/citasimagenologia`, objImg)
+                GetListadosCitas();/**/
+                getProgramacionByIdProgramacion(idprogramacionw?.value)
+            }
+            showSuccessAlert("Guardado Correctamente.")
+        } else {
             showSuccessError("Escoja algun examen")
         }
-       
+
     }
-    const idprogramacionw=watch('idprogramacion')
+    const idprogramacionw = watch('idprogramacion')
+
+    useEffect(() => {
+        console.log(dataExamenes)
+        reset({ intereses: [] }); // o imgordenes: [] si es el campo correcto
+    }, [dataExamenes, reset]);
+
+    const getProgramacionByIdProgramacion = async (idprogramacion: any) => {
+        const { data } = await axios.get(`${process.env.apijimmynew}/citasimagenologia/findbyidprogramacion/${idprogramacion}`)
+        setListaProgramaciones(data)
+    }
+
+    useEffect(() => {
+        if (idprogramacionw) {
+            console.log(idprogramacionw?.value)
+            getProgramacionByIdProgramacion(idprogramacionw?.value)
+        }
+    }, [idprogramacionw])
+    const rowsFiltradas = ListaProgramaciones.filter((row) =>
+        Object.values(row).some((value) =>
+            value !== null &&
+            value !== undefined &&
+            value.toString().toLowerCase().includes(filtro.toLowerCase())
+        )
+    );
+    const eliminarElemento=(id:any)=>{
+        console.log(id)
+    }
+    const columnas = [
+        { field: "id", headerName: "id" },
+        { field: "procedencia", headerName: "procedencia" },
+        { field: "recetaFactCatServ", headerName: "recetaFactCatServ", width: 250 },
+        { field: "numReceta", headerName: "numReceta", width: 180 },
+        {
+            field: "acciones",
+            headerName: "Acciones",
+            width: 200,
+            sortable: false,
+            renderCell: (params: any) => (
+                <Box sx={{ display: "flex", marginTop: "0.5em", gap: 1 }}>
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        onClick={() => eliminarElemento(2)} // Aquí pasas el ID o índice del elemento a eliminar
+                    >
+                        Eliminar
+                    </Button>
+                </Box>
+            ),
+        },
+    ];
     return (
         <>
 
-     
+
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
-            <pre>
-            {JSON.stringify(idprogramacionw,null,2)}
-        </pre>
+
                 <form
                     onSubmit={handleSubmit(FormImg)}
                     className="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-4">
@@ -119,6 +172,17 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                                             required={true}
                                             onChange={(selectedOption) => field.onChange(selectedOption)}
                                             value={field.value}
+                                            styles={{
+        menu: (provided) => ({
+          ...provided,
+          zIndex: 9999
+        }),
+        menuPortal: (base) => ({
+          ...base,
+          zIndex: 9999
+        })
+      }}
+      menuPortalTarget={document.body} 
                                         />
                                     )}
                                 />
@@ -138,19 +202,16 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                                 name="imgordenes"
                                 render={({ field }) => {
                                     const { value = [], onChange } = field;
-
                                     const handleCheckboxChange = (checkedValue: any) => {
                                         const newValue = value.includes(checkedValue)
                                             ? value.filter((val: any) => val !== checkedValue)
                                             : [...value, checkedValue];
                                         onChange(newValue);
                                     };
-
                                     return (
                                         <div className="space-y-1">
-                                            {dataExamenes.map((item: any) => {
-                                              const itemValue = `${item.idReceta}-${item.IdProducto}`; // aquí se construye el valor deseado
-                                             
+                                            {dataExamenes.filter((data: any) => data.recetaFactCatServ == null).map((item: any) => {
+                                                const itemValue = `${item.idReceta}-${item.IdProducto}`; // aquí se construye el valor deseado
                                                 return (
                                                     <label key={item.IdProducto} className="block">
                                                         <input
@@ -173,16 +234,30 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
 
                     </div>
                 </form>
-
-
-                <div className="mt-6 flex justify-end">
-                    <button
-                        className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                        onClick={closeModal}
-                    >
-                        Cerrar
-                    </button>
-                </div>
+                {ListaProgramaciones.length > 0 ? (
+  <Box sx={{ width: "100%", backgroundColor: "white", p: 2 }}>
+    <TextField
+      label="Buscar..."
+      variant="outlined"
+      size="small"
+      fullWidth
+      value={filtro}
+      onChange={(e) => setFiltro(e.target.value)}
+      sx={{ mb: 2 }}
+    />
+    <DataGrid
+      rows={rowsFiltradas}
+      columns={columnas}
+      autoHeight // Ajusta la altura al contenido
+      sx={{
+        backgroundColor: "white", // Fondo blanco
+        border: "1px solid #e0e0e0", // Borde suave opcional
+      }}
+    />
+  </Box>
+) : (
+  <p>No posee registros.</p> // Mensaje cuando no hay elementos en la lista
+)}
             </ModalGeneric>
 
 
