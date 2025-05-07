@@ -1,0 +1,24 @@
+.rbc-calendar {
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+/*
+.rbc-header {
+  background-color: #f3f4f6;
+}
+
+.rbc-day-bg {
+  background-color: #f9fafb;
+}
+
+.rbc-event:hover {
+    background-color: #9333ea !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+
+  .rbc-selected {
+    background-color: #9333ea !important;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }*/

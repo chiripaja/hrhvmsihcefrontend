@@ -18,6 +18,7 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
             intereses: [],
         }
     });
+
     const getProgramacion = async () => {
         const data = await getData(`${process.env.apijimmynew}/programacionordenes`)
         const mappedOptionsOrigenAtencion = data.map((est: any) => ({
@@ -30,21 +31,38 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
 
         getProgramacion()
     }, [])
+  // Efecto para inicializar valores del formulario al abrir el modal
+  useEffect(() => {
+    if (isModalOpen) {
+      reset({
+        idprogramacion: { value: 0, label: "Seleccione..." },
+        Telefono: datosPx?.Telefono || '',
+        intereses: [], 
+      });
+    }
+  }, [isModalOpen, datosPx, reset]);
 
-    useEffect(() => {
-        if (isModalOpen && datosPx) {
-            reset({
-                Telefono: datosPx?.Telefono || '',
-                intereses: [], // esto limpia los checkboxes
-            });
-        }
-    }, [isModalOpen, datosPx, reset]);
+ 
+  
+  // Efecto para actualizar solo el campo "intereses" cuando cambia dataExamenes
+  useEffect(() => {
+    if (dataExamenes) {
+      setValue("intereses", []); // Solo afecta a intereses, mantiene otros valores
+    }
+  }, [dataExamenes, setValue]);
     const FormImg = async (data: any) => {
-        console.log(data.imgordenes)
+    
+        if(data.Telefono!="" && data.Telefono!=datosPx?.Telefono){
+            console.log("entro")
+            try {
+               await axios.put(`${process.env.apijimmynew}/paciente/actualizarcelxidpaciente/${datosPx?.IdPaciente}/${data.Telefono}`)
+            } catch (error) {
+                console.log(error)
+            }
+        }
         if (data.imgordenes) {
             for (const img of data.imgordenes) {
                 const [receta, idproducto] = img.split("-");
-             
                 const objImg = {
                     id: 0,
                     idProducto: parseInt(idproducto, 10),
@@ -59,10 +77,13 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                     recetaFactCatServ: img
                 }
                 const response = await axios.post(`${process.env.apijimmynew}/citasimagenologia`, objImg)
-                GetListadosCitas();/**/
+                GetListadosCitas();
                 getProgramacionByIdProgramacion(idprogramacionw?.value)
             }
             showSuccessAlert("Guardado Correctamente.")
+            reset({
+                intereses: [], 
+              });
         } else {
             showSuccessError("Escoja algun examen")
         }
@@ -70,10 +91,7 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
     }
     const idprogramacionw = watch('idprogramacion')
 
-    useEffect(() => {
-        console.log(dataExamenes)
-        reset({ intereses: [] }); // o imgordenes: [] si es el campo correcto
-    }, [dataExamenes, reset]);
+
 
     const getProgramacionByIdProgramacion = async (idprogramacion: any) => {
         const { data } = await axios.get(`${process.env.apijimmynew}/citasimagenologia/findbyidprogramacion/${idprogramacion}`)
@@ -97,35 +115,48 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
         console.log(id)
     }
     const columnas = [
-        { field: "id", headerName: "id" },
-        { field: "procedencia", headerName: "procedencia" },
-        { field: "recetaFactCatServ", headerName: "recetaFactCatServ", width: 250 },
-        { field: "numReceta", headerName: "numReceta", width: 180 },
+        { field: "id", headerName: "ID", flex: 1, minWidth: 100 },
+        { field: "procedencia", headerName: "Procedencia", flex: 2, minWidth: 150 },
+        { field: "recetaFactCatServ", headerName: "Receta/Servicio", flex: 2, minWidth: 200 },
         {
-            field: "acciones",
-            headerName: "Acciones",
-            width: 200,
-            sortable: false,
-            renderCell: (params: any) => (
-                <Box sx={{ display: "flex", marginTop: "0.5em", gap: 1 }}>
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        color="primary"
-                        onClick={() => eliminarElemento(2)} // Aquí pasas el ID o índice del elemento a eliminar
-                    >
-                        Eliminar
-                    </Button>
-                </Box>
-            ),
+          field: "paciente",
+          headerName: "Nombre Completo",
+          flex: 2,
+          minWidth: 250,
+          valueGetter: (params: any) => {
+            const paciente = params;
+            return paciente
+              ? `${paciente.primerNombre || ""} ${paciente.segundoNombre || ""} ${paciente.apellidoPaterno || ""} ${paciente.apellidoMaterno || ""}`.trim()
+              : "Sin nombre";
+          },
         },
-    ];
+        {
+          field: "acciones",
+          headerName: "Acciones",
+          sortable: false,
+          flex: 1,
+          minWidth: 150,
+          renderCell: (params: any) => (
+            <Box sx={{ display: "flex", marginTop: "0.5em", gap: 1 }}>
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                onClick={() => eliminarElemento(params.row.id)} // Usa el ID del elemento directamente
+              >
+                Eliminar
+              </Button>
+            </Box>
+          ),
+        },
+      ];
+      
     return (
         <>
 
 
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
-
+           
                 <form
                     onSubmit={handleSubmit(FormImg)}
                     className="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-4">
@@ -195,8 +226,11 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                                 <input type="text"  {...register('Telefono')} className='px-3 py-2 border border-gray-300  w-full rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500;' placeholder='Celular' />
                             </div>
                         </div>
-                        <div className="space-y-2">
-                            <label className="font-semibold">Selecciona tus examenes:</label>
+
+                        {dataExamenes.filter((data: any) => data.recetaFactCatServ == null).length?
+                        <>
+                         <div className="space-y-2">
+                            <label className="font-semibold">Selecciona tus examenes: </label>
                             <Controller
                                 control={control}
                                 name="imgordenes"
@@ -231,6 +265,10 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                         <div>
                             <button className="py-2 px-4 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Guardar</button>
                         </div>
+                        </>:
+                        <>No posee ninguna orden sin registrar.</>
+                        }
+                       
 
                     </div>
                 </form>
