@@ -39,7 +39,6 @@ export default function NamePage() {
   const customEventStyle = (event: any) => {
     const eventDate = format(event.start, "yyyy-MM-dd");
     const isSelected = selectedDates.includes(eventDate);
-
     return {
       style: {
         backgroundColor: isSelected ? "#4f46e5" : "#3b82f6", // Morado si está seleccionado, azul si no.
