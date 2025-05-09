@@ -12,6 +12,8 @@ import axios from 'axios';
 import { watch } from 'fs';
 import { showSuccessAlert, showSuccessError } from '@/components/utils/alertHelper';
 import { getMessagesES } from '@/components/helper/getMessages';
+import { CalendarEvent } from './CalendarEvent';
+import { CalendarModal } from './CalendarModal';
 
 
 
@@ -32,7 +34,7 @@ const localizer = dateFnsLocalizer({
 
 const ProgramacionImagenologia = () => {
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  const { control, register, handleSubmit, reset, formState: { errors }, watch,setValue } = useForm();
+  const { control, register, handleSubmit, reset, formState: { errors }, watch, setValue } = useForm();
   const [programaciones, setProgramaciones] = useState<any[]>([]);
   const [optionPuntosImg, setoptionPuntosImg] = useState<any[]>([]);
   const [optionMedicosG, setoptionMedicosG] = useState<any[]>([]);
@@ -65,9 +67,9 @@ const ProgramacionImagenologia = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      if(selectedDates.length>0){
+      if (selectedDates.length > 0) {
 
-        for(const dates of selectedDates) {
+        for (const dates of selectedDates) {
           const objProgra = {
             idProgramacionOrdenes: 0,
             idMedico: data.idmedico?.value,
@@ -81,14 +83,14 @@ const ProgramacionImagenologia = () => {
             objProgra
           )
           setSelectedDates([])
-     //     reset();
+          //     reset();
         }
-            getFechaProgramacionByMedico(data.idmedico?.value)
-         showSuccessAlert("Ingresado correctamente la programación.")
-      }else{
+        getFechaProgramacionByMedico(data.idmedico?.value)
+        showSuccessAlert("Ingresado correctamente la programación.")
+      } else {
         showSuccessError("Porfavor seleccione las fechas en el calendario.")
       }
-    
+
 
 
 
@@ -109,10 +111,10 @@ const ProgramacionImagenologia = () => {
   const eventosPrecargados = programaciones.map((p, index) => {
     const start = new Date(`${p.fecha}T${p.horaInicio}`);
     const end = new Date(`${p.fecha}T${p.horaFin}`);
-  
+
     return {
       id: index,
-       title: `Dr. ${p.medico?.empleado?.apellidoPaterno} ${p.medico?.empleado?.apellidomaterno}\nServ: ${p.catalogOrdenes?.nombreExamen}`,
+      title: `Dr. ${p.medico?.empleado?.apellidoPaterno} ${p.medico?.empleado?.apellidomaterno}`,
       start,
       end,
       servicio: `Serv: ${p.catalogOrdenes?.nombreExamen}`,
@@ -144,7 +146,7 @@ const ProgramacionImagenologia = () => {
   const getNomOrdenes = async () => {
     try {
       const response = await getData(`${process.env.apijimmynew}/programacionordenes/listaordenes`);
-     
+
       const catalogoOrdenesOptions = response.map((est: any) => ({
         value: est.id,
         label: est.nombreExamen,
@@ -155,9 +157,7 @@ const ProgramacionImagenologia = () => {
     }
   }
   const getFechaProgramacionByMedico = async (idmedico: number) => {
-     console.log(idmedico)
     const data = await getData(`${process.env.apijimmynew}/programacionordenes/medico/${idmedico}`)
-   
     setProgramaciones(data);
   }
   useEffect(() => {
@@ -173,10 +173,10 @@ const ProgramacionImagenologia = () => {
     }
   }, [idmedicoW])
 
-  const turnow=watch('turno')
+  const turnow = watch('turno')
 
   useEffect(() => {
-        if (turnow == 1) {
+    if (turnow == 1) {
       setValue("horaInicio", "08:00");
       setValue("horaFin", "12:00");
     } else {
@@ -184,11 +184,21 @@ const ProgramacionImagenologia = () => {
       setValue("horaFin", "18:00");
     }
   }, [turnow, setValue])
-  
+
+  const onDoubleClick=(event:any)=>{
+    console.log({doubleClick:event});
+  }
+  const onSelect=(event:any)=>{
+    console.log({click:event})
+  }
+
+  const onViewChange=(event:any)=>{
+    console.log({ViewChange:event})
+  }
 
   return (
     <div className=" mx-auto p-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
- 
+
       {/* Formulario */}
       <div className="bg-white shadow p-4 rounded lg:col-span-1">
         <h2 className="text-xl font-bold mb-4">Programar Imagenología</h2>
@@ -245,7 +255,7 @@ const ProgramacionImagenologia = () => {
               <option value="2">Turno Tarde</option>
             </select>
           </div>
-         
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block font-medium">Hora Inicio</label>
@@ -294,7 +304,13 @@ const ProgramacionImagenologia = () => {
           views={["month", "week", "day"]}
           messages={getMessagesES()}
           culture='es'
-           titleAccessor={(event) => event.title}
+          titleAccessor={(event) => event.title}
+          components={{
+            event: CalendarEvent
+          }}
+          onDoubleClickEvent={onDoubleClick}
+          onSelectEvent={onSelect}
+          onView={onViewChange}
         />
         <button
           className="mt-4 bg-red-500 text-white py-2 px-4 rounded-md"
@@ -305,6 +321,7 @@ const ProgramacionImagenologia = () => {
 
 
         <div className="mt-4">
+                <CalendarModal/>
           <h3>Fechas seleccionadas:</h3>
           <ul>
             {selectedDates.length > 0 ? (
@@ -315,6 +332,7 @@ const ProgramacionImagenologia = () => {
           </ul>
         </div>
       </div>
+
     </div>
   );
 };
