@@ -11,17 +11,13 @@ import Select from 'react-select';
 import axios from 'axios';
 import { watch } from 'fs';
 import { showSuccessAlert, showSuccessError } from '@/components/utils/alertHelper';
+import { getMessagesES } from '@/components/helper/getMessages';
 
 
 
-type CalendarioEvento = Event & {
-  title: string;
-  start: Date;
-  end: Date;
-  servicio: string,
-};
 
-const locales = { es: es };
+
+const locales = { 'es': es };
 const localizer = dateFnsLocalizer({
   format,
   parse,
@@ -30,9 +26,13 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+
+
+
+
 const ProgramacionImagenologia = () => {
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  const { control, register, handleSubmit, reset, formState: { errors }, watch } = useForm();
+  const { control, register, handleSubmit, reset, formState: { errors }, watch,setValue } = useForm();
   const [programaciones, setProgramaciones] = useState<any[]>([]);
   const [optionPuntosImg, setoptionPuntosImg] = useState<any[]>([]);
   const [optionMedicosG, setoptionMedicosG] = useState<any[]>([]);
@@ -80,11 +80,11 @@ const ProgramacionImagenologia = () => {
             `${process.env.apijimmynew}/programacionordenes`,
             objProgra
           )
-          getFechaProgramacionByMedico(data.idmedico?.value)
           setSelectedDates([])
-          showSuccessAlert("Ingresado correctamente la programación.")
      //     reset();
         }
+            getFechaProgramacionByMedico(data.idmedico?.value)
+         showSuccessAlert("Ingresado correctamente la programación.")
       }else{
         showSuccessError("Porfavor seleccione las fechas en el calendario.")
       }
@@ -109,10 +109,10 @@ const ProgramacionImagenologia = () => {
   const eventosPrecargados = programaciones.map((p, index) => {
     const start = new Date(`${p.fecha}T${p.horaInicio}`);
     const end = new Date(`${p.fecha}T${p.horaFin}`);
-   
+  
     return {
       id: index,
-      title: `Dr. ${p.medico?.empleado?.apellidoPaterno} ${p.medico?.empleado?.apellidomaterno}`,
+       title: `Dr. ${p.medico?.empleado?.apellidoPaterno} ${p.medico?.empleado?.apellidomaterno}\nServ: ${p.catalogOrdenes?.nombreExamen}`,
       start,
       end,
       servicio: `Serv: ${p.catalogOrdenes?.nombreExamen}`,
@@ -144,7 +144,7 @@ const ProgramacionImagenologia = () => {
   const getNomOrdenes = async () => {
     try {
       const response = await getData(`${process.env.apijimmynew}/programacionordenes/listaordenes`);
-      console.log(response)
+     
       const catalogoOrdenesOptions = response.map((est: any) => ({
         value: est.id,
         label: est.nombreExamen,
@@ -155,8 +155,9 @@ const ProgramacionImagenologia = () => {
     }
   }
   const getFechaProgramacionByMedico = async (idmedico: number) => {
+     console.log(idmedico)
     const data = await getData(`${process.env.apijimmynew}/programacionordenes/medico/${idmedico}`)
-    console.log(data)
+   
     setProgramaciones(data);
   }
   useEffect(() => {
@@ -172,10 +173,22 @@ const ProgramacionImagenologia = () => {
     }
   }, [idmedicoW])
 
+  const turnow=watch('turno')
+
+  useEffect(() => {
+        if (turnow == 1) {
+      setValue("horaInicio", "08:00");
+      setValue("horaFin", "12:00");
+    } else {
+      setValue("horaInicio", "14:00");
+      setValue("horaFin", "18:00");
+    }
+  }, [turnow, setValue])
+  
 
   return (
-    <div className=" mx-auto p-6 grid grid-cols-1 lg:grid-cols-6 gap-6">
-
+    <div className=" mx-auto p-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
+ 
       {/* Formulario */}
       <div className="bg-white shadow p-4 rounded lg:col-span-1">
         <h2 className="text-xl font-bold mb-4">Programar Imagenología</h2>
@@ -195,7 +208,6 @@ const ProgramacionImagenologia = () => {
                   required
                   isClearable
                   isSearchable
-
                 />
               )}
             />
@@ -226,6 +238,12 @@ const ProgramacionImagenologia = () => {
                 />
               )}
             />
+          </div>
+          <div>
+            <select className="w-full border p-2 rounded shadow-sm"  {...register('turno')}>
+              <option value="1">Turno Mañana</option>
+              <option value="2">Turno Tarde</option>
+            </select>
           </div>
          
           <div className="grid grid-cols-2 gap-4">
@@ -265,7 +283,7 @@ const ProgramacionImagenologia = () => {
       <div className="bg-white shadow p-4 rounded lg:col-span-4">
         <h2 className="text-xl font-bold mb-4">Calendario de Programación</h2>
         <Calendar
-          style={{ height: "calc(100vh - 100px)", minHeight: "800px" }}
+          style={{ height: "calc(100vh - 400px)" }}
           localizer={localizer}
           events={eventosCalendario}
           startAccessor="start"
@@ -274,15 +292,9 @@ const ProgramacionImagenologia = () => {
           onSelectSlot={handleSelectSlot}
           eventPropGetter={customEventStyle}
           views={["month", "week", "day"]}
-          messages={{
-            today: "Hoy",
-            previous: "Atrás",
-            next: "Siguiente",
-            month: "Mes",
-            week: "Semana",
-            day: "Día",
-            agenda: "Agenda",
-          }}
+          messages={getMessagesES()}
+          culture='es'
+           titleAccessor={(event) => event.title}
         />
         <button
           className="mt-4 bg-red-500 text-white py-2 px-4 rounded-md"
