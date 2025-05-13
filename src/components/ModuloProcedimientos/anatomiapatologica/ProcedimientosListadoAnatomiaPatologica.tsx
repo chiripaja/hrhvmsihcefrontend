@@ -7,11 +7,11 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, TextField } from '@mui/material';
 import { ModalGeneric } from '../../ui/ModalGeneric/ModalGeneric';
 import { Form } from 'react-hook-form';
-import { FormAdmisionImg } from './FormAdmisionImg';
 import { calcularEdad } from '@/components/utils/obtenerEdad';
+import { FormAdmisionImg } from '@/components/ModuloAdmisionImg/AdmisionImg/FormAdmisionImg';
 
 
-export const ModuloAdmisionImgLista = ({ usuario }: any) => {
+export const ProcedimientosListadoAnatomiaPatologica = ({ usuario }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [datosPx, setdatosPx] = useState<any>();
   const [rows, setRows] = useState<any[]>([]);
@@ -55,8 +55,9 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
 
   const GetListadosCitas = async () => {
     const { data } = await axios.post(`${process.env.apijimmynew}/recetas/ListadoOrdenesByPuntoCarga`,{
-      idpuntoscarga: "21,22,23,24"
+      idpuntoscarga: "3"
     })
+    console.log(data)
     setDataCompleto(data)
     const agrupado = data.reduce((acc: any, item: any) => {
       const key = item.IdCuentaAtencion;
@@ -125,7 +126,7 @@ export const ModuloAdmisionImgLista = ({ usuario }: any) => {
   return (
     <div>
      
-      <FormAdmisionImg 
+      <FormAdmisionImg
       isModalOpen={isModalOpen} 
       closeModal={closeModal} 
       datosPx={datosPx} 

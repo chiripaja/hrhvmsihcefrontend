@@ -33,6 +33,7 @@ const localizer = dateFnsLocalizer({
 
 
 const ProgramacionImagenologia = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
   const { control, register, handleSubmit, reset, formState: { errors }, watch, setValue } = useForm();
   const [programaciones, setProgramaciones] = useState<any[]>([]);
@@ -40,6 +41,16 @@ const ProgramacionImagenologia = () => {
   const [optionMedicosG, setoptionMedicosG] = useState<any[]>([]);
   const [optionCatalogoOrdenes, setOptionCatalogoOrdenes] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [datosModal, setdatosModal] = useState<any>();
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setdatosModal(null);
+  };
 
   const handleSelectSlot = (slotInfo: { start: Date }) => {
     const dateSelected = format(slotInfo.start, "yyyy-MM-dd");
@@ -68,7 +79,6 @@ const ProgramacionImagenologia = () => {
   const onSubmit = async (data: any) => {
     try {
       if (selectedDates.length > 0) {
-
         for (const dates of selectedDates) {
           const objProgra = {
             idProgramacionOrdenes: 0,
@@ -90,9 +100,6 @@ const ProgramacionImagenologia = () => {
       } else {
         showSuccessError("Porfavor seleccione las fechas en el calendario.")
       }
-
-
-
 
     } catch (error) {
       console.log(error)
@@ -117,7 +124,12 @@ const ProgramacionImagenologia = () => {
       title: `Dr. ${p.medico?.empleado?.apellidoPaterno} ${p.medico?.empleado?.apellidomaterno}`,
       start,
       end,
-      servicio: `Serv: ${p.catalogOrdenes?.nombreExamen}`,
+      servicio: `${p.catalogOrdenes?.nombreExamen}`,
+      horaInicio: p.horaInicio,
+      horaFin: p.horaFin,
+      fecha: p.fecha,
+      idMedico: p.idMedico,
+      idPuntoCarga:p.idPuntoCarga
     };
   });
   const eventosCalendario = [...eventosSeleccionados, ...eventosPrecargados];
@@ -146,7 +158,6 @@ const ProgramacionImagenologia = () => {
   const getNomOrdenes = async () => {
     try {
       const response = await getData(`${process.env.apijimmynew}/programacionordenes/listaordenes`);
-
       const catalogoOrdenesOptions = response.map((est: any) => ({
         value: est.id,
         label: est.nombreExamen,
@@ -161,7 +172,6 @@ const ProgramacionImagenologia = () => {
     setProgramaciones(data);
   }
   useEffect(() => {
-
     getNomOrdenes();
   }, [])
 
@@ -185,15 +195,20 @@ const ProgramacionImagenologia = () => {
     }
   }, [turnow, setValue])
 
-  const onDoubleClick=(event:any)=>{
-    console.log({doubleClick:event});
+  const onDoubleClick = (event: any) => {
+    console.log({ doubleClick: event });
   }
-  const onSelect=(event:any)=>{
-    console.log({click:event})
+  const onSelect = (event: any) => {
+    
+    if (event.idMedico) {
+      openModal()
+      setdatosModal(event)
+    }
+
   }
 
-  const onViewChange=(event:any)=>{
-    console.log({ViewChange:event})
+  const onViewChange = (event: any) => {
+    console.log({ ViewChange: event })
   }
 
   return (
@@ -319,9 +334,14 @@ const ProgramacionImagenologia = () => {
           Limpiar selección
         </button>
 
-
         <div className="mt-4">
-                <CalendarModal/>
+          <CalendarModal 
+          isModalOpen={isModalOpen} 
+          openModal={openModal} 
+          closeModal={closeModal} 
+          datosModal={datosModal} 
+          optionCatalogoOrdenes={optionCatalogoOrdenes}
+          />
           <h3>Fechas seleccionadas:</h3>
           <ul>
             {selectedDates.length > 0 ? (
