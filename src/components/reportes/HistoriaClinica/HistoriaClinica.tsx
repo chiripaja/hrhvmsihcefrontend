@@ -15,7 +15,7 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
   }, [idcuentaatencion])
   const getDatosHC = async (idcuentaatencion: any) => {
     const { data } = await axios.get(`${process.env.apiWebOrigenNodeJs}api/reportes/imprimehc/${idcuentaatencion}`);
-  console.log(data)
+    console.log(data)
     setdatosPx(data)
   }
 

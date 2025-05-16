@@ -1,12 +1,9 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-
-import { getData } from '../../helper/axiosHelper';
 import axios from 'axios';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, TextField } from '@mui/material';
-import { ModalGeneric } from '../../ui/ModalGeneric/ModalGeneric';
-import { Form } from 'react-hook-form';
+
 import { calcularEdad } from '@/components/utils/obtenerEdad';
 import { FormAdmisionImg } from '@/components/ModuloAdmisionImg/AdmisionImg/FormAdmisionImg';
 
@@ -71,7 +68,6 @@ export const ProcedimientosListadoAnatomiaPatologica = ({ usuario }: any) => {
 
     const datosFormateados2 = (Object.values(agrupado) as any[][]).map((grupo, index) => {
       const item = grupo[0];
-
       return {
         id: index,
         ...item,
@@ -125,7 +121,6 @@ export const ProcedimientosListadoAnatomiaPatologica = ({ usuario }: any) => {
   ];
   return (
     <div>
-     
       <FormAdmisionImg
       isModalOpen={isModalOpen} 
       closeModal={closeModal} 

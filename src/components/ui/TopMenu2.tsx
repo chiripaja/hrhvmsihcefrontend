@@ -20,6 +20,7 @@ export const TopMenu2 = async () => {
     { href: "/sihce/admision", label: "Admision CE", condition: webadmin || admisionista },
     { href: "/sihce/admisionproc", label: "Admision Proc", condition: webadmin || CEAtencionProc },
     { href: "/sihce/procedimientos/anatomiapatologica", label: "Anatomia Patologica", condition: webadmin || CEAtencionProc },
+    { href: "/sihce/procedimientos/procedimientosGenerales", label: "Procedimientos Generales", condition: webadmin || CEAtencionProc },
     { href: "/sihce/admisionimg", label: "Admision Imagen", condition: webadmin || CEAtencionProc },
     { href: "/sihce/admisionimg/programacionimg", label: "Programacion Imagen", condition: webadmin },
     
