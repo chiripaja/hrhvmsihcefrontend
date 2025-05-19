@@ -62,8 +62,8 @@ const generarFechas = (citas: Cita[]): string[] => {
 };
 
 export const ModuloAdmision = ({ usuario }: any) => {
-      const ws = useRef<WebSocket | null>(null);
-      const [idcuentaActualizacion, setidcuentaActualizacion] = useState();
+    const ws = useRef<WebSocket | null>(null);
+    const [idcuentaActualizacion, setidcuentaActualizacion] = useState();
     const [medicoSeleccionado, setMedicoSeleccionado] = useState<string | null>(null);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const diactual = new Date().toISOString().split('T')[0];

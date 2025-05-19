@@ -18,6 +18,7 @@ import { FormPacientev2 } from "./FormPacientev2";
 import { Tooltip } from '../ui/Tooltip';
 import { useRouter } from "next/router";
 import Link from 'next/link';
+import { FormReprogramacion } from "./FormReprogramacion";
 type InputBusquedadDni = {
     dni: string,
     idDocIdentidad: string,
@@ -675,11 +676,14 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                                                     </td>
                                                                     <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                                                                         <div className="flex  gap-y-1">
+                                                                           <FormReprogramacion/>
+                                                                           
+                                                                            
                                                                             <Tooltip text="Imprimir">
                                                                                 <button
                                                                                     type="button"
                                                                                     onClick={() => impresionTicket(datalista?.idCuentaAtencion)}
-                                                                                    className="py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-yellow-500 text-gray-700  hover:bg-yellow-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                                                                                    className="ml-3 py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-yellow-500 text-gray-700  hover:bg-yellow-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
                                                                                 >
                                                                                     <FiPrinter size={18} className="text-white hover: cursor-pointer" />
                                                                                 </button>

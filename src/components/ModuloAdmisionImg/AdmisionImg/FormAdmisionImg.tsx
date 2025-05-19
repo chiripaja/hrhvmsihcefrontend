@@ -31,31 +31,31 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
 
         getProgramacion()
     }, [])
-  // Efecto para inicializar valores del formulario al abrir el modal
-  useEffect(() => {
-    if (isModalOpen) {
-      reset({
-        idprogramacion: { value: 0, label: "Seleccione..." },
-        Telefono: datosPx?.Telefono || '',
-        intereses: [], 
-      });
-    }
-  }, [isModalOpen, datosPx, reset]);
+    // Efecto para inicializar valores del formulario al abrir el modal
+    useEffect(() => {
+        if (isModalOpen) {
+            reset({
+                idprogramacion: { value: 0, label: "Seleccione..." },
+                Telefono: datosPx?.Telefono || '',
+                intereses: [],
+            });
+        }
+    }, [isModalOpen, datosPx, reset]);
 
- 
-  
-  // Efecto para actualizar solo el campo "intereses" cuando cambia dataExamenes
-  useEffect(() => {
-    if (dataExamenes) {
-      setValue("intereses", []); // Solo afecta a intereses, mantiene otros valores
-    }
-  }, [dataExamenes, setValue]);
+
+
+    // Efecto para actualizar solo el campo "intereses" cuando cambia dataExamenes
+    useEffect(() => {
+        if (dataExamenes) {
+            setValue("intereses", []); // Solo afecta a intereses, mantiene otros valores
+        }
+    }, [dataExamenes, setValue]);
     const FormImg = async (data: any) => {
-    
-        if(data.Telefono!="" && data.Telefono!=datosPx?.Telefono){
+
+        if (data.Telefono != "" && data.Telefono != datosPx?.Telefono) {
             console.log("entro")
             try {
-               await axios.put(`${process.env.apijimmynew}/paciente/actualizarcelxidpaciente/${datosPx?.IdPaciente}/${data.Telefono}`)
+                await axios.put(`${process.env.apijimmynew}/paciente/actualizarcelxidpaciente/${datosPx?.IdPaciente}/${data.Telefono}`)
             } catch (error) {
                 console.log(error)
             }
@@ -82,8 +82,8 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
             }
             showSuccessAlert("Guardado Correctamente.")
             reset({
-                intereses: [], 
-              });
+                intereses: [],
+            });
         } else {
             showSuccessError("Escoja algun examen")
         }
@@ -111,7 +111,7 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
             value.toString().toLowerCase().includes(filtro.toLowerCase())
         )
     );
-    const eliminarElemento=(id:any)=>{
+    const eliminarElemento = (id: any) => {
         console.log(id)
     }
     const columnas = [
@@ -119,44 +119,44 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
         { field: "procedencia", headerName: "Procedencia", flex: 2, minWidth: 150 },
         { field: "recetaFactCatServ", headerName: "Receta/Servicio", flex: 2, minWidth: 200 },
         {
-          field: "paciente",
-          headerName: "Nombre Completo",
-          flex: 2,
-          minWidth: 250,
-          valueGetter: (params: any) => {
-            const paciente = params;
-            return paciente
-              ? `${paciente.primerNombre || ""} ${paciente.segundoNombre || ""} ${paciente.apellidoPaterno || ""} ${paciente.apellidoMaterno || ""}`.trim()
-              : "Sin nombre";
-          },
+            field: "paciente",
+            headerName: "Nombre Completo",
+            flex: 2,
+            minWidth: 250,
+            valueGetter: (params: any) => {
+                const paciente = params;
+                return paciente
+                    ? `${paciente.primerNombre || ""} ${paciente.segundoNombre || ""} ${paciente.apellidoPaterno || ""} ${paciente.apellidoMaterno || ""}`.trim()
+                    : "Sin nombre";
+            },
         },
         {
-          field: "acciones",
-          headerName: "Acciones",
-          sortable: false,
-          flex: 1,
-          minWidth: 150,
-          renderCell: (params: any) => (
-            <Box sx={{ display: "flex", marginTop: "0.5em", gap: 1 }}>
-              <Button
-                variant="outlined"
-                size="small"
-                color="primary"
-                onClick={() => eliminarElemento(params.row.id)} // Usa el ID del elemento directamente
-              >
-                Eliminar
-              </Button>
-            </Box>
-          ),
+            field: "acciones",
+            headerName: "Acciones",
+            sortable: false,
+            flex: 1,
+            minWidth: 150,
+            renderCell: (params: any) => (
+                <Box sx={{ display: "flex", marginTop: "0.5em", gap: 1 }}>
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        onClick={() => eliminarElemento(params.row.id)} // Usa el ID del elemento directamente
+                    >
+                        Eliminar
+                    </Button>
+                </Box>
+            ),
         },
-      ];
-      
+    ];
+
     return (
         <>
 
 
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
-           
+
                 <form
                     onSubmit={handleSubmit(FormImg)}
                     className="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-4">
@@ -204,16 +204,16 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                                             onChange={(selectedOption) => field.onChange(selectedOption)}
                                             value={field.value}
                                             styles={{
-        menu: (provided) => ({
-          ...provided,
-          zIndex: 9999
-        }),
-        menuPortal: (base) => ({
-          ...base,
-          zIndex: 9999
-        })
-      }}
-      menuPortalTarget={document.body} 
+                                                menu: (provided) => ({
+                                                    ...provided,
+                                                    zIndex: 9999
+                                                }),
+                                                menuPortal: (base) => ({
+                                                    ...base,
+                                                    zIndex: 9999
+                                                })
+                                            }}
+                                            menuPortalTarget={document.body}
                                         />
                                     )}
                                 />
@@ -227,75 +227,75 @@ export const FormAdmisionImg = ({ isModalOpen, closeModal, datosPx, dataExamenes
                             </div>
                         </div>
 
-                        {dataExamenes.filter((data: any) => data.recetaFactCatServ == null).length?
-                        <>
-                         <div className="space-y-2">
-                            <label className="font-semibold">Selecciona tus examenes: </label>
-                            <Controller
-                                control={control}
-                                name="imgordenes"
-                                render={({ field }) => {
-                                    const { value = [], onChange } = field;
-                                    const handleCheckboxChange = (checkedValue: any) => {
-                                        const newValue = value.includes(checkedValue)
-                                            ? value.filter((val: any) => val !== checkedValue)
-                                            : [...value, checkedValue];
-                                        onChange(newValue);
-                                    };
-                                    return (
-                                        <div className="space-y-1">
-                                            {dataExamenes.filter((data: any) => data.recetaFactCatServ == null).map((item: any) => {
-                                                const itemValue = `${item.idReceta}-${item.IdProducto}`; // aquí se construye el valor deseado
-                                                return (
-                                                    <label key={item.IdProducto} className="block">
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={value.includes(itemValue)}
-                                                            onChange={() => handleCheckboxChange(itemValue)}
-                                                        />
-                                                        <span className="ml-2">{item.Nombre}</span>
-                                                    </label>
-                                                );
-                                            })}
-                                        </div>
-                                    );
-                                }}
-                            />
-                        </div>
-                        <div>
-                            <button className="py-2 px-4 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Guardar</button>
-                        </div>
-                        </>:
-                        <>No posee ninguna orden sin registrar.</>
+                        {dataExamenes.filter((data: any) => data.recetaFactCatServ == null).length ?
+                            <>
+                                <div className="space-y-2">
+                                    <label className="font-semibold">Selecciona tus examenes: </label>
+                                    <Controller
+                                        control={control}
+                                        name="imgordenes"
+                                        render={({ field }) => {
+                                            const { value = [], onChange } = field;
+                                            const handleCheckboxChange = (checkedValue: any) => {
+                                                const newValue = value.includes(checkedValue)
+                                                    ? value.filter((val: any) => val !== checkedValue)
+                                                    : [...value, checkedValue];
+                                                onChange(newValue);
+                                            };
+                                            return (
+                                                <div className="space-y-1">
+                                                    {dataExamenes.filter((data: any) => data.recetaFactCatServ == null).map((item: any) => {
+                                                        const itemValue = `${item.idReceta}-${item.IdProducto}`; // aquí se construye el valor deseado
+                                                        return (
+                                                            <label key={item.IdProducto} className="block">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={value.includes(itemValue)}
+                                                                    onChange={() => handleCheckboxChange(itemValue)}
+                                                                />
+                                                                <span className="ml-2">{item.Nombre}</span>
+                                                            </label>
+                                                        );
+                                                    })}
+                                                </div>
+                                            );
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <button className="py-2 px-4 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Guardar</button>
+                                </div>
+                            </> :
+                            <>No posee ninguna orden sin registrar.</>
                         }
-                       
+
 
                     </div>
                 </form>
                 {ListaProgramaciones.length > 0 ? (
-  <Box sx={{ width: "100%", backgroundColor: "white", p: 2 }}>
-    <TextField
-      label="Buscar..."
-      variant="outlined"
-      size="small"
-      fullWidth
-      value={filtro}
-      onChange={(e) => setFiltro(e.target.value)}
-      sx={{ mb: 2 }}
-    />
-    <DataGrid
-      rows={rowsFiltradas}
-      columns={columnas}
-      autoHeight // Ajusta la altura al contenido
-      sx={{
-        backgroundColor: "white", // Fondo blanco
-        border: "1px solid #e0e0e0", // Borde suave opcional
-      }}
-    />
-  </Box>
-) : (
-  <p>No posee registros.</p> // Mensaje cuando no hay elementos en la lista
-)}
+                    <Box sx={{ width: "100%", backgroundColor: "white", p: 2 }}>
+                        <TextField
+                            label="Buscar..."
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            value={filtro}
+                            onChange={(e) => setFiltro(e.target.value)}
+                            sx={{ mb: 2 }}
+                        />
+                        <DataGrid
+                            rows={rowsFiltradas}
+                            columns={columnas}
+                            autoHeight // Ajusta la altura al contenido
+                            sx={{
+                                backgroundColor: "white", // Fondo blanco
+                                border: "1px solid #e0e0e0", // Borde suave opcional
+                            }}
+                        />
+                    </Box>
+                ) : (
+                    <p>No posee registros.</p> // Mensaje cuando no hay elementos en la lista
+                )}
             </ModalGeneric>
 
 
