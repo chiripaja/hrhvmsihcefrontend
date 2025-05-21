@@ -112,7 +112,14 @@ export const FormAdmision = (data: any) => {
     const [shouldPrint, setShouldPrint] = useState(false);
     const [enableNewUser, setEnableNewUser] = useState(false);
     const [validacionListarIafas, setValidacionListarIafas] = useState(0);
+    const [isModalOpenR, setIsModalOpenR] = useState(false);
+    const openModalR = () => {
+        setIsModalOpenR(true);
+    };
 
+    const closeModalR = () => {
+        setIsModalOpenR(false);
+    };
     const loadOptions = useCallback(async (inputValue: string) => {
         setIsLoading(true);
         const fetchedOptions = await fetchOptions(inputValue);
@@ -255,11 +262,11 @@ export const FormAdmision = (data: any) => {
                     if (data?.data?.exito == '1') {
                         limpiarCampos();
                         impresionTicket(data?.data?.idCuentaAtencion);
-                        const idcuentaAtencionCreate=data?.data?.idCuentaAtencion
-                        const dataobj={
-                            idcuenta :idcuentaAtencionCreate
-                          }
-                        await axios.post(`${process.env.apiurl}/api/websocket/send/${idcuentaAtencionCreate}`,dataobj);
+                        const idcuentaAtencionCreate = data?.data?.idCuentaAtencion
+                        const dataobj = {
+                            idcuenta: idcuentaAtencionCreate
+                        }
+                        await axios.post(`${process.env.apiurl}/api/websocket/send/${idcuentaAtencionCreate}`, dataobj);
                     }
                     else {
                         showAlert("Atencion", data?.data?.mensaje)
@@ -327,10 +334,10 @@ export const FormAdmision = (data: any) => {
             if (result.isConfirmed) {
                 try {
                     await axios.get(`${process.env.apiurl}/CitaAnula/${idcita}/${usuario.user.id}`);
-                    const dataobj={
-                        idcuenta :idcita
-                      }
-                    await axios.post(`${process.env.apiurl}/api/websocket/send/${idcita}`,dataobj);
+                    const dataobj = {
+                        idcuenta: idcita
+                    }
+                    await axios.post(`${process.env.apiurl}/api/websocket/send/${idcita}`, dataobj);
                     cargarListadoProgramados(idprogramacion)
                     Swal.fire("Se eliminó la cuenta correctamente!", "", "success");
                 } catch (error) {
@@ -449,6 +456,7 @@ export const FormAdmision = (data: any) => {
                     </ModalGenerico>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 mt-3 gap-2">
+                    <FormReprogramacion isModalOpenR={isModalOpenR} setIsModalOpenR={setIsModalOpenR} openModalR={openModalR} closeModalR={closeModalR} />
                     {
                         consultorio?.map((data: any, index: number) => {
                             if (data.cuposLibres <= 0 && diactual !== data.fecha) {
@@ -675,10 +683,19 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                                                         {datalista?.paciente} ({datalista?.idCuentaAtencion})
                                                                     </td>
                                                                     <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+
                                                                         <div className="flex  gap-y-1">
-                                                                           <FormReprogramacion/>
-                                                                           
-                                                                            
+                                                                            <Tooltip text="Hoja Filiación">
+                                                                                <a
+                                                                                    onClick={openModalR}
+                                                                                    target="_blank"
+                                                                                    className="ml-3 py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-blue-400 text-gray-700 hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                                                                                >
+                                                                                    <FiFile size={18} className="text-white" />
+                                                                                </a>
+                                                                            </Tooltip>
+
+
                                                                             <Tooltip text="Imprimir">
                                                                                 <button
                                                                                     type="button"
