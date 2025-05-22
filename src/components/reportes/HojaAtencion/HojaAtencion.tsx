@@ -8,6 +8,8 @@ import { getData } from '@/components/helper/axiosHelper';
 export const HojaAtencion = ({ idcuentaatencion }: any) => {
 
   const [datosPxGeneral, setdatosPxGeneral] = useState<any>();
+  const [datosAtencion, setdatosAtencion] = useState<any>([]);
+  const [datosFarmacia, setdatosFarmacia] = useState<any>([]);
   const handlePrint = () => {
     window.print();
   };
@@ -15,26 +17,22 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
     getDatosHC(idcuentaatencion)
   }, [idcuentaatencion])
   const getDatosHC = async (idcuentaatencion: any) => {
-
     const response = await getData(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
     setdatosPxGeneral(response)
-        const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
-     console.log(data)
   }
 
+  const getdatosAtencion = async (idatencion: any) => {
+    const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
+    setdatosAtencion(datosAtencion)
+  }
+  
   function obtenerHoraActual() {
     const fecha = new Date();
     let horas = fecha.getHours();
     const minutos = fecha.getMinutes();
     const esAM = horas < 12;
-
-    // Convertir formato 24 horas a 12 horas
     horas = horas % 12 || 12;
-
-    // Formatear minutos con dos dígitos
     const minutosFormateados = minutos.toString().padStart(2, "0");
-
-    // Crear el formato final
     const periodo = esAM ? "a. m." : "p. m.";
     return `${horas}:${minutosFormateados} ${periodo}`;
   }
@@ -44,6 +42,36 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
     }
 
   }, [datosPxGeneral])
+
+ const getMedicamentosbyIdRecetaCabeceraFarmacia = async (idrecetacabecera: number, idFormaPago: number) => {
+     try {
+       //await limpiarMedicamento(); 
+       console.log(idFormaPago)
+       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdReceta/${idrecetacabecera}/${idFormaPago}/4`)
+
+       setdatosFarmacia(data); 
+    
+     } catch (error) {
+       console.log(error)
+     }
+   }
+
+  useEffect(() => {
+    if (datosAtencion?.recetaCabeceras && datosAtencion?.idFormaPago) {
+      const idreceta=datosAtencion?.recetaCabeceras.filter((data:any)=>data.idPuntoCarga==5)
+      console.log(idreceta[0]?.idreceta)
+      getMedicamentosbyIdRecetaCabeceraFarmacia(idreceta[0]?.idreceta,datosAtencion?.idFormaPago)
+    }
+  }, [datosAtencion?.recetaCabeceras, datosAtencion?.idFormaPago])
+
+
+
+  useEffect(() => {
+    if (datosPxGeneral?.idAtencion) {
+      getdatosAtencion(datosPxGeneral?.idAtencion)
+    }
+  }, [datosPxGeneral?.idAtencion])
+
 
   const { formattedDate, hora, fechayhora } = obtenerFechaYHora();
   return (
@@ -160,40 +188,40 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
         {/* Antecedentes Personales */}
 
         <table className="border col-span-2 mt-1 text-sm w-full">
-  <thead>
-    <tr>
-      <th className="border text-left" colSpan={2}>
-        Antecedentes Personales
-      </th>
-    </tr>
-  </thead>
-<tbody>
-  <tr className="border-b border-gray-100">
-    <td className="w-1/5 align-top">Quirúrgico :</td>
-    <td className="align-top">{datosPxGeneral?.antecedQuirurgico}</td>
-  </tr>
-  <tr className="border-b border-gray-100">
-    <td className="align-top">Patológico :</td>
-    <td className="align-top text-justify">{datosPxGeneral?.antecedPatologico}</td>
-  </tr>
-  <tr className="border-b border-gray-100">
-    <td className="align-top">Alergias :</td>
-    <td className="align-top text-justify">{datosPxGeneral?.antecedAlergico}</td>
-  </tr>
-  <tr className="border-b border-gray-100">
-    <td className="align-top">Obstétricos :</td>
-    <td className="align-top text-justify">{datosPxGeneral?.antecedObstetrico}</td>
-  </tr>
-  <tr className="border-b border-gray-100">
-    <td className="align-top">Otros :</td>
-    <td className="align-top text-justify">{datosPxGeneral?.antecedentes}</td>
-  </tr>
-  <tr className="border-b border-gray-100">
-    <td className="align-top">Ant. Familiares :</td>
-    <td className="align-top text-justify">{datosPxGeneral?.antecedFamiliar}</td>
-  </tr>
-</tbody>
-</table>
+          <thead>
+            <tr>
+              <th className="border text-left" colSpan={2}>
+                Antecedentes Personales
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b border-gray-100">
+              <td className="w-1/5 align-top">Quirúrgico :</td>
+              <td className="align-top">{datosPxGeneral?.antecedQuirurgico}</td>
+            </tr>
+            <tr className="border-b border-gray-100">
+              <td className="align-top">Patológico :</td>
+              <td className="align-top text-justify">{datosPxGeneral?.antecedPatologico}</td>
+            </tr>
+            <tr className="border-b border-gray-100">
+              <td className="align-top">Alergias :</td>
+              <td className="align-top text-justify">{datosPxGeneral?.antecedAlergico}</td>
+            </tr>
+            <tr className="border-b border-gray-100">
+              <td className="align-top">Obstétricos :</td>
+              <td className="align-top text-justify">{datosPxGeneral?.antecedObstetrico}</td>
+            </tr>
+            <tr className="border-b border-gray-100">
+              <td className="align-top">Otros :</td>
+              <td className="align-top text-justify">{datosPxGeneral?.antecedentes}</td>
+            </tr>
+            <tr className="border-b border-gray-100">
+              <td className="align-top">Ant. Familiares :</td>
+              <td className="align-top text-justify">{datosPxGeneral?.antecedFamiliar}</td>
+            </tr>
+          </tbody>
+        </table>
 
 
         {/* Motivo Consulta */}
@@ -214,29 +242,50 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
                 Exámen Clínico :
               </td>
               <td>
-                             {datosPxGeneral?.CitaExamenClinico}
+                {datosPxGeneral?.CitaExamenClinico}
               </td>
             </tr>
             <tr>
-              <td>
+              <td className='align-top text-justify'>
                 Diagnóstico CIE 10  :
               </td>
               <td>
-                (R10.0-P -Abdomen agudo)
+              
+{
+  datosAtencion?.atencionesDiagnosticos && datosAtencion.atencionesDiagnosticos.length > 0 ? (
+    datosAtencion.atencionesDiagnosticos.map((data: any) => (
+      <div key={data?.idDiagnostico}>
+        ({data?.diagnostico?.codigoCIE10} - {data?.diagnostico?.descripcion}){' '}
+      </div>
+    ))
+  ) : (
+    <></>
+  )
+}
+             
+             
               </td>
             </tr>
             <tr>
-              <td>
+              <td className='align-top'>
                 Tratamiento :
               </td>
-              <td>
-                (Farmacia:) (N° Receta: 72236)
-                ----------------------------------------------------------------------------------------
-                0020 00056//ACETAZOLAMIDA 250 mg TABLETA
+              <td className='align-top'>
+             
+  {
+      datosFarmacia.map((item: any) => (
+                    <div key={item.idproducto}>
+                      {item?.nombre} ( {item?.cantidad})
+                    </div>
+                  ))
+  }
+            
+         
+              
               </td>
             </tr>
             <tr>
-              <td>
+              <td className='align-top'>
                 Ord.Médicas  :
               </td>
               <td>
