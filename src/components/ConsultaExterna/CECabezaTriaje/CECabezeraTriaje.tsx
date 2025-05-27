@@ -1,5 +1,5 @@
 
-import { FaSearchPlus } from "react-icons/fa";
+import { FaPrint, FaSearchPlus } from "react-icons/fa";
 
 import { useState } from "react";
 import { ModalGeneric } from "../../ui/ModalGeneric/ModalGeneric";
@@ -7,7 +7,8 @@ import style from './CECabezeraTriaje.module.css'
 import { CEHistoricosByDni } from "../historicos/CEHistoricosByDni";
 import Image from "next/image";
 import { CEFormatoRehabilitacion } from "../consultamedica/CEFormatoRehabilitacion";
-export const CECabezeraTriaje = ({ dataPx }: any) => {
+import Link from "next/link";
+export const CECabezeraTriaje = ({ dataPx,cuentaDatos }: any) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => {
         setIsModalOpen(true);
@@ -26,23 +27,23 @@ export const CECabezeraTriaje = ({ dataPx }: any) => {
                         <button onClick={openModal} className="letraFondo hover:letraFondo flex items-center">
                             (Ver Históricos <FaSearchPlus className="ml-2" />)
                         </button>
-                        <CEFormatoRehabilitacion/>
+                        <CEFormatoRehabilitacion />
                     </div>
                     <div className={style.mainTriaje__body}>
                         <div className={style.mainTriaje__body__container}>
                             <div className="flex-grow flex justify-center  md:mb-0">
                                 <div className="h-32">
-                                <div className="relative w-full h-full">
-      <Image
-        src={dataPx?.foto ? `data:image/png;base64,${dataPx.foto}` : '/img/userdefault.png'}
-        alt="Imagen decodificada"
-        width={100}
-        height={100}
-        className="rounded-xl shadow-2xl"
-        loading="lazy" 
-      />
-    </div>
-                                        
+                                    <div className="relative w-full h-full">
+                                        <Image
+                                            src={dataPx?.foto ? `data:image/png;base64,${dataPx.foto}` : '/img/userdefault.png'}
+                                            alt="Imagen decodificada"
+                                            width={100}
+                                            height={100}
+                                            className="rounded-xl shadow-2xl"
+                                            loading="lazy"
+                                        />
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -55,7 +56,7 @@ export const CECabezeraTriaje = ({ dataPx }: any) => {
                                     <span className={style.mainTriaje__body__container__item__container__txtprincipal}>Fecha de Nacimiento:</span>
                                     <span className={style.txtColorContenido}>{dataPx?.fechaNacimiento} ({dataPx?.edad} años)</span>
                                 </div>
-                               
+
                             </div>
                             <div className={style.mainTriaje__body__container__item}>
                                 <div className={style.mainTriaje__body__container__item__container}>
@@ -66,7 +67,7 @@ export const CECabezeraTriaje = ({ dataPx }: any) => {
                                     <span className={style.mainTriaje__body__container__item__container__txtprincipal}>Saturación (SAT):</span>
                                     <span className={style.txtColorContenido}>{dataPx?.triajeSaturacion ? dataPx?.triajeSaturacion + " %" : '-'}</span>
                                 </div>
-                              
+
                             </div>
                             <div className={style.mainTriaje__body__container__item}>
                                 <div className={style.mainTriaje__body__container__item__container}>
@@ -81,10 +82,10 @@ export const CECabezeraTriaje = ({ dataPx }: any) => {
                                         {dataPx?.triajeFrecCardiaca ? dataPx?.triajeFrecCardiaca + " x min" : '-'}
                                     </span>
                                 </div>
-                              
+
                             </div>
                             <div className={style.mainTriaje__body__container__item}>
-                            <div className={style.mainTriaje__body__container__item__container}>
+                                <div className={style.mainTriaje__body__container__item__container}>
                                     <span className={style.mainTriaje__body__container__item__container__txtprincipal}>Talla:</span>
                                     <span className={style.txtColorContenido}>
                                         {dataPx?.triajeTalla ? dataPx?.triajeTalla + " cm" : '-'}
@@ -97,6 +98,29 @@ export const CECabezeraTriaje = ({ dataPx }: any) => {
                                     </span>
                                 </div>
                             </div>
+                             <div className={style.mainTriaje__body__container__item}>
+                                <div className={style.mainTriaje__body__container__item__container}>
+                                    
+                                    <span className={style.txtColorContenido}>
+                                {cuentaDatos?.diagnosticos.length > 0 && (
+  <Link
+    
+    className="flex items-center px-4 py-2 rounded focus:outline-none colorFondo text-white"
+    href={`/reportes/hojaatencion/${cuentaDatos?.idcuentaatencion}`}
+                                    target="__blank"
+  >
+    <FaPrint className="mr-2" />
+    Impresión HC
+  </Link>
+)}
+                                           
+                                      
+                                    </span>
+                                </div>
+                                <div className={style.mainTriaje__body__container__item__container}>
+                                            ---------
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -105,7 +129,7 @@ export const CECabezeraTriaje = ({ dataPx }: any) => {
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal} css={style.modalSize}>
                 <label className="text-lg font-semibold text-gray-900">Historial del Paciente</label>
                 <div className="text-sm text-gray-600">
-                    <CEHistoricosByDni dni={dataPx?.nroDocumento}/>
+                    <CEHistoricosByDni dni={dataPx?.nroDocumento} />
                 </div>
                 <div className="mt-6 flex justify-end">
                     <button

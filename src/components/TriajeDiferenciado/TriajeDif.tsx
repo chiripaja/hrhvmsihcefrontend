@@ -125,7 +125,6 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
         try {
             setShowPrioridades(true)
             reset()
-          
             const { data } = await axios.get(`${process.env.apiurl}/Triaje/SolicitaAgregar/${numerocuenta}`)
             console.log(data?.triajeSolicita?.tipoServicio==="Consultorios Externos")
             if(data?.triajeSolicita?.tipoServicio!=="Consultorios Externos"){           

@@ -18,6 +18,8 @@ import { ReferenciaDestino } from './ReferenciaDestino';
 import { watch } from 'fs';
 import Swal from 'sweetalert2';
 import { toast } from 'sonner';
+import { FaPrint } from 'react-icons/fa';
+import { FiSave } from 'react-icons/fi';
 const opcionCondicionMaterna = [
   { id: 1, valor: "Gestante" },
   { id: 2, valor: "Puerpera" },
@@ -370,7 +372,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
           )
         }
       </div>
-      <div className="flex justify-end mt-6 col-span-2">
+      <div className="flex justify-end mt-6 col-span-2 gap-2">
+      
         <button
           type="submit"
           disabled={isSubmitting}
@@ -381,8 +384,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
             <Loading />
           ) : (
             <>
+            <FiSave  className="mr-2" />
               Guardar y finalizar
-              <GrFormNextLink className="ml-2" />
             </>
           )}
         </button>
