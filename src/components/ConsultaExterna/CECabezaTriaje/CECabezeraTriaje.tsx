@@ -105,7 +105,7 @@ export const CECabezeraTriaje = ({ dataPx,cuentaDatos }: any) => {
                                 {cuentaDatos?.diagnosticos.length > 0 && (
   <Link
     
-    className="flex items-center px-4 py-2 rounded focus:outline-none colorFondo text-white"
+    className="flex items-center px-4 py-2 rounded focus:outline-none colorFondo text-white w-44"
     href={`/reportes/hojaatencion/${cuentaDatos?.idcuentaatencion}`}
                                     target="__blank"
   >

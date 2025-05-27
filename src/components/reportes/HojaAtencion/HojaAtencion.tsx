@@ -46,7 +46,6 @@ const handleImprimirConRetardo = () => {
   const getdatosAtencion = async (idatencion: any) => {
     const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
     setdatosAtencion(datosAtencion)
-
   }
 
   const getdatosprocdentro = async (idcuenta: any) => {
@@ -203,7 +202,7 @@ const handleImprimirConRetardo = () => {
               </tr>
               <tr>
                 <td className='align-top font-semibold'>Paciente:</td>
-                <td>({datosPxGeneral?.nroDocumento}) {datosPxGeneral?.nombrespx} (Edad: {datosPxGeneral?.triajeEdad} Años) ({datosPxGeneral?.FuentesFinanciamiento})</td>
+                <td>({datosPxGeneral?.nroDocumento}) {datosPxGeneral?.nombreCompleto} (Edad: {datosPxGeneral?.triajeEdad} Años) ({datosPxGeneral?.FuentesFinanciamiento})</td>
                 <td className='align-top font-semibold'>Hora Atención:</td>
                 <td>{datosPxGeneral?.HoraEgreso}</td>
               </tr>
