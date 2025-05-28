@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FaPlus } from "react-icons/fa";
+import { FaCalendarAlt, FaPlus } from "react-icons/fa";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import Select from 'react-select';
@@ -685,13 +685,13 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                                                     <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
 
                                                                         <div className="flex  gap-y-1">
-                                                                            <Tooltip text="Hoja Filiación">
+                                                                            <Tooltip text="Reprogramación Medica">
                                                                                 <a
                                                                                     onClick={openModalR}
                                                                                     target="_blank"
                                                                                     className="ml-3 py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded border border-transparent bg-blue-400 text-gray-700 hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
                                                                                 >
-                                                                                    <FiFile size={18} className="text-white" />
+                                                                                    <FaCalendarAlt size={18} className="text-white" />
                                                                                 </a>
                                                                             </Tooltip>
 

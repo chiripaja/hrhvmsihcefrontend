@@ -15,47 +15,61 @@ export const FormReprogramacion = ({isModalOpenR,setIsModalOpenR,openModalR,clos
     return (
         <>
             <ModalProps isOpen={isModalOpenR} onClose={closeModalR} width="40vw" height="55vh">
-                 <form  dir="ltr" onSubmit={handleSubmit(FormRehabilitacion)} className="p-4 space-y-4 bg-white shadow rounded-lg">
-          <h2 className="text-lg font-semibold text-gray-900">Formato de Medicina Física y Rehabilitación</h2>
+              <form onSubmit={handleSubmit(FormReprogramacion)} className="p-6 space-y-6 bg-white shadow-lg rounded-lg">
+  <h2 className="text-xl font-bold text-gray-800">Formulario de Reprogramación Médica</h2>
+
+  {/* Datos del paciente */}
+ 
 
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Fecha de sesión</label>
-            <input
-              type="date"
-              {...register("fechaSesion", { required: "Fecha requerida" })}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Objetivo terapéutico</label>
-            <textarea
-              {...register("objetivo", { required: "Objetivo requerido" })}
-              className="w-full h-24 p-2 border rounded"
-            ></textarea>
-          </div>
+  {/* Fecha de reprogramación */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Nueva Fecha de Atención</label>
+    <input
+      type="date"
+      {...register("fechaReprogramacion", { required: "Fecha requerida" })}
+      className="w-full mt-1 p-2 border rounded"
+    />
+  </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Observaciones</label>
-            <textarea {...register("observaciones")} className="w-full h-24 p-2 border rounded"></textarea>
-          </div>
+  {/* Motivo de reprogramación */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Motivo de Reprogramación</label>
+    <textarea
+      {...register("motivo", { required: "Motivo requerido" })}
+      className="w-full mt-1 p-2 border rounded h-24"
+      placeholder="Describa el motivo de la reprogramación"
+    ></textarea>
+  </div>
 
-          <div className="mt-4 flex justify-end gap-2">
-            <button
-              type="submit"
-              className="py-2 px-4 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700"
-            >
-              Guardar
-            </button>
-            <button
-              type="button"
-              className="py-2 px-4 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-              onClick={reset}
-            >
-              Limpiar
-            </button>
-          </div>
-        </form>
+  {/* Observaciones */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Observaciones</label>
+    <textarea
+      {...register("observaciones")}
+      className="w-full mt-1 p-2 border rounded h-24"
+      placeholder="Observaciones adicionales (opcional)"
+    ></textarea>
+  </div>
+
+  {/* Botones */}
+  <div className="flex justify-end gap-3 pt-1">
+    <button
+      type="submit"
+      className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded"
+    >
+      Guardar Reprogramación
+    </button>
+    <button
+      type="button"
+      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded"
+      onClick={reset}
+    >
+      Limpiar
+    </button>
+  </div>
+</form>
+
             </ModalProps>
 
           
