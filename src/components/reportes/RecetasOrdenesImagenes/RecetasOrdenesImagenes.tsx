@@ -11,6 +11,13 @@ export const RecetasOrdenesImagenes = ({ idcuentaatencion }: any) => {
   const [datosAtencion, setdatosAtencion] = useState<any>([]);
   const [datosRayosX, setdatosRayosX] = useState<any>([]);
   const [datosTomografia, setdatosTomografia] = useState<any>([]);
+  const [datosEcograficaGeneral, setdatosEcograficaGeneral] = useState<any>([]);
+  const [datosEcograficaObstetrica, setdatosEcograficaObstetrica] = useState<any>([]);
+
+
+  const [isPxGeneralLoaded, setIsPxGeneralLoaded] = useState(false);
+  const [isAtencionLoaded, setIsAtencionLoaded] = useState(false);
+  const [isImagenesLoaded, setIsImagenesLoaded] = useState(false);
   useEffect(() => {
     if (idcuentaatencion) {
       getDatosHC(idcuentaatencion)
@@ -20,19 +27,30 @@ export const RecetasOrdenesImagenes = ({ idcuentaatencion }: any) => {
   const getDatosHC = async (idcuenta: any) => {
     const response = await getData(`${process.env.apijimmynew}/atenciones/${idcuenta}`);
     setdatosPxGeneral(response)
+    setIsPxGeneralLoaded(true);
   }
   const getdatosAtencion = async (idcuenta: any) => {
     const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuenta}`);
     setdatosAtencion(datosAtencion)
+    setIsAtencionLoaded(true);
   }
 
   const getImagenesByCuenta = async (idcuenta: any) => {
     const data = await getData(`${process.env.apijimmynew}/recetas/apiordenesmedicasbycuenta/${idcuenta}`)
     setdatosRayosX(data.filter((data: any) => data.IdPuntoCarga == 21))
     setdatosTomografia(data.filter((data: any) => data.IdPuntoCarga == 22))
+    setdatosEcograficaGeneral(data.filter((data: any) => data.IdPuntoCarga == 20))
+    setdatosEcograficaObstetrica(data.filter((data: any) => data.IdPuntoCarga == 23))
+    setIsImagenesLoaded(true);
   }
 
-
+  useEffect(() => {
+    if (isPxGeneralLoaded && isAtencionLoaded && isImagenesLoaded) {
+      setTimeout(() => {
+        window.print();
+      }, 500); // espera a que todo pinte en pantalla
+    }
+  }, [isPxGeneralLoaded, isAtencionLoaded, isImagenesLoaded]);
 
   useEffect(() => {
     if (datosAtencion?.idCuentaAtencion) {
@@ -40,22 +58,24 @@ export const RecetasOrdenesImagenes = ({ idcuentaatencion }: any) => {
     }
   }, [datosAtencion?.idCuentaAtencion])
 
-
+  const secciones = [
+    datosRayosX,
+    datosTomografia,
+    datosEcograficaGeneral,
+    datosEcograficaObstetrica,
+  ].filter((datos) => datos.length > 0);
 
   return (
     <>
-  <SeccionImpresion
-    datosPxGeneral={datosPxGeneral}
-    datos={datosRayosX}
-    datosAtencion={datosAtencion}
-   
-  />
-
-  <SeccionImpresion
-    datosPxGeneral={datosPxGeneral}
-    datos={datosTomografia}
-    datosAtencion={datosAtencion}
-  />
+      {secciones.map((datos, index) => (
+        <SeccionImpresion
+          key={index}
+          datosPxGeneral={datosPxGeneral}
+          datos={datos}
+          datosAtencion={datosAtencion}
+          isLast={index === secciones.length - 1}
+        />
+      ))}
     </>
 
   )

@@ -6,6 +6,7 @@ import axios from 'axios';
 import { obtenerFechaYHora } from '@/components/utils/obtenerFechaYHora';
 import { getData } from '@/components/helper/axiosHelper';
 import { RecetaCabecera } from '../../../interfaces/RecetaCabezeraI';
+import { SeccionOrdenes } from './SeccionOrdenes';
 export const HojaAtencion = ({ idcuentaatencion }: any) => {
 
   const [datosPxGeneral, setdatosPxGeneral] = useState<any>();
@@ -23,14 +24,14 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   const [datosInterconsulta, setdatosInterconsulta] = useState<any>([]);
   let printed = false;
 
-const handleImprimirConRetardo = () => {
-  if (printed) return; // si ya se imprimió, no hacer nada
-  printed = true;
+  const handleImprimirConRetardo = () => {
+    if (printed) return; // si ya se imprimió, no hacer nada
+    printed = true;
 
-  setTimeout(() => {
-     window.print();
-  }, 3000);
-};
+    setTimeout(() => {
+      // window.print();
+    }, 3000);
+  };
 
 
 
@@ -70,10 +71,12 @@ const handleImprimirConRetardo = () => {
 
   }, [datosPxGeneral])
 
-  const getMedicamentosbyIdRecetaCabeceraFarmacia = async (idrecetacabecera: number, idFormaPago: number) => {
+  const getMedicamentosbyIdRecetaCabeceraFarmacia = async (idcuenta: number) => {
     try {
-      const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdReceta/${idrecetacabecera}/${idFormaPago}/4`)
+      const data = await getData(`${process.env.apijimmynew}/recetas/apiordenesfarmaciabycuenta/${idcuenta}`)
+      console.log(data)
       setdatosFarmacia(data);
+
     } catch (error) {
       console.log(error)
     }
@@ -94,11 +97,10 @@ const handleImprimirConRetardo = () => {
 
 
   useEffect(() => {
-    if (datosAtencion?.recetaCabeceras && datosAtencion?.idFormaPago) {
-      const idrecetaFarmacia = datosAtencion?.recetaCabeceras.filter((data: any) => data.idPuntoCarga == 5)
-      getMedicamentosbyIdRecetaCabeceraFarmacia(idrecetaFarmacia[0]?.idreceta, datosAtencion?.idFormaPago)
+    if (idcuentaatencion) {
+      getMedicamentosbyIdRecetaCabeceraFarmacia(idcuentaatencion)
     }
-  }, [datosAtencion?.recetaCabeceras, datosAtencion?.idFormaPago])
+  }, [idcuentaatencion])
 
 
   const otrosProc = async () => {
@@ -113,29 +115,29 @@ const handleImprimirConRetardo = () => {
   }, [datosAtencion])
 
 
-
-  useEffect(() => {
-    if (datosAtencion?.recetaCabeceras && datosAtencion?.idFormaPago) {
-      const examenes = [
-        //imagenologica
-        { idPuntoCarga: 20, setter: setdatosEcografia },
-        { idPuntoCarga: 21, setter: setdatosRayosX },
-        { idPuntoCarga: 22, setter: setdatosTomografia },
-        { idPuntoCarga: 23, setter: setdatosEcografiaObstetrica },
-        //laboratorio
-        { idPuntoCarga: 3, setter: setdatosAnatomiaPatologica },
-        { idPuntoCarga: 2, setter: setdatosPatologicaClinica },
-        { idPuntoCarga: 11, setter: setdatosBancoSangre },
-      ]
-      examenes.forEach(({ idPuntoCarga, setter }) => {
-        const receta = datosAtencion.recetaCabeceras.find((data: any) => data.idPuntoCarga === idPuntoCarga)
-        if (receta) {
-          fetchDetalleReceta(receta.idreceta, datosAtencion.idFormaPago, setter)
-        }
-      })
-    }
-  }, [datosAtencion?.recetaCabeceras, datosAtencion?.idFormaPago])
-
+  /*
+    useEffect(() => {
+      if (datosAtencion?.recetaCabeceras && datosAtencion?.idFormaPago) {
+        const examenes = [
+          //imagenologica
+          { idPuntoCarga: 20, setter: setdatosEcografia },
+          { idPuntoCarga: 21, setter: setdatosRayosX },
+          { idPuntoCarga: 22, setter: setdatosTomografia },
+          { idPuntoCarga: 23, setter: setdatosEcografiaObstetrica },
+          //laboratorio
+          //   { idPuntoCarga: 3, setter: setdatosAnatomiaPatologica },
+          { idPuntoCarga: 2, setter: setdatosPatologicaClinica },
+          { idPuntoCarga: 11, setter: setdatosBancoSangre },
+        ]
+        examenes.forEach(({ idPuntoCarga, setter }) => {
+          const receta = datosAtencion.recetaCabeceras.find((data: any) => data.idPuntoCarga === idPuntoCarga)
+          if (receta) {
+            fetchDetalleReceta(receta.idreceta, datosAtencion.idFormaPago, setter)
+          }
+        })
+      }
+    }, [datosAtencion?.recetaCabeceras, datosAtencion?.idFormaPago])
+  */
   useEffect(() => {
     if (datosPxGeneral?.idAtencion) {
       getdatosAtencion(datosPxGeneral?.idAtencion)
@@ -148,9 +150,22 @@ const handleImprimirConRetardo = () => {
     setdatosInterconsulta(data)
   }
 
+  const getLaboratorioByCuenta = async (idcuenta: any) => {
+    const data = await getData(`${process.env.apijimmynew}/recetas/apiordenesmedicasbycuenta/${idcuenta}`)
+    setdatosPatologicaClinica(data.filter((data: any) => data.IdPuntoCarga == 2))
+    setdatosAnatomiaPatologica(data.filter((data: any) => data.IdPuntoCarga == 3))
+    setdatosBancoSangre(data.filter((data: any) => data.IdPuntoCarga == 11))
+    setdatosRayosX(data.filter((data: any) => data.IdPuntoCarga == 21))
+    setdatosTomografia(data.filter((data: any) => data.IdPuntoCarga == 22))
+    setdatosEcografia(data.filter((data: any) => data.IdPuntoCarga == 20))
+    setdatosEcografiaObstetrica(data.filter((data: any) => data.IdPuntoCarga == 23))
+
+  }
+
   useEffect(() => {
     if (idcuentaatencion) {
       getdatosprocdentro(idcuentaatencion)
+      getLaboratorioByCuenta(idcuentaatencion)
     }
 
   }, [idcuentaatencion])
@@ -212,7 +227,7 @@ const handleImprimirConRetardo = () => {
                 <td className='align-top font-semibold'>N° Cuenta:</td>
                 <td>{datosPxGeneral?.idCuentaAtencion}</td>
               </tr>
-  <tr>
+              <tr>
                 <td></td>
                 <td></td>
                 <td className='align-top font-semibold'>Fecha Proxima:</td>
@@ -344,11 +359,11 @@ const handleImprimirConRetardo = () => {
               </td>
               <td className='align-top'>
                 <hr className="border-t-2 border-gray-400 border-dashed my-2" />
-                (Farmacia) (N° Receta: {datosFarmacia[0]?.idrecetacabecera})
+                ({datosFarmacia[0]?.Descripcion}) (N° Receta: {datosFarmacia[0]?.idReceta})
                 {
                   datosFarmacia.map((item: any) => (
-                    <div key={item.idproducto}>
-                      - {item?.nombre} ( {item?.cantidad})
+                    <div key={item.IdProducto}>
+                      - {item?.Nombre} ( {item?.CantidadPedida})
                     </div>
                   ))
                 }
@@ -359,105 +374,15 @@ const handleImprimirConRetardo = () => {
                 Ord.Médicas  :
               </td>
               <td>
-                {datosRayosX.length > 0 && (
-                  <div>
-                    <hr className="border-t-2 border-gray-400 border-dashed my-2" />
-                    (Rayos X) (N° Receta: {datosRayosX[0]?.idrecetacabecera})
-                    {
-                      datosRayosX.map((item: any) => (
-                        <div key={item.idproducto}>
-                          - {item?.nombre} ( {item?.cantidad})
-                        </div>
-                      ))
-                    }
+                <SeccionOrdenes datos={datosAnatomiaPatologica} />
+                <SeccionOrdenes datos={datosPatologicaClinica} />
+                <SeccionOrdenes datos={datosBancoSangre} />
+                <SeccionOrdenes datos={datosRayosX} />
+                <SeccionOrdenes datos={datosTomografia} />
+                <SeccionOrdenes datos={datosEcografia} />
+                <SeccionOrdenes datos={datosEcografiaObstetrica} />
 
-                  </div>
-                )}
-
-
-                {datosTomografia.length > 0 && (
-                  <div>
-                    <hr className="border-t-2 border-gray-400 border-dashed my-2" />
-                    (Tomografia) (N° Receta: {datosTomografia[0]?.idrecetacabecera})
-                    {
-                      datosTomografia.map((item: any) => (
-                        <div key={item.idproducto}>
-                          - {item?.nombre} ( {item?.cantidad})
-                        </div>
-                      ))
-                    }
-                  </div>
-                )}
-
-                {datosTomografia.length > 0 && (
-                  <div>
-                    <hr className="border-t-2 border-gray-400 border-dashed my-2" />
-                    (Ecografía General) (N° Receta: {datosEcografia[0]?.idrecetacabecera})
-                    {
-                      datosEcografia.map((item: any) => (
-                        <div key={item.idproducto}>
-                          - {item?.nombre} ( {item?.cantidad})
-                        </div>
-                      ))
-                    }
-                  </div>
-                )}
-
-                {datosEcografiaObstetrica.length > 0 && (
-                  <div>
-                    <hr className="border-t-2 border-gray-400 border-dashed my-2" />
-                    (Ecografía Obstétrica) (N° Receta: {datosEcografiaObstetrica[0]?.idrecetacabecera})
-                    {
-                      datosEcografiaObstetrica.map((item: any) => (
-                        <div key={item.idproducto}>
-                          - {item?.nombre} ( {item?.cantidad})
-                        </div>
-                      ))
-                    }
-                  </div>
-                )}
-
-                {datosAnatomiaPatologica.length > 0 && (
-                  <div>
-                    <hr className="border-t-2 border-gray-400 border-dashed my-2" />
-                    (Anatomia Patologica) (N° Receta: {datosAnatomiaPatologica[0]?.idrecetacabecera})
-                    {
-                      datosAnatomiaPatologica.map((item: any) => (
-                        <div key={item.idproducto}>
-                          - {item?.nombre} ( {item?.cantidad})
-                        </div>
-                      ))
-                    }
-                  </div>
-                )}
-
-                {datosPatologicaClinica.length > 0 && (
-                  <div>
-                    <hr className="border-t-2 border-gray-400 border-dashed my-2" />
-                    (Patologica Clinica) (N° Receta: {datosPatologicaClinica[0]?.idrecetacabecera})
-                    {
-                      datosPatologicaClinica.map((item: any) => (
-                        <div key={item.idproducto}>
-                          - {item?.nombre} ( {item?.cantidad})
-                        </div>
-                      ))
-                    }
-                  </div>
-                )}
-
-                {datosBancoSangre.length > 0 && (
-                  <div>
-                    <hr className="border-t-2 border-gray-400 border-dashed my-2" />
-                    (Banco de Sangre) (N° Receta: {datosBancoSangre[0]?.idrecetacabecera})
-                    {
-                      datosBancoSangre.map((item: any) => (
-                        <div key={item.idproducto}>
-                          - {item?.nombre} ( {item?.cantidad})
-                        </div>
-                      ))
-                    }
-                  </div>
-                )}
+            
 
 
               </td>

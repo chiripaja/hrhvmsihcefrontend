@@ -43,20 +43,21 @@ export const CELaboratorioTabla = ({ modificar = 0, cuentaDatos }: { modificar?:
                         {cuentaDatos?.ordenesLaboratorio.map((data: any, index: any) => (
                             <tr key={index}>
                                 <td className="tabletd w-1/3">
+                             
                                     {NombrePuntoCarga(data.puntoCarga)}</td>
                                 <td className="tabletd w-32">{data.nombre} </td>
                                 {(modificar === 0) &&
-                                    <td className="tabletd w-23" >
-                                        {data?.idEstadoDetalle == "1" ?
+                                     <td className="tabletd">
+                                        
+                                        {(filterByRecetaCabezera(data?.idrecetacabecera) == "1" || !filterByRecetaCabezera(data?.idrecetacabecera)) ?
                                             <Tooltip text="Eliminar">
                                                 <GoTrash size={24} className="text-red-400 hover:text-red-700 cursor-pointer" onClick={() => handleDelete(data?.idproducto, data.puntoCarga)} />
-                                            </Tooltip> :
+                                            </Tooltip>
+                                            :
                                             <span className="text-blue-500 text-xs">
-                                                Receta
-                                                Despachada
+                                                Receta Despachada
                                             </span>
                                         }
-
                                     </td>
                                 }
                             </tr>

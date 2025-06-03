@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-
+import { SlPrinter } from "react-icons/sl";
 import { CiImageOn } from 'react-icons/ci';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
@@ -11,11 +11,12 @@ import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import axios from 'axios';
 import { RecetaCabecera } from '@/interfaces/RecetaCabezeraI';
 import { CgAdd } from 'react-icons/cg';
+import Link from 'next/link';
 interface Option {
     value: string;
     label: string;
 }
-export const CEImagenes = ({cuentaDatos}:any) => {
+export const CEImagenes = ({ cuentaDatos }: any) => {
     const [isOffcanvasOpenImagenes, setIsOffcanvasOpenImagenes] = useState(false);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const setRecetaCabezera = useCEDatosStore((state: any) => state.setRecetaCabezera);
@@ -63,22 +64,22 @@ export const CEImagenes = ({cuentaDatos}:any) => {
         const puntoCargaLab = datos.filter((data: any) => idsPermitidos.includes(data.IdPuntoCarga.toString()));
         setDataPuntosDeCargaLab(puntoCargaLab)
     }
-    const getDataPuntoDeCargaValidacion= async () => {
-            const datos = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/FactPuntosCargaFiltrar`)
-            const idsPermitidos = ["20", "21", "22","23"];
-            const idsPermitidosi = [20, 21, 22,23];
-            const puntoCargaLab = datos.filter((data: any) => idsPermitidos.includes(data.IdPuntoCarga))
-              const filtro = cuentaDatos?.recetaCabezera.filter(
-                (item:any) => idsPermitidosi.includes(item.IdPuntoCarga) && item?.idEstado==2
-              );
-              const idpermitidonodespachado = filtro?.map((item: any) => item.IdPuntoCarga.toString()) || [];
-              if (idpermitidonodespachado.length > 0) {
-                const nuevoCombo = puntoCargaLab.filter(
-                  (data: any) => !idpermitidonodespachado.includes(data.IdPuntoCarga.toString())
-                );
-                setDataPuntosDeCargaLab(nuevoCombo);
-              }
+    const getDataPuntoDeCargaValidacion = async () => {
+        const datos = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/FactPuntosCargaFiltrar`)
+        const idsPermitidos = ["20", "21", "22", "23"];
+        const idsPermitidosi = [20, 21, 22, 23];
+        const puntoCargaLab = datos.filter((data: any) => idsPermitidos.includes(data.IdPuntoCarga))
+        const filtro = cuentaDatos?.recetaCabezera.filter(
+            (item: any) => idsPermitidosi.includes(item.IdPuntoCarga) && item?.idEstado == 2
+        );
+        const idpermitidonodespachado = filtro?.map((item: any) => item.IdPuntoCarga.toString()) || [];
+        if (idpermitidonodespachado.length > 0) {
+            const nuevoCombo = puntoCargaLab.filter(
+                (data: any) => !idpermitidonodespachado.includes(data.IdPuntoCarga.toString())
+            );
+            setDataPuntosDeCargaLab(nuevoCombo);
         }
+    }
     const getExamenesByPuntoCarga = async (idpuntocarga: any) => {
         const datos = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/factaCatalogoServicioByIdPuntoCargaAndFormaPago/${idpuntocarga}/${cuentaDatos?.idFormaPago}`);
         const mappedOptions = datos.map((est: any) => ({
@@ -98,10 +99,10 @@ export const CEImagenes = ({cuentaDatos}:any) => {
         getDataPuntoDeCarga()
     }, [])
     useEffect(() => {
-            if(cuentaDatos?.recetaCabezera){
-                getDataPuntoDeCargaValidacion()
-            }
-        }, [cuentaDatos?.recetaCabezera])
+        if (cuentaDatos?.recetaCabezera) {
+            getDataPuntoDeCargaValidacion()
+        }
+    }, [cuentaDatos?.recetaCabezera])
     useEffect(() => {
         if (dataPuntosDeCargaLab[0]?.IdPuntoCarga && cuentaDatos?.idFormaPago) {
             getExamenesByPuntoCarga(dataPuntosDeCargaLab[0]?.IdPuntoCarga)
@@ -168,7 +169,7 @@ export const CEImagenes = ({cuentaDatos}:any) => {
     const actualizarReceta = async (idReceta: number, puntoCarga: number) => {
         try {
             const data = cuentaDatos?.recetaCabezera.filter((datos: any) => datos?.idReceta === idReceta);
-           
+
             if (data && data.length > 0 && data[0].idEstado === 1) {
                 await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${idReceta}`);
                 const ordenes = await updateOrdenesImagenes(idReceta, puntoCarga);
@@ -201,15 +202,33 @@ export const CEImagenes = ({cuentaDatos}:any) => {
     };
     return (
         <>
-            
+
             <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                    <span className="flex-grow">Imagenes</span>
+                    <span className="flex-grow">
+                        <div className="flex items-center justify-between">
+                            <span className="font-semibold text-gray-800">Imágenes</span>
+
+                            {cuentaDatos?.recetaCabezera?.some((item: any) =>
+                                [20, 21, 22, 23].includes(item.IdPuntoCarga)
+                            ) && (
+                                    <Link
+                                        href={`/reportes/recetasimagenes/${cuentaDatos?.idcuentaatencion}`}
+                                        target="_blank"
+                                        className="inline-flex items-center px-3 py-1.5 text-blue-600 text-sm rounded-md hover:bg-blue-100 transition-colors duration-200"
+                                    >
+                                        <SlPrinter className="m-2" />
+                                        <span>Imprimir</span>
+                                    </Link>
+                                )}
+                        </div>
+                    </span>
+
 
                     <button
                         onClick={toggleOffcanvasImagenes}
-                        className={cuentaDatos?.ordenesImagenes.length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
+                        className={cuentaDatos?.ordenesImagenes.length > 0 ? "text-blue-500 hover:underline text-sm ml-2" : "hidden"}
                     >
                         Agregar
                     </button>
@@ -233,7 +252,7 @@ export const CEImagenes = ({cuentaDatos}:any) => {
                     </button>
                 </div>
 
-                <CEImagenesTabla modificar={1} cuentaDatos={cuentaDatos}/>
+                <CEImagenesTabla modificar={1} cuentaDatos={cuentaDatos} />
             </div>
             {isOffcanvasOpenImagenes && (
                 <div
@@ -326,7 +345,7 @@ export const CEImagenes = ({cuentaDatos}:any) => {
                         <textarea {...register('frecuencia')} className='w-full border shadow mt-2 p-1' placeholder='Observaciones' ></textarea>
                         <button type="submit" className="btnprimario mt-2">Guardar</button>
                     </form>
-                    <CEImagenesTabla cuentaDatos={cuentaDatos}/>
+                    <CEImagenesTabla cuentaDatos={cuentaDatos} />
                     <div className={cuentaDatos?.ordenesImagenes.length > 0 ? "block" : "hidden"}>
                         <button onClick={handleCanastaPorPuntoDeCarga} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden

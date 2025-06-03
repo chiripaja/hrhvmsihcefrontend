@@ -13,10 +13,11 @@ import { CgAdd } from 'react-icons/cg';
 import { CELaboratorioTabla } from './CELaboratorioTabla';
 import { PiJarLabel } from 'react-icons/pi';
 import { HandleLaboratorio } from './HandleLaboratorio';
-
+import Link from 'next/link';
+import { SlPrinter } from "react-icons/sl";
 //import { handleCanastaPorPuntoDeCarga } from './HandleLaboratorio';
 
-export const CELaboratorio = ({cuentaDatos}:any) => {
+export const CELaboratorio = ({ cuentaDatos }: any) => {
     const [isOffcanvasOpenLaboratorio, setIsOffcanvasOpenLaboratorio] = useState(false);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const [dataPuntosDeCargaLab, setDataPuntosDeCargaLab] = useState<any[]>([])
@@ -24,9 +25,9 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
     const createordenesLaboratorio = useCEDatosStore((state: any) => state.createordenesLaboratorio);
     const updateOrdenesLaboratorio = useCEDatosStore((state: any) => state.updateOrdenesLaboratorio);
     const setRecetaCabezera = useCEDatosStore((state: any) => state.setRecetaCabezera);
-  
+
     const FormLaboratorio: SubmitHandler<any> = async (data: any) => {
-        
+
         const datosServicios = {
             idrecetacabecera: "",
             idproducto: data?.factservicio?.value,
@@ -83,7 +84,7 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
                 (data: any) => !idpermitidonodespachado.includes(data.IdPuntoCarga.toString())
             );
             setDataPuntosDeCargaLab(nuevoCombo);
-        }else{
+        } else {
             setDataPuntosDeCargaLab(puntoCargaLab);
         }
     }
@@ -104,7 +105,7 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
             getExamenesByPuntoCarga(puntoCargaW)
         }
     }, [puntoCargaW])
-   
+
 
     useEffect(() => {
         if (cuentaDatos?.recetaCabezera) {
@@ -123,7 +124,7 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
     }, [dataPuntosDeCargaLab, cuentaDatos?.idFormaPago])
 
 
-   /*
+
     const handleCanastaPorPuntoDeCarga = async () => {
         const puntosDeCarga = [2, 3, 11];
         for (const puntoCarga of puntosDeCarga) {
@@ -220,7 +221,26 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
             <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                    <span className="flex-grow">Laboratorio</span>
+                    <span className="flex-grow">
+                        <div className="flex items-center justify-between">
+                            <span className="font-semibold text-gray-800">Laboratorio</span>
+
+                            {cuentaDatos?.recetaCabezera?.some((item: any) =>
+                                [2, 3, 11].includes(item.IdPuntoCarga)
+                            ) && (
+                                    <Link
+                                        href={`/reportes/recetaslaboratorio/${cuentaDatos?.idcuentaatencion}`}
+                                        target="_blank"
+                                        className="inline-flex items-center px-3 py-1.5 text-blue-600 text-sm rounded-md hover:bg-blue-100 transition-colors duration-200"
+                                    >
+                                        <SlPrinter className="m-2" />
+                                        <span>Imprimir</span>
+                                    </Link>
+                                )}
+
+                        </div>
+                    </span>
+
                     <button
                         onClick={toggleOffcanvasLaboratorio}
                         className={
@@ -246,7 +266,7 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
                         Registrar Examenes activos
                     </button>
                 </div>
-                <CELaboratorioTabla modificar={1} cuentaDatos={cuentaDatos}/>
+                <CELaboratorioTabla modificar={1} cuentaDatos={cuentaDatos} />
             </div>
             {isOffcanvasOpenLaboratorio && (
                 <div
@@ -298,31 +318,31 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
                             />
                         )}
                         {dataPuntosDeCargaLab.length > 0 && (
-  <Controller
-    name="puntoCarga"
-    control={control}
-   
-    rules={{ required: "Debe seleccionar un punto de carga" }}  // Validación para el campo
-    render={({ field, fieldState }) => (
-      <div>
-        <select
-          {...field}
-          className="w-full border p-2 rounded shadow-sm"
-          required
-        >
-          <option value="">Seleccione</option> {/* Opción vacía */}
-          {dataPuntosDeCargaLab.map((data: any) => (
-            <option key={data?.IdPuntoCarga} value={data?.IdPuntoCarga}>
-              {data?.Descripcion}
-            </option>
-          ))}
-        </select>
-        {/* Mostrar mensaje de error si el campo no está seleccionado */}
-        {fieldState?.error && <p className="text-red-500">{fieldState?.error?.message}</p>}
-      </div>
-    )}
-  />
-)}
+                            <Controller
+                                name="puntoCarga"
+                                control={control}
+
+                                rules={{ required: "Debe seleccionar un punto de carga" }}  // Validación para el campo
+                                render={({ field, fieldState }) => (
+                                    <div>
+                                        <select
+                                            {...field}
+                                            className="w-full border p-2 rounded shadow-sm"
+                                            required
+                                        >
+                                            <option value="">Seleccione</option> {/* Opción vacía */}
+                                            {dataPuntosDeCargaLab.map((data: any) => (
+                                                <option key={data?.IdPuntoCarga} value={data?.IdPuntoCarga}>
+                                                    {data?.Descripcion}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {/* Mostrar mensaje de error si el campo no está seleccionado */}
+                                        {fieldState?.error && <p className="text-red-500">{fieldState?.error?.message}</p>}
+                                    </div>
+                                )}
+                            />
+                        )}
                         <Controller
                             name="factservicio"
                             control={control}
@@ -352,10 +372,10 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
                         <button type="submit" className="btnprimario mt-2">Guardar</button>
                     </form>
 
-                    <CELaboratorioTabla cuentaDatos={cuentaDatos}/>
+                    <CELaboratorioTabla cuentaDatos={cuentaDatos} />
                     <div className={cuentaDatos?.ordenesLaboratorio.length > 0 ? "block" : "hidden"}>
-                       {/* 
-                        */}
+                        {/* 
+                       
                          <button onClick={
                             ()=>HandleLaboratorio(
                                 cuentaDatos,
@@ -367,13 +387,13 @@ export const CELaboratorio = ({cuentaDatos}:any) => {
                                 )} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden
                             <CgAdd />
-                        </button>
-                        {/*
-                        <button type="button" onClick={ handleCanastaPorPuntoDeCarga} className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
-                            Confirmar Orden
-                            <CgAdd />
-                        </button>
-                        */}
+                        </button> */}
+                        {
+                            <button type="button" onClick={handleCanastaPorPuntoDeCarga} className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                                Confirmar Orden
+                                <CgAdd />
+                            </button>
+                        /**/}
                     </div>
                 </div>
             </div>

@@ -1,10 +1,44 @@
-import React from 'react'
-import './style.css'
-export const SeccionImpresion = ({ datosPxGeneral, datosAtencion, datos, isLast }: any) => {
-    if (datos.length === 0) return null;
+'use client'
+import React, { useEffect, useState } from 'react'
+import { getData } from "@/components/helper/axiosHelper";
+export const RecetasOrdenesOtrosProcedimientos = ({ idcuentaatencion }: any) => {
+    const [datosPxGeneral, setdatosPxGeneral] = useState<any>();
+    const [datosAtencion, setdatosAtencion] = useState<any>([]);
+    const [datos, setdatos] = useState<any>([]);
 
+    useEffect(() => {
+        if (idcuentaatencion) {
+            getDatosHC(idcuentaatencion)
+            getdatosAtencion(idcuentaatencion)
+        }
+    }, [idcuentaatencion])
+    const getDatosHC = async (idcuenta: any) => {
+        const response = await getData(`${process.env.apijimmynew}/atenciones/${idcuenta}`);
+        setdatosPxGeneral(response)
+    }
+    const getdatosAtencion = async (idcuenta: any) => {
+        const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuenta}`);
+        setdatosAtencion(datosAtencion)
+    }
+
+    const getDatosProc = async (idcuenta: any) => {
+        const datos = await getData(`${process.env.apijimmynew}/recetas/ApiObtenerProcedimientosPorCuenta/${idcuenta}`);
+        setdatos(datos)
+    }
+    useEffect(() => {
+        if (datosAtencion?.idCuentaAtencion) {
+            getDatosProc(datosAtencion?.idCuentaAtencion)
+        }
+    }, [datosAtencion?.idCuentaAtencion])
+
+    useEffect(() => {
+        
+        if (datos?.length>0) {
+            window.print()
+        }
+    }, [datos])
     return (
-        <div className={`flex justify-center ${!isLast ? 'print-page-break' : ''}`}>
+        <div className={`flex justify-center print-page-break`}>
             <div className="w-full max-w-md p-6 break-inside-avoid">
                 {/* Encabezado */}
                 <div className="text-center border-b pb-2 text-xs">
@@ -41,6 +75,7 @@ export const SeccionImpresion = ({ datosPxGeneral, datosAtencion, datos, isLast 
                             </span>
                         ))}
                 </div>
+
                 <table className="w-full text-xs mt-2">
                     <thead className="border-b-2">
                         <tr>
@@ -49,19 +84,19 @@ export const SeccionImpresion = ({ datosPxGeneral, datosAtencion, datos, isLast 
                         </tr>
                     </thead>
                     <tbody className="border-b-2">
+                    
                         {datos.map((item: any) => (
-                            <tr key={item.idReceta + item.Nombre}>
-                                <td>{item.Nombre}</td>
-                                <td>{item.CantidadPedida}</td>
+                            <tr key={item.idProducto }>
+                                <td>{item.nombre}</td>
+                                <td>{item.cantidad}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-
-                <div className="text-xs mt-2">Fecha: {datos[0]?.FechaReceta}</div>
+                <div className="text-xs mt-2">Fecha: {datosPxGeneral?.FechaIngreso}</div>
 
                 <div className="text-xs">Terminal: SRV-SIHCE</div>
             </div>
         </div>
-    );
+    )
 }

@@ -14,6 +14,8 @@ import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import { CEFarmaciaTabla } from './CEFarmaciaTabla';
 import Swal from 'sweetalert2';
 import { handleFarmacia } from './HandleFarmacia';
+import Link from 'next/link';
+import { SlPrinter } from 'react-icons/sl';
 interface Option {
     value: string;
     label: string;
@@ -111,7 +113,24 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
             <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                    <span className="flex-grow">Farmacia</span>
+                       <span className="flex-grow">
+                        <div className="flex items-center justify-between">
+                            <span className="font-semibold text-gray-800">Farmacia</span>
+
+                            {cuentaDatos?.recetaCabezera?.some((item: any) =>
+                                [5].includes(item.IdPuntoCarga)
+                            ) && (
+                                    <Link
+                                        href={`/reportes/recetasFarmacia/${cuentaDatos?.idcuentaatencion}`}
+                                        target="_blank"
+                                        className="inline-flex items-center px-3 py-1.5 text-blue-600 text-sm rounded-md hover:bg-blue-100 transition-colors duration-200"
+                                    >
+                                        <SlPrinter className="m-2" />
+                                        <span>Imprimir</span>
+                                    </Link>
+                                )}
+                        </div>
+                    </span>
                     <button
                         onClick={toggleOffcanvasFarmacia}
                         className={

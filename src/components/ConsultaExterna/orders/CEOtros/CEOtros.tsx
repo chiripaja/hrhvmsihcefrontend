@@ -12,6 +12,8 @@ import { CgAdd } from 'react-icons/cg';
 import axios from 'axios';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import { AiOutlineFileProtect } from 'react-icons/ai';
+import Link from 'next/link';
+import { SlPrinter } from 'react-icons/sl';
 interface Option {
     value: string;
     label: string;
@@ -124,8 +126,24 @@ export const CEOtros = ({ session,cuentaDatos }: any) => {
             <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                    <span className="flex-grow">Otros Procedimientos</span>
+                  
+                 <span className="flex-grow">
+                        <div className="flex items-center justify-between">
+                            <span className="font-semibold text-gray-800">Otros Procedimientos</span>
 
+                            {cuentaDatos?.ordenesOtros.length > 0 && (
+                                    <Link
+                                        href={`/reportes/recetasOtrosProcedimientos/${cuentaDatos?.idcuentaatencion}`}
+                                        target="_blank"
+                                        className="inline-flex items-center px-3 py-1.5 text-blue-600 text-sm rounded-md hover:bg-blue-100 transition-colors duration-200"
+                                    >
+                                        <SlPrinter className="m-2" />
+                                        <span>Imprimir</span>
+                                    </Link>
+                                )}
+
+                        </div>
+                    </span>
                     <button
                         onClick={toggleOffcanvasOtros} 
                         className={cuentaDatos?.ordenesOtros.length > 0 ? "text-blue-500 hover:underline text-sm" : "hidden"}
