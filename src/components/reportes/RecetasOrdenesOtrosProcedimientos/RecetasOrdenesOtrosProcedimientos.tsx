@@ -84,7 +84,6 @@ export const RecetasOrdenesOtrosProcedimientos = ({ idcuentaatencion }: any) => 
                         </tr>
                     </thead>
                     <tbody className="border-b-2">
-                    
                         {datos.map((item: any) => (
                             <tr key={item.idProducto }>
                                 <td>{item.nombre}</td>

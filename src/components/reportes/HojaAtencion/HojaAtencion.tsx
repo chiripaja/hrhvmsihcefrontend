@@ -22,6 +22,14 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   const [datosProcedimientosFuera, setdatosProcedimientosFuera] = useState<any>([]);
   const [datosProcedimientosDentro, setdatosProcedimientosDentro] = useState<any>([]);
   const [datosInterconsulta, setdatosInterconsulta] = useState<any>([]);
+
+
+  const [flagFarmacia, setflagFarmacia] = useState<boolean>(false);
+  const [flagOrders, setflagOrders] = useState<boolean>(false);
+  const [flagDatosAtencion, setflagDatosAtencion] = useState<boolean>(false);
+  const [flagDatosPx, setflagDatosPx] = useState<boolean>(false);
+  const [flagProcedimientosFuera, setflagProcedimientosFuera] = useState<boolean>(false);
+  const [flagProcedimientosDentro, setflagProcedimientosDentro] = useState<boolean>(false);
   let printed = false;
 
   const handleImprimirConRetardo = () => {
@@ -34,7 +42,25 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   };
 
 
-
+useEffect(() => {
+    if (
+      flagFarmacia &&
+      flagOrders &&
+      flagDatosAtencion &&
+      flagDatosPx &&
+      flagProcedimientosFuera &&
+      flagProcedimientosDentro
+    ) {
+      window.print();
+    }
+  }, [
+    flagFarmacia,
+    flagOrders,
+    flagDatosAtencion,
+    flagDatosPx,
+    flagProcedimientosFuera,
+    flagProcedimientosDentro
+  ]);
 
   useEffect(() => {
     getDatosHC(idcuentaatencion)
@@ -42,16 +68,19 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   const getDatosHC = async (idcuentaatencion: any) => {
     const response = await getData(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
     setdatosPxGeneral(response)
+    setflagDatosPx(true)
   }
 
   const getdatosAtencion = async (idatencion: any) => {
     const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
     setdatosAtencion(datosAtencion)
+    setflagDatosAtencion(true)
   }
 
   const getdatosprocdentro = async (idcuenta: any) => {
     const datosprocdentro = await getData(`${process.env.apijimmynew}/recetas/ApiProcedimientosRealizadosDentroByIdCuenta/${idcuenta}`)
     setdatosProcedimientosDentro(datosprocdentro)
+    setflagProcedimientosDentro(true)
   }
 
   function obtenerHoraActual() {
@@ -74,26 +103,13 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   const getMedicamentosbyIdRecetaCabeceraFarmacia = async (idcuenta: number) => {
     try {
       const data = await getData(`${process.env.apijimmynew}/recetas/apiordenesfarmaciabycuenta/${idcuenta}`)
-      console.log(data)
       setdatosFarmacia(data);
-
+      setflagFarmacia(true);
     } catch (error) {
       console.log(error)
     }
   }
 
-  const fetchDetalleReceta = async (
-    idrecetacabecera: number,
-    idFormaPago: number,
-    setter: (data: any) => void
-  ) => {
-    try {
-      const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdRecetaServicios/${idrecetacabecera}/${idFormaPago}`)
-      setter(data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
 
   useEffect(() => {
@@ -106,6 +122,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   const otrosProc = async () => {
     const data = await getData(`${process.env.apijimmynew}/api/solicitud-procedimientos/procedimientos/${idcuentaatencion}`)
     setdatosProcedimientosFuera(data)
+    setflagProcedimientosFuera(true)
   }
   useEffect(() => {
     if (datosAtencion?.idAtencion) {
@@ -115,29 +132,6 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   }, [datosAtencion])
 
 
-  /*
-    useEffect(() => {
-      if (datosAtencion?.recetaCabeceras && datosAtencion?.idFormaPago) {
-        const examenes = [
-          //imagenologica
-          { idPuntoCarga: 20, setter: setdatosEcografia },
-          { idPuntoCarga: 21, setter: setdatosRayosX },
-          { idPuntoCarga: 22, setter: setdatosTomografia },
-          { idPuntoCarga: 23, setter: setdatosEcografiaObstetrica },
-          //laboratorio
-          //   { idPuntoCarga: 3, setter: setdatosAnatomiaPatologica },
-          { idPuntoCarga: 2, setter: setdatosPatologicaClinica },
-          { idPuntoCarga: 11, setter: setdatosBancoSangre },
-        ]
-        examenes.forEach(({ idPuntoCarga, setter }) => {
-          const receta = datosAtencion.recetaCabeceras.find((data: any) => data.idPuntoCarga === idPuntoCarga)
-          if (receta) {
-            fetchDetalleReceta(receta.idreceta, datosAtencion.idFormaPago, setter)
-          }
-        })
-      }
-    }, [datosAtencion?.recetaCabeceras, datosAtencion?.idFormaPago])
-  */
   useEffect(() => {
     if (datosPxGeneral?.idAtencion) {
       getdatosAtencion(datosPxGeneral?.idAtencion)
@@ -159,7 +153,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
     setdatosTomografia(data.filter((data: any) => data.IdPuntoCarga == 22))
     setdatosEcografia(data.filter((data: any) => data.IdPuntoCarga == 20))
     setdatosEcografiaObstetrica(data.filter((data: any) => data.IdPuntoCarga == 23))
-
+    setflagOrders(true)
   }
 
   useEffect(() => {
@@ -234,7 +228,6 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
                 <td></td>
               </tr>
             </tbody>
-
           </table>
 
           {/* Triaje */}
@@ -382,7 +375,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
                 <SeccionOrdenes datos={datosEcografia} />
                 <SeccionOrdenes datos={datosEcografiaObstetrica} />
 
-            
+
 
 
               </td>

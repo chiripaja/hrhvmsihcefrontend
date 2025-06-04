@@ -7,15 +7,13 @@ import Image from "next/image";
 export const Historiaclinica = ({ idcuentaatencion }: any) => {
   const [datosPx, setdatosPx] = useState<any>();
 
-  const handlePrint = () => {
-    window.print();
-  };
+
   useEffect(() => {
     getDatosHC(idcuentaatencion)
   }, [idcuentaatencion])
   const getDatosHC = async (idcuentaatencion: any) => {
     const { data } = await axios.get(`${process.env.apiWebOrigenNodeJs}api/reportes/imprimehc/${idcuentaatencion}`);
-    console.log(data)
+
     setdatosPx(data)
   }
 
@@ -36,6 +34,7 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
     return `${horas}:${minutosFormateados} ${periodo}`;
   }
   useEffect(() => {
+    console.log("aca")
     if(datosPx){
       window.print();
     }

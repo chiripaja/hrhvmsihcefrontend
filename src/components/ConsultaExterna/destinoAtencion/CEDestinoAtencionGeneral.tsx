@@ -59,7 +59,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         confirmButtonText: "Si",
         denyButtonText: `No`
       }).then(async (result) => {
-        /* 
+      
         if (result.isConfirmed) {
           await axios.post(`${process.env.apijimmynew}/atenciones/atencionesActualizar`, objetoEnvio)
           Swal.fire(
@@ -72,7 +72,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
           //  router.push("/sihce/consultaexterna")
         } else if (result.isDenied) {
           Swal.fire("Cambios no fueron guardados", "", "info");
-        }
+        }  /* 
 */
       });
 
@@ -320,7 +320,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
                   name="observaciones"
                   control={control2}
                   render={({ field }) => (
-                    <textarea rows={4} className='inputSelect ' {...field} placeholder="Examen" />
+                    <textarea rows={4} className='inputSelect ' {...field} placeholder="Ingrese Observación" />
                   )}
                 />
               )}
