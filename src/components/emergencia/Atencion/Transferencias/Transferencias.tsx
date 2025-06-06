@@ -18,6 +18,10 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
   const [options, setOptions] = useState<any[]>([]);
   const { formattedDate, hora, fechayhora } = obtenerFechaYHora();
   const [dataTransferencias, setDataTransferencias] = useState<any[]>([]);
+  const [gravedadAtencion, setGravedadAtencion] = useState<any[]>([])
+
+
+  
   const getMedicosGeneral = async (nom: string) => {
     try {
       const response = await getData(`${process.env.apijimmynew}/apimedicobynomape/${nom}`);
@@ -57,6 +61,13 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
       idproducto: est.idProducto
     }));
     setOptionsS(mappedOptions);
+       const responseGravedadAtencion = await getData(`${process.env.apijimmynew}/emergencia/tiposGravedadAtencion`);
+
+            const mappedresponseGravedadAtencion = responseGravedadAtencion.map((est: any) => ({
+                value: est.idTipoGravedad,
+                label: `${est.descripcion?.trim()}`
+            }));
+            setGravedadAtencion(mappedresponseGravedadAtencion)
   }
 
 
@@ -301,7 +312,21 @@ export const Transferencias = ({ datosEmergencia, session }: any) => {
               />
             </div>
           </div>
-
+<Controller
+                            name="gravedadAtencion"
+                            control={control}
+                            defaultValue=""
+                            render={({ field }) => (
+                                <Select
+                                    instanceId="unique-select-id2"
+                                    {...field}
+                                    className='w-full'
+                                    options={gravedadAtencion}
+                                    placeholder="Gravedad Atención"
+                                    required={true}
+                                />
+                            )}
+                        />
 
 
           {/* Botones */}

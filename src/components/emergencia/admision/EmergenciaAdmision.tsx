@@ -117,12 +117,14 @@ export const EmergenciaAdmision = ({ session }: any) => {
             direccionDomicilio: data?.DireccionDomicilio,
             preferenciaNumero: data?.referenciaNumero ? data?.referenciaNumero : null,
             idMedicoIngreso: data?.IdMedicoIngreso?.value,
-            idServicio: data?.IdServicio?.value,
+            //idServicio: data?.IdServicio?.value,
+            idServicio: 299,
             telefono: data?.Telefono,
-            idTipoGravedad: data?.gravedadAtencion.value,
+            //idTipoGravedad: data?.gravedadAtencion.value,
+            idTipoGravedad: 1,
             idPaciente: data?.idPaciente
         }
-
+        console.log(tramaAdmision)
         try {
             const response = await axios.post(`${process.env.apijimmynew}/emergencia/ejecutarAdmisionEmergencia`, tramaAdmision)
             console.log(response.data)
@@ -287,6 +289,7 @@ export const EmergenciaAdmision = ({ session }: any) => {
         }
     }
     const getMedicos = async (idespecialidad: any) => {
+        console.log(idespecialidad)
         const response = await getData(`${process.env.apijimmynew}/emergencia/MedicosFiltrar/${idespecialidad}`);
         const mappedOptions = response.map((est: any) => ({
             value: est.IdMedico,
@@ -294,15 +297,20 @@ export const EmergenciaAdmision = ({ session }: any) => {
         }));
         setoptionMedicos(mappedOptions)
     }
+     /*const handleSelectChange = (selectedOption: any) => {
+        getMedicos(selectedOption?.IdEspecialidad)
+    };*/
+    useEffect(() => {
+      getMedicos(188)
+    }, [])
+    
     const getSexo = async () => {
         const data = await getData(`${process.env.apiurl}/Publico/Maestros/sexo`)
         setOptionSexo(data)
 
     }
 
-    const handleSelectChange = (selectedOption: any) => {
-        getMedicos(selectedOption?.IdEspecialidad)
-    };
+   
     const idIafaValue = watch('idIafa');
     useEffect(() => {
         if (idIafaValue == 3 && referenciaInputRef.current) {
@@ -613,7 +621,7 @@ export const EmergenciaAdmision = ({ session }: any) => {
                                 />
                             )}
                         />
-                        <Controller
+                      {/*  <Controller
                             name="IdServicio"
                             control={control}
                             defaultValue=""
@@ -632,7 +640,7 @@ export const EmergenciaAdmision = ({ session }: any) => {
                                     }}
                                 />
                             )}
-                        />
+                        />*/ }
                         <Controller
                             name="IdMedicoIngreso"
                             control={control}
@@ -649,7 +657,7 @@ export const EmergenciaAdmision = ({ session }: any) => {
                                 />
                             )}
                         />
-                        <Controller
+                       {/* <Controller
                             name="gravedadAtencion"
                             control={control}
                             defaultValue=""
@@ -663,7 +671,7 @@ export const EmergenciaAdmision = ({ session }: any) => {
                                     required={true}
                                 />
                             )}
-                        />
+                        />*/ }
                         <input type="text" required  {...register('Telefono')} className={style.txtfield} placeholder='Celular' />
                         <input type="text" required {...register('NombreAcompaniante')} className={style.txtfield} placeholder='Nombre Acompañante' />
                         <input type="text" required {...register('DireccionDomicilio')} className={style.txtfield} placeholder='Direccion' />

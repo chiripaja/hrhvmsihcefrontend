@@ -419,7 +419,7 @@ export const AtencionEmergencia = ({ session, idcuentaatencion }: any) => {
           {/* Contenido de Tab 1 */}
           {activeTab === 1 && (
             <div className="p-4 bg-white border rounded-md shadow-md">
-              <TriajeDif idcuentaatencion={275247} />
+              <TriajeDif idcuentaatencion={idcuentaatencion} />
             </div>
           )}
 
