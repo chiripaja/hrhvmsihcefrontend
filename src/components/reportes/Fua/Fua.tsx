@@ -3,6 +3,7 @@ import './fua.css'
 import React, { useEffect, useState } from 'react'
 import { getData } from "@/components/helper/axiosHelper";
 import { HiX } from 'react-icons/hi';
+import Image from 'next/image';
 
 export const Fua = ({ idcuentaatencion }: any) => {
     const [datosPxGeneral, setdatosPxGeneral] = useState<any>();
@@ -13,18 +14,32 @@ export const Fua = ({ idcuentaatencion }: any) => {
     return (
         <>
             <div className="flex justify-center print-page-break bg-white ">
-                <table className='w-full scale-100 origin-top'>
+                <table className="w-full" style={{
+                    transform: 'scale(0.8)', // Ajusta este valor según necesidad (0.7 a 0.9)
+                    transformOrigin: 'top center',
+                    width: '133%' // Compensa la reducción de escala
+                }}>
                     <tbody>
                         <tr>
-                            <td>
-                                <table>
+                            <td >
+                                <table className='w-full'>
                                     <tbody>
                                         <tr>
-                                            <td>LOGO PERU</td>
-                                            <td>MINISTERIO DE SALUD</td>
-                                            <td>SEGURO INTEGRAL DE SALUD</td>
-                                            <td>ANEXO 1</td>
-                                            <td>Cta: escribir(Cons. Ext)</td>
+
+                                            <td>
+                                                <div className=' grid grid-cols-4 w-full border border-black'>
+                                                    <Image
+                                                        src="/img/logofua.png"
+                                                        alt="Logo del hospital"
+                                                        width={254}
+                                                        height={254}
+                                                        className="w-80 h-auto col-span-2"
+                                                    />
+                                                    <span className='font-semibold'>ANEXO 1</span>
+                                                    <span className="text-xs text-center self-end">Cta: 71555 (Cons.Ext)</span>
+                                                </div>
+                                            </td>
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -32,7 +47,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                         </tr>
                         <tr>
                             <td>
-                                 <table className='w-full border border-black border-collapse' style={{ fontSize: '8px' }}>
+                                <table className='w-full border border-black border-collapse' style={{ fontSize: '11px' }}>
                                     <tbody>
                                         <tr>
                                             <td colSpan={9} className='bg-zinc-300 border border-black px-2 font-semibold text-center'> FORMATO ÚNICO DE ATENCIÓN - FUA </td>
@@ -58,13 +73,13 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                             <td className='border border-black '></td>
                                         </tr>
                                     </tbody>
-                                 </table>
+                                </table>
                             </td>
                         </tr>
 
                         <tr>
                             <td>
-                                <table className='w-full border border-black border-collapse' style={{ fontSize: '8px' }}>
+                                <table className='w-full border border-black border-collapse' style={{ fontSize: '11px' }}>
                                     <tbody>
                                         <tr>
                                             <td colSpan={10} className='text-center border border-black  bg-zinc-300 font-semibold '>DE LA INSTITUCIÓN PRESTADORA DE SERVICIOS DE SALUD</td>
@@ -474,7 +489,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
 
 
                         <tr>
-                            <td  style={{ fontSize: '9px' }}>
+                            <td style={{ fontSize: '9px' }}>
                                 <table className='w-full border-collapse border-black border'>
                                     <tbody>
 
@@ -504,7 +519,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                             <td className=' text-center border border-black'>APOYO AL DIAGNÓSTICO</td>
                                             <td className=' text-center border border-black w-4'></td>
                                         </tr>
-                                        
+
                                     </tbody>
                                 </table>
                                 <table className='border border-black border-collapse w-full mt-1'>
@@ -528,218 +543,218 @@ export const Fua = ({ idcuentaatencion }: any) => {
                         </tr>
                         <tr>
                             <td>
-                            <div className='grid grid-cols-3' style={{fontSize:'7px'}}>
-                                <div className='col-span-2'>
-                                    <table className='w-full border border-collapse border-black'>
-                                        <tbody>
-                                            <tr>
-                                                <td colSpan={6} className='border border-black bg-zinc-300 text-center'>ACTIVIDADES PREVENTIVAS Y OTROS</td>
-                                            </tr>
-                                            <tr>
-                                                <td className='border border-black bg-zinc-300 text-center'>PESO (Kg)</td>
-                                                <td className='border border-black  text-center'>19.9</td>
-                                                <td className='border border-black bg-zinc-300 text-center'>TALLA (cm)</td>
-                                                <td className='border border-black  text-center'>110</td>
-                                                <td className='border border-black bg-zinc-300 text-center'>P.A. (mmHg) </td>
-                                                <td className='border border-black  text-center'>___/___ </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div className='w-full grid grid-cols-5'>
-                                        <table className='border border-black border-collapse'>
+                                <div className='grid grid-cols-3' style={{ fontSize: '7px' }}>
+                                    <div className='col-span-2'>
+                                        <table className='w-full border border-collapse border-black'>
                                             <tbody>
                                                 <tr>
-                                                    <td colSpan={2} className='border border-black bg-zinc-300 text-center'>DE LA GESTANTE</td>
+                                                    <td colSpan={6} className='border border-black bg-zinc-300 text-center'>ACTIVIDADES PREVENTIVAS Y OTROS</td>
                                                 </tr>
                                                 <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center w-4'>CPN (N°)</td>
-                                                    <td className='border border-black text-center w-4'></td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>EDAD GEST</td>
-                                                    <td className='border border-black text-center'></td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>ALTURA UTERINA</td>
-                                                    <td className='border border-black text-center'></td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>PARTO VERTICAL</td>
-                                                    <td className='border border-black text-center'></td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>CONTROL PUERP (N°)</td>
-                                                    <td className='border border-black text-center'></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>PESO (Kg)</td>
+                                                    <td className='border border-black  text-center'>19.9</td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>TALLA (cm)</td>
+                                                    <td className='border border-black  text-center'>110</td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>P.A. (mmHg) </td>
+                                                    <td className='border border-black  text-center'>___/___ </td>
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        <table>
-                                             <tbody>
-                                                <tr>
-                                                    <td colSpan={5} className='border border-black bg-zinc-300 text-center font-semibold'>DEL RECIEN NACIDO</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center' colSpan={4}>CPN (N°)</td>
-                                                    <td className='border border-black text-center'>s</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black text-center'>APGAR</td>
-                                                    <td className='border border-black bg-zinc-300 text-center'>1°</td>
-                                                    <td className='border border-black w-3'></td>
-                                                    <td className='border border-black bg-zinc-300 text-center'>5°</td>
-                                                    <td className='border border-black '></td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center' colSpan={4}>Corte Tardío de Cordón (2 a 3 min)</td>
-                                                    <td className='border border-black text-center w-10'></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table className='col-span-2'>
+                                        <div className='w-full grid grid-cols-5'>
+                                            <table className='border border-black border-collapse'>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colSpan={2} className='border border-black bg-zinc-300 text-center'>DE LA GESTANTE</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center w-4'>CPN (N°)</td>
+                                                        <td className='border border-black text-center w-4'></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>EDAD GEST</td>
+                                                        <td className='border border-black text-center'></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>ALTURA UTERINA</td>
+                                                        <td className='border border-black text-center'></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>PARTO VERTICAL</td>
+                                                        <td className='border border-black text-center'></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>CONTROL PUERP (N°)</td>
+                                                        <td className='border border-black text-center'></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colSpan={5} className='border border-black bg-zinc-300 text-center font-semibold'>DEL RECIEN NACIDO</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center' colSpan={4}>CPN (N°)</td>
+                                                        <td className='border border-black text-center'>s</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black text-center'>APGAR</td>
+                                                        <td className='border border-black bg-zinc-300 text-center'>1°</td>
+                                                        <td className='border border-black w-3'></td>
+                                                        <td className='border border-black bg-zinc-300 text-center'>5°</td>
+                                                        <td className='border border-black '></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center' colSpan={4}>Corte Tardío de Cordón (2 a 3 min)</td>
+                                                        <td className='border border-black text-center w-10'></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table className='col-span-2'>
+                                                <tbody>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center font-semibold' colSpan={4}>GESTANTE / RN / NIÑO / ADOLESCENTE / JOVEN Y ADULTO / ADULTO MAYOR</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>CRED N°</td>
+                                                        <td className='border border-black  text-center w-8'></td>
+                                                        <td className='border border-black bg-zinc-300 text-center'>PAB (cm)</td>
+                                                        <td className='border border-black  text-center w-7'></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>R.N. PREMATURO</td>
+                                                        <td className='border border-black  text-center '></td>
+                                                        <td className='border border-black bg-zinc-300 text-center'>TAP/ EEDP o TEPSI</td>
+                                                        <td className='border border-black  text-center '></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>BAJO PESO AL NACER</td>
+                                                        <td className='border border-black  text-center '></td>
+                                                        <td className='border border-black bg-zinc-300 text-center'>CONSEJERIA NUTRICIONAL</td>
+                                                        <td className='border border-black  text-center '></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>ENFER. CONGENITA / SECUELA AL NACER</td>
+                                                        <td className='border border-black  text-center '></td>
+                                                        <td className='border border-black bg-zinc-300 text-center'>CONSEJERIA INTEGRAL</td>
+                                                        <td className='border border-black  text-center '></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>N° FAMILIARES DE GEST / PUERP. CASA MAT.</td>
+                                                        <td className='border border-black  text-center '></td>
+                                                        <td className='border border-black bg-zinc-300 text-center'>IMC (Kg/M<sup>2</sup> )</td>
+                                                        <td className='border border-black  text-center '></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table className=' border-collapse'>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colSpan={2} className='border border-black bg-zinc-300 text-center font-semibold'>JOVEN Y ADULTO</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center w-3'>EVALUACIÓN INTEGRAL</td>
+                                                        <td className='border border-black text-center w-3'></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colSpan={2} className='border border-black bg-zinc-300 text-center font-semibold'>ADULTO MAYOR</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>VACAM</td>
+                                                        <td className='border border-black text-center'></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='border border-black bg-zinc-300 text-center'>TAMIZAJE DE SALUD MENTAL</td>
+                                                        <td className='border border-black text-center'></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className='text-red-500 text-right' colSpan={2}>PAT. O NOR</td>
+
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div >
+                                        <table className='border border-black w-full border-collapse'>
                                             <tbody>
                                                 <tr>
-                                                     <td className='border border-black bg-zinc-300 text-center font-semibold'  colSpan={4}>GESTANTE / RN / NIÑO / ADOLESCENTE / JOVEN Y ADULTO / ADULTO MAYOR</td>
+                                                    <td colSpan={6} className='border border-black bg-zinc-300 text-center'>
+                                                        VACUNAS N° DE DOSIS
+                                                    </td>
                                                 </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>CRED N°</td>
-                                                    <td className='border border-black  text-center w-8'></td>
-                                                    <td className='border border-black bg-zinc-300 text-center'>PAB (cm)</td>
-                                                    <td className='border border-black  text-center w-7'></td>
+                                                <tr >
+                                                    <td className='border border-black bg-zinc-300 text-center'>BCG</td>
+                                                    <td className='border border-black  text-center w-6'></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>INFLUENZA</td>
+                                                    <td className='border border-black  text-center w-6'></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>ANTIAMARILICA</td>
+                                                    <td className='border border-black  text-center w-6'></td>
                                                 </tr>
-                                                  <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>R.N. PREMATURO</td>
+                                                <tr >
+                                                    <td className='border border-black bg-zinc-300 text-center'>DPT</td>
                                                     <td className='border border-black  text-center '></td>
-                                                    <td className='border border-black bg-zinc-300 text-center'>TAP/ EEDP o TEPSI</td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>PAROTID</td>
+                                                    <td className='border border-black  text-center '></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>ANTINEUMOC</td>
+                                                    <td className='border border-black  text-center'></td>
+                                                </tr>
+                                                <tr >
+                                                    <td className='border border-black bg-zinc-300 text-center'>APO</td>
+                                                    <td className='border border-black  text-center '></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>RUBEOLA</td>
+                                                    <td className='border border-black  text-center '></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>ANTITETANICA</td>
                                                     <td className='border border-black  text-center '></td>
                                                 </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>BAJO PESO AL NACER</td>
+                                                <tr >
+                                                    <td className='border border-black bg-zinc-300 text-center'>ASA</td>
                                                     <td className='border border-black  text-center '></td>
-                                                    <td className='border border-black bg-zinc-300 text-center'>CONSEJERIA NUTRICIONAL</td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>ROTAVIRUS</td>
+                                                    <td className='border border-black  text-center'></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>COMPLETAS PARA LA EDAD</td>
+                                                    <td className='border border-black  text-center'></td>
+                                                </tr>
+                                                <tr >
+                                                    <td className='border border-black bg-zinc-300 text-center'>SPR</td>
+                                                    <td className='border border-black  text-center'></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>DT ADULTO (N° DOSIS)</td>
+                                                    <td className='border border-black  text-center'></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>VPH</td>
                                                     <td className='border border-black  text-center '></td>
                                                 </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>ENFER. CONGENITA / SECUELA AL NACER</td>
+                                                <tr >
+                                                    <td className='border border-black bg-zinc-300 text-center'>SR</td>
                                                     <td className='border border-black  text-center '></td>
-                                                    <td className='border border-black bg-zinc-300 text-center'>CONSEJERIA INTEGRAL</td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>IPV</td>
+                                                    <td className='border border-black  text-center '></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>OTRA VACUNA</td>
                                                     <td className='border border-black  text-center '></td>
                                                 </tr>
-                                                  <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>N° FAMILIARES DE GEST / PUERP. CASA MAT.</td>
+                                                <tr >
+                                                    <td className='border border-black bg-zinc-300 text-center'>HVB</td>
+                                                    <td className='border border-black  text-center'></td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>PENTAVAL</td>
                                                     <td className='border border-black  text-center '></td>
-                                                    <td className='border border-black bg-zinc-300 text-center'>IMC (Kg/M<sup>2</sup> )</td>
+                                                    <td className='border border-black bg-zinc-300 text-center'>____________</td>
                                                     <td className='border border-black  text-center '></td>
+                                                </tr>
+                                                <tr >
+                                                    <td className='border border-black bg-zinc-300 text-center'>GRUPO DE RIESGO HVB</td>
+                                                    <td className='border border-black  text-center '></td>
+                                                    <td className='border border-black  text-center' colSpan={4} style={{ fontSize: '6px' }}>
+                                                        GRUPO DE RIESGO HVB: 1. TRABAJADOR DE SALUD 2. TRABAJAD. SEXUALES 3. HSH 4. PRIVADO LIBERTAD 5. FF. AA. 6. POLICIA NACIONAL  7. ESTUDIANTES DE SALUD 8. POLITRANFUNDIDOS 9. DROGO DEPENDIENTES
+
+                                                    </td>
+
                                                 </tr>
                                             </tbody>
-                                        </table>
-                                         <table className=' border-collapse'>
-                                            <tbody>
-                                                <tr>
-                                                    <td colSpan={2} className='border border-black bg-zinc-300 text-center font-semibold'>JOVEN Y ADULTO</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center w-3'>EVALUACIÓN INTEGRAL</td>
-                                                    <td className='border border-black text-center w-3'></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colSpan={2} className='border border-black bg-zinc-300 text-center font-semibold'>ADULTO MAYOR</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>VACAM</td>
-                                                    <td className='border border-black text-center'></td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='border border-black bg-zinc-300 text-center'>TAMIZAJE DE SALUD MENTAL</td>
-                                                    <td className='border border-black text-center'></td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='text-red-500 text-right' colSpan={2}>PAT. O NOR</td>
-                                                   
-                                                </tr>
-                                            </tbody>
+
                                         </table>
                                     </div>
                                 </div>
-                                <div >
-                                    <table className='border border-black w-full border-collapse'>
-                                        <tbody>
-                                            <tr>
-<td colSpan={6} className='border border-black bg-zinc-300 text-center'>
-                                                VACUNAS N° DE DOSIS
-                                            </td>
-                                            </tr>
-                                            <tr >
-                                                <td  className='border border-black bg-zinc-300 text-center'>BCG</td>
-                                                <td  className='border border-black  text-center w-6'></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>INFLUENZA</td>
-                                                <td  className='border border-black  text-center w-6'></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>ANTIAMARILICA</td>
-                                                <td  className='border border-black  text-center w-6'></td>
-                                            </tr>
-                                            <tr >
-                                                <td  className='border border-black bg-zinc-300 text-center'>DPT</td>
-                                                <td  className='border border-black  text-center '></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>PAROTID</td>
-                                                <td  className='border border-black  text-center '></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>ANTINEUMOC</td>
-                                                <td  className='border border-black  text-center'></td>
-                                            </tr>
-                                            <tr >
-                                                <td  className='border border-black bg-zinc-300 text-center'>APO</td>
-                                                <td  className='border border-black  text-center '></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>RUBEOLA</td>
-                                                <td  className='border border-black  text-center '></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>ANTITETANICA</td>
-                                                <td  className='border border-black  text-center '></td>
-                                            </tr>
-                                            <tr >
-                                                <td  className='border border-black bg-zinc-300 text-center'>ASA</td>
-                                                <td  className='border border-black  text-center '></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>ROTAVIRUS</td>
-                                                <td  className='border border-black  text-center'></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>COMPLETAS PARA LA EDAD</td>
-                                                <td  className='border border-black  text-center'></td>
-                                            </tr>
-                                            <tr >
-                                                <td  className='border border-black bg-zinc-300 text-center'>SPR</td>
-                                                <td  className='border border-black  text-center'></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>DT ADULTO (N° DOSIS)</td>
-                                                <td  className='border border-black  text-center'></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>VPH</td>
-                                                <td  className='border border-black  text-center '></td>
-                                            </tr>
-                                             <tr >
-                                                <td  className='border border-black bg-zinc-300 text-center'>SR</td>
-                                                <td  className='border border-black  text-center '></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>IPV</td>
-                                                <td  className='border border-black  text-center '></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>OTRA VACUNA</td>
-                                                <td  className='border border-black  text-center '></td>
-                                            </tr>
-                                             <tr >
-                                                <td  className='border border-black bg-zinc-300 text-center'>HVB</td>
-                                                <td  className='border border-black  text-center'></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>PENTAVAL</td>
-                                                <td  className='border border-black  text-center '></td>
-                                                <td  className='border border-black bg-zinc-300 text-center'>____________</td>
-                                                <td  className='border border-black  text-center '></td>
-                                            </tr>
-                                            <tr >
-                                                <td  className='border border-black bg-zinc-300 text-center'>GRUPO DE RIESGO HVB</td>
-                                                <td  className='border border-black  text-center '></td>
-                                                <td  className='border border-black  text-center' colSpan={4}  style={{fontSize:'6px'}}>
-GRUPO DE RIESGO HVB: 1. TRABAJADOR DE SALUD 2. TRABAJAD. SEXUALES 3. HSH 4. PRIVADO LIBERTAD 5. FF. AA. 6. POLICIA NACIONAL  7. ESTUDIANTES DE SALUD 8. POLITRANFUNDIDOS 9. DROGO DEPENDIENTES
-
-                                                </td>
-                                               
-                                            </tr>
-                                        </tbody>
-
-                                    </table>
-                                </div>
-                            </div>
                             </td>
-                            
+
                         </tr>
                         <tr>
                             <td style={{ fontSize: '9px' }}>
@@ -834,40 +849,40 @@ GRUPO DE RIESGO HVB: 1. TRABAJADOR DE SALUD 2. TRABAJAD. SEXUALES 3. HSH 4. PRIV
                             </td>
                         </tr>
                         <tr>
-                            <td style={{ fontSize: '9px' }}> 
+                            <td style={{ fontSize: '9px' }}>
                                 <table className='w-full'>
                                     <tbody>
-                                    <tr>
-                                        <td  className='border border-black bg-zinc-300 font-semibold text-center'>N° DE DNI</td>
-                                        <td  className='border border-black bg-zinc-300 font-semibold text-center' colSpan={5}>NOMBRE DEL RESPONSABLE DE LA ATENCIÓN</td>
-                                        <td  className='border border-black bg-zinc-300 font-semibold text-center' colSpan={2}>N° DE COLEGIATURA</td>
-                                    </tr>
-                                    <tr>
-                                        <td className='border border-black text-center'>43298860</td>
-                                        <td className='border border-black text-center' colSpan={5}>Herrera ISIDRO PILAR </td>
-                                        <td className='border border-black text-center' colSpan={2}>27914</td>
-                                    </tr>
-                                    <tr>
-                                        <td  className='border border-black bg-zinc-300 font-semibold text-center'>RESPONSABLE DE LA ATENCIÓN</td>
-                                        <td className='border border-black text-center w-10'>3</td>
-                                        <td  className='border border-black bg-zinc-300 font-semibold text-center'>ESPECIALIDAD</td>
-                                        <td className='border border-black text-center'>Odontologo</td>
-                                        <td  className='border border-black bg-zinc-300 font-semibold text-center'>N° RNE</td>
-                                        <td className='border border-black text-center w-10'></td>
-                                        <td  className='border border-black bg-zinc-300 font-semibold text-center'>EGRESADO</td>
-                                        <td className='border border-black text-center w-10'></td>
-                                    </tr>
+                                        <tr>
+                                            <td className='border border-black bg-zinc-300 font-semibold text-center'>N° DE DNI</td>
+                                            <td className='border border-black bg-zinc-300 font-semibold text-center' colSpan={5}>NOMBRE DEL RESPONSABLE DE LA ATENCIÓN</td>
+                                            <td className='border border-black bg-zinc-300 font-semibold text-center' colSpan={2}>N° DE COLEGIATURA</td>
+                                        </tr>
+                                        <tr>
+                                            <td className='border border-black text-center'>43298860</td>
+                                            <td className='border border-black text-center' colSpan={5}>Herrera ISIDRO PILAR </td>
+                                            <td className='border border-black text-center' colSpan={2}>27914</td>
+                                        </tr>
+                                        <tr>
+                                            <td className='border border-black bg-zinc-300 font-semibold text-center'>RESPONSABLE DE LA ATENCIÓN</td>
+                                            <td className='border border-black text-center w-10'>3</td>
+                                            <td className='border border-black bg-zinc-300 font-semibold text-center'>ESPECIALIDAD</td>
+                                            <td className='border border-black text-center'>Odontologo</td>
+                                            <td className='border border-black bg-zinc-300 font-semibold text-center'>N° RNE</td>
+                                            <td className='border border-black text-center w-10'></td>
+                                            <td className='border border-black bg-zinc-300 font-semibold text-center'>EGRESADO</td>
+                                            <td className='border border-black text-center w-10'></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <table className='border border-collapse w-full'>
                                     <tbody>
                                         <tr>
-                                            <td colSpan={5}>
+                                            <td colSpan={5} style={{ fontSize: '8px' }}>
                                                 1. MÉDICO 2. FARMACEUTICO 3. CIRUJANO DENTISTA 4. BIÓLOGO 5. OBSTETRIZ 6. ENFERMERA 7. TRABAJADORA SOCIAL 8. PSICOLOGA 9.TECNOLOGO MEDICO 10.NUTRICION 11. TECNICO ENFERMERIA 12. AUXILIAR DE ENFERMERIA 13. OTRO
                                             </td>
                                         </tr>
                                         <tr>
-                                          
+
                                             <td colSpan={5}>
                                                 <table className='w-full  border-collapse'>
                                                     <tbody>
@@ -891,13 +906,13 @@ GRUPO DE RIESGO HVB: 1. TRABAJADOR DE SALUD 2. TRABAJAD. SEXUALES 3. HSH 4. PRIV
                                                                 </table>
                                                             </td>
                                                             <td className='border-b border-black w-40'></td>
-                                                           <td rowSpan={2} className="text-center align-middle">
-  <div className="flex justify-center items-center w-full h-full">
-    <div className="border border-black w-32 h-36">
-      {/* contenido aquí si lo necesitas */}
-    </div>
-  </div>
-</td>
+                                                            <td rowSpan={2} className="text-center align-middle">
+                                                                <div className="flex justify-center items-center w-full h-full">
+                                                                    <div className="border border-black w-32 h-36">
+                                                                        {/* contenido aquí si lo necesitas */}
+                                                                    </div>
+                                                                </div>
+                                                            </td>
                                                         </tr>
                                                         <tr>
                                                             <td></td>
@@ -923,8 +938,141 @@ GRUPO DE RIESGO HVB: 1. TRABAJADOR DE SALUD 2. TRABAJAD. SEXUALES 3. HSH 4. PRIV
                 </table>
 
             </div>
-            <div className="flex justify-center print-page-break">
-                hola
+            <div className="  bg-white ">
+                <table className="w-full">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div className="w-5/6 mx-auto">
+                                    <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
+                                        <tbody>
+                                            <tr>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black' colSpan={10} style={{ fontSize: '10px' }}>PRODUCTOS FARMACEUTICOS / MEDICAMENTOS</td>
+                                            </tr>
+                                            <tr>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-12' >CÓDIGO SISMED</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black' >NOMBRE <br /> (Denominacion, Concentracion ,Presentacion, FormaFarmaceutica) </td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>PRES</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>ENTR</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>DX</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-12'>CÓDIGO SISMED</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black'>NOMBRE <br /> (Denominacion, Concentracion, Presentacion, FormaFarmaceutica)</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>PRES</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>ENTR</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>DX</td>
+                                            </tr>
+                              
+                                            {Array.from({ length: 8 }).map((_, index) => (
+                                                <tr key={index}>
+                                                    {Array.from({ length: 10 }).map((_, colIndex) => (
+                                                        <td key={colIndex} className="border border-black h-5"></td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+
+                                            <tr>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black' colSpan={10} style={{ fontSize: '10px' }}>DISPOSITIVOS MÉDICOS / PRODUCTOS SANITARIOS</td>
+                                            </tr>
+                                            <tr>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-12' >CÓDIGO</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black '>NOMBRE <br /> (Denominacion, Concentracion, Presentacion, Caracteristicas) </td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>PRES</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>ENTR</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>DX</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-12'>CÓDIGO</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black'>NOMBRE  <br /> (Denominacion, Concentracion, Presentacion, Caracteristicas)</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>PRES</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>ENTR</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>DX</td>
+                                            </tr>
+                                            <tr>
+                                                <td className='border border-black h-5 text-center'>725</td>
+                                                <td className='border border-black h-5 text-center'>AMOXICILINA + ACIDO CLAVULANICO (COMO SAL POTASICA) 60 mL 250 mg</td>
+                                                <td className='border border-black h-5 text-center'>1</td>
+                                                <td className='border border-black h-5 text-center'>1</td>
+                                                <td className='border border-black h-5 text-center'>1</td>
+                                                <td className='border border-black h-5 text-center'>4024</td>
+                                                <td className='border border-black h-5 text-center'>IBUPROFENO 60 mL 100 mg/5 mL SUSPENSION</td>
+                                                <td className='border border-black h-5 text-center'>1</td>
+                                                <td className='border border-black h-5 text-center'>1</td>
+                                                <td className='border border-black h-5 text-center'>1</td>
+                                            </tr>
+                                          
+                                            {Array.from({ length: 8 }).map((_, index) => (
+                                                <tr key={index}>
+                                                    {Array.from({ length: 10 }).map((_, colIndex) => (
+                                                        <td key={colIndex} className="border border-black h-5"></td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
+                                       <tbody>
+                                           <tr>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black' colSpan={12} style={{ fontSize: '10px' }}>PROCEDIMIENTOS/ DIAGNÓSTICO POR IMÁGENES/ LABORATORIO</td>
+                                            </tr>
+                                            <tr>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-12' >CÓDIGO</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black '>NOMBRE </td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>IND</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>EJE</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>DX</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>RES</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-12'>CÓDIGO</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black'>NOMBRE  </td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>IND</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>EJE</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>DX</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>RES</td>
+                                            </tr>
+                                             {Array.from({ length: 8 }).map((_, index) => (
+                                                <tr key={index}>
+                                                    {Array.from({ length: 12 }).map((_, colIndex) => (
+                                                        <td key={colIndex} className="border border-black h-5"></td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                       </tbody>
+                                    </table>
+
+                                       <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
+                                       <tbody>
+                                           <tr>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black' colSpan={12} style={{ fontSize: '10px' }}>
+                                                    SUB COMPONENTE PRESTACIONAL (PROCEDIMIENTOS)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-12' >CÓDIGO</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black '>NOMBRE </td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>IND</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>EJE</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>DX</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>RES</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-12'>CÓDIGO</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black'>NOMBRE  </td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>IND</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>EJE</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>DX</td>
+                                                <td className='text-center font-bold bg-zinc-300 border border-black w-6'>RES</td>
+                                            </tr>
+                                             {Array.from({ length: 8 }).map((_, index) => (
+                                                <tr key={index}>
+                                                    {Array.from({ length: 12 }).map((_, colIndex) => (
+                                                        <td key={colIndex} className="border border-black h-5"></td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                       </tbody>
+                                    </table>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
             </div>
         </>
     )

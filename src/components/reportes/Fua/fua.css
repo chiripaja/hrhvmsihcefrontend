@@ -1,5 +1,15 @@
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 1px; /* Elimina márgenes predeterminados */
+  }
+  body {
+    margin: 0;
+    padding: 0;
+  }
   .print-page-break {
-    page-break-before: always;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
   }
 }
