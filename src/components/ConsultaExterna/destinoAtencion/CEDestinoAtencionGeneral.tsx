@@ -37,6 +37,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const { control: control2, register: register2, handleSubmit: handleSubmit2, setValue: setValue2, reset: reset2, watch: watch2 } = useForm<any>();
   const { formattedDate, hora, fechayhora } = obtenerFechaYHora();
   const [referenciaView, setreferenciaView] = useState(false);
+  const [sisfua, setsisfua] = useState<any>();
   const FormDestino = async (data: any) => {
 
     try {
@@ -109,6 +110,11 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
     setDestinoAtencion(data);
   }
 
+  const getSisfua=async()=>{
+    const data=await getData(`${process.env.apijimmynew}/fua/sisfua`);
+    console.log(data)
+  }
+
 
   const getListadoInterconsulta = async (idatencion: any) => {
     const data = await getData(`${process.env.apijimmynew}/atenciones/interconsulta/${idatencion}`)
@@ -117,6 +123,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   useEffect(() => {
     getListadoDestinoAtencion()
+    getSisfua()
   }, [])
 
 
@@ -154,8 +161,11 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   const handleButtonClick = () => {
     handleSubmit2(FormDestino)();
-
+    generarFua();
   };
+  const generarFua=async()=>{
+
+  }
   const destinoAtencionW = watch2('destinoAtencion');
   useEffect(() => {
     destinoAtencionW != 84 && setreferenciaView(false)

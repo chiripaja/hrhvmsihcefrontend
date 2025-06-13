@@ -34,18 +34,6 @@ export const Fua = ({ idcuentaatencion }: any) => {
     }, [idcuentaatencion])
 
    
-    
-
-    useEffect(() => {
-        const fecha = sisFuaAtencion?.FuaAtencionFecha; // "11/10/2023"
-        let dia = "";
-        let mes = "";
-        let anio = "";
-
-        if (fecha) {
-            [dia, mes, anio] = fecha.split("/");
-        }
-    }, [sisFuaAtencion])
 
 
 
@@ -368,10 +356,15 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                             <td className='text-center border border-black h-8'></td>
                                                         </tr>
                                                         <tr>
-                                                            <td className='bg-customGray border border-black text-center h-8'>FECHA DE NACIMIENTO</td>
-                                                            <td className='text-center border border-black h-8'>-</td>
-                                                            <td className='text-center border border-black h-8'>-</td>
-                                                            <td className='text-center border border-black h-8'>-</td>
+                                                            {sisFuaAtencion?.fnacimiento && (
+                                                                <>
+<td className='bg-customGray border border-black text-center h-8'>FECHA DE NACIMIENTO</td>
+                                                            <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[0]}</td>
+                                                            <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[1]}</td>
+                                                            <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[2]}</td>
+</>
+                                                            )}
+                                                            
                                                         </tr>
                                                         <tr>
                                                             <td className='bg-customGray border border-black text-center h-8'>FECHA DE FALLECIMIENTO</td>
@@ -1132,7 +1125,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 <td className='border-b border-black w-9'></td>
                                             </tr>
                                             <tr>
-                                                <td className='border-t border-black w-9 text-center'>FIRMA Y SELLO DEL RESPONSABLE DE LA ATENCIÓN</td>
+                                                <td className='border-t border-black w-9 text-center'>Firma y Sello del Responsable de<br />Procedimiento y/o Farmacia y/o Laboratorio</td>
                                                 <td className='font-semibold'>DNI o CE DEL APODERADO:</td>
                                                 <td className='border-b border-black w-9'></td>
                                                 <td className='text-center'>Huella Digital del Asegurado o del Apoderado</td>
