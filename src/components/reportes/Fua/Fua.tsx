@@ -6,18 +6,35 @@ import { HiX } from 'react-icons/hi';
 import Image from 'next/image';
 
 export const Fua = ({ idcuentaatencion }: any) => {
-    const [sisFuaAtencion, setSisFuaAtencion] = useState<any>()
+    const [sisFuaAtencion, setSisFuaAtencion] = useState<any>();
+    const [sisFuaAtencionDIA, setSisFuaAtencionDIA] = useState<any[]>([]);
+    const [sisFuaAtencionMED, setSisFuaAtencionMED] = useState<any[]>([]);
+    const [sisFuaAtencionINS, setsisFuaAtencionINS] = useState<any[]>([]);
+    const [sisFuaAtencionPRO, setSisFuaAtencionPRO] = useState<any[]>([]);
     const getFuaAtencion = async (idcuenta: any) => {
-        const data = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionSeleccionarPorId/${idcuenta}`)
-        console.log(data)
-        setSisFuaAtencion(data)
-
+        const fuadatosgenerales = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionSeleccionarPorId/${idcuenta}`)        
+        console.log(fuadatosgenerales)
+        setSisFuaAtencion(fuadatosgenerales)
+        const fuadiag=await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAbyIdCuentaAtencion/${idcuenta}`)
+        setSisFuaAtencionDIA(fuadiag);
+        const fuamed=await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionMEDbyIdCuentaAtencion/${idcuenta}`)
+        setSisFuaAtencionMED(fuamed)
+        const fuains=await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionINSbyIdCuenta/${idcuenta}`)
+        setsisFuaAtencionINS(fuains)
+        const fuaprod=await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionPRObyIdCuenta/${idcuenta}`)
+        setSisFuaAtencionPRO(fuaprod)
     }
+
+
+
     useEffect(() => {
         if (idcuentaatencion) {
             getFuaAtencion(idcuentaatencion)
         }
     }, [idcuentaatencion])
+
+   
+    
 
     useEffect(() => {
         const fecha = sisFuaAtencion?.FuaAtencionFecha; // "11/10/2023"
@@ -35,6 +52,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
 
     return (
         <>
+   
             <div className="flex justify-center print-page-break bg-white ">
                 <table className="w-full" style={{
                     transform: 'scale(0.8)', // Ajusta este valor según necesidad (0.7 a 0.9)
@@ -47,7 +65,6 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                 <table className='w-full'>
                                     <tbody>
                                         <tr>
-
                                             <td>
                                                 <div className=' grid grid-cols-4 w-full border border-black'>
                                                     <Image
@@ -582,9 +599,9 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 </tr>
                                                 <tr>
                                                     <td className='border border-black bg-customGray text-center'>PESO (Kg)</td>
-                                                    <td className='border border-black  text-center'>{sisFuaAtencion?.TriajePeso}</td>
+                                                    <td className='border border-black  text-center'>{parseFloat(sisFuaAtencion?.TriajePeso ?? 0).toFixed(2)}</td>
                                                     <td className='border border-black bg-customGray text-center'>TALLA (cm)</td>
-                                                    <td className='border border-black  text-center'>{sisFuaAtencion?.TriajeTalla}</td>
+                                                    <td className='border border-black  text-center'> {parseFloat(sisFuaAtencion?.TriajeTalla ?? 0).toFixed(2)}</td>
                                                     <td className='border border-black bg-customGray text-center'>P.A. (mmHg) </td>
                                                     <td className='border border-black  text-center'>{sisFuaAtencion?.TriajePresion} </td>
                                                 </tr>
@@ -808,72 +825,24 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                             <td className='border border-black bg-customGray font-semibold text-center'>R</td>
                                             <td className='border border-black bg-customGray font-semibold text-center'>CIE - 10</td>
                                         </tr>
-                                        <tr>
-                                            <td className='border border-black font-semibold text-center'>1</td>
-                                            <td className='border border-black font-semibold'>Pulpitis</td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'>X</td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'>K040</td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                        </tr>
-                                        <tr>
-                                            <td className='border border-black font-semibold text-center'>2</td>
-                                            <td className='border border-black font-semibold '></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                        </tr>
-                                        <tr>
-                                            <td className='border border-black font-semibold text-center'>3</td>
-                                            <td className='border border-black font-semibold '></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                        </tr>
-                                        <tr>
-                                            <td className='border border-black font-semibold text-center'>4</td>
-                                            <td className='border border-black font-semibold '></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                        </tr>
-                                        <tr>
-                                            <td className='border border-black font-semibold text-center'>5</td>
-                                            <td className='border border-black font-semibold '></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                        </tr>
-                                        <tr>
-                                            <td className='border border-black font-semibold text-center'>6</td>
-                                            <td className='border border-black font-semibold '></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                            <td className='border border-black font-semibold text-center'></td>
-                                        </tr>
+                                {Array.from({ length: 6 }, (_, index) => {
+  // si existe el item en el array, lo llenamos
+  const item = sisFuaAtencionDIA[index];
+  return (
+    <tr key={item?.id ?? `empty-row-${index}`}>
+      <td className='border border-black font-semibold text-center h-4'>{item?.DxNumero ?? ''}</td>
+      <td className='border border-black'>{item?.Descripcion ?? ''}</td>
+      <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'P' ? "X" : ''}</td>
+      <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'D' ? "X" : ''}</td>
+      <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'R' ? "X" : ''}</td>
+      <td className='border border-black font-semibold text-center'>{item?.codigo ?? ''}</td>
+      <td className='border border-black font-semibold text-center'></td>
+      <td className='border border-black font-semibold text-center'></td>
+      <td className='border border-black font-semibold text-center'></td>
+    </tr>
+  )
+})}
+                                     
                                     </tbody>
                                 </table>
                             </td>
@@ -888,17 +857,17 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                             <td className='border border-black bg-customGray font-semibold text-center' colSpan={2}>N° DE COLEGIATURA</td>
                                         </tr>
                                         <tr>
-                                            <td className='border border-black text-center'>43298860</td>
-                                            <td className='border border-black text-center' colSpan={5}>Herrera ISIDRO PILAR </td>
-                                            <td className='border border-black text-center' colSpan={2}>27914</td>
+                                            <td className='border border-black text-center'>{sisFuaAtencion?.FuaMedicoDNI} </td>
+                                            <td className='border border-black text-center' colSpan={5}>{sisFuaAtencion?.FuaMedico} </td>
+                                            <td className='border border-black text-center' colSpan={2}>{sisFuaAtencion?.Colegiatura}</td>
                                         </tr>
                                         <tr>
                                             <td className='border border-black bg-customGray font-semibold text-center'>RESPONSABLE DE LA ATENCIÓN</td>
-                                            <td className='border border-black text-center w-10'>3</td>
+                                            <td className='border border-black text-center w-10'>{sisFuaAtencion?.FuaMedicoTipo}</td>
                                             <td className='border border-black bg-customGray font-semibold text-center'>ESPECIALIDAD</td>
-                                            <td className='border border-black text-center'>Odontologo</td>
+                                            <td className='border border-black text-center'>{sisFuaAtencion?.Descripcion}</td>
                                             <td className='border border-black bg-customGray font-semibold text-center'>N° RNE</td>
-                                            <td className='border border-black text-center w-10'></td>
+                                            <td className='border border-black text-center w-10'>{sisFuaAtencion?.rne}</td>
                                             <td className='border border-black bg-customGray font-semibold text-center'>EGRESADO</td>
                                             <td className='border border-black text-center w-10'></td>
                                         </tr>
@@ -992,13 +961,28 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
                                             </tr>
 
-                                            {Array.from({ length: 8 }).map((_, index) => (
-                                                <tr key={index}>
-                                                    {Array.from({ length: 10 }).map((_, colIndex) => (
-                                                        <td key={colIndex} className="border border-black h-5"></td>
-                                                    ))}
-                                                </tr>
-                                            ))}
+                                           {Array.from({ length: 8 }).map((_, rowIndex) => {
+      // el primer nombre va en 0, el segundo en 1, el tercer en 2, el cuarto en 3...
+      const item1 = sisFuaAtencionMED[rowIndex * 2];
+      const item2 = sisFuaAtencionMED[rowIndex * 2 + 1];
+      return (
+        <tr key={rowIndex}>
+          {/* primera parte */}
+          <td className='border border-black h-5 text-center'>{item1?.Codigo ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.Nombre ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.CantidadPrescrita ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.CantidadEntregada ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.DxNumero ?? ''}</td>
+
+          {/* segunda parte */}
+          <td className='border border-black h-5 text-center'>{item2?.Codigo ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.Nombre ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.CantidadPrescrita ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.CantidadEntregada ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.DxNumero ?? ''}</td>
+        </tr>
+      )
+    })}
 
                                             <tr>
                                                 <td className='text-center font-bold bg-customGray border border-black' colSpan={10} style={{ fontSize: '10px' }}>DISPOSITIVOS MÉDICOS / PRODUCTOS SANITARIOS</td>
@@ -1015,26 +999,28 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>ENTR</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
                                             </tr>
-                                            <tr>
-                                                <td className='border border-black h-5 text-center'>725</td>
-                                                <td className='border border-black h-5 text-center'>AMOXICILINA + ACIDO CLAVULANICO (COMO SAL POTASICA) 60 mL 250 mg</td>
-                                                <td className='border border-black h-5 text-center'>1</td>
-                                                <td className='border border-black h-5 text-center'>1</td>
-                                                <td className='border border-black h-5 text-center'>1</td>
-                                                <td className='border border-black h-5 text-center'>4024</td>
-                                                <td className='border border-black h-5 text-center'>IBUPROFENO 60 mL 100 mg/5 mL SUSPENSION</td>
-                                                <td className='border border-black h-5 text-center'>1</td>
-                                                <td className='border border-black h-5 text-center'>1</td>
-                                                <td className='border border-black h-5 text-center'>1</td>
-                                            </tr>
+                                            {Array.from({ length: 8 }).map((_, rowIndex) => {
+      // el primer nombre va en 0, el segundo en 1, el tercer en 2, el cuarto en 3...
+      const item1 = sisFuaAtencionINS[rowIndex * 2];
+      const item2 = sisFuaAtencionINS[rowIndex * 2 + 1];
+      return (
+        <tr key={rowIndex}>
+          {/* primera parte */}
+          <td className='border border-black h-5 text-center'>{item1?.Codigo ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.Nombre ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.CantidadPrescrita ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.CantidadEntregada ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.DxNumero ?? ''}</td>
 
-                                            {Array.from({ length: 8 }).map((_, index) => (
-                                                <tr key={index}>
-                                                    {Array.from({ length: 10 }).map((_, colIndex) => (
-                                                        <td key={colIndex} className="border border-black h-5"></td>
-                                                    ))}
-                                                </tr>
-                                            ))}
+          {/* segunda parte */}
+          <td className='border border-black h-5 text-center'>{item2?.Codigo ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.Nombre ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.CantidadPrescrita ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.CantidadEntregada ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.DxNumero ?? ''}</td>
+        </tr>
+      )
+    })}
                                         </tbody>
                                     </table>
                                     <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
@@ -1056,13 +1042,31 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>RES</td>
                                             </tr>
-                                            {Array.from({ length: 8 }).map((_, index) => (
-                                                <tr key={index}>
-                                                    {Array.from({ length: 12 }).map((_, colIndex) => (
-                                                        <td key={colIndex} className="border border-black h-5"></td>
-                                                    ))}
-                                                </tr>
-                                            ))}
+                                              {Array.from({ length: 8 }).map((_, rowIndex) => {
+      // el primer nombre va en 0, el segundo en 1, el tercer en 2, el cuarto en 3...
+      const item1 = sisFuaAtencionPRO[rowIndex * 2];
+      const item2 = sisFuaAtencionPRO[rowIndex * 2 + 1];
+      return (
+        <tr key={rowIndex}>
+          {/* primera parte */}
+          <td className='border border-black h-5 text-center'>{item1?.Codigo ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.Nombre ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item1?.CantidadPrescrita ?? ''}</td>
+          <td className='border border-black h-5 text-center'></td>
+          <td className='border border-black h-5 text-center'>{item1?.DxNumero ?? ''}</td>
+          <td className='border border-black h-5 text-center'></td>
+
+          {/* segunda parte */}
+          <td className='border border-black h-5 text-center'>{item2?.Codigo ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.Nombre ?? ''}</td>
+          <td className='border border-black h-5 text-center'>{item2?.CantidadPrescrita ?? ''}</td>
+          <td className='border border-black h-5 text-center'></td>
+          <td className='border border-black h-5 text-center'>{item2?.DxNumero ?? ''}</td>
+          <td className='border border-black h-5 text-center'></td>
+        </tr>
+      )
+    })}
+                                        
                                         </tbody>
                                     </table>
                                     <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
