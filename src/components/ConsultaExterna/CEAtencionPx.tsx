@@ -54,7 +54,9 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
-      
+     console.log("**********")
+     console.log(data)
+     console.log("**********")
       setIdAtencionv2(
         data?.idAtencion,
         data?.idCuentaAtencion,
@@ -63,7 +65,15 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
         data?.CitaMotivo,
         data?.CitaExamenClinico,
         data?.IdTipoSexo,
-        data?.CitaObservaciones
+        data?.CitaObservaciones,
+        data?.AfiliacionDisa,
+        data?.AfiliacionNroFormato,
+        data?.AfiliacionTipoFormato,
+        data?.ApellidoPaterno,
+        data?.ApellidoMaterno,
+        data?.PrimerNombre,
+        data?.Onombre,
+        data?.FechaEgreso
       )
       setDataPx(data);
     } catch (error: any) {
@@ -79,9 +89,13 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   const getDatosConsulta = async () => {
     try {
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
-     
+      console.log(datosAtencion)
       setDatosAtencion(datosAtencion)
-      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago, datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,datosAtencion?.edad,datosAtencion?.idCondicionMaterna,datosAtencion?.idDestinoAtencion)
+      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, 
+        datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago,
+         datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,
+         datosAtencion?.edad,datosAtencion?.idCondicionMaterna,
+         datosAtencion?.idDestinoAtencion)
       if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
         datosAtencion.atencionesDiagnosticos.map((data: any) => {
           setDiagnosticoByCuenta(
@@ -235,6 +249,9 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   return (
     <div className="flex flex-wrap bg-white p-3 rounded w-full shadow-2xl">
 
+      <pre>
+        {JSON.stringify(cuentaDatos,null,2)}
+      </pre>
         
       <CECabezeraTriaje dataPx={dataPx} cuentaDatos={cuentaDatos}/>
       <div className="border-e border-gray-200 dark:border-neutral-700">

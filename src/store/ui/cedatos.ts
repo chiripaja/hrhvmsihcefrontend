@@ -5,20 +5,30 @@ import { create } from 'zustand';
 
 export const useCEDatosStore = create<any>((set, get) => ({
   datosce: {
-    CitaObservaciones:"",
-    IdTipoSexo:"",
+    CitaObservaciones: "",
+    IdTipoSexo: "",
     idatencion: "",
     idpaciente: "",
     idcuentaatencion: "",
     idMedicoIngreso: "",
     idServicio: "",
-    edad:"",
-    NroHistoriaClinica:"",
+    edad: "",
+    NroHistoriaClinica: "",
     idFuenteFinanciamiento: "",
     idFormaPago: "",
-    idDestinoAtencion:"",
-    idCondicionMaterna:"",
+    idDestinoAtencion: "",
+    idCondicionMaterna: "",
     idPuntoCargaProcDentroConsultorio: "",
+    CitaMotivo: "",
+    CitaExamenClinico: "",
+    AfiliacionDisa: "",
+    AfiliacionNroFormato: "",
+    AfiliacionTipoFormato: "",
+    ApellidoPaterno: "",
+    ApellidoMaterno: "",
+    PrimerNombre: "",
+    Onombre: "",
+    FechaEgreso:"",
     diagnosticos: [],
     recetaCabezera: [] as RecetaCabecera[],
     recetaCabezeraProcedimientos: [],
@@ -31,22 +41,30 @@ export const useCEDatosStore = create<any>((set, get) => ({
   resetDatosCE: () => {
     set(() => ({
       datosce: {
-        CitaObservaciones:"",
-        IdTipoSexo:"",
+        CitaObservaciones: "",
+        IdTipoSexo: "",
         idatencion: "",
         idpaciente: "",
         idcuentaatencion: "",
         idMedicoIngreso: "",
         idServicio: "",
-        edad:"",
-        NroHistoriaClinica:"",
+        edad: "",
+        NroHistoriaClinica: "",
         idFuenteFinanciamiento: "",
         idFormaPago: "",
-        idDestinoAtencion:"",
-        idCondicionMaterna:"",
+        idDestinoAtencion: "",
+        idCondicionMaterna: "",
         idPuntoCargaProcDentroConsultorio: "",
-        CitaMotivo:"",
-        CitaExamenClinico:"",
+        CitaMotivo: "",
+        CitaExamenClinico: "",
+        AfiliacionDisa: "",
+        AfiliacionNroFormato: "",
+        AfiliacionTipoFormato: "",
+        ApellidoPaterno: "",
+        ApellidoMaterno: "",
+        PrimerNombre: "",
+        Onombre: "",
+        FechaEgreso:"",
         diagnosticos: [],
         recetaCabezera: [] as RecetaCabecera[],
         recetaCabezeraProcedimientos: [],
@@ -56,21 +74,21 @@ export const useCEDatosStore = create<any>((set, get) => ({
         ordenesOtros: [],
         ordenesProcedimiento: [] as OrdenProcedimiento[],
       },
-      
+
     }));
-  
+
   },
 
   updateProcedimientosIdOrden: (idOrden: number) => {
     set((state: any) => {
       const ordenesProcedimiento = state.datosce.ordenesProcedimiento;
-  
+
       // Validar si ordenesProcedimiento es un array
       if (!Array.isArray(ordenesProcedimiento)) {
         console.error("ordenesProcedimiento no es un array");
         return state;
       }
-  
+
       // Actualizar idOrden en cada procedimiento
       const updatedOrdenesProcedimiento = ordenesProcedimiento.map(
         (orden: OrdenProcedimiento) => ({
@@ -78,7 +96,7 @@ export const useCEDatosStore = create<any>((set, get) => ({
           idOrden,
         })
       );
-  
+
       return {
         datosce: {
           ...state.datosce,
@@ -86,7 +104,7 @@ export const useCEDatosStore = create<any>((set, get) => ({
         },
       };
     });
-  
+
     // Acceso seguro al estado actualizado
     const updatedOrdenes = get()?.datosce?.ordenesProcedimiento ?? [];
     return updatedOrdenes;
@@ -95,7 +113,7 @@ export const useCEDatosStore = create<any>((set, get) => ({
 
 
 
-  setRecetaCabezeraProcedimientos: (newRecetaCabezeraProcedimientos:[]) => set((state: any) => ({
+  setRecetaCabezeraProcedimientos: (newRecetaCabezeraProcedimientos: []) => set((state: any) => ({
     datosce: {
       ...state.datosce,
       recetaCabezeraProcedimientos: newRecetaCabezeraProcedimientos,
@@ -212,7 +230,7 @@ export const useCEDatosStore = create<any>((set, get) => ({
         medicamentos: [...state.datosce.medicamentos, { ...nuevoMedicamento }]
       }
     })),
-  limpiarMedicamento:() =>
+  limpiarMedicamento: () =>
     set((state: any) => ({
       datosce: {
         ...state.datosce,
@@ -220,13 +238,13 @@ export const useCEDatosStore = create<any>((set, get) => ({
       }
     })),
 
-    limpiarordenesProcedimiento:() =>
-      set((state: any) => ({
-        datosce: {
-          ...state.datosce,
-          ordenesProcedimiento: []
-        }
-      })),  
+  limpiarordenesProcedimiento: () =>
+    set((state: any) => ({
+      datosce: {
+        ...state.datosce,
+        ordenesProcedimiento: []
+      }
+    })),
 
 
   deleteMedicamento: (idproducto: number) =>
@@ -257,9 +275,17 @@ export const useCEDatosStore = create<any>((set, get) => ({
     return updatedMedicamentos;
   },
 
-  setIdAtencionv2: (newIdCuenta: any,newIdCuentaIdatencion:any,newIdPaciente:any,newhc:any,CitaMotivo:any,CitaExamenClinico:any,IdTipoSexo:any,CitaObservaciones:any) =>
+  setIdAtencionv2: (newIdCuenta: any, newIdCuentaIdatencion: any, newIdPaciente: any,
+    newhc: any, CitaMotivo: any, CitaExamenClinico: any, IdTipoSexo: any, CitaObservaciones: any,
+    AfiliacionDisa: any, AfiliacionNroFormato: any, AfiliacionTipoFormato: any,
+    ApellidoPaterno:any,ApellidoMaterno:any,PrimerNombre:any,Onombre:any,FechaEgreso:any) =>
     set((state: any) => ({
-      datosce: { ...state.datosce, idatencion: newIdCuenta,idcuentaatencion:newIdCuentaIdatencion,idpaciente:newIdPaciente,NroHistoriaClinica:newhc,CitaMotivo,CitaExamenClinico,IdTipoSexo,CitaObservaciones }
+      datosce: {
+        ...state.datosce, idatencion: newIdCuenta, idcuentaatencion: newIdCuentaIdatencion, idpaciente: newIdPaciente, NroHistoriaClinica: newhc, CitaMotivo, CitaExamenClinico, IdTipoSexo, CitaObservaciones,
+        AfiliacionDisa, AfiliacionNroFormato, AfiliacionTipoFormato,
+        ApellidoPaterno,ApellidoMaterno,PrimerNombre,Onombre,FechaEgreso
+
+      }
     })),
 
   setIdAtencion: (newIdCuenta: any) =>
@@ -267,11 +293,11 @@ export const useCEDatosStore = create<any>((set, get) => ({
       datosce: { ...state.datosce, idatencion: newIdCuenta }
     })),
 
-    setAtencionMedica: (CitaMotivo: any,CitaExamenClinico: any) =>
-      set((state: any) => ({
-        datosce: { ...state.datosce,CitaMotivo,CitaExamenClinico }
-      })),  
-  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any,newEdad:any,idCondicionMaterna:any,idDestinoAtencion:any) =>
+  setAtencionMedica: (CitaMotivo: any, CitaExamenClinico: any) =>
+    set((state: any) => ({
+      datosce: { ...state.datosce, CitaMotivo, CitaExamenClinico }
+    })),
+  setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago: (newIdmedico: any, newIdServicio: any, newidFuenteFinanciamiento: any, newidFormaPago: any, newidPuntoCargaProcDentroConsultorio: any, newEdad: any, idCondicionMaterna: any, idDestinoAtencion: any) =>
     set((state: any) => ({
       datosce: {
         ...state.datosce,
@@ -280,7 +306,7 @@ export const useCEDatosStore = create<any>((set, get) => ({
         idFuenteFinanciamiento: newidFuenteFinanciamiento,
         idFormaPago: newidFormaPago,
         idPuntoCargaProcDentroConsultorio: newidPuntoCargaProcDentroConsultorio,
-        edad:newEdad,
+        edad: newEdad,
         idCondicionMaterna,
         idDestinoAtencion
       }
@@ -299,11 +325,11 @@ export const useCEDatosStore = create<any>((set, get) => ({
       recetaCabezera: newRecetaCabezera,
     }
   })),
-  setDiagnosticoByCuenta: (IdDiagnostico: any, nomdx: any,codigoCIE10:any, idSubclasificacionDx: any, subClasificacion: any, labConfHIS: any = null) =>
+  setDiagnosticoByCuenta: (IdDiagnostico: any, nomdx: any, codigoCIE10: any, idSubclasificacionDx: any, subClasificacion: any, labConfHIS: any = null) =>
     set((state: any) => ({
       datosce: {
         ...state.datosce,
-        diagnosticos: [...state.datosce.diagnosticos, { IdDiagnostico, nomdx,codigoCIE10, idSubclasificacionDx, subClasificacion, labConfHIS }]
+        diagnosticos: [...state.datosce.diagnosticos, { IdDiagnostico, nomdx, codigoCIE10, idSubclasificacionDx, subClasificacion, labConfHIS }]
       }
     })),
   setEliminarDiagnosticoByCuenta: (IdDiagnostico: any) =>
