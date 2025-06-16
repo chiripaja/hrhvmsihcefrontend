@@ -35,7 +35,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
   const { control: control2, register: register2, handleSubmit: handleSubmit2, setValue: setValue2, reset: reset2, watch: watch2 } = useForm<any>();
-  const { formattedDate, hora, fechayhora,formattedDate2 } = obtenerFechaYHora();
+  const { formattedDate, hora, fechayhora, formattedDate2 } = obtenerFechaYHora();
   const [referenciaView, setreferenciaView] = useState(false);
   const [sisfua, setsisfua] = useState<any>();
   const FormDestino = async (data: any) => {
@@ -60,7 +60,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         confirmButtonText: "Si",
         denyButtonText: `No`
       }).then(async (result) => {
-      
+
         if (result.isConfirmed) {
           await axios.post(`${process.env.apijimmynew}/atenciones/atencionesActualizar`, objetoEnvio)
           Swal.fire(
@@ -110,8 +110,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
     setDestinoAtencion(data);
   }
 
-  const getSisfua=async()=>{
-    const data=await getData(`${process.env.apijimmynew}/fua/sisfua`);
+  const getSisfua = async () => {
+    const data = await getData(`${process.env.apijimmynew}/fua/sisfua`);
     setsisfua(data)
   }
 
@@ -160,56 +160,87 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   }
 
   const handleButtonClick = () => {
-   // handleSubmit2(FormDestino)();
+    // handleSubmit2(FormDestino)();
     generarFua();
   };
-  const generarFua=async()=>{
-    const validadSis=await getData(`${process.env.apijimmynew}/fua/validadExisteFuaByIdCuenta/${cuentaDatos?.idcuentaatencion}`)
+  const generarFua = async () => {
+    const validadSis = await getData(`${process.env.apijimmynew}/fua/validadExisteFuaByIdCuenta/${cuentaDatos?.idcuentaatencion}`)
     console.log(validadSis)
-    if(validadSis?.FuaNumero){
+    if (validadSis?.FuaNumero) {
       console.log("existe fua")
-    }else{
-    
-      const ultimoNum=await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionConsultarUltimoNumero/${sisfua[0]?.fuaNumeroInicial}/${sisfua[0]?.fuaNumeroFinal}`)
- 
+    } else {
+
+      const ultimoNum = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionConsultarUltimoNumero/${sisfua[0]?.fuaNumeroInicial}/${sisfua[0]?.fuaNumeroFinal}`)
+
 
       let dataCondicionMaterna;
 
-if (cuentaDatos.idCondicionMaterna == null || cuentaDatos.idCondicionMaterna=='3') {
-  dataCondicionMaterna = 0;
-} else {
-  dataCondicionMaterna=cuentaDatos.idCondicionMaterna
-}
-console.log(cuentaDatos?.FechaEgreso)
-      const obj={
-        idCuentaAtencion:cuentaDatos?.idcuentaatencion,
-        FuaDisa:sisfua[0]?.fuaDisa,
-        FuaLote:sisfua[0]?.fuaLote,
-        FuaNumero:ultimoNum?.FuaNumero+1,
-        EstablecimientoCodigoRenaes:'00754',
-        Reconsideracion:'N',
-        ReconsideracionCodigoDisa:null,
-        ReconsideracionLote:null,
-        ReconsideracionNroFormato:null,
-        FuaComponente:'4',
-        Situacion:'2',
-        AfiliacionDisa:cuentaDatos?.AfiliacionDisa,
-        AfiliacionTipoFormato:cuentaDatos?.AfiliacionTipoFormato,
-        AfiliacionNroFormato:cuentaDatos?.AfiliacionNroFormato,
-        CodigoTipoFormato:null,
-        OrigenAseguradoInstitucion:'0',
-        OrigenAseguradoCodigo:null,
-        Edad:null,
-        GrupoEtareo:'0',
-        Genero: cuentaDatos?.IdTipoSexo=='2'? '0':'1',
-        FuaAtencion:'2', //2 es referencia 3 es emergencia,
-        FuaCondicionMaterna:dataCondicionMaterna,
-        FuaNrohistoria:cuentaDatos?.NroHistoriaClinica,
-        FuaConceptoPr:'1',
-        FuaConceptoPrAutoriz:null,
-        FuaConceptoPrMonto:'0.00',
-        FuaAtencionFecha:  formattedDate2,
-        FuaAtencionHora:hora
+      if (cuentaDatos.idCondicionMaterna == null || cuentaDatos.idCondicionMaterna == '3') {
+        dataCondicionMaterna = 0;
+      } else {
+        dataCondicionMaterna = cuentaDatos.idCondicionMaterna
+      }
+      let dataDestinoAtencion;
+      switch (cuentaDatos.idDestinoAtencion) {
+        case 10:
+          dataDestinoAtencion = 1;
+          break;
+        case 60:
+          dataDestinoAtencion = 2;
+          break;
+        case 54:
+          dataDestinoAtencion = 3;
+          break;
+        case 84:
+          dataDestinoAtencion = 4;
+          break;
+        case null:
+          dataDestinoAtencion = 5;
+        case 13:
+          dataDestinoAtencion = 6;  
+        case 25:
+          dataDestinoAtencion = 7;  
+        case 11:
+          dataDestinoAtencion = 8;  
+        default:
+          dataDestinoAtencion = 0;
+          break;
+      }
+
+      const obj = {
+        idCuentaAtencion: cuentaDatos?.idcuentaatencion,
+        FuaDisa: sisfua[0]?.fuaDisa,
+        FuaLote: sisfua[0]?.fuaLote,
+        FuaNumero: ultimoNum?.FuaNumero + 1,
+        EstablecimientoCodigoRenaes: '00754',
+        Reconsideracion: 'N',
+        ReconsideracionCodigoDisa: null,
+        ReconsideracionLote: null,
+        ReconsideracionNroFormato: null,
+        FuaComponente: '4',
+        Situacion: '2',
+        AfiliacionDisa: cuentaDatos?.AfiliacionDisa,
+        AfiliacionTipoFormato: cuentaDatos?.AfiliacionTipoFormato,
+        AfiliacionNroFormato: cuentaDatos?.AfiliacionNroFormato,
+        CodigoTipoFormato: null,
+        OrigenAseguradoInstitucion: '0',
+        OrigenAseguradoCodigo: null,
+        Edad: null,
+        GrupoEtareo: '0',
+        Genero: cuentaDatos?.IdTipoSexo == '2' ? '0' : '1',
+        FuaAtencion: '2', //2 es referencia 3 es emergencia,
+        FuaCondicionMaterna: dataCondicionMaterna,
+        FuaNrohistoria: cuentaDatos?.NroHistoriaClinica,
+        FuaConceptoPr: '1',
+        FuaConceptoPrAutoriz: null,
+        FuaConceptoPrMonto: '0.00',
+        FuaAtencionFecha: formattedDate2,
+        FuaAtencionHora: hora,//CodigoEstablAdscripcion
+        FuaReferidoOrigenCodigoRenaes: cuentaDatos?.CodigoEstablAdscripcion,
+        FuaReferidoOrigenNreferencia: cuentaDatos?.NroReferenciaOrigen,
+        FuaCodigoPrestacion: cuentaDatos?.FuaCodigoPrestacion,
+        FuaPersonalQatiende: '1',
+        FuaAtencionLugar: '1'
       }
       console.log(obj)
     }
@@ -244,7 +275,7 @@ console.log(cuentaDatos?.FechaEgreso)
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-  
+
       <div className='flex justify-evenly'>
 
         <div className='w-2/3'>
@@ -431,7 +462,7 @@ console.log(cuentaDatos?.FechaEgreso)
         }
       </div>
       <div className="flex justify-end mt-6 col-span-2 gap-2">
-      
+
         <button
           type="submit"
           disabled={isSubmitting}
@@ -442,7 +473,7 @@ console.log(cuentaDatos?.FechaEgreso)
             <Loading />
           ) : (
             <>
-            <FiSave  className="mr-2" />
+              <FiSave className="mr-2" />
               Guardar y finalizar
             </>
           )}

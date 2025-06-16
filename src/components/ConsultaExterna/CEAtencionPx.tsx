@@ -73,7 +73,10 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
         data?.ApellidoMaterno,
         data?.PrimerNombre,
         data?.Onombre,
-        data?.FechaEgreso
+        data?.FechaEgreso,
+        data?.CodigoEstablAdscripcion,
+        data?.FuaCodigoPrestacion,
+        data?.NroReferenciaOrigen
       )
       setDataPx(data);
     } catch (error: any) {

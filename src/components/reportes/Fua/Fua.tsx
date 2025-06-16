@@ -534,30 +534,33 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                     <tbody>
 
                                         <tr>
-                                            <td colSpan={18} className='text-center font-semibold bg-customGray'>DEL DESTINO DEL ASEGURADO/USUARIO</td>
+                                            <td colSpan={18} className='text-center font-semibold bg-customGray'>DEL DESTINO DEL ASEGURADO/USUARIO 
+
+                                             
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>ALTA</td>
-                                            <td rowSpan={2} className=' text-center border border-black w-4'></td>
+                                            <td rowSpan={2} className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino=='1' && 'X'}</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>CITA</td>
-                                            <td rowSpan={2} className=' text-center border border-black  w-4'>X</td>
+                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='2' && 'X'}</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>HOSPITALIZACIÓN</td>
-                                            <td rowSpan={2} className=' text-center border border-black  w-4'></td>
+                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='8' && 'X'}</td>
                                             <td colSpan={6} className='bg-customGray text-center border border-black'>REFERIDO</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>CONTRA <br /> REFERIDO</td>
-                                            <td rowSpan={2} className=' text-center border border-black  w-4'></td>
+                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='6' && 'X'}</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>FALLECIDO</td>
-                                            <td rowSpan={2} className=' text-center border border-black  w-4'></td>
+                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='7' && 'X'}</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>CORTE <br /> ADMINIS</td>
                                             <td rowSpan={2} className=' text-center border border-black  w-4'></td>
                                         </tr>
                                         <tr>
                                             <td className=' text-center border border-black'>EMERGENCIA</td>
-                                            <td className=' text-center border border-black w-4'></td>
+                                            <td className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino=='3' && 'X'}</td>
                                             <td className=' text-center border border-black'>CONSULTA EXTERNA</td>
-                                            <td className=' text-center border border-black w-4'></td>
+                                            <td className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino=='4' && 'X'}</td>
                                             <td className=' text-center border border-black'>APOYO AL DIAGNÓSTICO</td>
-                                            <td className=' text-center border border-black w-4'></td>
+                                            <td className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino=='5' && 'X'}</td>
                                         </tr>
 
                                     </tbody>

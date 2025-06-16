@@ -29,6 +29,9 @@ export const useCEDatosStore = create<any>((set, get) => ({
     PrimerNombre: "",
     Onombre: "",
     FechaEgreso:"",
+    CodigoEstablAdscripcion:"",
+    FuaCodigoPrestacion:"",
+    NroReferenciaOrigen:"",
     diagnosticos: [],
     recetaCabezera: [] as RecetaCabecera[],
     recetaCabezeraProcedimientos: [],
@@ -65,6 +68,9 @@ export const useCEDatosStore = create<any>((set, get) => ({
         PrimerNombre: "",
         Onombre: "",
         FechaEgreso:"",
+        CodigoEstablAdscripcion:"",
+        FuaCodigoPrestacion:"",
+        NroReferenciaOrigen:"",
         diagnosticos: [],
         recetaCabezera: [] as RecetaCabecera[],
         recetaCabezeraProcedimientos: [],
@@ -278,13 +284,13 @@ export const useCEDatosStore = create<any>((set, get) => ({
   setIdAtencionv2: (newIdCuenta: any, newIdCuentaIdatencion: any, newIdPaciente: any,
     newhc: any, CitaMotivo: any, CitaExamenClinico: any, IdTipoSexo: any, CitaObservaciones: any,
     AfiliacionDisa: any, AfiliacionNroFormato: any, AfiliacionTipoFormato: any,
-    ApellidoPaterno:any,ApellidoMaterno:any,PrimerNombre:any,Onombre:any,FechaEgreso:any) =>
+    ApellidoPaterno:any,ApellidoMaterno:any,PrimerNombre:any,Onombre:any,FechaEgreso:any,CodigoEstablAdscripcion:any,FuaCodigoPrestacion:any,NroReferenciaOrigen:any) =>
     set((state: any) => ({
       datosce: {
         ...state.datosce, idatencion: newIdCuenta, idcuentaatencion: newIdCuentaIdatencion, idpaciente: newIdPaciente, NroHistoriaClinica: newhc, CitaMotivo, CitaExamenClinico, IdTipoSexo, CitaObservaciones,
         AfiliacionDisa, AfiliacionNroFormato, AfiliacionTipoFormato,
-        ApellidoPaterno,ApellidoMaterno,PrimerNombre,Onombre,FechaEgreso
-
+        ApellidoPaterno,ApellidoMaterno,PrimerNombre,Onombre,FechaEgreso,CodigoEstablAdscripcion
+,FuaCodigoPrestacion,NroReferenciaOrigen
       }
     })),
 
