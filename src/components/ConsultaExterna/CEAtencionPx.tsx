@@ -54,9 +54,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   const getDatos = async () => {
     try {
       const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
-     console.log("**********")
-     console.log(data)
-     console.log("**********")
+
       setIdAtencionv2(
         data?.idAtencion,
         data?.idCuentaAtencion,
@@ -89,7 +87,8 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
         data?.IdDocIdentidad,
         data?.nroDocumentom,
         data?.MedicoDocumentoTipo,
-        data?.codigoServicioFUA
+        data?.codigoServicioFUA,
+        data?.FuaNumero
       )
       setDataPx(data);
     } catch (error: any) {

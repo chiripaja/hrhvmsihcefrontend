@@ -164,17 +164,13 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
     generarFua();
   };
   const generarFua = async () => {
+    console.log("Entro al afuncion generar fua")
     const validadSis = await getData(`${process.env.apijimmynew}/fua/validadExisteFuaByIdCuenta/${cuentaDatos?.idcuentaatencion}`)
-    console.log(validadSis)
-    if (validadSis?.FuaNumero) {
-      console.log("existe fua")
-    } else {
 
-      const ultimoNum = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionConsultarUltimoNumero/${sisfua[0]?.fuaNumeroInicial}/${sisfua[0]?.fuaNumeroFinal}`)
-
-
+    let dataFuaCabecera;
+    if(cuentaDatos?.idSiasis){
+ const ultimoNum = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionConsultarUltimoNumero/${sisfua[0]?.fuaNumeroInicial}/${sisfua[0]?.fuaNumeroFinal}`)
       let dataCondicionMaterna;
-
       if (cuentaDatos.idCondicionMaterna == null || cuentaDatos.idCondicionMaterna == '3') {
         dataCondicionMaterna = 0;
       } else {
@@ -206,12 +202,11 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
           dataDestinoAtencion = 0;
           break;
       }
-
-      const obj = {
+      dataFuaCabecera = {
         idCuentaAtencion: cuentaDatos?.idcuentaatencion,
         FuaDisa: sisfua[0]?.fuaDisa,
         FuaLote: sisfua[0]?.fuaLote,
-        FuaNumero: ultimoNum?.FuaNumero + 1,
+        FuaNumero: validadSis?.FuaNumero ? cuentaDatos?.FuaNumero : (ultimoNum?.FuaNumero + 1),
         EstablecimientoCodigoRenaes: '00754',
         Reconsideracion: 'N',
         ReconsideracionCodigoDisa: null,
@@ -300,7 +295,18 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         FuaCodOferFlexible: null,
         IdUsuarioAuditoria: session?.user?.id
       }
-      console.log(obj)
+    }
+
+
+
+    if (validadSis?.FuaNumero) {
+      
+      console.log("actualizar fua")
+      console.log(dataFuaCabecera)
+    } else {
+     console.log("crear fua")
+     console.log(dataFuaCabecera)
+     
     }
   }
   const destinoAtencionW = watch2('destinoAtencion');

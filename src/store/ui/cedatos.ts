@@ -45,6 +45,7 @@ export const useCEDatosStore = create<any>((set, get) => ({
     nroDocumento: "",
     MedicoDocumentoTipo: "",
     codigoServicioFUA: "",
+    FuaNumero:"",
     diagnosticos: [],
     recetaCabezera: [] as RecetaCabecera[],
     recetaCabezeraProcedimientos: [],
@@ -97,6 +98,7 @@ export const useCEDatosStore = create<any>((set, get) => ({
         nroDocumento: "",
         MedicoDocumentoTipo: "",
         codigoServicioFUA: "",
+        FuaNumero:"",
         diagnosticos: [],
         recetaCabezera: [] as RecetaCabecera[],
         recetaCabezeraProcedimientos: [],
@@ -313,7 +315,8 @@ export const useCEDatosStore = create<any>((set, get) => ({
     ApellidoPaterno: any, ApellidoMaterno: any, PrimerNombre: any, Onombre: any, FechaEgreso: any, CodigoEstablAdscripcion: any
     , FuaCodigoPrestacion: any, NroReferenciaOrigen: any,
     MedicoColegitura: any, MedicoDni: any, MedicoMaterno: any, MedicoNombres: any, MedicoPaterno: any, idColegioHIS: any, Afiliacioncodigosiasis: any
-    , idSiasis: any, FechaNacimiento_formateada: any, IdDocIdentidad: any, nroDocumento: any, MedicoDocumentoTipo: any, codigoServicioFUA: any
+    , idSiasis: any, FechaNacimiento_formateada: any, IdDocIdentidad: any, nroDocumento: any, MedicoDocumentoTipo: any, codigoServicioFUA: any,
+    FuaNumero:any
   ) =>
     set((state: any) => ({
       datosce: {
@@ -322,7 +325,7 @@ export const useCEDatosStore = create<any>((set, get) => ({
         ApellidoPaterno, ApellidoMaterno, PrimerNombre, Onombre, FechaEgreso, CodigoEstablAdscripcion
         , FuaCodigoPrestacion, NroReferenciaOrigen
         , MedicoColegitura, MedicoDni, MedicoMaterno, MedicoNombres, MedicoPaterno, idColegioHIS, Afiliacioncodigosiasis, idSiasis,
-        FechaNacimiento_formateada, IdDocIdentidad, nroDocumento, MedicoDocumentoTipo, codigoServicioFUA
+        FechaNacimiento_formateada, IdDocIdentidad, nroDocumento, MedicoDocumentoTipo, codigoServicioFUA,FuaNumero
       }
     })),
 
