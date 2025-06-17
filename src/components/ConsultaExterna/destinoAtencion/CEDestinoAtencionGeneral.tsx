@@ -197,11 +197,11 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         case null:
           dataDestinoAtencion = 5;
         case 13:
-          dataDestinoAtencion = 6;  
+          dataDestinoAtencion = 6;
         case 25:
-          dataDestinoAtencion = 7;  
+          dataDestinoAtencion = 7;
         case 11:
-          dataDestinoAtencion = 8;  
+          dataDestinoAtencion = 8;
         default:
           dataDestinoAtencion = 0;
           break;
@@ -240,7 +240,65 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         FuaReferidoOrigenNreferencia: cuentaDatos?.NroReferenciaOrigen,
         FuaCodigoPrestacion: cuentaDatos?.FuaCodigoPrestacion,
         FuaPersonalQatiende: '1',
-        FuaAtencionLugar: '1'
+        FuaAtencionLugar: '1',
+        FuaDestino: dataDestinoAtencion,
+        FuaHospitalizadoFingreso: null,
+        FuaHospitalizadoFalta: '__/__/____',
+        FuaReferidoDestinoCodigoRenaes: null,
+        FuaReferidoDestinoNreferencia: null,
+        FuaMedicoDNI: cuentaDatos?.MedicoDni?.trim(),
+        FuaMedico: cuentaDatos?.MedicoPaterno + ' ' + cuentaDatos?.MedicoMaterno + ' ' + cuentaDatos?.MedicoNombres,
+        FuaMedicoTipo: cuentaDatos?.idColegioHIS,
+        AfiliacionNroIntegrante: null,
+        Codigo: cuentaDatos?.Afiliacioncodigosiasis,
+        idSiasis: cuentaDatos?.idSiasis,
+        FuaObservaciones: cuentaDatos?.CitaObservaciones,
+        CabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+        UltimaFechaAddMod: cuentaDatos?.formattedDate2,
+        CabEstado: '0',
+        FuaFechaParto: '',
+        EstablecimientoDistrito: '100101',
+        Anio: formattedDate2.split('/')[2],
+        Mes: formattedDate2.split('/')[1],
+        CostoTotal: '0.00',
+        Apaterno: cuentaDatos?.ApellidoPaterno,
+        Amaterno: cuentaDatos?.ApellidoMaterno,
+        Pnombre: cuentaDatos?.PrimerNombre,
+        Onombre: cuentaDatos?.Onombre,
+        fnacimiento: cuentaDatos?.FechaNacimiento_formateada,
+        Autogenerado: null,
+        DocumentoTipo: cuentaDatos?.IdDocIdentidad,
+        DocumentoNumero: cuentaDatos?.nroDocumento,
+        EstablecimientoCategoria: '05',
+        CostoServicio: '0.00',
+        CostoMedicamento: '0.00',
+        CostoProcedimiento: '0.00',
+        CostoInsumo: '0.00',
+        MedicoDocumentoTipo: cuentaDatos?.MedicoDocumentoTipo,
+        ate_grupoRiesgo: null,
+        CabCodigoPuntoDigitacion: '1071',
+        CabCodigoUDR: '17',
+        CabNroEnvioAlSIS: null,
+        CabOrigenDelRegistro: '1000',
+        CabVersionAplicativo: 'v.3',
+        CabIdentificacionPaquete: '0',
+        IdentificacionArfsis: null,
+        CabFechaFuaPrimeraVez: formattedDate2,
+        PeriodoOrigen: null,
+        FuacolegioCodigo: null,
+        FuacolegioNivel: null,
+        FuacolegioGrado: null,
+        FuacolegioSeccion: null,
+        FuacolegioTurno: null,
+        Fuaetnia: '58',
+        FuafechaFallecimiento: null,
+        FuaUPS: cuentaDatos?.codigoServicioFUA,
+        FuaCodAutorizacion: null,
+        FuaFechaCorteAdm: null,
+        FuaVersionFormato: 'B',
+        FuaTipoAnexo2015: '1',
+        FuaCodOferFlexible: null,
+        IdUsuarioAuditoria: session?.user?.id
       }
       console.log(obj)
     }
@@ -275,13 +333,10 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-
       <div className='flex justify-evenly'>
-
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
             <legend className='font-bold'>Modulo Interconsultas</legend>
-
             <form onSubmit={handleSubmit(FormInterconsulta)}>
 
               {cuentaDatos?.diagnosticos?.length > 0 && (

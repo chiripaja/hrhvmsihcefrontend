@@ -76,7 +76,20 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
         data?.FechaEgreso,
         data?.CodigoEstablAdscripcion,
         data?.FuaCodigoPrestacion,
-        data?.NroReferenciaOrigen
+        data?.NroReferenciaOrigen,
+        data?.MedicoColegitura,
+        data?.MedicoDni,
+        data?.MedicoMaterno,
+        data?.MedicoNombres,
+        data?.MedicoPaterno,
+        data?.idColegioHIS,
+        data?.Afiliacioncodigosiasis,
+        data?.idSiasis,
+        data?.FechaNacimiento_formateada,
+        data?.IdDocIdentidad,
+        data?.nroDocumentom,
+        data?.MedicoDocumentoTipo,
+        data?.codigoServicioFUA
       )
       setDataPx(data);
     } catch (error: any) {
@@ -251,11 +264,6 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
 
   return (
     <div className="flex flex-wrap bg-white p-3 rounded w-full shadow-2xl">
-
-      <pre>
-        {JSON.stringify(cuentaDatos,null,2)}
-      </pre>
-        
       <CECabezeraTriaje dataPx={dataPx} cuentaDatos={cuentaDatos}/>
       <div className="border-e border-gray-200 dark:border-neutral-700">
         <nav className="flex flex-col space-y-2">
