@@ -8,11 +8,12 @@ interface InputTextProps extends React.InputHTMLAttributes<HTMLInputElement> {
     defaultValue?: string;
     unidadMedida?: string;
     parametro?: string;
+    error?: string; // ✅ AÑADE ESTA LÍNEA
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const InputTextTriaje = forwardRef<HTMLInputElement, InputTextProps>(
-    ({ unidadMedida = "", parametro = "", label = "", defaultValue = "", requerido = false, readOnly = false, ...props }, ref) => {
+    ({ unidadMedida = "", parametro = "", label = "", defaultValue = "", requerido = false, readOnly = false,error, ...props }, ref) => {
         return (
             <div className='grid grid-cols-1'>
                 <div>
@@ -30,7 +31,7 @@ export const InputTextTriaje = forwardRef<HTMLInputElement, InputTextProps>(
                     </div>
                 </div>
                 <div className="text-red-500 h-4">
-                    {parametro}
+                   {error ? error : parametro}
                 </div>
             </div>
         );

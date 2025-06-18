@@ -85,7 +85,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
         data?.idSiasis,
         data?.FechaNacimiento_formateada,
         data?.IdDocIdentidad,
-        data?.nroDocumentom,
+        data?.nroDocumento,
         data?.MedicoDocumentoTipo,
         data?.codigoServicioFUA,
         data?.FuaNumero

@@ -53,7 +53,7 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
         formState: { errors: errors2 },
     } = useForm<InputBusquedad>()
 
-    const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<Input>();
+    const { register, handleSubmit, setValue, watch, getValues,reset, formState: { errors } } = useForm<Input>();
 
     const [datosTriajePaciente, setDatosTriajePaciente] = useState<any>()
     const [estadoGestacionalCheck, setEstadoGestacionalCheck] = useState<boolean>(true)
@@ -86,12 +86,30 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
             reset()
             const { numcuenta } = numerocuenta
             const { data } = await axios.get(`${process.env.apiurl}/Triaje/SolicitaAgregar/${numcuenta}`)
-            console.log(data?.triajeSolicita?.tipoServicio==="Consultorios Externos")
+       
+            const fechaIngreso = data?.triajeSolicita?.fechaIngreso; // "18/06/2025"
+
+// Obtener fecha actual en formato "DD/MM/YYYY"
+const hoy = new Date();
+const dia = String(hoy.getDate()).padStart(2, '0');
+const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Enero es 0
+const anio = hoy.getFullYear();
+const fechaHoy = `${dia}/${mes}/${anio}`;
+
+// Comparar
+
+
             if(data?.triajeSolicita?.tipoServicio!=="Consultorios Externos"){           
                 setShowPrioridades(false)
+                console.log("entro al primer iff")
             }
-            if (data?.triajeSolicita?.exito === 0) {
-                setEditable(false)
+            if (data?.triajeSolicita?.exito === 0 && fechaIngreso === fechaHoy) {
+              setEditable(true)
+            console.log("entro al segundo iff")
+            }
+            else if (data?.triajeSolicita?.exito === 0) {
+                
+                setEditable(true)
                 Swal.fire({
                     icon: "error",
                     title: `<h5 classname='text-base'>${data?.triajeSolicita?.mensaje} </h5>`,
@@ -99,6 +117,7 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
                 });
             }
             if (data?.triajeSolicita === null) {
+                  console.log("entro al Tercer iff")
                 setEditable(false)
                 Swal.fire({
                     icon: "error",
@@ -126,13 +145,29 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
             setShowPrioridades(true)
             reset()
             const { data } = await axios.get(`${process.env.apiurl}/Triaje/SolicitaAgregar/${numerocuenta}`)
-            console.log(data?.triajeSolicita?.tipoServicio==="Consultorios Externos")
+               const fechaIngreso = data?.triajeSolicita?.fechaIngreso; // "18/06/2025"
+console.log(data)
+// Obtener fecha actual en formato "DD/MM/YYYY"
+const hoy = new Date();
+const dia = String(hoy.getDate()).padStart(2, '0');
+const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Enero es 0
+const anio = hoy.getFullYear();
+const fechaHoy = `${dia}/${mes}/${anio}`;
             if(data?.triajeSolicita?.tipoServicio!=="Consultorios Externos"){           
                 setShowPrioridades(false)
             }
-            if (data?.triajeSolicita?.exito === 0) {
-                setEditable(false)
-               
+            if (data?.triajeSolicita?.exito === 0 && fechaIngreso === fechaHoy) {
+              setEditable(true)
+            console.log("entro al segundo iff")
+            }
+            else if (data?.triajeSolicita?.exito === 0) {
+                
+                setEditable(true)
+                Swal.fire({
+                    icon: "error",
+                    title: `<h5 classname='text-base'>${data?.triajeSolicita?.mensaje} </h5>`,
+                    html: `${data?.triajeSolicita?.nroHistoria} - ${data?.triajeSolicita?.paterno} ${data?.triajeSolicita?.materno} , ${data?.triajeSolicita?.nombres}<br\>`,
+                });
             }
             if (data?.triajeSolicita === null) {
                 setEditable(false)
@@ -220,9 +255,9 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
 
 
         setVerdataJson(dataenviar)
-
+/* 
         try {
-            const { data } = await axios.post(`${process.env.apiurl}/Triaje/Guardar`, dataenviar)
+           const { data } = await axios.post(`${process.env.apiurl}/Triaje/Guardar`, dataenviar)
 
             if (data.exito === 0) {
                 Swal.fire({
@@ -255,7 +290,27 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
     };
 
 
-
+    const actualizarTriaje=async()=>{
+    
+        const values = getValues();
+      
+        const presionArterial=values?.presionSist+"/"+values?.presionDiast
+        const obj={
+            idAtencion:datosTriajePaciente?.triaje?.idAtencion,
+            triajeTemperatura: values?.triajeTemperatura ? values?.triajeTemperatura : "",
+            triajePresion: presionArterial,
+            triajeSaturacion:values?.triajeSaturacion ? values?.triajeSaturacion : null,
+            triajeFrecCardiaca: values?.triajeFrecCardiaca ? values?.triajeFrecCardiaca : "",
+            triajeFrecRespiratoria: values?.triajeFrecRespiratoria ? values?.triajeFrecRespiratoria:null,
+            triajePulso: values?.triajePulso,
+            triajePeso: values?.triajePeso,
+            triajePerimetro: values?.triajePerimetro ? values?.triajePerimetro : "",
+            triajeTalla:values?.triajeTalla,
+            triajePerimCefalico: values?.triajePerimCefalico ? values?.triajePerimCefalico : null,
+        }
+        const response=   await axios.put(`${process.env.apijimmynew}/triaje/actualizar`, obj);
+        console.log(response)
+    }
 
 
     //actualizacion de datos triaje
@@ -494,8 +549,6 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
 
     return (
         <>
-       
-       
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div  className={`${showPrioridades ? 'col-span-3':'col-span-2'}`}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -522,15 +575,16 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
 
 
 
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5">
                             <div>
                                 <div className='bg-blue-300 text-center'>
                                     <h1 className='font-semibold text-slate-800'>Signos Vitales</h1>
                                 </div>
                                 <div className='grid grid-cols-1 md:grid-cols-2 gap-2 '>
-                                    <InputTextTriaje label="Temperatura" type="number" readOnly={!editable} disabled={!editable} parametro={ParametroTemperatura} unidadMedida={"C°"} requerido={true} {...register('triajeTemperatura')} />
-
+                                    <InputTextTriaje label="Temperatura" type="number" readOnly={!editable} disabled={!editable} parametro={ParametroTemperatura} unidadMedida={"C°"} requerido={true}  
+                                    {...register("triajeTemperatura", { required: "La temperatura es obligatoria" })} error={errors?.triajeTemperatura?.message}/>
+                               
                                     <div className="flex items-center justify-center  ">
                                         <div className="flex flex-col">
                                             <label>
@@ -634,6 +688,7 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
                             <button
                                 type="submit"
                                 disabled={ActivateButton}
+                                onSubmit={handleSubmit(onSubmit)}
                                 className="mt-4 px-4 py-2 bg-green-500 text-white rounded-r-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                             >
                                 Guardar
@@ -641,6 +696,14 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
                         )}
 
 
+
+<button
+  type="button"
+  onClick={handleSubmit(actualizarTriaje)}
+  className="mt-4 ml-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+>
+  Actualizar
+</button>
                     </form>
 
 

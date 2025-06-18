@@ -206,7 +206,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         idCuentaAtencion: cuentaDatos?.idcuentaatencion,
         FuaDisa: sisfua[0]?.fuaDisa,
         FuaLote: sisfua[0]?.fuaLote,
-        FuaNumero: validadSis?.FuaNumero ? cuentaDatos?.FuaNumero : (ultimoNum?.FuaNumero + 1),
+        FuaNumero: validadSis?.FuaNumero ? cuentaDatos?.FuaNumero :'ñ.-------',
         EstablecimientoCodigoRenaes: '00754',
         Reconsideracion: 'N',
         ReconsideracionCodigoDisa: null,
@@ -249,7 +249,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         idSiasis: cuentaDatos?.idSiasis,
         FuaObservaciones: cuentaDatos?.CitaObservaciones,
         CabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
-        UltimaFechaAddMod: cuentaDatos?.formattedDate2,
+        UltimaFechaAddMod: formattedDate2,
         CabEstado: '0',
         FuaFechaParto: '',
         EstablecimientoDistrito: '100101',
@@ -339,6 +339,9 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
+    <pre>
+      {JSON.stringify(cuentaDatos,null,2)}
+    </pre>
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>

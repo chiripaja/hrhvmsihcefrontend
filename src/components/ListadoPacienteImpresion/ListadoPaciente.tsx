@@ -3,6 +3,9 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { ModalGenerico } from '../ui/ModalGenerico';
+import { ModalGeneric } from '../ui/ModalGeneric/ModalGeneric';
+import { TriajeDif } from '../TriajeDiferenciado/TriajeDif';
 
 
 
@@ -17,15 +20,23 @@ type InputBusquedad = {
 const Select = dynamic(() => import('react-select'), { ssr: false });
 
 export const ListadoPacienteImpresion = () => {
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataTotal, setDataTotal] = useState<any[]>([]);
   const [departamentos, setDepartamentos] = useState<any[]>([]);
   const [especialidad, setEspecialidad] = useState<any[]>([]);
   const [servicios, setServicios] = useState<any[]>([])
   const [loading, setLoading] = useState(false);
   const [dataListadoPX, setDataListadoPX] = useState<any[]>([]);
+  const [cuentaTriar, setCuentaTriar] = useState<any[]>([]);
   const { control, register, handleSubmit, watch, setValue, formState: { errors } } = useForm<InputBusquedad>();
+  const openModal = ({ idcuenta }: any) => {
+    setCuentaTriar(idcuenta)
+    setIsModalOpen(true);
+  };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   useEffect(() => {
     ListarDepartamentos();
   }, []);
@@ -36,11 +47,11 @@ export const ListadoPacienteImpresion = () => {
       const { data } = await axios.get(`${process.env.apiurl}/Departamentos`);
       setDataTotal(data);
       optionDepartamentos =
-      optionDepartamentos.concat(
-      data.map((est: any) => ({
-        value: est.idDepartamento,
-        label: est.nombre,
-      })));
+        optionDepartamentos.concat(
+          data.map((est: any) => ({
+            value: est.idDepartamento,
+            label: est.nombre,
+          })));
       setDepartamentos(optionDepartamentos);
     } catch (error) {
       console.error('Error fetching specialties', error);
@@ -55,12 +66,12 @@ export const ListadoPacienteImpresion = () => {
       let optionsEspecialidad: any[] = [{ value: '0', label: 'TODOS' }];
       const dataEspecialidad = dataTotal.filter(data => data.idDepartamento == selected.value);
       if (dataEspecialidad[0].especialidades.length > 0) {
-        optionsEspecialidad = 
-        optionsEspecialidad.concat(
-        dataEspecialidad[0].especialidades.map((est: any) => ({
-          value: est.idEspecialidad,
-          label: est.nombre,
-        })));
+        optionsEspecialidad =
+          optionsEspecialidad.concat(
+            dataEspecialidad[0].especialidades.map((est: any) => ({
+              value: est.idEspecialidad,
+              label: est.nombre,
+            })));
       } else {
         optionsEspecialidad = [{ value: '0', label: 'TODOS' }]
       }
@@ -77,13 +88,13 @@ export const ListadoPacienteImpresion = () => {
       let opcionesConsultorio: any[] = [{ value: '0', label: 'TODOS' }];
       const { data } = await axios.get(`${process.env.apiurl}/Servicios/${selectedOption.value}`);
       if (data.length > 0) {
-        opcionesConsultorio = 
-        opcionesConsultorio.concat(
-        data.map((est: any) => ({
-          value: est.idServicio,
-          label: est.servicio,
-        }))
-      );
+        opcionesConsultorio =
+          opcionesConsultorio.concat(
+            data.map((est: any) => ({
+              value: est.idServicio,
+              label: est.servicio,
+            }))
+          );
       } else {
         opcionesConsultorio = [{ value: '0', label: 'Todos' }]
       }
@@ -103,8 +114,9 @@ export const ListadoPacienteImpresion = () => {
     let idServicio = formData?.idServicio?.value | 0;
     const { data } = await axios.get(`${process.env.apiurl}/CitadosBloque/${formData?.desde}/${formData?.hasta}/${idDepa}/${idEspe}/${idServicio}`)
     console.log(data)
+    const datafiltrada = data.filter((data: any) => data.idCuentaAtencion != 0)
     setLoading(false)
-    setDataListadoPX(data)
+    setDataListadoPX(datafiltrada)
   };
 
   const [departamentoLabel, especialidadLabel, servicioLabel, desde, hasta] = watch(['idDepa', 'idEspe', 'idServicio', 'desde', 'hasta']);
@@ -215,6 +227,7 @@ export const ListadoPacienteImpresion = () => {
               <input
                 {...register('desde', { required: true })}
                 type="date"
+                defaultValue={new Date().toISOString().split('T')[0]}
                 className=" py-2 px-4 border h-10 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.desde &&
@@ -227,6 +240,7 @@ export const ListadoPacienteImpresion = () => {
               <input
                 {...register('hasta', { required: true })}
                 type="date"
+                defaultValue={new Date().toISOString().split('T')[0]}
                 className=" py-2 px-4 border h-10 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.hasta &&
@@ -281,28 +295,47 @@ export const ListadoPacienteImpresion = () => {
                     <thead>
                       <tr>
                         <th colSpan={6} className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase dark:text-neutral-500">
-
                         </th>
                       </tr>
                       <tr>
+                        <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase dark:text-neutral-500">SERVICIOS</th>
                         <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase dark:text-neutral-500">CTA.</th>
                         <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase dark:text-neutral-500">DNI/HC</th>
                         <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase dark:text-neutral-500">APELLIDOS Y NOMBRES</th>
                         <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase dark:text-neutral-500">IAFA</th>
                         <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase dark:text-neutral-500">HORA</th>
                         <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase dark:text-neutral-500">TELÉFONO</th>
+                        <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase dark:text-neutral-500">TRIAR</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
                       {dataListadoPX.length > 0 ? (
                         dataListadoPX.map((data: any, index: number) => (
                           <tr key={index}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{data.nombre}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{data.idCuentaAtencion}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{data.nroDocumento}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{data.paciente}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{data.iafa}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{data.horaInicio}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{data.telefono}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                              {data?.triajePeso != null && data?.triajePeso !== '' ? (
+                                <button
+                                  onClick={() => openModal({ idcuenta: data.idCuentaAtencion })}
+                                  className="w-24 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300"
+                                >
+                                  Modificar
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => openModal({ idcuenta: data.idCuentaAtencion })}
+                                  className="w-24 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300"
+                                >
+                                  Triar
+                                </button>
+                              )}
+                            </td>
                           </tr>
                         ))
                       ) : (
@@ -318,7 +351,20 @@ export const ListadoPacienteImpresion = () => {
         </div>
 
       </div>
-
+      <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
+        <label className="text-lg font-semibold text-gray-900">Triaje</label>
+        <div className="text-sm text-gray-600">
+          <TriajeDif idcuentaatencion={cuentaTriar} />
+        </div>
+        <div className="mt-6 flex justify-end">
+          <button
+            className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            onClick={closeModal}
+          >
+            Cerrar
+          </button>
+        </div>
+      </ModalGeneric>
     </div>
   );
 };
