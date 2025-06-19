@@ -76,7 +76,7 @@ export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
 
     const [info, setInfo] = useState<any>()
     const [editable, setEditable] = useState<boolean>(false)
-
+const [validadorActualizar, setvalidadorActualizar] = useState<any>();
 
 
     //submit busqueda
@@ -156,13 +156,14 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
             if(data?.triajeSolicita?.tipoServicio!=="Consultorios Externos"){           
                 setShowPrioridades(false)
             }
+            setvalidadorActualizar(fechaIngreso === fechaHoy)
             if (data?.triajeSolicita?.exito === 0 && fechaIngreso === fechaHoy) {
               setEditable(true)
-            console.log("entro al segundo iff")
+            console.log("entro al primer iff")
             }
             else if (data?.triajeSolicita?.exito === 0) {
-                
-                setEditable(true)
+                console.log("entro al segundo iff")
+                setEditable(false)
                 Swal.fire({
                     icon: "error",
                     title: `<h5 classname='text-base'>${data?.triajeSolicita?.mensaje} </h5>`,
@@ -255,7 +256,7 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
 
 
         setVerdataJson(dataenviar)
-/* 
+
         try {
            const { data } = await axios.post(`${process.env.apiurl}/Triaje/Guardar`, dataenviar)
 
@@ -309,7 +310,14 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
             triajePerimCefalico: values?.triajePerimCefalico ? values?.triajePerimCefalico : null,
         }
         const response=   await axios.put(`${process.env.apijimmynew}/triaje/actualizar`, obj);
-        console.log(response)
+       
+          Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: response?.data,
+                    showConfirmButton: false,
+                    timer: 1500
+                });/**/
     }
 
 
@@ -600,7 +608,7 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                                                     type="number"
                                                     className="w-1/3 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     placeholder="Sistolica"
-                                                    {...register('presionSist')}
+                                                    {...register('presionSist', { required: "La sistolica es obligatoria" })} 
                                                 />
                                                 <div>
                                                     /
@@ -611,7 +619,7 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                                                     type="number"
                                                     className="w-1/3 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     placeholder="Diastolica"
-                                                    {...register('presionDiast')}
+                                                    {...register('presionDiast', { required: "La diastolica es obligatoria" })}
                                                 />
                                                 <div className="ml-1 w-1/3 h-11 bg-slate-200 text-center flex items-center justify-center rounded ">
                                                     <span>x mmHG</span>
@@ -622,10 +630,15 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                                             </span>
                                         </div>
                                     </div>
-                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Saturación (SAT)" requerido={true} unidadMedida={"%"} {...register('triajeSaturacion')} />
-                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Frec. Cardiaca (FC)" requerido={true} unidadMedida={"x min"} parametro={ParametroFrecuenciaCardiaca} {...register('triajeFrecCardiaca')} />
-                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Frec. Respiratoria" requerido={true} unidadMedida={"x min"} parametro={ParametroFrecuenciaRespiratoria} {...register('triajeFrecRespiratoria')} />
-                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Pulso" requerido={true} unidadMedida='bpm' {...register('triajePulso')} parametro={ParametroPulso} />
+                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Saturación (SAT)" requerido={true} unidadMedida={"%"} 
+                                    {...register('triajeSaturacion', { required: "La saturacion es obligatoria" })} error={errors?.triajeSaturacion?.message}/>
+                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Frec. Cardiaca (FC)" requerido={true} unidadMedida={"x min"} parametro={ParametroFrecuenciaCardiaca} 
+                                    {...register('triajeFrecCardiaca', { required: "La frec. cardiaca es obligatoria" })} error={errors?.triajeFrecCardiaca?.message}/>
+                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Frec. Respiratoria" requerido={true} unidadMedida={"x min"} parametro={ParametroFrecuenciaRespiratoria} 
+                                    {...register('triajeFrecRespiratoria', { required: "La frec. respiratoria es obligatoria" })} error={errors?.triajeFrecRespiratoria?.message}/>
+                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Pulso" requerido={true} unidadMedida='bpm' 
+                                    {...register('triajePulso', { required: "El pulso es obligatorio" })} parametro={ParametroPulso}  error={errors?.triajePulso?.message}
+                                     />
                                 </div>
 
 
@@ -695,15 +708,16 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                             </button>
                         )}
 
-
-
+   {(info?.triajeSolicita?.exito === 0 && validadorActualizar) && (
 <button
   type="button"
   onClick={handleSubmit(actualizarTriaje)}
   className="mt-4 ml-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 >
   Actualizar
-</button>
+</button>  )}
+
+
                     </form>
 
 
