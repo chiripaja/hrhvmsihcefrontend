@@ -42,7 +42,7 @@ type Input = {
 type InputBusquedad = {
     numcuenta: string
 }
-export const TriajeDif = ({usuario,idusuario,idcuentaatencion}:any) => {
+export const TriajeDif = ({usuario,idusuario,idcuentaatencion,volverABuscar,closeModal}:any) => {
 
     const {
         register: register2,
@@ -129,6 +129,7 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                 setEditable(true)
             }
             setInfo(data)
+            
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -204,7 +205,8 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
 
     //submit formulario triaje
     const onSubmit: SubmitHandler<Input> = async (formData) => {
-        setActivateButton(true)
+     
+       setActivateButton(true)
         setTimeout(() => {
             setActivateButton(false)
         }, 2000);
@@ -254,9 +256,8 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
         }
 
 
-
-        setVerdataJson(dataenviar)
-
+       setVerdataJson(dataenviar)
+       
         try {
            const { data } = await axios.post(`${process.env.apiurl}/Triaje/Guardar`, dataenviar)
 
@@ -278,7 +279,10 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                     showConfirmButton: false,
                     timer: 1500
                 });
+                  volverABuscar()
+           closeModal()
             }
+          
             setActivateButton(false)
         } catch (error) {
             Swal.fire({
@@ -292,9 +296,9 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
 
 
     const actualizarTriaje=async()=>{
+        
     
         const values = getValues();
-      
         const presionArterial=values?.presionSist+"/"+values?.presionDiast
         const obj={
             idAtencion:datosTriajePaciente?.triaje?.idAtencion,
@@ -318,6 +322,8 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                     showConfirmButton: false,
                     timer: 1500
                 });/**/
+                volverABuscar()
+                closeModal()
     }
 
 
@@ -557,6 +563,7 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
 
     return (
         <>
+        
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div  className={`${showPrioridades ? 'col-span-3':'col-span-2'}`}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -590,7 +597,7 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                                     <h1 className='font-semibold text-slate-800'>Signos Vitales</h1>
                                 </div>
                                 <div className='grid grid-cols-1 md:grid-cols-2 gap-2 '>
-                                    <InputTextTriaje label="Temperatura" type="number" readOnly={!editable} disabled={!editable} parametro={ParametroTemperatura} unidadMedida={"C°"} requerido={true}  
+                                    <InputTextTriaje label="Temperatura" type="decimal" readOnly={!editable} disabled={!editable} parametro={ParametroTemperatura} unidadMedida={"C°"} requerido={true}  
                                     {...register("triajeTemperatura", { required: "La temperatura es obligatoria" })} error={errors?.triajeTemperatura?.message}/>
                                
                                     <div className="flex items-center justify-center  ">
@@ -599,9 +606,7 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                                                 Presion Arterial
                                                 <span className="text-red-500">  (*)</span>
                                             </label>
-
                                             <div className="flex items-center ">
-
                                                 <input
                                                     readOnly={!editable}
                                                     disabled={!editable}
@@ -649,10 +654,13 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                                     <h1 className='font-semibold text-slate-800'>Datos Antopometricos</h1>
                                 </div>
                                 <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-                                    <InputTextTriaje readOnly={!editable} disabled={!editable} label="Peso" requerido={false} unidadMedida={"Kg"} parametro={ParametroPeso}  {...register('triajePeso')} />
-                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Perimetro Abdominal" requerido={false} unidadMedida={"cm"}  {...register('triajePerimetro')} />
-                                    <InputTextTriaje readOnly={!editable} disabled={!editable} label="Talla" requerido={false} parametro={ParametroTalla} unidadMedida={"cm"}  {...register('triajeTalla')} />
-                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Perimetro Cefalico" requerido={false} parametro={ParametroCefalico} unidadMedida={"cm"}  {...register('triajePerimCefalico')} />
+                                    <InputTextTriaje readOnly={!editable} disabled={!editable} label="Peso" requerido={false} unidadMedida={"Kg"} parametro={ParametroPeso}  
+                                    {...register('triajePeso', { required: "El peso es obligatorio" })} error={errors?.triajePeso?.message}/>
+                                    <InputTextTriaje type="text" readOnly={!editable} disabled={!editable} label="Perimetro Abdominal" requerido={false} unidadMedida={"cm"}  {...register('triajePerimetro')} />
+                                    <InputTextTriaje readOnly={!editable} disabled={!editable} label="Talla" requerido={false} parametro={ParametroTalla} unidadMedida={"cm"} 
+                                     {...register('triajeTalla', { required: "La talla es obligatorio" })}  error={errors?.triajeTalla?.message}
+                                     />
+                                    <InputTextTriaje type="text" readOnly={!editable} disabled={!editable} label="Perimetro Cefalico" requerido={false} parametro={ParametroCefalico} unidadMedida={"cm"}  {...register('triajePerimCefalico')} />
                                 </div>
                             </div>
 
@@ -701,7 +709,7 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                             <button
                                 type="submit"
                                 disabled={ActivateButton}
-                                onSubmit={handleSubmit(onSubmit)}
+                                onClick={handleSubmit(onSubmit)}
                                 className="mt-4 px-4 py-2 bg-green-500 text-white rounded-r-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                             >
                                 Guardar

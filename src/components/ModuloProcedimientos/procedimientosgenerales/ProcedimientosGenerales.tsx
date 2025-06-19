@@ -27,7 +27,7 @@ export const ProcedimientosGenerales = () => {
     const onSubmit = async (data: any) => {
         setLoading(true);
         try {
-            const response = await axios.get(`http://192.168.31.11:9797/api/solicitud-procedimientos/by-date`, {
+            const response = await axios.get(`${process.env.apijimmynew}/api/solicitud-procedimientos/by-date`, {
                 params: {
                     startDate: data.startDate,
                     endDate: data.endDate
