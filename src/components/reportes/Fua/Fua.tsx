@@ -549,7 +549,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                             <td colSpan={6} className='bg-customGray text-center border border-black'>REFERIDO</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>CONTRA <br /> REFERIDO</td>
                                             <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='6' && 'X'}</td>
-                                            <td rowSpan={2} className='bg-customGray text-center border border-black'>FALLECIDO</td>
+                                            <td rowSpan={2} className='bg-customGray text-center border border-black'>FALLECIDO</td> 
                                             <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='7' && 'X'}</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>CORTE <br /> ADMINIS</td>
                                             <td rowSpan={2} className=' text-center border border-black  w-4'></td>

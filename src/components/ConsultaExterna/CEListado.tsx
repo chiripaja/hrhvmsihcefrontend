@@ -66,10 +66,10 @@ export const CEListado = ({ session }: any) => {
 
   const getDataCE = async () => {
     setIsLoading(true)
-    // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
+     const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
 
     // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4902/2024-07-16`)
-    const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4147/2024-10-03`)
+   // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4147/2024-10-03`)
 
     console.log(data)
     const groupedData = groupByIdProgramacion(data);
@@ -198,7 +198,7 @@ export const CEListado = ({ session }: any) => {
                   </button>
 
                   :
-                  <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent colorFondo text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
+                  <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
 
                     <FaRegEdit />
 
@@ -218,7 +218,7 @@ export const CEListado = ({ session }: any) => {
 
 
 
-          <button type="button" onClick={() => handleEditClick(params.row)} className="btnyellow">
+          <button type="button" onClick={() => handleEditClick(params.row)} className="btnyellow hidden">
             <PiPrinter />
             Historia
           </button>

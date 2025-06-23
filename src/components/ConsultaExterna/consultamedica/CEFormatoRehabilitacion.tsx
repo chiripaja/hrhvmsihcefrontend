@@ -167,7 +167,7 @@ export const CEFormatoRehabilitacion = () => {
 
       </ModalProps>
       <button
-        className="letraFondo hover:letraFondo flex items-center "
+        className="letraFondo hover:letraFondo flex items-center hidden"
         onClick={openModal}
       >
         <FaFileMedical />

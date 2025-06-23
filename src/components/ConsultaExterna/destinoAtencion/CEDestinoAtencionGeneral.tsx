@@ -51,7 +51,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         idCondicionMaterna: data?.condicionMaterna == "" ? null : data?.condicionMaterna,
         citaObservaciones: data?.observaciones
       }
-      console.log(objetoEnvio)
+    
 
       Swal.fire({
         icon: "question",
@@ -70,6 +70,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
               timerProgressBar: true,
               timer: 2000,
             });
+            console.log("antes de generar a la fua")
+            generarFua();
           //  router.push("/sihce/consultaexterna")
         } else if (result.isDenied) {
           Swal.fire("Cambios no fueron guardados", "", "info");
@@ -80,6 +82,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
     } catch (error) {
       console.log(error)
+    } finally{
+ 
     }
   }
 
@@ -160,16 +164,17 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   }
 
   const handleButtonClick = () => {
-    // handleSubmit2(FormDestino)();
-    generarFua();
+    handleSubmit2(FormDestino)();
+   
   };
   const generarFua = async () => {
-    console.log("Entro al afuncion generar fua")
+    console.log("genera la fua")
     const validadSis = await getData(`${process.env.apijimmynew}/fua/validadExisteFuaByIdCuenta/${cuentaDatos?.idcuentaatencion}`)
 
     let dataFuaCabecera;
     if(cuentaDatos?.idSiasis){
  const ultimoNum = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionConsultarUltimoNumero/${sisfua[0]?.fuaNumeroInicial}/${sisfua[0]?.fuaNumeroFinal}`)
+ const nuevoFuaNumero = parseInt(ultimoNum?.FuaNumero || '0', 10) + 1;
       let dataCondicionMaterna;
       if (cuentaDatos.idCondicionMaterna == null || cuentaDatos.idCondicionMaterna == '3') {
         dataCondicionMaterna = 0;
@@ -177,123 +182,130 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         dataCondicionMaterna = cuentaDatos.idCondicionMaterna
       }
       let dataDestinoAtencion;
-      switch (cuentaDatos.idDestinoAtencion) {
+      const destino = Number(destinoAtencionW);
+      console.log(destino)
+      switch (destino) {
         case 10:
           dataDestinoAtencion = 1;
           break;
         case 60:
           dataDestinoAtencion = 2;
           break;
-        case 54:
+        case 83:
           dataDestinoAtencion = 3;
           break;
         case 84:
           dataDestinoAtencion = 4;
           break;
-        case null:
+        case 89:
           dataDestinoAtencion = 5;
+          break;
         case 13:
           dataDestinoAtencion = 6;
+          break;
         case 25:
           dataDestinoAtencion = 7;
+          break;
         case 11:
           dataDestinoAtencion = 8;
+          break;
         default:
           dataDestinoAtencion = 0;
           break;
       }
+      console.log(dataDestinoAtencion)
       dataFuaCabecera = {
         idCuentaAtencion: cuentaDatos?.idcuentaatencion,
-        FuaDisa: sisfua[0]?.fuaDisa,
-        FuaLote: sisfua[0]?.fuaLote,
-        FuaNumero: validadSis?.FuaNumero ? cuentaDatos?.FuaNumero :'ñ.-------',
-        EstablecimientoCodigoRenaes: '00754',
-        Reconsideracion: 'N',
-        ReconsideracionCodigoDisa: null,
-        ReconsideracionLote: null,
-        ReconsideracionNroFormato: null,
-        FuaComponente: '4',
-        Situacion: '2',
-        AfiliacionDisa: cuentaDatos?.AfiliacionDisa,
-        AfiliacionTipoFormato: cuentaDatos?.AfiliacionTipoFormato,
-        AfiliacionNroFormato: cuentaDatos?.AfiliacionNroFormato,
-        CodigoTipoFormato: null,
-        OrigenAseguradoInstitucion: '0',
-        OrigenAseguradoCodigo: null,
-        Edad: null,
-        GrupoEtareo: '0',
-        Genero: cuentaDatos?.IdTipoSexo == '2' ? '0' : '1',
-        FuaAtencion: '2', //2 es referencia 3 es emergencia,
-        FuaCondicionMaterna: dataCondicionMaterna,
-        FuaNrohistoria: cuentaDatos?.NroHistoriaClinica,
-        FuaConceptoPr: '1',
-        FuaConceptoPrAutoriz: null,
-        FuaConceptoPrMonto: '0.00',
-        FuaAtencionFecha: formattedDate2,
-        FuaAtencionHora: hora,//CodigoEstablAdscripcion
-        FuaReferidoOrigenCodigoRenaes: cuentaDatos?.CodigoEstablAdscripcion,
-        FuaReferidoOrigenNreferencia: cuentaDatos?.NroReferenciaOrigen,
-        FuaCodigoPrestacion: cuentaDatos?.FuaCodigoPrestacion,
-        FuaPersonalQatiende: '1',
-        FuaAtencionLugar: '1',
-        FuaDestino: dataDestinoAtencion,
-        FuaHospitalizadoFingreso: null,
-        FuaHospitalizadoFalta: '__/__/____',
-        FuaReferidoDestinoCodigoRenaes: null,
-        FuaReferidoDestinoNreferencia: null,
-        FuaMedicoDNI: cuentaDatos?.MedicoDni?.trim(),
-        FuaMedico: cuentaDatos?.MedicoPaterno + ' ' + cuentaDatos?.MedicoMaterno + ' ' + cuentaDatos?.MedicoNombres,
-        FuaMedicoTipo: cuentaDatos?.idColegioHIS,
-        AfiliacionNroIntegrante: null,
-        Codigo: cuentaDatos?.Afiliacioncodigosiasis,
+        fuaDisa: sisfua[0]?.fuaDisa,
+        fuaLote: sisfua[0]?.fuaLote,
+        fuaNumero: cuentaDatos?.FuaNumero ? cuentaDatos?.FuaNumero :nuevoFuaNumero,
+        establecimientoCodigoRenaes: '00754',
+        reconsideracion: 'N',
+        reconsideracionCodigoDisa: null,
+        reconsideracionLote: null,
+        reconsideracionNroFormato: null,
+        fuaComponente: '4',
+        situacion: '2',
+        afiliacionDisa: cuentaDatos?.AfiliacionDisa,
+        afiliacionTipoFormato: cuentaDatos?.AfiliacionTipoFormato,
+        afiliacionNroFormato: cuentaDatos?.AfiliacionNroFormato,
+        codigoTipoFormato: null,
+        origenAseguradoInstitucion: '0',
+        origenAseguradoCodigo: null,
+        edad: null,
+        grupoEtareo: '0',
+        genero: cuentaDatos?.IdTipoSexo == '2' ? '0' : '1',
+        fuaAtencion: '2', //2 es referencia 3 es emergencia,
+        fuaCondicionMaterna: dataCondicionMaterna,
+        fuaNrohistoria: cuentaDatos?.NroHistoriaClinica,
+        fuaConceptoPr: '1',
+        fuaConceptoPrAutoriz: null,
+        fuaConceptoPrMonto: '0.00',
+        fuaAtencionFecha: formattedDate2,
+        fuaAtencionHora: hora,//CodigoEstablAdscripcion
+        fuaReferidoOrigenCodigoRenaes: cuentaDatos?.CodigoEstablAdscripcion,
+        fuaReferidoOrigenNreferencia: cuentaDatos?.NroReferenciaOrigen,
+        fuaCodigoPrestacion: cuentaDatos?.FuaCodigoPrestacion,
+        fuaPersonalQatiende: '1',
+        fuaAtencionLugar: '1',
+        fuaDestino: dataDestinoAtencion,
+        fuaHospitalizadoFingreso: null,
+        fuaHospitalizadoFalta: '__/__/____',
+        fuaReferidoDestinoCodigoRenaes: null,
+        fuaReferidoDestinoNreferencia: null,
+        fuaMedicoDNI: cuentaDatos?.MedicoDni?.trim(),
+        fuaMedico: cuentaDatos?.MedicoPaterno + ' ' + cuentaDatos?.MedicoMaterno + ' ' + cuentaDatos?.MedicoNombres,
+        fuaMedicoTipo: String(parseInt(cuentaDatos?.idColegioHIS ?? '0')),
+        afiliacionNroIntegrante: null,
+        codigo: cuentaDatos?.Afiliacioncodigosiasis,
         idSiasis: cuentaDatos?.idSiasis,
-        FuaObservaciones: cuentaDatos?.CitaObservaciones,
-        CabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
-        UltimaFechaAddMod: formattedDate2,
-        CabEstado: '0',
-        FuaFechaParto: '',
-        EstablecimientoDistrito: '100101',
-        Anio: formattedDate2.split('/')[2],
-        Mes: formattedDate2.split('/')[1],
-        CostoTotal: '0.00',
-        Apaterno: cuentaDatos?.ApellidoPaterno,
-        Amaterno: cuentaDatos?.ApellidoMaterno,
-        Pnombre: cuentaDatos?.PrimerNombre,
-        Onombre: cuentaDatos?.Onombre,
+        fuaObservaciones: cuentaDatos?.CitaObservaciones,
+        cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+        ultimaFechaAddMod: formattedDate2,
+        cabEstado: '0',
+        fuaFechaParto: null,
+        establecimientoDistrito: '100101',
+        anio: formattedDate2.split('/')[2],
+        mes: formattedDate2.split('/')[1],
+        costoTotal: '0.00',
+        apaterno: cuentaDatos?.ApellidoPaterno,
+        amaterno: cuentaDatos?.ApellidoMaterno,
+        pnombre: cuentaDatos?.PrimerNombre,
+        onombre: cuentaDatos?.Onombre,
         fnacimiento: cuentaDatos?.FechaNacimiento_formateada,
-        Autogenerado: null,
-        DocumentoTipo: cuentaDatos?.IdDocIdentidad,
-        DocumentoNumero: cuentaDatos?.nroDocumento,
-        EstablecimientoCategoria: '05',
-        CostoServicio: '0.00',
-        CostoMedicamento: '0.00',
-        CostoProcedimiento: '0.00',
-        CostoInsumo: '0.00',
-        MedicoDocumentoTipo: cuentaDatos?.MedicoDocumentoTipo,
+        autogenerado: null,
+        documentoTipo: cuentaDatos?.IdDocIdentidad,
+        documentoNumero: cuentaDatos?.nroDocumento,
+        establecimientoCategoria: '05',
+        costoServicio: '0.00',
+        costoMedicamento: '0.00',
+        costoProcedimiento: '0.00',
+        costoInsumo: '0.00',
+        medicoDocumentoTipo: cuentaDatos?.MedicoDocumentoTipo,
         ate_grupoRiesgo: null,
-        CabCodigoPuntoDigitacion: '1071',
-        CabCodigoUDR: '17',
-        CabNroEnvioAlSIS: null,
-        CabOrigenDelRegistro: '1000',
-        CabVersionAplicativo: 'v.3',
-        CabIdentificacionPaquete: '0',
-        IdentificacionArfsis: null,
-        CabFechaFuaPrimeraVez: formattedDate2,
-        PeriodoOrigen: null,
-        FuacolegioCodigo: null,
-        FuacolegioNivel: null,
-        FuacolegioGrado: null,
-        FuacolegioSeccion: null,
-        FuacolegioTurno: null,
-        Fuaetnia: '58',
-        FuafechaFallecimiento: null,
-        FuaUPS: cuentaDatos?.codigoServicioFUA,
-        FuaCodAutorizacion: null,
-        FuaFechaCorteAdm: null,
-        FuaVersionFormato: 'B',
-        FuaTipoAnexo2015: '1',
-        FuaCodOferFlexible: null,
-        IdUsuarioAuditoria: session?.user?.id
+        cabCodigoPuntoDigitacion: '1071',
+        cabCodigoUDR: '17',
+        cabNroEnvioAlSIS: null,
+        cabOrigenDelRegistro: '1000',
+        cabVersionAplicativo: 'v.3',
+        cabIdentificacionPaquete: '0',
+        identificacionArfsis: null,
+        cabFechaFuaPrimeraVez: formattedDate2,
+        periodoOrigen: null,
+        fuacolegioCodigo: null,
+        fuacolegioNivel: null,
+        fuacolegioGrado: null,
+        fuacolegioSeccion: null,
+        fuacolegioTurno: null,
+        fuaetnia: '58',
+        fuafechaFallecimiento: null,
+        fuaUPS: cuentaDatos?.codigoServicioFUA,
+        fuaCodAutorizacion: null,
+        fuaFechaCorteAdm: null,
+        fuaVersionFormato: 'B',
+        fuaTipoAnexo2015: '1',
+        fuaCodOferFlexible: null,
+        idUsuarioAuditoria: session?.user?.id
       }
     }
 
@@ -302,11 +314,15 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
     if (validadSis?.FuaNumero) {
       
       console.log("actualizar fua")
-      console.log(dataFuaCabecera)
+      const data=await axios.put(`${process.env.apijimmynew}/fua/modificarfua`, dataFuaCabecera);
+       console.log(dataFuaCabecera)
     } else {
      console.log("crear fua")
      console.log(dataFuaCabecera)
      
+       const data=await axios.post(`${process.env.apijimmynew}/fua/agregarfua`, dataFuaCabecera);
+       console.log(data)
+    
     }
   }
   const destinoAtencionW = watch2('destinoAtencion');
@@ -339,9 +355,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-    <pre>
-      {JSON.stringify(cuentaDatos,null,2)}
-    </pre>
+  
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
