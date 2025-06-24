@@ -34,6 +34,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
         setIsOffcanvasOpenFarmacia(!isOffcanvasOpenFarmacia);
     };
     const FormFarmacia: SubmitHandler<any> = async (data: any) => {
+        console.log(data)
         const datosMedicamentos: MedicamentosCE = {
             idrecetacabecera: "",
             idproducto: data?.idproductoFarmacia?.value,
@@ -47,7 +48,8 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
             iddiagnostico: data?.diagnostico,
             nombre: data?.idproductoFarmacia?.label,
             usuarioauditoria: 0,
-            idEstadoDetalle: 1
+            idEstadoDetalle: 1,
+            Codigo:data?.idproductoFarmacia?.Codigo
         }
         const existeMedicamento = cuentaDatos?.medicamentos?.some(
             (medicamento: MedicamentosCE) => medicamento.idproducto === datosMedicamentos.idproducto
@@ -97,6 +99,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
                     label: `${est.Nombre.trim()}`,
                     cantidad: est.cantidad,
                     PrecioUnitario: est.PrecioUnitario,
+                    Codigo:est.Codigo
                 }));
                 setOptions(mappedOptions);
             } catch (error) {
@@ -110,6 +113,9 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
     );
     return (
         <>
+        <pre>
+        {JSON.stringify(cuentaDatos?.medicamentos,null,2)}
+      </pre>
             <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>

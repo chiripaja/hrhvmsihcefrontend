@@ -150,6 +150,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
     try {
       //await limpiarMedicamento(); 
       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdReceta/${idrecetacabecera}/${idFormaPago}/4`)
+      console.log(data)
       data.forEach((info: MedicamentosCE) => {
         createMedicamento(info); 
       });

@@ -831,8 +831,10 @@ export const Fua = ({ idcuentaatencion }: any) => {
       <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'P' ? "X" : ''}</td>
       <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'D' ? "X" : ''}</td>
       <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'R' ? "X" : ''}</td>
-      <td className='border border-black font-semibold text-center'>{item?.codigo ?? ''}</td>
-      <td className='border border-black font-semibold text-center'></td>
+      <td className='border border-black font-semibold text-center'> {item?.DxCodigo}</td>
+      <td className='border border-black font-semibold text-center'>
+      
+      </td>
       <td className='border border-black font-semibold text-center'></td>
       <td className='border border-black font-semibold text-center'></td>
     </tr>

@@ -11,5 +11,6 @@ export interface MedicamentosCE{
     iddiagnostico:number,
     nombre:string,
     usuarioauditoria: any,
-    idEstadoDetalle:any
+    idEstadoDetalle:any,
+    Codigo:any
 }

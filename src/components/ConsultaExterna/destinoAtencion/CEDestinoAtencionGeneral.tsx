@@ -38,6 +38,9 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const { formattedDate, hora, fechayhora, formattedDate2 } = obtenerFechaYHora();
   const [referenciaView, setreferenciaView] = useState(false);
   const [sisfua, setsisfua] = useState<any>();
+
+  const [sisFuaCabecera, setsisFuaCabecera] = useState<any>();
+  const [sisFuaDx, setsisFuaDx] = useState<any[]>([]);
   const FormDestino = async (data: any) => {
 
     try {
@@ -51,7 +54,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         idCondicionMaterna: data?.condicionMaterna == "" ? null : data?.condicionMaterna,
         citaObservaciones: data?.observaciones
       }
-    
+
 
       Swal.fire({
         icon: "question",
@@ -70,8 +73,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
               timerProgressBar: true,
               timer: 2000,
             });
-            console.log("antes de generar a la fua")
-            generarFua();
+          console.log("antes de generar a la fua")
+          generarFua();
           //  router.push("/sihce/consultaexterna")
         } else if (result.isDenied) {
           Swal.fire("Cambios no fueron guardados", "", "info");
@@ -82,8 +85,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
     } catch (error) {
       console.log(error)
-    } finally{
- 
+    } finally {
+
     }
   }
 
@@ -165,16 +168,14 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   const handleButtonClick = () => {
     handleSubmit2(FormDestino)();
-   
   };
+  const destinoAtencionW = watch2('destinoAtencion');
   const generarFua = async () => {
-    console.log("genera la fua")
     const validadSis = await getData(`${process.env.apijimmynew}/fua/validadExisteFuaByIdCuenta/${cuentaDatos?.idcuentaatencion}`)
-
     let dataFuaCabecera;
-    if(cuentaDatos?.idSiasis){
- const ultimoNum = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionConsultarUltimoNumero/${sisfua[0]?.fuaNumeroInicial}/${sisfua[0]?.fuaNumeroFinal}`)
- const nuevoFuaNumero = parseInt(ultimoNum?.FuaNumero || '0', 10) + 1;
+    if (cuentaDatos?.idSiasis) {
+      const ultimoNum = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionConsultarUltimoNumero/${sisfua[0]?.fuaNumeroInicial}/${sisfua[0]?.fuaNumeroFinal}`)
+      const nuevoFuaNumero = parseInt(ultimoNum?.FuaNumero || '0', 10) + 1;
       let dataCondicionMaterna;
       if (cuentaDatos.idCondicionMaterna == null || cuentaDatos.idCondicionMaterna == '3') {
         dataCondicionMaterna = 0;
@@ -183,7 +184,6 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       }
       let dataDestinoAtencion;
       const destino = Number(destinoAtencionW);
-      console.log(destino)
       switch (destino) {
         case 10:
           dataDestinoAtencion = 1;
@@ -213,12 +213,11 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
           dataDestinoAtencion = 0;
           break;
       }
-      console.log(dataDestinoAtencion)
       dataFuaCabecera = {
         idCuentaAtencion: cuentaDatos?.idcuentaatencion,
         fuaDisa: sisfua[0]?.fuaDisa,
         fuaLote: sisfua[0]?.fuaLote,
-        fuaNumero: cuentaDatos?.FuaNumero ? cuentaDatos?.FuaNumero :nuevoFuaNumero,
+        fuaNumero: cuentaDatos?.FuaNumero ? cuentaDatos?.FuaNumero : nuevoFuaNumero,
         establecimientoCodigoRenaes: '00754',
         reconsideracion: 'N',
         reconsideracionCodigoDisa: null,
@@ -308,24 +307,84 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         idUsuarioAuditoria: session?.user?.id
       }
     }
-
-
-
     if (validadSis?.FuaNumero) {
-      
-      console.log("actualizar fua")
-      const data=await axios.put(`${process.env.apijimmynew}/fua/modificarfua`, dataFuaCabecera);
-       console.log(dataFuaCabecera)
+      const data = await axios.put(`${process.env.apijimmynew}/fua/modificarfua`, dataFuaCabecera);
     } else {
-     console.log("crear fua")
-     console.log(dataFuaCabecera)
-     
-       const data=await axios.post(`${process.env.apijimmynew}/fua/agregarfua`, dataFuaCabecera);
-       console.log(data)
-    
+      const data = await axios.post(`${process.env.apijimmynew}/fua/agregarfua`, dataFuaCabecera);
     }
+    const fuaverdadero = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionSeleccionarPorId/${cuentaDatos?.idcuentaatencion}`)
+
+    setsisFuaCabecera(fuaverdadero)
   }
-  const destinoAtencionW = watch2('destinoAtencion');
+
+
+  useEffect(() => {
+    if(sisFuaCabecera){
+      getSisFuaDiaAgregar()
+    }
+  }, [sisFuaCabecera])
+
+const getSisFuaDiaAgregar = async () => {
+  if (!cuentaDatos?.diagnosticos) return;
+
+  const nuevosDiagnosticos: any[] = [];
+
+  for (const [index, data] of cuentaDatos.diagnosticos.entries()) {
+    const codigoSinPunto = data?.codigoCIE10?.replace(/\./g, '');
+
+    let dxTipoDPRvar;
+    switch (Number(data?.idSubclasificacionDx)) {
+      case 103:
+        dxTipoDPRvar = 'R';
+        break;
+      case 102:
+        dxTipoDPRvar = 'D';
+        break;
+      case 101:
+        dxTipoDPRvar = 'P';
+        break;
+      default:
+        console.log('Opción no válida');
+        break;
+    }
+
+    const objDiag = {
+      idCuentaAtencion: cuentaDatos?.idcuentaatencion,
+      dxNumero: index + 1,
+      dxTipoIE: 'I',
+      dxCodigo: codigoSinPunto,
+      dxTipoDPR: dxTipoDPRvar,
+      cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+      cabFechaFuaPrimeraVez: cuentaDatos?.CabFechaFuaPrimeraVez,
+      fuaLote: sisFuaCabecera?.FuaLote,
+      fuaNumero: sisFuaCabecera?.FuaNumero,
+    };
+
+    nuevosDiagnosticos.push(objDiag);
+
+    // Si estás enviando a la API, puedes hacerlo aquí también
+    await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAAgregar`, objDiag);
+  }
+
+  // Guardar todos los objetos en el state
+  setsisFuaDx(nuevosDiagnosticos);
+};
+
+
+
+useEffect(() => {
+  if(sisFuaDx.length>0){
+    getMedicamentos();
+  }
+  
+}, [sisFuaDx])
+
+const getMedicamentos=async()=>{
+  
+}
+
+
+
   useEffect(() => {
     destinoAtencionW != 84 && setreferenciaView(false)
     destinoAtencionW == 84 && setreferenciaView(true)
@@ -355,7 +414,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-  
+      
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
