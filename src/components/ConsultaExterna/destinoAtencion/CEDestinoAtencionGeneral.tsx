@@ -41,6 +41,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   const [sisFuaCabecera, setsisFuaCabecera] = useState<any>();
   const [sisFuaDx, setsisFuaDx] = useState<any[]>([]);
+
   const FormDestino = async (data: any) => {
 
     try {
@@ -93,7 +94,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   const FormInterconsulta = async (data: any) => {
     try {
-      console.log(data)
+
       const objetoEnvio = {
         idAtencion: cuentaDatos?.idatencion,
         idEspecialidad: data?.especialidad.value,
@@ -319,69 +320,86 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
 
   useEffect(() => {
-    if(sisFuaCabecera){
+    if (sisFuaCabecera) {
       getSisFuaDiaAgregar()
     }
   }, [sisFuaCabecera])
 
-const getSisFuaDiaAgregar = async () => {
-  if (!cuentaDatos?.diagnosticos) return;
-
-  const nuevosDiagnosticos: any[] = [];
-
-  for (const [index, data] of cuentaDatos.diagnosticos.entries()) {
-    const codigoSinPunto = data?.codigoCIE10?.replace(/\./g, '');
-
-    let dxTipoDPRvar;
-    switch (Number(data?.idSubclasificacionDx)) {
-      case 103:
-        dxTipoDPRvar = 'R';
-        break;
-      case 102:
-        dxTipoDPRvar = 'D';
-        break;
-      case 101:
-        dxTipoDPRvar = 'P';
-        break;
-      default:
-        console.log('Opción no válida');
-        break;
+  const getSisFuaDiaAgregar = async () => {
+    if (!cuentaDatos?.diagnosticos) return;
+    await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+    const nuevosDiagnosticos: any[] = [];
+    for (const [index, data] of cuentaDatos.diagnosticos.entries()) {
+      const codigoSinPunto = data?.codigoCIE10?.replace(/\./g, '');
+      let dxTipoDPRvar;
+      switch (Number(data?.idSubclasificacionDx)) {
+        case 103:
+          dxTipoDPRvar = 'R';
+          break;
+        case 102:
+          dxTipoDPRvar = 'D';
+          break;
+        case 101:
+          dxTipoDPRvar = 'P';
+          break;
+        default:
+          console.log('Opción no válida');
+          break;
+      }
+      const objDiag = {
+        idCuentaAtencion: cuentaDatos?.idcuentaatencion,
+        dxNumero: index + 1,
+        dxTipoIE: 'I',
+        dxCodigo: codigoSinPunto,
+        dxTipoDPR: dxTipoDPRvar,
+        cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+        cabFechaFuaPrimeraVez: sisFuaCabecera?.CabFechaFuaPrimeraVez,
+        fuaLote: sisFuaCabecera?.FuaLote,
+        fuaNumero: sisFuaCabecera?.FuaNumero,
+        IdDiagnostico: data?.IdDiagnostico
+      };
+      nuevosDiagnosticos.push(objDiag);
+      await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAAgregar`, objDiag);
     }
+    const response=await axios.get(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAbyIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`);
+    setsisFuaDx(response.data);
+  };
 
-    const objDiag = {
-      idCuentaAtencion: cuentaDatos?.idcuentaatencion,
-      dxNumero: index + 1,
-      dxTipoIE: 'I',
-      dxCodigo: codigoSinPunto,
-      dxTipoDPR: dxTipoDPRvar,
-      cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
-      cabFechaFuaPrimeraVez: cuentaDatos?.CabFechaFuaPrimeraVez,
-      fuaLote: sisFuaCabecera?.FuaLote,
-      fuaNumero: sisFuaCabecera?.FuaNumero,
-    };
 
-    nuevosDiagnosticos.push(objDiag);
 
-    // Si estás enviando a la API, puedes hacerlo aquí también
-    await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAAgregar`, objDiag);
+  useEffect(() => {
+    if (sisFuaDx.length > 0) {
+      getMedicamentos();
+    }
+  }, [sisFuaDx])
+
+  const getMedicamentos = async () => {
+    if (cuentaDatos?.medicamentos.length > 0) {
+      await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionMEDEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+      const SisFuaAtencionMEDObj = cuentaDatos.medicamentos.filter((data: any) => data?.TipoProducto == 0)
+      for (const [index, data] of SisFuaAtencionMEDObj.entries()) {
+        const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
+        const obj = {
+          idTablaDx:dxnumeroSacado[0]?.id,
+          idCuentaAtencion: cuentaDatos?.idcuentaatencion,
+          cantidadEntregada: 0,
+          cantidadPrescrita: data?.cantidad,
+          cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+          cabFechaFuaPrimeraVez: sisFuaCabecera?.CabFechaFuaPrimeraVez,
+          fuaDisa: "754",
+          fuaLote: sisFuaCabecera?.FuaLote,
+          fuaNumero: sisFuaCabecera?.FuaNumero,
+          codigo: data?.Codigo,
+          dxNumero: dxnumeroSacado[0]?.DxNumero,
+          precioUnitario: String(data?.precio ?? '')
+        }
+       
+       const response = await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionMEDAgregar`, obj);
+        console.log(response)/**/
+      }
+
+    }
   }
-
-  // Guardar todos los objetos en el state
-  setsisFuaDx(nuevosDiagnosticos);
-};
-
-
-
-useEffect(() => {
-  if(sisFuaDx.length>0){
-    getMedicamentos();
-  }
-  
-}, [sisFuaDx])
-
-const getMedicamentos=async()=>{
-  
-}
 
 
 
@@ -414,7 +432,13 @@ const getMedicamentos=async()=>{
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-      
+      <pre>
+        {JSON.stringify(sisFuaDx, null, 2)}
+      </pre>
+      <hr />
+      <pre>
+        {JSON.stringify(cuentaDatos?.medicamentos, null, 2)}
+      </pre>
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
