@@ -33,7 +33,7 @@ export const CELaboratorioTabla = ({ modificar = 0, cuentaDatos }: { modificar?:
                     <thead>
                         <tr>
                             <th scope="col" className="tableth">Departamento</th>
-                            <th scope="col" className="tableth">Servicio</th>
+                            <th scope="col" className="tableth">Procedimiento</th>
                             {(modificar === 0) &&
                                 <th scope="col" className="tableth">Accion</th>
                             }
@@ -45,7 +45,7 @@ export const CELaboratorioTabla = ({ modificar = 0, cuentaDatos }: { modificar?:
                                 <td className="tabletd w-1/3">
                              
                                     {NombrePuntoCarga(data.puntoCarga)}</td>
-                                <td className="tabletd w-32">{data.nombre} </td>
+                                <td className="tabletd w-32">({data.Codigo}) - {data.nombre} </td>
                                 {(modificar === 0) &&
                                      <td className="tabletd">
                                         

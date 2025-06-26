@@ -33,7 +33,8 @@ export const CEOtros = ({ session,cuentaDatos }: any) => {
             cantidad: data?.cantmedicamento,
             observacion: data?.frecuencia,
             idUsuario: session?.user?.id,
-            nombre: data?.idproductoServicio?.label
+            nombre: data?.idproductoServicio?.label,
+            Codigo:data?.idproductoServicio?.Codigo
         }
         const existeProducto = cuentaDatos?.ordenesOtros?.some(
             (ordenesOtros: any) => ordenesOtros.idProducto === ProcidimientosObjeto.idProducto
@@ -57,9 +58,11 @@ export const CEOtros = ({ session,cuentaDatos }: any) => {
             try {
                 setIsLoading(true);
                 const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/findByName/${nommed}`);
+                console.log(response)
                 const mappedOptions = response.map((est: any) => ({
                     value: est.idProducto,
                     label: est.nombre,
+                    Codigo:est.codigo
                 }));
                 setOptions(mappedOptions);
             } catch (error) {

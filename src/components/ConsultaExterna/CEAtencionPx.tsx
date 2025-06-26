@@ -198,12 +198,10 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
 
   const getOtros = async (idcuenta: any) => {
     try {
-   
       const data = await getData(`${process.env.apijimmynew}/recetas/ApiObtenerProcedimientosPorCuenta/${idcuenta}`)
       data.map((datos: any) => {
         createordenesOtros(datos);
       })
-
     } catch (error) {
       console.log(error)
     }

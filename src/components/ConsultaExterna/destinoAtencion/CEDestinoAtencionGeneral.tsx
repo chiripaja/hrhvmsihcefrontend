@@ -20,6 +20,7 @@ import Swal from 'sweetalert2';
 import { toast } from 'sonner';
 import { FaPrint } from 'react-icons/fa';
 import { FiSave } from 'react-icons/fi';
+import Link from "next/link";
 const opcionCondicionMaterna = [
   { id: 1, valor: "Gestante" },
   { id: 2, valor: "Puerpera" },
@@ -360,9 +361,6 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
     const response = await axios.get(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAbyIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`);
     setsisFuaDx(response.data);
   };
-
-
-
   useEffect(() => {
     if (sisFuaDx.length > 0) {
       getMedicamentos();
@@ -417,6 +415,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   const getProcedimientos = async () => {
     await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionPROEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+    //ordenes laboratorio
     if (cuentaDatos?.ordenesLaboratorio.length > 0) {
       for (const [index, data] of cuentaDatos?.ordenesLaboratorio.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
@@ -437,7 +436,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionPROAgregar`, objlaboratorio);
       }
     }
-    //cuentaDatos?.ordenesImagenes
+    //ordenes imagenes
     if (cuentaDatos?.ordenesImagenes.length > 0) {
       for (const [index, data] of cuentaDatos?.ordenesImagenes.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
@@ -459,6 +458,49 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionPROAgregar`, objlaboratorio);
       }
     }
+    //ordenes procedimientos dentro del consultorio
+    if (cuentaDatos?.ordenesProcedimiento.length > 0) {
+      for (const [index, data] of cuentaDatos?.ordenesProcedimiento.entries()) {
+        const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.idDiagnostico)
+        const objprocdentroconsultorio = {
+          idTablaDx: dxnumeroSacado[0]?.id,
+          idCuentaAtencion: cuentaDatos?.idcuentaatencion,
+          codigo: data?.Codigo,
+          dxNumero: dxnumeroSacado[0]?.DxNumero,
+          cantidadPrescrita: data?.cantidad,
+          cantidadEjecutada: 0,
+          precioUnitario: data?.precio,
+          cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+          cabFechaFuaPrimeraVez: sisFuaCabecera?.CabFechaFuaPrimeraVez,
+          fuaDisa: "754",
+          fuaLote: sisFuaCabecera?.FuaLote,
+          fuaNumero: sisFuaCabecera?.FuaNumero,
+        }
+        await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionPROAgregar`, objprocdentroconsultorio);
+      }
+    }
+
+    if (cuentaDatos?.ordenesOtros.length > 0) {
+      for (const [index, data] of cuentaDatos?.ordenesOtros.entries()) {
+        const objotrosproc = {
+          idTablaDx: sisFuaDx[0].id,
+          idCuentaAtencion: cuentaDatos?.idcuentaatencion,
+          codigo: data?.Codigo,
+          dxNumero: sisFuaDx[0].DxNumero,
+          cantidadPrescrita: data?.cantidad,
+          cantidadEjecutada: 0,
+          precioUnitario: data?.precio,
+          cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+          cabFechaFuaPrimeraVez: sisFuaCabecera?.CabFechaFuaPrimeraVez,
+          fuaDisa: "754",
+          fuaLote: sisFuaCabecera?.FuaLote,
+          fuaNumero: sisFuaCabecera?.FuaNumero,
+        }
+        await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionPROAgregar`, objotrosproc);
+      }
+    }
+
+
   }
 
 
@@ -491,7 +533,6 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
@@ -581,10 +622,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         </div>
         <div >
           <form onSubmit={handleSubmit2(FormDestino)}>
-
             <fieldset className="border p-3 rounded-lg">
               <legend className="font-bold">Módulo Destino Atención</legend>
-
               {destinoAtencion?.length > 0 && (
                 <Controller
                   name="destinoAtencion"
@@ -614,10 +653,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
               )}
             </fieldset>
-
             <fieldset className='border p-3 mt-8'>
               <legend className="font-bold">Observaciones</legend>
-
               {destinoAtencion?.length > 0 && (
                 <Controller
                   name="observaciones"
@@ -676,12 +713,18 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         }
       </div>
       <div className="flex justify-end mt-6 col-span-2 gap-2">
-
+                               <Link
+    className="flex items-center px-4 h-12 py-2 mb-2 rounded focus:outline-none bg-blue-700 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
+    href={`/sihce/consultaexterna`}
+    
+  >
+    📄 Lista Pacientes
+  </Link>
         <button
           type="submit"
           disabled={isSubmitting}
           onClick={handleButtonClick}
-          className={`flex items-center px-4 py-2 rounded focus:outline-none ${isSubmitting ? 'bg-gray-400' : 'colorFondo'} text-white`}
+          className={`flex items-center px-4 py-2 h-12 rounded focus:outline-none ${isSubmitting ? 'bg-gray-400' : 'colorFondo'} text-white`}
         >
           {isSubmitting ? (
             <Loading />

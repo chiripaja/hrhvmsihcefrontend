@@ -28,7 +28,7 @@ export const CEFarmaciaTabla = ({ modificar = 0, cuentaDatos }: { modificar?: nu
                     {cuentaDatos?.medicamentos.map((data: any, index: any) => (
                         <tr key={`${data.idProducto}-${data.nombre}`}>
                             <td className="tabletd w-1/3">
-
+({data.Codigo}) -
                                 {data.nombre} </td>
                             <td className="tabletd w-32"> {data.cantidad} </td>
                             {(modificar === 1) &&

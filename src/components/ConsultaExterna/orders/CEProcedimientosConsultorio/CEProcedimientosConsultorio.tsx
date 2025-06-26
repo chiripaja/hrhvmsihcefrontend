@@ -32,6 +32,7 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
             idFuenteFinanciamiento: cuentaDatos?.idFuenteFinanciamiento,
             idTipoFinanciamiento: cuentaDatos?.idFormaPago,
             nombreproc: data?.factservicio?.label,
+            Codigo:data?.factservicio?.Codigo
         }
         createordenesProcedimiento(datosProcedimientos)
         reset()
@@ -100,6 +101,7 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
                     value: est.IdProducto,
                     label: `${est.Nombre.trim()}`,
                     PrecioUnitario: est.PrecioUnitario,
+                    Codigo:est.Codigo
                 }));
                 setOptions(mappedOptions);
             } catch (error) {

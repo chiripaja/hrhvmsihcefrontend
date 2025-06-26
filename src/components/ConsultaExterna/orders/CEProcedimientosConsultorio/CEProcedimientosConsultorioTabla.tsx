@@ -25,7 +25,7 @@ export const CEProcedimientosConsultorioTabla = ({ modificar = 0,cuentaDatos }: 
             {cuentaDatos?.ordenesProcedimiento.map((data: any,index:any) => (
                 <tr key={data.idProducto}>
                     <td className="tabletd w-1/3">{data.cantidad} </td>
-                    <td className="tabletd w-32"> {data.nombreproc} </td>
+                    <td className="tabletd w-32">({data.Codigo}) - {data.nombreproc} </td>
                     {(modificar===0) && 
                     <td className="tabletd">
                          <Tooltip text="Eliminar">

@@ -25,10 +25,6 @@ interface formBusqueda {
 
 
 
-function handleEditClick(row: any): void {
-  console.log(row)
-}
-
 export const CEListado = ({ session }: any) => {
   const router = useRouter();
 
@@ -53,6 +49,10 @@ export const CEListado = ({ session }: any) => {
     router.push(`/sihce/consultaexterna/${row?.idcuenta}`);
   }
 
+function handleHCClick(row: any): void {
+   router.push(`/reportes/hojaatencion/${row?.idcuenta}`);
+}
+
   const groupByIdProgramacion = (arr: any) => {
     return arr.reduce((acc: any, obj: any) => {
       const key = obj.idProgramacion;
@@ -66,9 +66,9 @@ export const CEListado = ({ session }: any) => {
 
   const getDataCE = async () => {
     setIsLoading(true)
-     const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
+   //  const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
 
-    // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4902/2024-07-16`)
+     const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4902/2024-07-16`)
    // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4147/2024-10-03`)
 
     console.log(data)
@@ -218,7 +218,7 @@ export const CEListado = ({ session }: any) => {
 
 
 
-          <button type="button" onClick={() => handleEditClick(params.row)} className="btnyellow hidden">
+          <button type="button" onClick={() => handleHCClick(params.row)} className="btnyellow hidden">
             <PiPrinter />
             Historia
           </button>

@@ -205,7 +205,7 @@ useEffect(() => {
               <tr>
                 <td className='align-top font-semibold'>Médico:</td>
                 <td>{datosPxGeneral?.MedicoPaterno} {datosPxGeneral?.MedicoMaterno} {datosPxGeneral?.MedicoNombres}
-                  Colegiatura: {datosPxGeneral?.MedicoColegitura}  RNE: {datosPxGeneral?.Medicorne}</td>
+                &nbsp;  Colegiatura: {datosPxGeneral?.MedicoColegitura}  RNE: {datosPxGeneral?.Medicorne}</td>
                 <td className='align-top font-semibold'>Fecha Consulta:</td>
                 <td>{datosPxGeneral?.FechaIngreso}</td>
               </tr>
