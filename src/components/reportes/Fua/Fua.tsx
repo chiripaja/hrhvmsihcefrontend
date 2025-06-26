@@ -63,7 +63,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         className="w-80 h-auto col-span-2 p-1"
                                                     />
                                                     <span className='font-semibold'>ANEXO 1</span>
-                                                    <span className="text-xs text-center self-end">Cta: 71555 (Cons.Ext)</span>
+                                                    <span className="text-xs text-center self-end">Cta: {idcuentaatencion} (Cons.Ext)</span>
                                                 </div>
                                             </td>
 

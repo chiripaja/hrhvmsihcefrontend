@@ -39,6 +39,7 @@ export const CEImagenes = ({ cuentaDatos }: any) => {
             nombre: data?.factservicio?.label,
             usuarioauditoria: 0,
             puntoCarga: data?.puntoCarga,
+            Codigo:data?.factservicio?.Codigo
         }
         const existeProducto = cuentaDatos?.ordenesImagenes?.some(
             (ordenesImagenes: any) => ordenesImagenes.idproducto === datosServicios.idproducto
@@ -86,6 +87,7 @@ export const CEImagenes = ({ cuentaDatos }: any) => {
             value: est.IdProducto,
             label: `${est.Nombre.trim()}`,
             PrecioUnitario: est.PrecioUnitario,
+            Codigo:est.Codigo,
         }));
         setDatosExamenes(mappedOptions);
     }

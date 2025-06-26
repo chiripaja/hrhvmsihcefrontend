@@ -27,7 +27,7 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
     const setRecetaCabezera = useCEDatosStore((state: any) => state.setRecetaCabezera);
 
     const FormLaboratorio: SubmitHandler<any> = async (data: any) => {
-
+        console.log(data)
         const datosServicios = {
             idrecetacabecera: "",
             idproducto: data?.factservicio?.value,
@@ -42,7 +42,8 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
             nombre: data?.factservicio?.label,
             usuarioauditoria: 0,
             puntoCarga: data?.puntoCarga,
-            idEstadoDetalle: 1
+            idEstadoDetalle: 1,
+            Codigo:data?.factservicio?.Codigo
         }
         const existeProducto = cuentaDatos?.ordenesLaboratorio?.some(
             (ordenesLaboratorio: any) => ordenesLaboratorio.idproducto === datosServicios.idproducto
@@ -96,6 +97,7 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
             value: est.IdProducto,
             label: `${est.Nombre.trim()}`,
             PrecioUnitario: est.PrecioUnitario,
+            Codigo:est.Codigo
         }));
         setDatosExamenes(mappedOptions);
     }
@@ -183,9 +185,7 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
     };
     const actualizarReceta = async (idReceta: number, puntoCarga: number) => {
         try {
-
             const data = cuentaDatos?.recetaCabezera.filter((datos: any) => datos?.idReceta === idReceta);
-
             if (data && data.length > 0 && data[0].idEstado === 1) {
                 await axios.delete(`${process.env.apijimmynew}/recetas/deleterecetadetallebyid/${idReceta}`);
                 const ordenes = await updateOrdenesLaboratorio(idReceta, puntoCarga);
@@ -212,12 +212,11 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
         }
     };/**/
     const toggleOffcanvasLaboratorio = () => {
-
         setIsOffcanvasOpenLaboratorio(!isOffcanvasOpenLaboratorio);
     };
     return (
         <>
-
+  
             <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>

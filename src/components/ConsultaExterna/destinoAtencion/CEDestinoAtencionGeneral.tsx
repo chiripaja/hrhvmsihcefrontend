@@ -43,7 +43,6 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const [sisFuaDx, setsisFuaDx] = useState<any[]>([]);
 
   const FormDestino = async (data: any) => {
-
     try {
       const objetoEnvio = {
         idAtencion: cuentaDatos?.idatencion,
@@ -55,8 +54,6 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         idCondicionMaterna: data?.condicionMaterna == "" ? null : data?.condicionMaterna,
         citaObservaciones: data?.observaciones
       }
-
-
       Swal.fire({
         icon: "question",
         title: "¿Finalizar la consulta medica?",
@@ -64,7 +61,6 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         confirmButtonText: "Si",
         denyButtonText: `No`
       }).then(async (result) => {
-
         if (result.isConfirmed) {
           await axios.post(`${process.env.apijimmynew}/atenciones/atencionesActualizar`, objetoEnvio)
           Swal.fire(
@@ -361,7 +357,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       nuevosDiagnosticos.push(objDiag);
       await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAAgregar`, objDiag);
     }
-    const response=await axios.get(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAbyIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`);
+    const response = await axios.get(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAbyIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`);
     setsisFuaDx(response.data);
   };
 
@@ -370,6 +366,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   useEffect(() => {
     if (sisFuaDx.length > 0) {
       getMedicamentos();
+      getProcedimientos();
     }
   }, [sisFuaDx])
 
@@ -380,7 +377,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       for (const [index, data] of SisFuaAtencionMEDObj.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
         const obj = {
-          idTablaDx:dxnumeroSacado[0]?.id,
+          idTablaDx: dxnumeroSacado[0]?.id,
           idCuentaAtencion: cuentaDatos?.idcuentaatencion,
           cantidadEntregada: 0,
           cantidadPrescrita: data?.cantidad,
@@ -393,14 +390,76 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
           dxNumero: dxnumeroSacado[0]?.DxNumero,
           precioUnitario: String(data?.precio ?? '')
         }
-       
-       const response = await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionMEDAgregar`, obj);
-        console.log(response)/**/
+        const response = await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionMEDAgregar`, obj);
       }
-
+      await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionINSEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+      const SisFuaAtencionINSObj = cuentaDatos.medicamentos.filter((data: any) => data?.TipoProducto == 1)
+      for (const [index, data] of SisFuaAtencionINSObj.entries()) {
+        const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
+        const obj = {
+          idTablaDx: dxnumeroSacado[0]?.id,
+          idCuentaAtencion: cuentaDatos?.idcuentaatencion,
+          cantidadEntregada: 0,
+          cantidadPrescrita: data?.cantidad,
+          cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+          cabFechaFuaPrimeraVez: sisFuaCabecera?.CabFechaFuaPrimeraVez,
+          fuaDisa: "754",
+          fuaLote: sisFuaCabecera?.FuaLote,
+          fuaNumero: sisFuaCabecera?.FuaNumero,
+          codigo: data?.Codigo,
+          dxNumero: dxnumeroSacado[0]?.DxNumero,
+          precioUnitario: String(data?.precio ?? '')
+        }
+        const response = await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionINSAgregar`, obj);
+      }
     }
   }
 
+  const getProcedimientos = async () => {
+    await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionPROEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+    if (cuentaDatos?.ordenesLaboratorio.length > 0) {
+      for (const [index, data] of cuentaDatos?.ordenesLaboratorio.entries()) {
+        const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
+        const objlaboratorio = {
+          idTablaDx: dxnumeroSacado[0]?.id,
+          idCuentaAtencion: cuentaDatos?.idcuentaatencion,
+          codigo: data?.Codigo,
+          dxNumero: dxnumeroSacado[0]?.DxNumero,
+          cantidadPrescrita: data?.cantidad,
+          cantidadEjecutada: 0,
+          precioUnitario: data?.precio,
+          cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+          cabFechaFuaPrimeraVez: sisFuaCabecera?.CabFechaFuaPrimeraVez,
+          fuaDisa: "754",
+          fuaLote: sisFuaCabecera?.FuaLote,
+          fuaNumero: sisFuaCabecera?.FuaNumero,
+        }
+        await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionPROAgregar`, objlaboratorio);
+      }
+    }
+    //cuentaDatos?.ordenesImagenes
+    if (cuentaDatos?.ordenesImagenes.length > 0) {
+      for (const [index, data] of cuentaDatos?.ordenesImagenes.entries()) {
+        const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
+        const objlaboratorio = {
+          idTablaDx: dxnumeroSacado[0]?.id,
+          idCuentaAtencion: cuentaDatos?.idcuentaatencion,
+          codigo: data?.Codigo,
+          dxNumero: dxnumeroSacado[0]?.DxNumero,
+          cantidadPrescrita: data?.cantidad,
+          cantidadEjecutada: 0,
+          precioUnitario: data?.precio,
+          cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
+          cabFechaFuaPrimeraVez: sisFuaCabecera?.CabFechaFuaPrimeraVez,
+          fuaDisa: "754",
+          fuaLote: sisFuaCabecera?.FuaLote,
+          fuaNumero: sisFuaCabecera?.FuaNumero,
+        }
+        console.log(objlaboratorio)
+        await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionPROAgregar`, objlaboratorio);
+      }
+    }
+  }
 
 
   useEffect(() => {
@@ -432,13 +491,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-      <pre>
-        {JSON.stringify(sisFuaDx, null, 2)}
-      </pre>
-      <hr />
-      <pre>
-        {JSON.stringify(cuentaDatos?.medicamentos, null, 2)}
-      </pre>
+
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>

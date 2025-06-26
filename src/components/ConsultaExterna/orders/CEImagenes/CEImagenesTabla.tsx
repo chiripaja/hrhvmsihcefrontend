@@ -18,9 +18,11 @@ const NombrePuntoCarga = (id: any) => {
 }
 export const CEImagenesTabla = ({ modificar = 0,cuentaDatos }: { modificar?: number,cuentaDatos:any }) => {
  
-    const deleteLaboratorio = useCEDatosStore((state: any) => state.deleteLaboratorio);
+    const deleteImagenes = useCEDatosStore((state: any) => state.deleteImagenes);
     const handleDelete = (indexToDelete: number, puntocarga: any) => {
-        deleteLaboratorio(indexToDelete, puntocarga)
+          console.log("llegando a eliminar")
+        deleteImagenes(indexToDelete, puntocarga)
+      
     };
     const filterByRecetaCabezera = (id: any) => {
         const datos = cuentaDatos?.recetaCabezera.filter((data: any) => data.idReceta == id)
