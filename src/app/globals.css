@@ -62,7 +62,10 @@ body {
     @apply m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none;
   }
   .btnyellow{
-    @apply m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-yellow-300 text-gray-800 hover:bg-yellow-500 focus:outline-none focus:bg-yellow-700 disabled:opacity-50 disabled:pointer-events-none;
+    @apply m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-yellow-300 text-gray-800 hover:bg-yellow-500 focus:outline-none  disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btngreen{
+    @apply m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-500 text-white hover:bg-green-700 focus:outline-none  disabled:opacity-50 disabled:pointer-events-none;
   }
   .tableth{
     @apply px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500;

@@ -50,7 +50,12 @@ export const CEListado = ({ session }: any) => {
   }
 
 function handleHCClick(row: any): void {
-   router.push(`/reportes/hojaatencion/${row?.idcuenta}`);
+   const url = `/reportes/hojaatencion/${row?.idcuenta}`;
+  window.open(url, '_blank');
+}
+function handleFUAClick(row:any):void{
+     const url = `/reportes/fua/${row?.idcuenta}`;
+  window.open(url, '_blank');
 }
 
   const groupByIdProgramacion = (arr: any) => {
@@ -117,6 +122,8 @@ function handleHCClick(row: any): void {
           nompx: `${data.NombreCompleto} (${data.nroDocumento}) `,
           Triaje: data.Triaje,
           TriajePeso: data.TriajePeso,
+          FuaNumero:data.FuaNumero,
+          CitaExamenClinico:data.CitaExamenClinico
         })
       });
       setDataTablaRowsPacientes(dataTablaRows);
@@ -216,12 +223,19 @@ function handleHCClick(row: any): void {
           }
 
 
-
-
+ {params.row?.CitaExamenClinico != null &&
           <button type="button" onClick={() => handleHCClick(params.row)} className="btnyellow hidden">
             <PiPrinter />
             Historia
           </button>
+         }
+          
+               {params.row?.FuaNumero != null &&
+            <button type="button" onClick={() => handleFUAClick(params.row)} className="btngreen hidden">
+            <PiPrinter />
+            FUA
+          </button>
+    }
 
         </div>
       ),

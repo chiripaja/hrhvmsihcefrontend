@@ -11,9 +11,10 @@ export const Fua = ({ idcuentaatencion }: any) => {
     const [sisFuaAtencionMED, setSisFuaAtencionMED] = useState<any[]>([]);
     const [sisFuaAtencionINS, setsisFuaAtencionINS] = useState<any[]>([]);
     const [sisFuaAtencionPRO, setSisFuaAtencionPRO] = useState<any[]>([]);
+    const [loadingFua, setLoadingFua] = useState(false);
     const getFuaAtencion = async (idcuenta: any) => {
+        setLoadingFua(true);
         const fuadatosgenerales = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionSeleccionarPorId/${idcuenta}`)        
-        console.log(fuadatosgenerales)
         setSisFuaAtencion(fuadatosgenerales)
         const fuadiag=await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAbyIdCuentaAtencion/${idcuenta}`)
         setSisFuaAtencionDIA(fuadiag);
@@ -23,6 +24,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
         setsisFuaAtencionINS(fuains)
         const fuaprod=await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionPRObyIdCuenta/${idcuenta}`)
         setSisFuaAtencionPRO(fuaprod)
+         setLoadingFua(false);
     }
 
 
@@ -33,7 +35,27 @@ export const Fua = ({ idcuentaatencion }: any) => {
         }
     }, [idcuentaatencion])
 
-   
+   useEffect(() => {
+  if (
+    !loadingFua &&
+    sisFuaAtencion &&
+    sisFuaAtencionDIA.length > 0 &&
+    sisFuaAtencionMED !== undefined &&
+    sisFuaAtencionINS !== undefined &&
+    sisFuaAtencionPRO !== undefined
+  ) {
+    setTimeout(() => {
+      window.print();
+    }, 500); // opcional: pequeño retraso para asegurar el render
+  }
+}, [
+  loadingFua,
+  sisFuaAtencion,
+  sisFuaAtencionDIA,
+  sisFuaAtencionMED,
+  sisFuaAtencionINS,
+  sisFuaAtencionPRO,
+]);
 
 
 

@@ -304,8 +304,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         fuaCodOferFlexible: null,
         idUsuarioAuditoria: session?.user?.id
       }
-    }
-    if (validadSis?.FuaNumero) {
+        if (validadSis?.FuaNumero) {
       const data = await axios.put(`${process.env.apijimmynew}/fua/modificarfua`, dataFuaCabecera);
     } else {
       const data = await axios.post(`${process.env.apijimmynew}/fua/agregarfua`, dataFuaCabecera);
@@ -313,6 +312,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
     const fuaverdadero = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionSeleccionarPorId/${cuentaDatos?.idcuentaatencion}`)
 
     setsisFuaCabecera(fuaverdadero)
+    }
+  
   }
 
 
@@ -499,7 +500,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionPROAgregar`, objotrosproc);
       }
     }
-
+    window.open(`/reportes/fua/${cuentaDatos?.idcuentaatencion}`, '_blank');
 
   }
 
@@ -533,6 +534,9 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
+      <pre>
+        {JSON.stringify(cuentaDatos?.idSiasis,null,2)}
+      </pre>
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
@@ -716,7 +720,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
                                <Link
     className="flex items-center px-4 h-12 py-2 mb-2 rounded focus:outline-none bg-blue-700 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
     href={`/sihce/consultaexterna`}
-    
+       
   >
     📄 Lista Pacientes
   </Link>
