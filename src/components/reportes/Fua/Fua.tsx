@@ -14,17 +14,17 @@ export const Fua = ({ idcuentaatencion }: any) => {
     const [loadingFua, setLoadingFua] = useState(false);
     const getFuaAtencion = async (idcuenta: any) => {
         setLoadingFua(true);
-        const fuadatosgenerales = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionSeleccionarPorId/${idcuenta}`)        
+        const fuadatosgenerales = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionSeleccionarPorId/${idcuenta}`)
         setSisFuaAtencion(fuadatosgenerales)
-        const fuadiag=await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAbyIdCuentaAtencion/${idcuenta}`)
+        const fuadiag = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAbyIdCuentaAtencion/${idcuenta}`)
         setSisFuaAtencionDIA(fuadiag);
-        const fuamed=await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionMEDbyIdCuentaAtencion/${idcuenta}`)
+        const fuamed = await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionMEDbyIdCuentaAtencion/${idcuenta}`)
         setSisFuaAtencionMED(fuamed)
-        const fuains=await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionINSbyIdCuenta/${idcuenta}`)
+        const fuains = await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionINSbyIdCuenta/${idcuenta}`)
         setsisFuaAtencionINS(fuains)
-        const fuaprod=await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionPRObyIdCuenta/${idcuenta}`)
+        const fuaprod = await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionPRObyIdCuenta/${idcuenta}`)
         setSisFuaAtencionPRO(fuaprod)
-         setLoadingFua(false);
+        setLoadingFua(false);
     }
 
 
@@ -35,34 +35,34 @@ export const Fua = ({ idcuentaatencion }: any) => {
         }
     }, [idcuentaatencion])
 
-   useEffect(() => {
-  if (
-    !loadingFua &&
-    sisFuaAtencion &&
-    sisFuaAtencionDIA.length > 0 &&
-    sisFuaAtencionMED !== undefined &&
-    sisFuaAtencionINS !== undefined &&
-    sisFuaAtencionPRO !== undefined
-  ) {
-    setTimeout(() => {
-      window.print();
-    }, 500); // opcional: pequeño retraso para asegurar el render
-  }
-}, [
-  loadingFua,
-  sisFuaAtencion,
-  sisFuaAtencionDIA,
-  sisFuaAtencionMED,
-  sisFuaAtencionINS,
-  sisFuaAtencionPRO,
-]);
+    useEffect(() => {
+        if (
+            !loadingFua &&
+            sisFuaAtencion &&
+            sisFuaAtencionDIA.length > 0 &&
+            sisFuaAtencionMED !== undefined &&
+            sisFuaAtencionINS !== undefined &&
+            sisFuaAtencionPRO !== undefined
+        ) {
+            setTimeout(() => {
+                // window.print();
+            }, 500); // opcional: pequeño retraso para asegurar el render
+        }
+    }, [
+        loadingFua,
+        sisFuaAtencion,
+        sisFuaAtencionDIA,
+        sisFuaAtencionMED,
+        sisFuaAtencionINS,
+        sisFuaAtencionPRO,
+    ]);
 
 
 
 
     return (
         <>
-   
+
             <div className="flex justify-center print-page-break bg-white ">
                 <table className="w-full" style={{
                     transform: 'scale(0.8)', // Ajusta este valor según necesidad (0.7 a 0.9)
@@ -128,7 +128,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
 
                         <tr>
                             <td>
-                                <table className='w-full border border-black border-collapse' style={{ fontSize: '11px' }}>
+                                <table className='w-full border border-black border-collapse' style={{ fontSize: '8px' }}>
                                     <tbody>
                                         <tr>
                                             <td colSpan={10} className='text-center border border-black  bg-customGray font-semibold '>DE LA INSTITUCIÓN PRESTADORA DE SERVICIOS DE SALUD</td>
@@ -214,7 +214,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                         </tr>
                         <tr>
                             <td>
-                                <div className='w-full  grid grid-cols-4  border  border-black' style={{ fontSize: '9px' }}>
+                                <div className='w-full  grid grid-cols-4  border  border-black' style={{ fontSize: '8px' }}>
 
                                     <div className=' bg-customGray text-center font-semibold col-span-4   border-b mb-1  border-black' >
                                         DEL ASEGURADO / USUARIO
@@ -258,7 +258,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
 
                                     </div>
                                     <div className='col-span-2'>
-                                        <table className='w-full'>
+                                        <table className='w-full' style={{ fontSize: '8px' }}>
                                             <tbody>
                                                 <tr>
                                                     <td className=' bg-customGray text-center font-semibold  border border-black' colSpan={2}>ASEGURADO DE OTRA IAFAS</td>
@@ -276,7 +276,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                     </div>
 
                                     <div className='col-span-2 mt-1 mr-1'>
-                                        <table className='w-full'>
+                                        <table className='w-full' style={{ fontSize: '8px' }}>
                                             <tbody>
                                                 <tr>
                                                     <td className=' bg-customGray text-center border border-black'>APELLIDO PATERNO</td>
@@ -370,7 +370,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                             <td className='bg-customGray text-center border border-black h-8'>MES</td>
                                                             <td className='bg-customGray text-center border border-black h-8'>AÑO</td>
                                                         </tr>
-     
+
                                                         <tr>
                                                             <td className='bg-customGray border border-black text-center h-8'>FECHA PROBABLE DE PARTO / FECHA DE PARTO </td>
                                                             <td className='text-center border border-black h-8'></td>
@@ -380,13 +380,13 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         <tr>
                                                             {sisFuaAtencion?.fnacimiento && (
                                                                 <>
-<td className='bg-customGray border border-black text-center h-8'>FECHA DE NACIMIENTO</td>
-                                                            <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[0]}</td>
-                                                            <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[1]}</td>
-                                                            <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[2]}</td>
-</>
+                                                                    <td className='bg-customGray border border-black text-center h-8'>FECHA DE NACIMIENTO</td>
+                                                                    <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[0]}</td>
+                                                                    <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[1]}</td>
+                                                                    <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[2]}</td>
+                                                                </>
                                                             )}
-                                                            
+
                                                         </tr>
                                                         <tr>
                                                             <td className='bg-customGray border border-black text-center h-8'>FECHA DE FALLECIMIENTO</td>
@@ -453,11 +453,11 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         <td className='border border-black bg-customGray text-center'>AÑO</td>
                                                     </tr>
                                                     {sisFuaAtencion?.FuaAtencionFecha && (
-                                                    <tr>
-                                                        <td className=' border-t border-black text-center'>{sisFuaAtencion.FuaAtencionFecha.split("/")[0]}</td>
-                                                        <td className='border-l border-black text-center'>{sisFuaAtencion.FuaAtencionFecha.split("/")[1]}</td>
-                                                        <td className='border-l border-r border-black text-center'>{sisFuaAtencion.FuaAtencionFecha.split("/")[2]}</td>
-                                                    </tr>
+                                                        <tr>
+                                                            <td className=' border-t border-black text-center'>{sisFuaAtencion.FuaAtencionFecha.split("/")[0]}</td>
+                                                            <td className='border-l border-black text-center'>{sisFuaAtencion.FuaAtencionFecha.split("/")[1]}</td>
+                                                            <td className='border-l border-r border-black text-center'>{sisFuaAtencion.FuaAtencionFecha.split("/")[2]}</td>
+                                                        </tr>
                                                     )}
                                                 </tbody>
                                             </table>
@@ -549,6 +549,60 @@ export const Fua = ({ idcuentaatencion }: any) => {
                             </td>
                         </tr>
 
+                        {/* INICIO CONCEPTO PRESTACIONAL */}
+                        <tr>
+                            <td style={{ fontSize: '8px' }}>
+                                <table className='w-full border-collapse border-black border'>
+                                    <tbody>
+                                        <tr>
+                                            <td colSpan={14} className='text-center border border-black bg-customGray font-semibold'>CONCEPTO PRESTACIONAL</td>
+                                        </tr>
+                                        <tr>
+                                            <td rowSpan={3} className='border border-black bg-customGray text-center font-semibold'>ATENCIÓN DIRECTA</td>
+                                            <td rowSpan={3} className='border border-black text-center w-8'>
+                                                X
+                                            </td>
+                                            <td colSpan={2} className='border border-black bg-customGray text-center font-semibold'>
+                                                COB EXTRAORDINARIA
+                                            </td>
+                                            <td colSpan={2} className='border border-black bg-customGray text-center font-semibold'>
+                                                CARTA DE GARANTIA
+                                            </td>
+                                            <td rowSpan={3} className='border border-black bg-customGray text-center font-semibold'>
+                                                TRASLADO
+                                            </td>
+                                            <td rowSpan={3} className='border border-black w-8'>
+
+                                            </td>
+                                            <td colSpan={6} className='border border-black bg-customGray text-center font-semibold'>
+                                                SEPELIO
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className='border border-black bg-customGray text-center w-20'>Nº Autorización</td>
+                                            <td className='border border-black w-14'></td>
+                                            <td className='border border-black bg-customGray text-center w-20'>Nº Autorización</td>
+                                            <td className='border border-black w-14'></td>
+                                            <td rowSpan={2} className='border border-black bg-customGray text-center font-semibold'>NATIMUERTO</td>
+                                            <td className='border border-black w-20' rowSpan={2}></td>
+                                            <td rowSpan={2} className='border border-black bg-customGray text-center font-semibold'>OBITO</td>
+                                            <td className='border border-black w-20' rowSpan={2}></td>
+                                            <td rowSpan={2} className='border border-black bg-customGray text-center font-semibold'>OTRO</td>
+                                            <td className='border border-black w-20' rowSpan={2}></td>
+                                        </tr>
+                                        <tr>
+                                            <td className='border border-black bg-customGray text-center'>Monto S/. </td>
+                                            <td className='border border-black'></td>
+                                            <td className='border border-black bg-customGray text-center'>Monto S/. </td>
+                                            <td className='border border-black'></td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        {/* FIN CONCEPTO PRESTACIONAL */}
 
                         <tr>
                             <td style={{ fontSize: '9px' }}>
@@ -556,33 +610,33 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                     <tbody>
 
                                         <tr>
-                                            <td colSpan={18} className='text-center font-semibold bg-customGray'>DEL DESTINO DEL ASEGURADO/USUARIO 
+                                            <td colSpan={18} className='text-center font-semibold bg-customGray'>DEL DESTINO DEL ASEGURADO/USUARIO
 
-                                             
+
                                             </td>
                                         </tr>
                                         <tr>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>ALTA</td>
-                                            <td rowSpan={2} className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino=='1' && 'X'}</td>
+                                            <td rowSpan={2} className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino == '1' && 'X'}</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>CITA</td>
-                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='2' && 'X'}</td>
+                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino == '2' && 'X'}</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>HOSPITALIZACIÓN</td>
-                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='8' && 'X'}</td>
+                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino == '8' && 'X'}</td>
                                             <td colSpan={6} className='bg-customGray text-center border border-black'>REFERIDO</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>CONTRA <br /> REFERIDO</td>
-                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='6' && 'X'}</td>
-                                            <td rowSpan={2} className='bg-customGray text-center border border-black'>FALLECIDO</td> 
-                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino=='7' && 'X'}</td>
+                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino == '6' && 'X'}</td>
+                                            <td rowSpan={2} className='bg-customGray text-center border border-black'>FALLECIDO</td>
+                                            <td rowSpan={2} className=' text-center border border-black  w-4'>{sisFuaAtencion?.FuaDestino == '7' && 'X'}</td>
                                             <td rowSpan={2} className='bg-customGray text-center border border-black'>CORTE <br /> ADMINIS</td>
                                             <td rowSpan={2} className=' text-center border border-black  w-4'></td>
                                         </tr>
                                         <tr>
                                             <td className=' text-center border border-black'>EMERGENCIA</td>
-                                            <td className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino=='3' && 'X'}</td>
+                                            <td className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino == '3' && 'X'}</td>
                                             <td className=' text-center border border-black'>CONSULTA EXTERNA</td>
-                                            <td className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino=='4' && 'X'}</td>
+                                            <td className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino == '4' && 'X'}</td>
                                             <td className=' text-center border border-black'>APOYO AL DIAGNÓSTICO</td>
-                                            <td className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino=='5' && 'X'}</td>
+                                            <td className=' text-center border border-black w-4'>{sisFuaAtencion?.FuaDestino == '5' && 'X'}</td>
                                         </tr>
 
                                     </tbody>
@@ -590,12 +644,12 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                 <table className='border border-black border-collapse w-full mt-1'>
                                     <tbody>
                                         <tr>
-                                            <td className='bg-customGray border border-black text-center' colSpan={3}>SE REFIERE / CONTRARREFIERE A:</td>
+                                            <td className='bg-customGray border border-black text-center font-semibold' colSpan={3}>SE REFIERE / CONTRARREFIERE A:</td>
                                         </tr>
                                         <tr>
-                                            <td className='bg-customGray border border-black text-center'>CÓDIGO RENAES DE LA IPRESS</td>
-                                            <td className='bg-customGray border border-black text-center'>NOMBRE DE LA IPRESS A LA QUE SE REFIERE / CONTRARREFIERE</td>
-                                            <td className='bg-customGray border border-black text-center'>N° HOJA DE REFER / CONTRARR.</td>
+                                            <td className='bg-customGray border border-black text-center font-semibold'>CÓDIGO RENAES DE LA IPRESS</td>
+                                            <td className='bg-customGray border border-black text-center font-semibold'>NOMBRE DE LA IPRESS A LA QUE SE REFIERE / CONTRARREFIERE</td>
+                                            <td className='bg-customGray border border-black text-center font-semibold'>N° HOJA DE REFER / CONTRARR.</td>
                                         </tr>
                                         <tr>
                                             <td className='h-4 border border-black'></td>
@@ -613,15 +667,15 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                         <table className='w-full border border-collapse border-black'>
                                             <tbody>
                                                 <tr>
-                                                    <td colSpan={6} className='border border-black bg-customGray text-center'>ACTIVIDADES PREVENTIVAS Y OTROS</td>
+                                                    <td colSpan={6} className='border border-black bg-customGray text-center font-semibold'>ACTIVIDADES PREVENTIVAS Y OTROS</td>
                                                 </tr>
                                                 <tr>
                                                     <td className='border border-black bg-customGray text-center'>PESO (Kg)</td>
-                                                    <td className='border border-black  text-center'>{parseFloat(sisFuaAtencion?.TriajePeso ?? 0).toFixed(2)}</td>
+                                                    <td className='border border-black  text-center w-12'>{sisFuaAtencion?.TriajePeso ? parseFloat(sisFuaAtencion.TriajePeso).toFixed(2) : ""}</td>
                                                     <td className='border border-black bg-customGray text-center'>TALLA (cm)</td>
-                                                    <td className='border border-black  text-center'> {parseFloat(sisFuaAtencion?.TriajeTalla ?? 0).toFixed(2)}</td>
+                                                    <td className='border border-black  text-center w-12'>{sisFuaAtencion?.TriajeTalla ? parseFloat(sisFuaAtencion.TriajeTalla).toFixed(2) : ""}</td>
                                                     <td className='border border-black bg-customGray text-center'>P.A. (mmHg) </td>
-                                                    <td className='border border-black  text-center'>{sisFuaAtencion?.TriajePresion} </td>
+                                                    <td className='border border-black  text-center w-12'>{sisFuaAtencion?.TriajePresion} </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -744,7 +798,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                         <table className='border border-black w-full border-collapse'>
                                             <tbody>
                                                 <tr>
-                                                    <td colSpan={6} className='border border-black bg-customGray text-center'>
+                                                    <td colSpan={6} className='border border-black bg-customGray text-center font-semibold'>
                                                         VACUNAS N° DE DOSIS
                                                     </td>
                                                 </tr>
@@ -805,9 +859,9 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                     <td className='border border-black  text-center '></td>
                                                 </tr>
                                                 <tr >
-                                                    <td className='border border-black bg-customGray text-center'>GRUPO DE RIESGO HVB</td>
+                                                    <td className='border border-black bg-customGray text-center' style={{ fontSize: '5px' }}> GRUPO DE RIESGO HVB</td>
                                                     <td className='border border-black  text-center '></td>
-                                                    <td className='border border-black  text-center' colSpan={4} style={{ fontSize: '6px' }}>
+                                                    <td className='border border-black  text-center' colSpan={4} style={{ fontSize: '4px' }}>
                                                         GRUPO DE RIESGO HVB: 1. TRABAJADOR DE SALUD 2. TRABAJAD. SEXUALES 3. HSH 4. PRIVADO LIBERTAD 5. FF. AA. 6. POLICIA NACIONAL  7. ESTUDIANTES DE SALUD 8. POLITRANFUNDIDOS 9. DROGO DEPENDIENTES
 
                                                     </td>
@@ -843,26 +897,26 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                             <td className='border border-black bg-customGray font-semibold text-center'>R</td>
                                             <td className='border border-black bg-customGray font-semibold text-center'>CIE - 10</td>
                                         </tr>
-                                {Array.from({ length: 6 }, (_, index) => {
-  // si existe el item en el array, lo llenamos
-  const item = sisFuaAtencionDIA[index];
-  return (
-    <tr key={item?.id ?? `empty-row-${index}`}>
-      <td className='border border-black font-semibold text-center h-4'>{item?.DxNumero ?? ''}</td>
-      <td className='border border-black'>{item?.Descripcion ?? ''}</td>
-      <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'P' ? "X" : ''}</td>
-      <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'D' ? "X" : ''}</td>
-      <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'R' ? "X" : ''}</td>
-      <td className='border border-black font-semibold text-center'> {item?.DxCodigo}</td>
-      <td className='border border-black font-semibold text-center'>
-      
-      </td>
-      <td className='border border-black font-semibold text-center'></td>
-      <td className='border border-black font-semibold text-center'></td>
-    </tr>
-  )
-})}
-                                     
+                                        {Array.from({ length: 6 }, (_, index) => {
+                                            // si existe el item en el array, lo llenamos
+                                            const item = sisFuaAtencionDIA[index];
+                                            return (
+                                                <tr key={item?.id ?? `empty-row-${index}`}>
+                                                    <td className='border border-black font-semibold text-center h-4'>{item?.DxNumero ?? ''}</td>
+                                                    <td className='border border-black'>{item?.Descripcion ?? ''}</td>
+                                                    <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'P' ? "X" : ''}</td>
+                                                    <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'D' ? "X" : ''}</td>
+                                                    <td className='border border-black font-semibold text-center'>{item?.DxTipoDPR == 'R' ? "X" : ''}</td>
+                                                    <td className='border border-black font-semibold text-center'> {item?.DxCodigo}</td>
+                                                    <td className='border border-black font-semibold text-center'>
+
+                                                    </td>
+                                                    <td className='border border-black font-semibold text-center'></td>
+                                                    <td className='border border-black font-semibold text-center'></td>
+                                                </tr>
+                                            )
+                                        })}
+
                                     </tbody>
                                 </table>
                             </td>
@@ -966,9 +1020,36 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                     <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
                                         <tbody>
                                             <tr>
-                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={10} style={{ fontSize: '10px' }}>PRODUCTOS FARMACEUTICOS / MEDICAMENTOS</td>
+                                                <td>
+                                                    <div className="flex items-center justify-center text-center bg-customGray font-semibold border h-8 border-black rounded-md w-11/12">
+                                                        TERAPEUTICA, INSUMOS, PROCEDIMIENTOS Y APOYO AL DIAGNOSTICO
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <table className='border-collapse w-full'>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td className='bg-customGray  border border-black text-center font-semibold' colSpan={3}>FORMATO DE ATENCIÓN Nº</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td className='border border-black text-center font-bold text-xs' style={{ fontSize: '9px' }}>00000754</td>
+                                                                <td className='border border-black text-center font-bold text-xs' style={{ fontSize: '9px' }}>{sisFuaAtencion?.FuaLote}</td>
+                                                                <td className='border border-black text-center font-bold text-xs' style={{ fontSize: '9px' }}>{sisFuaAtencion?.FuaNumero}</td>
+                                                            </tr>
+                                                        </tbody>
+
+                                                    </table>
+                                                </td>
                                             </tr>
+                                        </tbody>
+
+                                    </table>
+                                    <table className='border-collapse w-full mt-1' style={{ fontSize: '9px' }}>
+                                        <tbody>
                                             <tr>
+                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={10} style={{ fontSize: '8px' }}>PRODUCTOS FARMACEUTICOS / MEDICAMENTOS</td>
+                                            </tr>
+                                            <tr style={{ fontSize: '7px' }}>
                                                 <td className='text-center font-bold bg-customGray border border-black w-12' >CÓDIGO SISMED</td>
                                                 <td className='text-center font-bold bg-customGray border border-black' >NOMBRE <br /> (Denominacion, Concentracion ,Presentacion, FormaFarmaceutica) </td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>PRES</td>
@@ -981,33 +1062,33 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
                                             </tr>
 
-                                           {Array.from({ length: 8 }).map((_, rowIndex) => {
-      // el primer nombre va en 0, el segundo en 1, el tercer en 2, el cuarto en 3...
-      const item1 = sisFuaAtencionMED[rowIndex * 2];
-      const item2 = sisFuaAtencionMED[rowIndex * 2 + 1];
-      return (
-        <tr key={rowIndex}>
-          {/* primera parte */}
-          <td className='border border-black h-5 text-center'>{item1?.Codigo ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.Nombre ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.CantidadPrescrita ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.CantidadEntregada ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.DxNumero ?? ''}</td>
+                                            {Array.from({ length: 8 }).map((_, rowIndex) => {
+                                                // el primer nombre va en 0, el segundo en 1, el tercer en 2, el cuarto en 3...
+                                                const item1 = sisFuaAtencionMED[rowIndex * 2];
+                                                const item2 = sisFuaAtencionMED[rowIndex * 2 + 1];
+                                                return (
+                                                    <tr key={rowIndex} style={{ fontSize: '7px' }}>
+                                                        {/* primera parte */}
+                                                        <td className='border border-black h-3 text-center'>{item1?.Codigo ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item1?.Nombre ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item1?.CantidadPrescrita ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item1?.CantidadEntregada ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item1?.DxNumero ?? ''}</td>
 
-          {/* segunda parte */}
-          <td className='border border-black h-5 text-center'>{item2?.Codigo ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.Nombre ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.CantidadPrescrita ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.CantidadEntregada ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.DxNumero ?? ''}</td>
-        </tr>
-      )
-    })}
+                                                        {/* segunda parte */}
+                                                        <td className='border border-black text-center'>{item2?.Codigo ?? ''}</td>
+                                                        <td className='border border-black text-center'>{item2?.Nombre ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item2?.CantidadPrescrita ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item2?.CantidadEntregada ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item2?.DxNumero ?? ''}</td>
+                                                    </tr>
+                                                )
+                                            })}
 
                                             <tr>
-                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={10} style={{ fontSize: '10px' }}>DISPOSITIVOS MÉDICOS / PRODUCTOS SANITARIOS</td>
+                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={10} style={{ fontSize: '8px' }}>DISPOSITIVOS MÉDICOS / PRODUCTOS SANITARIOS</td>
                                             </tr>
-                                            <tr>
+                                            <tr style={{ fontSize: '7px' }}>
                                                 <td className='text-center font-bold bg-customGray border border-black w-12' >CÓDIGO</td>
                                                 <td className='text-center font-bold bg-customGray border border-black '>NOMBRE <br /> (Denominacion, Concentracion, Presentacion, Caracteristicas) </td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>PRES</td>
@@ -1020,33 +1101,33 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
                                             </tr>
                                             {Array.from({ length: 8 }).map((_, rowIndex) => {
-      // el primer nombre va en 0, el segundo en 1, el tercer en 2, el cuarto en 3...
-      const item1 = sisFuaAtencionINS[rowIndex * 2];
-      const item2 = sisFuaAtencionINS[rowIndex * 2 + 1];
-      return (
-        <tr key={rowIndex}>
-          {/* primera parte */}
-          <td className='border border-black h-5 text-center'>{item1?.Codigo ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.Nombre ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.CantidadPrescrita ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.CantidadEntregada ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.DxNumero ?? ''}</td>
+                                                // el primer nombre va en 0, el segundo en 1, el tercer en 2, el cuarto en 3...
+                                                const item1 = sisFuaAtencionINS[rowIndex * 2];
+                                                const item2 = sisFuaAtencionINS[rowIndex * 2 + 1];
+                                                return (
+                                                    <tr key={rowIndex} style={{ fontSize: '7px' }}>
+                                                        {/* primera parte */}
+                                                        <td className='border border-black h-3 text-center'>{item1?.Codigo ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item1?.Nombre ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item1?.CantidadPrescrita ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item1?.CantidadEntregada ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item1?.DxNumero ?? ''}</td>
 
-          {/* segunda parte */}
-          <td className='border border-black h-5 text-center'>{item2?.Codigo ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.Nombre ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.CantidadPrescrita ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.CantidadEntregada ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.DxNumero ?? ''}</td>
-        </tr>
-      )
-    })}
+                                                        {/* segunda parte */}
+                                                        <td className='border border-black  text-center'>{item2?.Codigo ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item2?.Nombre ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item2?.CantidadPrescrita ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item2?.CantidadEntregada ?? ''}</td>
+                                                        <td className='border border-black  text-center'>{item2?.DxNumero ?? ''}</td>
+                                                    </tr>
+                                                )
+                                            })}
                                         </tbody>
                                     </table>
-                                    <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
+                                    <table className='border-collapse w-full' style={{ fontSize: '7px' }}>
                                         <tbody>
                                             <tr>
-                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={12} style={{ fontSize: '10px' }}>PROCEDIMIENTOS/ DIAGNÓSTICO POR IMÁGENES/ LABORATORIO</td>
+                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={12} style={{ fontSize: '8px' }}>PROCEDIMIENTOS/ DIAGNÓSTICO POR IMÁGENES/ LABORATORIO</td>
                                             </tr>
                                             <tr>
                                                 <td className='text-center font-bold bg-customGray border border-black w-12' >CÓDIGO</td>
@@ -1062,37 +1143,37 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>RES</td>
                                             </tr>
-                                              {Array.from({ length: 8 }).map((_, rowIndex) => {
-      // el primer nombre va en 0, el segundo en 1, el tercer en 2, el cuarto en 3...
-      const item1 = sisFuaAtencionPRO[rowIndex * 2];
-      const item2 = sisFuaAtencionPRO[rowIndex * 2 + 1];
-      return (
-        <tr key={rowIndex}>
-          {/* primera parte */}
-          <td className='border border-black h-5 text-center'>{item1?.Codigo ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.Nombre ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item1?.CantidadPrescrita ?? ''}</td>
-          <td className='border border-black h-5 text-center'></td>
-          <td className='border border-black h-5 text-center'>{item1?.DxNumero ?? ''}</td>
-          <td className='border border-black h-5 text-center'></td>
+                                            {Array.from({ length: 8 }).map((_, rowIndex) => {
+                                                // el primer nombre va en 0, el segundo en 1, el tercer en 2, el cuarto en 3...
+                                                const item1 = sisFuaAtencionPRO[rowIndex * 2];
+                                                const item2 = sisFuaAtencionPRO[rowIndex * 2 + 1];
+                                                return (
+                                                    <tr key={rowIndex}>
+                                                        {/* primera parte */}
+                                                        <td className='border border-black h-3 text-center'>{item1?.Codigo ?? ''}</td>
+                                                        <td className='border border-black h-3 text-center'>{item1?.Nombre ?? ''}</td>
+                                                        <td className='border border-black h-3 text-center'>{item1?.CantidadPrescrita ?? ''}</td>
+                                                        <td className='border border-black h-3 text-center'></td>
+                                                        <td className='border border-black h-3 text-center'>{item1?.DxNumero ?? ''}</td>
+                                                        <td className='border border-black h-3 text-center'></td>
 
-          {/* segunda parte */}
-          <td className='border border-black h-5 text-center'>{item2?.Codigo ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.Nombre ?? ''}</td>
-          <td className='border border-black h-5 text-center'>{item2?.CantidadPrescrita ?? ''}</td>
-          <td className='border border-black h-5 text-center'></td>
-          <td className='border border-black h-5 text-center'>{item2?.DxNumero ?? ''}</td>
-          <td className='border border-black h-5 text-center'></td>
-        </tr>
-      )
-    })}
-                                        
+                                                        {/* segunda parte */}
+                                                        <td className='border border-black h-3 text-center'>{item2?.Codigo ?? ''}</td>
+                                                        <td className='border border-black h-3 text-center'>{item2?.Nombre ?? ''}</td>
+                                                        <td className='border border-black h-3 text-center'>{item2?.CantidadPrescrita ?? ''}</td>
+                                                        <td className='border border-black h-3 text-center'></td>
+                                                        <td className='border border-black h-3 text-center'>{item2?.DxNumero ?? ''}</td>
+                                                        <td className='border border-black h-3 text-center'></td>
+                                                    </tr>
+                                                )
+                                            })}
+
                                         </tbody>
                                     </table>
-                                    <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
+                                    <table className='border-collapse w-full' style={{ fontSize: '7px' }}>
                                         <tbody>
                                             <tr>
-                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={12} style={{ fontSize: '10px' }}>
+                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={12} style={{ fontSize: '8px' }}>
                                                     SUB COMPONENTE PRESTACIONAL (PROCEDIMIENTOS)
                                                 </td>
                                             </tr>
@@ -1110,12 +1191,31 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                             {Array.from({ length: 8 }).map((_, index) => (
                                                 <tr key={index}>
                                                     {Array.from({ length: 9 }).map((_, colIndex) => (
-                                                        <td key={colIndex} className="border border-black h-5"></td>
+                                                        <td key={colIndex} className="border border-black h-3"></td>
                                                     ))}
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
+                                    {/*observaciones*/}
+                                    <table className='w-full  border-collapse ' style={{ fontSize: '9px' }}>
+                                        <tbody>
+                                            <tr>
+                                                <td className='border border-black text-center bg-customGray font-semibold'>OBSERVACIONES</td>
+                                            </tr>
+                                            <tr>
+                                                <td className='h-20 border border-black align-top'> {sisFuaAtencion?.FuaObservaciones?.split('\r\n').map((line: any, index: any) => (
+                                                    <span key={index}>
+                                                        {line}
+                                                        <br />
+                                                    </span>
+                                                ))}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    {/* fin observaciones*/}
+
+
                                     <table className='w-full  border-collapse mt-2' style={{ fontSize: '9px' }}>
                                         <tbody>
                                             <tr>
@@ -1160,12 +1260,10 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                         </tbody>
                                     </table>
                                 </div>
-
                             </td>
                         </tr>
                     </tbody>
                 </table>
-
             </div>
         </>
     )
