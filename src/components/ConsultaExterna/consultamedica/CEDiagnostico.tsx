@@ -10,6 +10,7 @@ import style from "./CEDiagnostico.module.css";
 import { Toaster, toast } from 'sonner';
 import { ToasterMsj } from "@/components/utils/ToasterMsj";
 import { RiDeleteBin3Line } from "react-icons/ri";
+import axios from "axios";
 
 interface Option {
     value: string;
@@ -82,7 +83,8 @@ export const CEDiagnostico = () => {
             }
         };
 
-    const handleDelete = (indexToDelete: number) => {
+    const handleDelete = async(indexToDelete: number) => {
+        const data=await axios.delete(`${process.env.apijimmynew}/diagnosticos/deleteByIdAtencionAndIdDiagnostico/${cuentaDatos?.idatencion}/${indexToDelete}`)
         setEliminarDiagnosticoByCuenta(indexToDelete)
     };
 
@@ -183,6 +185,7 @@ export const CEDiagnostico = () => {
     };
     return (
         <>
+      
             <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>

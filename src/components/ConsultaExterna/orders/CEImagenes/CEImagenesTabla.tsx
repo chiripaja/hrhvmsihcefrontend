@@ -1,5 +1,6 @@
 import { Tooltip } from "@/components/ui/Tooltip";
 import { useCEDatosStore } from "@/store"
+import axios from "axios";
 
 import { GoTrash } from "react-icons/go";
 const NombrePuntoCarga = (id: any) => {
@@ -19,9 +20,14 @@ const NombrePuntoCarga = (id: any) => {
 export const CEImagenesTabla = ({ modificar = 0,cuentaDatos }: { modificar?: number,cuentaDatos:any }) => {
  
     const deleteImagenes = useCEDatosStore((state: any) => state.deleteImagenes);
-    const handleDelete = (indexToDelete: number, puntocarga: any) => {
-          console.log("llegando a eliminar")
-        deleteImagenes(indexToDelete, puntocarga)
+    const handleDelete = async(indexToDelete: number, puntocarga: any,idrecetacabecera:any) => {
+         if(idrecetacabecera){
+            const data=await axios.delete(`${process.env.apijimmynew}/recetas/apiDeleteRecetaDetalleByIdRecetaAndIdItem/${idrecetacabecera}/${indexToDelete}`)
+        
+           deleteImagenes(indexToDelete, puntocarga)
+        }else{
+           deleteImagenes(indexToDelete, puntocarga)
+        }
       
     };
     const filterByRecetaCabezera = (id: any) => {
@@ -54,7 +60,7 @@ export const CEImagenesTabla = ({ modificar = 0,cuentaDatos }: { modificar?: num
                                         
                                         {(filterByRecetaCabezera(data?.idrecetacabecera) == "1" || !filterByRecetaCabezera(data?.idrecetacabecera)) ?
                                             <Tooltip text="Eliminar">
-                                                <GoTrash size={24} className="text-red-400 hover:text-red-700 cursor-pointer" onClick={() => handleDelete(data?.idproducto, data.puntoCarga)} />
+                                                <GoTrash size={24} className="text-red-400 hover:text-red-700 cursor-pointer" onClick={() => handleDelete(data?.idproducto, data.puntoCarga,data?.idrecetacabecera)} />
                                             </Tooltip>
                                             :
                                             <span className="text-blue-500 text-xs">

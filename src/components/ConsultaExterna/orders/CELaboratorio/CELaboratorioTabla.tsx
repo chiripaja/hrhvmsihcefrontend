@@ -1,6 +1,7 @@
 
 import { Tooltip } from "@/components/ui/Tooltip";
 import { useCEDatosStore } from "@/store"
+import axios from "axios";
 
 import { GoTrash } from "react-icons/go";
 const NombrePuntoCarga = (id: any) => {
@@ -18,10 +19,18 @@ const NombrePuntoCarga = (id: any) => {
 export const CELaboratorioTabla = ({ modificar = 0, cuentaDatos }: { modificar?: number, cuentaDatos: any }) => {
 
     const deleteLaboratorio = useCEDatosStore((state: any) => state.deleteLaboratorio);
-    const handleDelete = (indexToDelete: number, puntocarga: any) => {
-        console.log(indexToDelete, puntocarga)
-        deleteLaboratorio(indexToDelete, puntocarga)
+    const handleDelete = async(indexToDelete: number, puntocarga: any,idrecetacabecera:any) => {
+        if(idrecetacabecera){
+            const data=await axios.delete(`${process.env.apijimmynew}/recetas/apiDeleteRecetaDetalleByIdRecetaAndIdItem/${idrecetacabecera}/${indexToDelete}`)
+        
+           deleteLaboratorio(indexToDelete, puntocarga)
+        }else{
+           deleteLaboratorio(indexToDelete, puntocarga)
+        }
+      
+        
     };
+
     const filterByRecetaCabezera = (id: any) => {
         const datos = cuentaDatos?.recetaCabezera.filter((data: any) => data.idReceta == id)
         return datos[0]?.idEstado
@@ -51,7 +60,7 @@ export const CELaboratorioTabla = ({ modificar = 0, cuentaDatos }: { modificar?:
                                         
                                         {(filterByRecetaCabezera(data?.idrecetacabecera) == "1" || !filterByRecetaCabezera(data?.idrecetacabecera)) ?
                                             <Tooltip text="Eliminar">
-                                                <GoTrash size={24} className="text-red-400 hover:text-red-700 cursor-pointer" onClick={() => handleDelete(data?.idproducto, data.puntoCarga)} />
+                                                <GoTrash size={24} className="text-red-400 hover:text-red-700 cursor-pointer" onClick={() => handleDelete(data?.idproducto, data.puntoCarga,data?.idrecetacabecera)} />
                                             </Tooltip>
                                             :
                                             <span className="text-blue-500 text-xs">

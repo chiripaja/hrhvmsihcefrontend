@@ -213,7 +213,7 @@ export const CEImagenes = ({ cuentaDatos }: any) => {
                             <span className="font-semibold text-gray-800">Imágenes</span>
 
                             {cuentaDatos?.recetaCabezera?.some((item: any) =>
-                                [20, 21, 22, 23].includes(item.IdPuntoCarga)
+                                [20, 21, 22, 23].includes(item.IdPuntoCarga) && cuentaDatos?.ordenesImagenes.length>0
                             ) && (
                                     <Link
                                         href={`/reportes/recetasimagenes/${cuentaDatos?.idcuentaatencion}`}

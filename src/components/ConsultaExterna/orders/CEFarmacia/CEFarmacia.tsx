@@ -124,7 +124,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
                             <span className="font-semibold text-gray-800">Farmacia</span>
 
                             {cuentaDatos?.recetaCabezera?.some((item: any) =>
-                                [5].includes(item.IdPuntoCarga)
+                                [5].includes(item.IdPuntoCarga) && cuentaDatos?.medicamentos.length>0
                             ) && (
                                     <Link
                                         href={`/reportes/recetasFarmacia/${cuentaDatos?.idcuentaatencion}`}

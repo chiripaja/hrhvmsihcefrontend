@@ -121,7 +121,7 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
 
     useEffect(() => {
         if (dataPuntosDeCargaLab[0]?.IdPuntoCarga && cuentaDatos?.idFormaPago) {
-            getExamenesByPuntoCarga(dataPuntosDeCargaLab[0]?.IdPuntoCarga)
+           // getExamenesByPuntoCarga(dataPuntosDeCargaLab[0]?.IdPuntoCarga)
         }
     }, [dataPuntosDeCargaLab, cuentaDatos?.idFormaPago])
 
@@ -225,7 +225,7 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
                             <span className="font-semibold text-gray-800">Laboratorio</span>
 
                             {cuentaDatos?.recetaCabezera?.some((item: any) =>
-                                [2, 3, 11].includes(item.IdPuntoCarga)
+                                [2, 3, 11].includes(item.IdPuntoCarga) && cuentaDatos?.ordenesLaboratorio.length>0
                             ) && (
                                     <Link
                                         href={`/reportes/recetaslaboratorio/${cuentaDatos?.idcuentaatencion}`}
