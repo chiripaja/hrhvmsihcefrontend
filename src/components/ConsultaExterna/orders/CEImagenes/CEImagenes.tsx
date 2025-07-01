@@ -85,7 +85,7 @@ export const CEImagenes = ({ cuentaDatos }: any) => {
         const datos = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/factaCatalogoServicioByIdPuntoCargaAndFormaPago/${idpuntocarga}/${cuentaDatos?.idFormaPago}`);
         const mappedOptions = datos.map((est: any) => ({
             value: est.IdProducto,
-            label: `${est.Nombre.trim()}`,
+            label: `${est.Codigo?.trim()} - ${est.Nombre.trim()}`,
             PrecioUnitario: est.PrecioUnitario,
             Codigo:est.Codigo,
         }));

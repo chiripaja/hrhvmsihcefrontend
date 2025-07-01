@@ -25,8 +25,8 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     const createordenesLaboratorio = useCEDatosStore((state: any) => state.createordenesLaboratorio);
     const updateOrdenesLaboratorio = useCEDatosStore((state: any) => state.updateOrdenesLaboratorio);
 
-     const createOrdenesImagenes = useCEDatosStore((state: any) => state.createOrdenesImagenes);
-        const updateOrdenesImagenes = useCEDatosStore((state: any) => state.updateOrdenesImagenes);
+    const createOrdenesImagenes = useCEDatosStore((state: any) => state.createOrdenesImagenes);
+    const updateOrdenesImagenes = useCEDatosStore((state: any) => state.updateOrdenesImagenes);
     const getPuntoCarga = async () => {
         const data = await getData(`${process.env.apijimmynew}/recetas/puntoscargapaquetes`);
         setOptionPuntoCarga(data);
@@ -45,12 +45,14 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     };
     const MostrarPaquete = async (id: any) => {
         const dato = await getData(`${process.env.apijimmynew}/recetas/FacturacionCatalogoPaquetesXpaquete/${id}`);
+        console.log(dato)
         setDatosKit(dato)
     }
 
     const onSubmit = async (data: any) => {
+       
         /*farmacia*/
-       await procesarFarmacia(
+        await procesarFarmacia(
             DatosKit,
             actualizarDatosFarmacia,
             createMedicamento,
@@ -74,7 +76,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             HandleLaboratorio,
             [2, 3, 11]
         );/**/
-         /*Imagenes*/
+        /*Imagenes*/
         await procesarImagenes(
             DatosKit,
             data?.diagnostico,
@@ -103,8 +105,9 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
         setRecetaCabezera: any
     ) => {
         const farmacia = DatosKit.filter((datos: any) => datos.idPuntoCarga == 5);
-        const farmaciaActualizado = await actualizarDatosFarmacia(farmacia);
         
+        const farmaciaActualizado = await actualizarDatosFarmacia(farmacia);
+       
         const datosMedicamentosArray: MedicamentosCE[] = farmaciaActualizado.map((element: any) => ({
             idrecetacabecera: "",
             idproducto: element?.idProducto,
@@ -119,12 +122,14 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             nombre: element.Descripcion,
             usuarioauditoria: session?.user?.id,
             idEstadoDetalle: 1,
+            Codigo: element?.Codigo?.trim(),
+            TipoProducto:element?.TipoProducto
         }));
-
-        await Promise.all(datosMedicamentosArray.map((medicamento) => createMedicamento(medicamento)));
+   
+       await Promise.all(datosMedicamentosArray.map((medicamento) => createMedicamento(medicamento)));
         const cuentaDatosActualizado = useCEDatosStore.getState().datosce;
         // Llamar a handleFarmacia al final
-        await handleFarmacia(cuentaDatosActualizado, updateMedicamentos, getData, setRecetaCabezera);
+       await handleFarmacia(cuentaDatosActualizado, updateMedicamentos, getData, setRecetaCabezera);
     };
 
 
@@ -139,14 +144,14 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
         createordenesLaboratorio: any,
         actualizarDatosLaboratorio: any,
         handleCanastaPorPuntoDeCarga: any,
-        puntosCarga:any[]
+        puntosCarga: any[]
     ) => {
         const laboratorio = DatosKit.filter((datos: any) =>
             puntosCarga.includes(datos.idPuntoCarga)
         );
-   
-        const laboratorioActualizado = await actualizarDatosLaboratorio(laboratorio);
 
+        const laboratorioActualizado = await actualizarDatosLaboratorio(laboratorio);
+      
         const laboratorioActualizadoArray = laboratorioActualizado.map((element: any) => ({
             idrecetacabecera: "",
             idproducto: element?.idProducto,
@@ -162,6 +167,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             usuarioauditoria: session?.user?.id,
             puntoCarga: element?.idPuntoCarga,
             idEstadoDetalle: 1,
+            Codigo:element?.Codigo?.trim()
         }));
 
         await Promise.all(
@@ -170,8 +176,8 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
 
         const cuentaDatosActualizado = useCEDatosStore.getState().datosce;
-       
- 
+
+
         await handleCanastaPorPuntoDeCarga(
             cuentaDatosActualizado,
             updateOrdenesLaboratorio,
@@ -191,12 +197,12 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
         createordenesImagenes: any,
         actualizarDatosImagenes: any,
         handleCanastaPorPuntoDeCarga: any,
-        puntosCarga:any[]
+        puntosCarga: any[]
     ) => {
         const imagenes = DatosKit.filter((datos: any) =>
             puntosCarga.includes(datos.idPuntoCarga)
         );
-       
+
         const ImagenesActualizado = await actualizarDatosLaboratorio(imagenes);
 
         const ImangeActualizadoArray = ImagenesActualizado.map((element: any) => ({
@@ -214,8 +220,9 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
             usuarioauditoria: session?.user?.id,
             puntoCarga: element?.idPuntoCarga,
             idEstadoDetalle: 1,
+            Codigo:element?.Codigo?.trim()
         }));
-  
+
 
         await Promise.all(
             ImangeActualizadoArray.map((item: any) => createordenesImagenes(item))
@@ -223,8 +230,8 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
 
         const cuentaDatosActualizado = useCEDatosStore.getState().datosce;
-       
- 
+
+
         await HandleImagenes(
             cuentaDatosActualizado,
             updateOrdenesImagenes,
@@ -259,7 +266,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                 }
             })
         );
-        
+
         // Mostrar alerta si hay productos no disponibles
         if (noDisponibles.length > 0) {
             await Swal.fire({
@@ -271,11 +278,11 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                 allowEscapeKey: false,
             });
         }
-    
+
         // Retornar solo los disponibles
         return DatosKitFarmaciaActualizado.filter(item => item !== null);
     };
-    
+
 
     const actualizarDatosLaboratorio = async (laboratorio: any) => {
         const DatosKitFarmaciaActualizado = await Promise.all(
@@ -283,7 +290,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                 const response = await getData(
                     `${process.env.apijimmynew}/FactCatalogoServicios/apiCatalogoServiciosSeleccionarSoloConPreciosEnParticularIdProducto/${data?.idPuntoCarga}/${cuentaDatos?.idFormaPago}/${data?.idProducto}`
                 );
-               
+
                 return {
                     ...data, // Mantiene los datos originales
                     precio: response?.PrecioUnitario, // Actualiza solo el precio si está disponible
@@ -328,7 +335,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
 
     return (
         <>
-
+{cuentaDatos?.diagnosticos?.length > 0 ? (
             <form onSubmit={handleSubmit(onSubmit)} >
                 <select
                     onChange={handleChange}
@@ -419,6 +426,7 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                     </div>
                 }
                 <div className="flex justify-end mt-6 col-span-2 gap-2">
+                      
                     <button
                         type="submit"
                         disabled={isSubmitting}
@@ -442,7 +450,9 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                         Cerrar
                     </button>
                 </div>
-            </form>
+            </form>):(
+                <div>Debe ingresar un diagnostico</div>
+            )}
         </>
     );
 };

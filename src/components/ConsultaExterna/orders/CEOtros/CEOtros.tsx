@@ -61,7 +61,7 @@ export const CEOtros = ({ session,cuentaDatos }: any) => {
                 console.log(response)
                 const mappedOptions = response.map((est: any) => ({
                     value: est.idProducto,
-                    label: est.nombre,
+                    label: est.codigo + ' ' + est.nombre,
                     Codigo:est.codigo
                 }));
                 setOptions(mappedOptions);

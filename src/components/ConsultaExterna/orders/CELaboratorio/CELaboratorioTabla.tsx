@@ -54,7 +54,7 @@ export const CELaboratorioTabla = ({ modificar = 0, cuentaDatos }: { modificar?:
                                 <td className="tabletd w-1/3">
                              
                                     {NombrePuntoCarga(data.puntoCarga)}</td>
-                                <td className="tabletd w-32">({data.Codigo}) - {data.nombre} </td>
+                                <td className="tabletd w-32"> {data.nombre} </td>
                                 {(modificar === 0) &&
                                      <td className="tabletd">
                                         

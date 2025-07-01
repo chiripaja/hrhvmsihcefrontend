@@ -99,7 +99,7 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
                 const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/apiCatalogoServiciosSeleccionarSoloConPreciosEnParticularByNombre/${cuentaDatos?.idPuntoCargaProcDentroConsultorio}/${cuentaDatos?.idFormaPago}/${nom}`);
                 const mappedOptions = response.map((est: any) => ({
                     value: est.IdProducto,
-                    label: `${est.Nombre.trim()}`,
+                   label: `${est.Codigo?.trim()} - ${est.Nombre.trim()} `,
                     PrecioUnitario: est.PrecioUnitario,
                     Codigo:est.Codigo
                 }));

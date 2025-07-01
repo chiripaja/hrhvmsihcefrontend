@@ -538,7 +538,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-  
+ 
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>

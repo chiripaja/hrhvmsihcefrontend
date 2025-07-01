@@ -30,7 +30,7 @@ export const CEOtrosTabla = ({ modificar = 0,cuentaDatos }: { modificar?: number
             {cuentaDatos?.ordenesOtros.map((data: any,index:any) => (
                 <tr key={`${data.idProducto}-${data.nombre}-${index}`}>
                     <td className="tabletd w-1/3">{data.cantidad}  </td>
-                    <td className="tabletd w-32">({data.Codigo}) - {data.nombre} </td>
+                    <td className="tabletd w-32"> {data.nombre} </td>
                     {(modificar===0) && 
                     <td className="tabletd">
                          <Tooltip text="Eliminar">
