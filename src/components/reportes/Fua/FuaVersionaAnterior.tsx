@@ -5,7 +5,7 @@ import { getData } from "@/components/helper/axiosHelper";
 import { HiX } from 'react-icons/hi';
 import Image from 'next/image';
 
-export const Fua = ({ idcuentaatencion }: any) => {
+export const FuaVersionaAnterior = ({ idcuentaatencion }: any) => {
     const [sisFuaAtencion, setSisFuaAtencion] = useState<any>();
     const [sisFuaAtencionDIA, setSisFuaAtencionDIA] = useState<any[]>([]);
     const [sisFuaAtencionMED, setSisFuaAtencionMED] = useState<any[]>([]);
@@ -103,16 +103,24 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                         </tr>
                                         <tr>
                                             <td className='w-2/5 text-center border border-black bg-customGray' colSpan={3}>NÚMERO DE FORMATO </td>
-                                            <td rowSpan={2} className='text-center border border-black  w-12'></td>
-                                            
+                                            <td colSpan={4} className='text-center border border-black bg-customGray w-12'>INSTITUCIÓN EDUCATIVA</td>
+                                            <td colSpan={2} className='text-center border border-black bg-customGray' >CÓDIGO</td>
                                         </tr>
                                         <tr>
                                             <td rowSpan={2} className='border border-black text-center font-bold text-lg'>00000754</td>
                                             <td rowSpan={2} className='border border-black text-center font-bold text-lg'>{sisFuaAtencion?.FuaLote}</td>
                                             <td rowSpan={2} className='border border-black text-center font-bold text-lg'>{sisFuaAtencion?.FuaNumero}</td>
-                                          
+                                            <td colSpan={4} className='border border-black h-4'></td>
+                                            <td colSpan={2} className='border border-black'></td>
                                         </tr>
-                                       
+                                        <tr>
+                                            <td className='border border-black bg-customGray'></td>
+                                            <td className='border border-black'></td>
+                                            <td className='border border-black bg-customGray w-10'>SECCIÓN</td>
+                                            <td className='border border-black'></td>
+                                            <td className='border border-black bg-customGray w-10'>TURNO</td>
+                                            <td className='border border-black '></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </td>
@@ -257,7 +265,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 </tr>
                                                 <tr>
                                                     <td className=' bg-customGray w-20 text-center  border border-black'>INSTITUCIÓN</td>
-                                                    <td className='  text-center border border-black'></td>
+                                                    <td className='  text-center border border-black'>0</td>
                                                 </tr>
                                                 <tr>
                                                     <td className=' bg-customGray text-center  border border-black'>COD. SEGURO</td>
@@ -365,17 +373,17 @@ export const Fua = ({ idcuentaatencion }: any) => {
 
                                                         <tr>
                                                             <td className='bg-customGray border border-black text-center h-8'>FECHA PROBABLE DE PARTO / FECHA DE PARTO </td>
-                                                            <td className='text-center border border-black'></td>
-                                                            <td className='text-center border border-black '></td>
-                                                            <td className='text-center border border-black'></td>
+                                                            <td className='text-center border border-black h-8'></td>
+                                                            <td className='text-center border border-black h-8'></td>
+                                                            <td className='text-center border border-black h-8'></td>
                                                         </tr>
                                                         <tr>
                                                             {sisFuaAtencion?.fnacimiento && (
                                                                 <>
                                                                     <td className='bg-customGray border border-black text-center h-8'>FECHA DE NACIMIENTO</td>
-                                                                    <td className='text-center border border-black '>{sisFuaAtencion.fnacimiento.split("/")[0]}</td>
-                                                                    <td className='text-center border border-black '>{sisFuaAtencion.fnacimiento.split("/")[1]}</td>
-                                                                    <td className='text-center border border-black '>{sisFuaAtencion.fnacimiento.split("/")[2]}</td>
+                                                                    <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[0]}</td>
+                                                                    <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[1]}</td>
+                                                                    <td className='text-center border border-black h-8'>{sisFuaAtencion.fnacimiento.split("/")[2]}</td>
                                                                 </>
                                                             )}
 
@@ -395,23 +403,23 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                     <tbody>
                                                         <tr>
                                                             <td className='bg-customGray text-center border border-black w-56 h-8'>N° DE HISTORIA CLÍNICA</td>
-                                                            <td className='bg-customGray text-center border border-black'>ETNIA</td>
+                                                            <td className='bg-customGray text-center border border-black h-8'>ETNIA</td>
                                                         </tr>
                                                         <tr>
-                                                            <td className='text-center  border border-black h-5'>{sisFuaAtencion?.FuaNrohistoria}</td>
+                                                            <td className='text-center  border border-black'>{sisFuaAtencion?.FuaNrohistoria}</td>
                                                             <td className='text-center  border border-black'>58</td>
                                                         </tr>
                                                         <tr>
-                                                            <td className=' bg-customGray border border-black text-center h-5'> DNI / CNV / AFILIACIÓN DEL RN 1 </td>
-                                                            <td className='text-center border border-black '></td>
+                                                            <td className=' bg-customGray border border-black text-center h-8'> DNI / CNV / AFILIACIÓN DEL RN 1 </td>
+                                                            <td className='text-center border border-black h-8'></td>
                                                         </tr>
                                                         <tr>
-                                                            <td className=' bg-customGray border border-black text-center h-5'> DNI / CNV / AFILIACIÓN DEL RN 2 </td>
-                                                            <td className='text-center border border-black '></td>
+                                                            <td className=' bg-customGray border border-black text-center h-8'> DNI / CNV / AFILIACIÓN DEL RN 2 </td>
+                                                            <td className='text-center border border-black h-8'></td>
                                                         </tr>
                                                         <tr>
-                                                            <td className=' bg-customGray border border-black text-center h-5'> DNI / CNV / AFILIACIÓN DEL RN 3 </td>
-                                                            <td className='text-center border border-black '></td>
+                                                            <td className=' bg-customGray border border-black text-center h-8'> DNI / CNV / AFILIACIÓN DEL RN 3 </td>
+                                                            <td className='text-center border border-black h-8'></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -456,15 +464,13 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                             <table className='  border-collapse w-full col-span-2 h-full'>
                                                 <tbody>
                                                     <tr>
-                                                        <td className='bg-customGray border-r border-black text-center font-semibold' colSpan={3}>HORA</td>
+                                                        <td className='bg-customGray border-r border-black text-center font-semibold'>HORA</td>
                                                         <td className='bg-customGray border-r border-black text-center font-semibold'>UPS</td>
                                                         <td className='bg-customGray border-r border-black text-center font-semibold'>CÓD. PRESTA</td>
                                                         <td className='bg-customGray border-r border-black  text-center font-semibold'>CÓD. PRESTACION(ES) ADICIONAL (ES)</td>
                                                     </tr>
                                                     <tr>
-                                                        <td className='border-t border-black  text-center'> {sisFuaAtencion?.FuaAtencionHora?.split(':')[0]}</td>
-                                                        <td className='border-t border-l border-black text-center'>:</td>
-                                                        <td className='border-t border-l border-black text-center'> {sisFuaAtencion?.FuaAtencionHora?.split(':')[1]}</td>
+                                                        <td className='border-t border-black  text-center'>{sisFuaAtencion?.FuaAtencionHora}</td>
                                                         <td className='border-t border-l border-black text-center'>{sisFuaAtencion?.FuaUPS}</td>
                                                         <td className='border-t border-l border-black text-center'>{sisFuaAtencion?.FuaCodigoPrestacion}</td>
                                                         <td className='border border-black text-center'></td>
@@ -477,8 +483,8 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         <td rowSpan={3} className=' bg-customGray border-t border-l  border-black text-center'>REPORTE VINCULADO</td>
                                                     </tr>
                                                     <tr>
-                                                        <td className='bg-customGray border  border-black text-center'>CÓD. AUTORIZACIÓN</td>
-                                                        <td className='bg-customGray border-r border-b border-black text-center'>N° FUA A VINCULAR</td>
+                                                        <td className='bg-customGray border  border-black'>CÓD. AUTORIZACIÓN</td>
+                                                        <td className='bg-customGray border-r border-b border-black '>N° FUA A VINCULAR</td>
                                                     </tr>
                                                     <tr>
                                                         <td className='border-r border-l border-black h-5'></td>
@@ -514,27 +520,20 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 </tr>
                                                 <tr>
                                                     <td className='border border-black bg-customGray w-24 text-center'>FECHA</td>
-                                                    <td className='border-l border-black text-center bg-customGray' colSpan={2}>DIA</td>
-                                                    <td className='border-l border-black text-center bg-customGray' colSpan={2}>MES</td>
-                                                    <td className='border-l border-black text-center bg-customGray' colSpan={2}>AÑO</td>
+                                                    <td className='border-l border-black'></td>
+                                                    <td className='border-l border-black'></td>
+                                                    <td className='border-l border-black'></td>
                                                 </tr>
                                                 <tr>
                                                     <td className='border border-black bg-customGray text-center'>DE INGRESO</td>
                                                     <td className='border border-black'></td>
                                                     <td className='border border-black'></td>
-                                                    <td className='border border-black'></td>
-                                                    <td className='border border-black'></td>
-                                                    <td className='border border-black'></td>
                                                     <td className='border-l border-t border-black'></td>
                                                 </tr>
-                                                
                                                 <tr>
                                                     <td className='border border-black bg-customGray text-center'>DE ALTA</td>
                                                     <td className='border border-black'></td>
                                                     <td className='border border-black'></td>
-                                                    <td className='border border-black'></td>
-                                                    <td className='border border-black'></td>
-                                                    <td className='border border-black'></td>                                                    
                                                     <td className='border-l border-t border-black'></td>
                                                 </tr>
                                                 <tr>
@@ -542,9 +541,6 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                     <td className='border-l border-t border-black'></td>
                                                     <td className='border-l border-t border-black'></td>
                                                     <td className='border-l border-t border-black'></td>
-                                                    <td className='border-l border-t border-black'></td>
-                                                    <td className='border-l border-t border-black'></td>
-                                                    <td className='border-l border-t border-black'></td>  
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -556,36 +552,50 @@ export const Fua = ({ idcuentaatencion }: any) => {
                         {/* INICIO CONCEPTO PRESTACIONAL */}
                         <tr>
                             <td style={{ fontSize: '8px' }}>
-                                <table className='w-full border-collapse '>
+                                <table className='w-full border-collapse border-black border'>
                                     <tbody>
                                         <tr>
-                                            <td colSpan={10} className='text-center border border-black bg-customGray font-semibold'>CONCEPTO PRESTACIONAL</td>
+                                            <td colSpan={14} className='text-center border border-black bg-customGray font-semibold'>CONCEPTO PRESTACIONAL</td>
                                         </tr>
                                         <tr>
-                                            <td rowSpan={2} className='border border-black bg-customGray text-center font-semibold w-3'>ATENCIÓN DIRECTA</td>
-                                            <td rowSpan={2} className='border border-black text-center w-8'>
+                                            <td rowSpan={3} className='border border-black bg-customGray text-center font-semibold'>ATENCIÓN DIRECTA</td>
+                                            <td rowSpan={3} className='border border-black text-center w-8'>
                                                 X
                                             </td>
-                                            <td rowSpan={2} className='border border-black text-center w-48'>
+                                            <td colSpan={2} className='border border-black bg-customGray text-center font-semibold'>
+                                                COB EXTRAORDINARIA
+                                            </td>
+                                            <td colSpan={2} className='border border-black bg-customGray text-center font-semibold'>
+                                                CARTA DE GARANTIA
+                                            </td>
+                                            <td rowSpan={3} className='border border-black bg-customGray text-center font-semibold'>
+                                                TRASLADO
+                                            </td>
+                                            <td rowSpan={3} className='border border-black w-8'>
 
                                             </td>
-                                            <td rowSpan={2} className='border border-black text-center w-2'>
-
-                                            </td>
-                                            <td colSpan={6} className='border border-black w-8 bg-customGray text-center font-semibold'>
-                                                Sepelio
+                                            <td colSpan={6} className='border border-black bg-customGray text-center font-semibold'>
+                                                SEPELIO
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td className='border border-black w-14 bg-customGray text-center font-semibold'>NATIMUERTO</td>
+                                            <td className='border border-black bg-customGray text-center w-20'>Nº Autorización</td>
                                             <td className='border border-black w-14'></td>
-                                            <td className='border border-black w-14 bg-customGray text-center font-semibold'>OBITO</td>
+                                            <td className='border border-black bg-customGray text-center w-20'>Nº Autorización</td>
                                             <td className='border border-black w-14'></td>
-                                            <td className='border border-black w-14 bg-customGray text-center font-semibold'>OTRO</td>
-                                            <td className='border border-black w-14'></td>
+                                            <td rowSpan={2} className='border border-black bg-customGray text-center font-semibold'>NATIMUERTO</td>
+                                            <td className='border border-black w-20' rowSpan={2}></td>
+                                            <td rowSpan={2} className='border border-black bg-customGray text-center font-semibold'>OBITO</td>
+                                            <td className='border border-black w-20' rowSpan={2}></td>
+                                            <td rowSpan={2} className='border border-black bg-customGray text-center font-semibold'>OTRO</td>
+                                            <td className='border border-black w-20' rowSpan={2}></td>
                                         </tr>
-                                     
-                                    
+                                        <tr>
+                                            <td className='border border-black bg-customGray text-center'>Monto S/. </td>
+                                            <td className='border border-black'></td>
+                                            <td className='border border-black bg-customGray text-center'>Monto S/. </td>
+                                            <td className='border border-black'></td>
+                                        </tr>
 
                                     </tbody>
                                 </table>
@@ -669,8 +679,8 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        <div className='w-full grid grid-cols-5  border'>
-                                            <table className='border border-black border-collapse row-span-2'>
+                                        <div className='w-full grid grid-cols-5'>
+                                            <table className='border border-black border-collapse'>
                                                 <tbody>
                                                     <tr>
                                                         <td colSpan={2} className='border border-black bg-customGray text-center'>DE LA GESTANTE</td>
@@ -703,15 +713,14 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         <td colSpan={5} className='border border-black bg-customGray text-center font-semibold'>DEL RECIEN NACIDO</td>
                                                     </tr>
                                                     <tr>
-                                                        <td className='border border-black bg-customGray text-center' colSpan={4}>EDAD GEST RN
-(SEM)</td>
-                                                        <td className='border border-black text-center'></td>
+                                                        <td className='border border-black bg-customGray text-center' colSpan={4}>CPN (N°)</td>
+                                                        <td className='border border-black text-center'>s</td>
                                                     </tr>
                                                     <tr>
-                                                        <td className='border border-black text-center bg-customGray '>APGAR</td>
-                                                        <td className='border border-black text-center'>1°</td>
+                                                        <td className='border border-black text-center'>APGAR</td>
+                                                        <td className='border border-black bg-customGray text-center'>1°</td>
                                                         <td className='border border-black w-3'></td>
-                                                        <td className='border border-black  text-center'>5°</td>
+                                                        <td className='border border-black bg-customGray text-center'>5°</td>
                                                         <td className='border border-black '></td>
                                                     </tr>
                                                     <tr>
@@ -757,7 +766,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                            <table className='border-collapse'>
+                                            <table className=' border-collapse'>
                                                 <tbody>
                                                     <tr>
                                                         <td colSpan={2} className='border border-black bg-customGray text-center font-semibold'>JOVEN Y ADULTO</td>
@@ -774,27 +783,12 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         <td className='border border-black text-center'></td>
                                                     </tr>
                                                     <tr>
-                                                        <td className='border border-black bg-customGray text-center' rowSpan={2}>TAMIZAJE DE SALUD MENTAL</td>
-                                                        <td className='border border-black text-center'>PAT.</td>
+                                                        <td className='border border-black bg-customGray text-center'>TAMIZAJE DE SALUD MENTAL</td>
+                                                        <td className='border border-black text-center'></td>
                                                     </tr>
                                                     <tr>
-                                                        <td className='border border-black text-center'>NOR</td>
-                                                    </tr>
-                        
-                                                </tbody>
-                                            </table>
-                                            <table className='col-span-4 border-collapse'>
-                                                <tbody>
-                                                    <tr>
-                                                        <td className='border border-black text-center bg-customGray font-semibold' colSpan={6}>TAMIZAJE DE PATOLOGÍAS CRÓNICAS</td>
-                                                    </tr>
-                                                    <tr style={{ fontSize: '6px' }}>
-                                                        <td className='border border-black  text-center bg-customGray'>HB.GLICOSILADA(mg/dL)</td>
-                                                        <td className='border border-black w-4'></td>
-                                                        <td className='border border-black  text-center bg-customGray'>DOSAJE DE ALBUMINA EN ORINA (ug/mL)</td>
-                                                        <td className='border border-black w-4'></td>
-                                                        <td className='border border-black  text-center bg-customGray'>DEPURACION DE CREATININA (mL/min)</td>
-                                                        <td className='border border-black  w-4'></td>
+                                                        <td className='text-red-500 text-right' colSpan={2}>PAT. O NOR</td>
+
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -804,18 +798,17 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                         <table className='border border-black w-full border-collapse'>
                                             <tbody>
                                                 <tr>
-                                                    <td colSpan={7} className='border border-black bg-customGray text-center font-semibold'>
+                                                    <td colSpan={6} className='border border-black bg-customGray text-center font-semibold'>
                                                         VACUNAS N° DE DOSIS
                                                     </td>
                                                 </tr>
                                                 <tr >
-                                                    <td className='border border-black bg-customGray text-center w-12'>BCG</td>
+                                                    <td className='border border-black bg-customGray text-center'>BCG</td>
                                                     <td className='border border-black  text-center w-6'></td>
-                                                    <td className='border border-black bg-customGray text-center  w-12'>INFLUENZA</td>
+                                                    <td className='border border-black bg-customGray text-center'>INFLUENZA</td>
                                                     <td className='border border-black  text-center w-6'></td>
                                                     <td className='border border-black bg-customGray text-center'>ANTIAMARILICA</td>
-                                                    <td className='border border-black  text-center w-6' colSpan={2}></td>
-                                                       
+                                                    <td className='border border-black  text-center w-6'></td>
                                                 </tr>
                                                 <tr >
                                                     <td className='border border-black bg-customGray text-center'>DPT</td>
@@ -823,7 +816,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                     <td className='border border-black bg-customGray text-center'>PAROTID</td>
                                                     <td className='border border-black  text-center '></td>
                                                     <td className='border border-black bg-customGray text-center'>ANTINEUMOC</td>
-                                                    <td className='border border-black  text-center' colSpan={2}></td>
+                                                    <td className='border border-black  text-center'></td>
                                                 </tr>
                                                 <tr >
                                                     <td className='border border-black bg-customGray text-center'>APO</td>
@@ -831,16 +824,15 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                     <td className='border border-black bg-customGray text-center'>RUBEOLA</td>
                                                     <td className='border border-black  text-center '></td>
                                                     <td className='border border-black bg-customGray text-center'>ANTITETANICA</td>
-                                                    <td className='border border-black  text-center ' colSpan={2}></td>
+                                                    <td className='border border-black  text-center '></td>
                                                 </tr>
                                                 <tr >
                                                     <td className='border border-black bg-customGray text-center'>ASA</td>
                                                     <td className='border border-black  text-center '></td>
                                                     <td className='border border-black bg-customGray text-center'>ROTAVIRUS</td>
                                                     <td className='border border-black  text-center'></td>
-                                                    <td className='border border-black bg-customGray text-center w-5'>COMPLETAS PARA LA EDAD</td>
-                                                    <td className='border border-black  text-center w-4'>SI</td>
-                                                    <td className='border border-black  text-center w-4'>NO</td>
+                                                    <td className='border border-black bg-customGray text-center'>COMPLETAS PARA LA EDAD</td>
+                                                    <td className='border border-black  text-center'></td>
                                                 </tr>
                                                 <tr >
                                                     <td className='border border-black bg-customGray text-center'>SPR</td>
@@ -848,7 +840,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                     <td className='border border-black bg-customGray text-center'>DT ADULTO (N° DOSIS)</td>
                                                     <td className='border border-black  text-center'></td>
                                                     <td className='border border-black bg-customGray text-center'>VPH</td>
-                                                    <td className='border border-black  text-center '  colSpan={2}></td>
+                                                    <td className='border border-black  text-center '></td>
                                                 </tr>
                                                 <tr >
                                                     <td className='border border-black bg-customGray text-center'>SR</td>
@@ -856,7 +848,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                     <td className='border border-black bg-customGray text-center'>IPV</td>
                                                     <td className='border border-black  text-center '></td>
                                                     <td className='border border-black bg-customGray text-center'>OTRA VACUNA</td>
-                                                    <td className='border border-black  text-center '  colSpan={2}></td>
+                                                    <td className='border border-black  text-center '></td>
                                                 </tr>
                                                 <tr >
                                                     <td className='border border-black bg-customGray text-center'>HVB</td>
@@ -864,12 +856,12 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                     <td className='border border-black bg-customGray text-center'>PENTAVAL</td>
                                                     <td className='border border-black  text-center '></td>
                                                     <td className='border border-black bg-customGray text-center'>____________</td>
-                                                    <td className='border border-black  text-center '  colSpan={2}></td>
+                                                    <td className='border border-black  text-center '></td>
                                                 </tr>
                                                 <tr >
-                                                    <td className='border border-black bg-customGray text-center' > GRUPO DE RIESGO HVB</td>
+                                                    <td className='border border-black bg-customGray text-center' style={{ fontSize: '5px' }}> GRUPO DE RIESGO HVB</td>
                                                     <td className='border border-black  text-center '></td>
-                                                    <td className='border border-black  text-center' colSpan={5} style={{ fontSize: '6px' }}>
+                                                    <td className='border border-black  text-center' colSpan={4} style={{ fontSize: '4px' }}>
                                                         GRUPO DE RIESGO HVB: 1. TRABAJADOR DE SALUD 2. TRABAJAD. SEXUALES 3. HSH 4. PRIVADO LIBERTAD 5. FF. AA. 6. POLICIA NACIONAL  7. ESTUDIANTES DE SALUD 8. POLITRANFUNDIDOS 9. DROGO DEPENDIENTES
 
                                                     </td>
@@ -929,9 +921,9 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                 </table>
                             </td>
                         </tr>
-                        <tr >
-                            <td style={{ fontSize: '9px' }} className='border-black '>
-                                <table className="w-full border border-black border-collapse">
+                        <tr>
+                            <td style={{ fontSize: '9px' }}>
+                                <table className='w-full'>
                                     <tbody>
                                         <tr>
                                             <td className='border border-black bg-customGray font-semibold text-center'>N° DE DNI</td>
@@ -965,47 +957,46 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                         <tr>
 
                                             <td colSpan={5}>
-                                                <table className='w-full  border-separate border-spacing-2'  >
-                                                    <tbody >
+                                                <table className='w-full  border-collapse'>
+                                                    <tbody>
                                                         <tr>
                                                             <td className=' border-black w-2/5'></td>
-                                                      <td className='align-bottom' >
-  <table className='border-separate border-spacing-2 ml-auto'>
-    <tbody>
-      <tr>
-        <td colSpan={2} className='font-semibold'>FIRMA</td>
-      </tr>
-      <tr>
-        <td className='font-semibold'>ASEGURADO</td>
-        <td className='border border-black w-6'></td>
-      </tr>
-      <tr>
-        <td className='font-semibold'>REPRESENTANTE</td>
-        <td className='border border-black w-6'></td>
-      </tr>
-    </tbody>
-  </table>
-</td>
+                                                            <td>
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td colSpan={2} className='font-semibold'>FIRMA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td className='font-semibold'>ASEGURADO</td>
+                                                                            <td className='border border-black w-6'></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td className='font-semibold'>APODERADO</td>
+                                                                            <td className='border border-black w-6'></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
                                                             <td className='border-b border-black w-40'></td>
-                                                            <td rowSpan={2} className="text-center align-middle ">
+                                                            <td rowSpan={2} className="text-center align-middle">
                                                                 <div className="flex justify-center items-center w-full h-full">
-                                                                    <div className="border border-black w-28 h-32">
-                                                                        {/* contenido aquí si lo necesitas */} 
+                                                                    <div className="border border-black w-32 h-36">
+                                                                        {/* contenido aquí si lo necesitas */}
                                                                     </div>
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                        <tr > 
+                                                        <tr>
                                                             <td></td>
-                                                            <td className='grid grid-cols-1 font-semibold align-bottom  text-right'><span>REPRESENTANTE DEL ASEGURADO:</span>   <span>NOMBRES Y APELLIDOS</span></td>
+                                                            <td className='grid grid-cols-1 font-semibold'><span>APODERADO:</span>   <span>NOMBRES Y APELLIDOS</span></td>
                                                             <td className='border-b border-black w-9'></td>
-                                                            <td></td>
                                                         </tr>
                                                         <tr>
                                                             <td className='border-t border-black w-9 text-center'>FIRMA Y SELLO DEL RESPONSABLE DE LA ATENCIÓN</td>
-                                                            <td className='font-semibold align-bottom text-right'>DNI o CE DEL REPRESENTANTE:</td>
+                                                            <td className='font-semibold'>DNI o CE DEL APODERADO:</td>
                                                             <td className='border-b border-black w-9'></td>
-                                                            <td className='text-center'>Huella Digital del Asegurado o del REPRESENTANTE</td>
+                                                            <td className='text-center'>Huella Digital del Asegurado o del Apoderado</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -1026,53 +1017,46 @@ export const Fua = ({ idcuentaatencion }: any) => {
                         <tr>
                             <td>
                                 <div className="w-5/6 mx-auto">
-                                <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
-                                    <tbody>
-<tr>
-                                            <td>
-                                              <div className="flex items-center justify-center text-center  font-bold  h-8  rounded-md w-11/12">
-  TERAPEUTICA, INSUMOS, PROCEDIMIENTOS Y APOYO AL DIAGNOSTICO
-</div>
-                                            </td>
-                                            <td>
-                                                <table className='border-collapse w-full'>
-                                                    <tbody>
-  <tr>
-                                                        <td className='bg-customGray  border border-black text-center font-semibold' colSpan={3}>FORMATO DE ATENCIÓN Nº</td>
-                                                    </tr>
-                                                    <tr>
-                                            <td  className='border border-black text-center font-bold text-xs' style={{ fontSize: '9px' }}>00000754</td>
-                                            <td  className='border border-black text-center font-bold text-xs' style={{ fontSize: '9px' }}>{sisFuaAtencion?.FuaLote}</td>
-                                            <td  className='border border-black text-center font-bold text-xs' style={{ fontSize: '9px' }}>{sisFuaAtencion?.FuaNumero}</td>
+                                    <table className='border-collapse w-full' style={{ fontSize: '9px' }}>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div className="flex items-center justify-center text-center bg-customGray font-semibold border h-8 border-black rounded-md w-11/12">
+                                                        TERAPEUTICA, INSUMOS, PROCEDIMIENTOS Y APOYO AL DIAGNOSTICO
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <table className='border-collapse w-full'>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td className='bg-customGray  border border-black text-center font-semibold' colSpan={3}>FORMATO DE ATENCIÓN Nº</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td className='border border-black text-center font-bold text-xs' style={{ fontSize: '9px' }}>00000754</td>
+                                                                <td className='border border-black text-center font-bold text-xs' style={{ fontSize: '9px' }}>{sisFuaAtencion?.FuaLote}</td>
+                                                                <td className='border border-black text-center font-bold text-xs' style={{ fontSize: '9px' }}>{sisFuaAtencion?.FuaNumero}</td>
+                                                            </tr>
+                                                        </tbody>
+
+                                                    </table>
+                                                </td>
                                             </tr>
-                                                    </tbody>
-                                                  
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                        
-                                </table>
+                                        </tbody>
+
+                                    </table>
                                     <table className='border-collapse w-full mt-1' style={{ fontSize: '9px' }}>
                                         <tbody>
                                             <tr>
-                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={14} style={{ fontSize: '8px' }}>PRODUCTOS FARMACEUTICOS / MEDICAMENTOS</td>
+                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={10} style={{ fontSize: '8px' }}>PRODUCTOS FARMACEUTICOS / MEDICAMENTOS</td>
                                             </tr>
                                             <tr style={{ fontSize: '7px' }}>
                                                 <td className='text-center font-bold bg-customGray border border-black w-12' >CÓDIGO SISMED</td>
-                                                <td className='text-center font-bold bg-customGray border border-black w-36' >NOMBRE</td>
-                                                <td className='text-center font-bold bg-customGray border border-black' >FF</td>
-                                                <td className='text-center font-bold bg-customGray border border-black w-6'>CONCENTR</td>
+                                                <td className='text-center font-bold bg-customGray border border-black' >NOMBRE <br /> (Denominacion, Concentracion ,Presentacion, FormaFarmaceutica) </td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>PRES</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>ENTR</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
-
-
-
                                                 <td className='text-center font-bold bg-customGray border border-black w-12'>CÓDIGO SISMED</td>
-                                                <td className='text-center font-bold bg-customGray border border-black w-36'>NOMBRE</td>
-                                                <td className='text-center font-bold bg-customGray border border-black' >FF</td>
-                                                <td className='text-center font-bold bg-customGray border border-black w-6'>CONCENTR</td>
+                                                <td className='text-center font-bold bg-customGray border border-black'>NOMBRE <br /> (Denominacion, Concentracion, Presentacion, FormaFarmaceutica)</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>PRES</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>ENTR</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
@@ -1087,8 +1071,6 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         {/* primera parte */}
                                                         <td className='border border-black h-3 text-center'>{item1?.Codigo ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item1?.Nombre ?? ''}</td>
-                                                        <td className='border border-black  text-center'></td>
-                                                        <td className='border border-black  text-center'></td>
                                                         <td className='border border-black  text-center'>{item1?.CantidadPrescrita ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item1?.CantidadEntregada ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item1?.DxNumero ?? ''}</td>
@@ -1096,8 +1078,6 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         {/* segunda parte */}
                                                         <td className='border border-black text-center'>{item2?.Codigo ?? ''}</td>
                                                         <td className='border border-black text-center'>{item2?.Nombre ?? ''}</td>
-                                                        <td className='border border-black  text-center'></td>
-                                                        <td className='border border-black  text-center'></td>
                                                         <td className='border border-black  text-center'>{item2?.CantidadPrescrita ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item2?.CantidadEntregada ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item2?.DxNumero ?? ''}</td>
@@ -1106,21 +1086,16 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                             })}
 
                                             <tr>
-                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={14} style={{ fontSize: '8px' }}>DISPOSITIVOS MÉDICOS / PRODUCTOS SANITARIOS</td>
+                                                <td className='text-center font-bold bg-customGray border border-black' colSpan={10} style={{ fontSize: '8px' }}>DISPOSITIVOS MÉDICOS / PRODUCTOS SANITARIOS</td>
                                             </tr>
                                             <tr style={{ fontSize: '7px' }}>
                                                 <td className='text-center font-bold bg-customGray border border-black w-12' >CÓDIGO</td>
-                                                <td className='text-center font-bold bg-customGray border border-black '>NOMBRE  </td>
-                                                <td className='text-center font-bold bg-customGray border border-black w-6' >FF</td>
-                                                <td className='text-center font-bold bg-customGray border border-black w-6'>CONCENTR</td>
+                                                <td className='text-center font-bold bg-customGray border border-black '>NOMBRE <br /> (Denominacion, Concentracion, Presentacion, Caracteristicas) </td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>PRES</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>ENTR</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
-
                                                 <td className='text-center font-bold bg-customGray border border-black w-12'>CÓDIGO</td>
-                                                <td className='text-center font-bold bg-customGray border border-black'>NOMBRE  </td>
-                                                <td className='text-center font-bold bg-customGray border border-black w-6'  >FF</td>
-                                                <td className='text-center font-bold bg-customGray border border-black w-6'>CONCENTR</td>
+                                                <td className='text-center font-bold bg-customGray border border-black'>NOMBRE  <br /> (Denominacion, Concentracion, Presentacion, Caracteristicas)</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>PRES</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>ENTR</td>
                                                 <td className='text-center font-bold bg-customGray border border-black w-6'>DX</td>
@@ -1134,8 +1109,6 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         {/* primera parte */}
                                                         <td className='border border-black h-3 text-center'>{item1?.Codigo ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item1?.Nombre ?? ''}</td>
-                                                        <td className='border border-black  text-center'></td>
-                                                        <td className='border border-black  text-center'></td>
                                                         <td className='border border-black  text-center'>{item1?.CantidadPrescrita ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item1?.CantidadEntregada ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item1?.DxNumero ?? ''}</td>
@@ -1143,8 +1116,6 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                                         {/* segunda parte */}
                                                         <td className='border border-black  text-center'>{item2?.Codigo ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item2?.Nombre ?? ''}</td>
-                                                        <td className='border border-black  text-center'></td>
-                                                        <td className='border border-black  text-center'></td>
                                                         <td className='border border-black  text-center'>{item2?.CantidadPrescrita ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item2?.CantidadEntregada ?? ''}</td>
                                                         <td className='border border-black  text-center'>{item2?.DxNumero ?? ''}</td>
@@ -1245,58 +1216,54 @@ export const Fua = ({ idcuentaatencion }: any) => {
                                     {/* fin observaciones*/}
 
 
-                                <table className='w-full  border-separate border-spacing-2'style={{ fontSize: '8px' }} >
-                                                    <tbody >
-                                                        <tr>
-                                                            <td className=' border-black w-2/5'></td>
-                                                      <td className='align-bottom'>
-  <table className='border-separate border-spacing-2 ml-auto'>
-    <tbody>
-      <tr>
-        <td colSpan={2} className='font-semibold'>FIRMA</td>
-      </tr>
-      <tr>
-        <td className='font-semibold'>ASEGURADO</td>
-        <td className='border border-black w-6'></td>
-      </tr>
-      <tr>
-        <td className='font-semibold'>REPRESENTANTE</td>
-        <td className='border border-black w-6'></td>
-      </tr>
-    </tbody>
-  </table>
-</td>
-                                                            <td className='border-b border-black w-40'></td>
-                                                            <td rowSpan={2} className="text-center align-middle ">
-                                                                <div className="flex justify-center items-center w-full h-full">
-                                                                    <div className="border border-black w-28 h-32">
-                                                                        {/* contenido aquí si lo necesitas */} 
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr > 
-                                                            <td></td>
-                                                            <td className='grid grid-cols-1 font-semibold align-bottom  text-right'><span>REPRESENTANTE DEL ASEGURADO:</span>   <span>NOMBRES Y APELLIDOS</span></td>
-                                                            <td className='border-b border-black w-9'></td>
-                                                            <td></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className='border-t border-black w-9 text-center'>FIRMA Y SELLO DEL RESPONSABLE DE LA ATENCIÓN</td>
-                                                            <td className='font-semibold align-bottom text-right'>DNI o CE DEL REPRESENTANTE:</td>
-                                                            <td className='border-b border-black w-9'></td>
-                                                            <td className='text-center'>Huella Digital del Asegurado o del REPRESENTANTE</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-
+                                    <table className='w-full  border-collapse mt-2' style={{ fontSize: '9px' }}>
+                                        <tbody>
+                                            <tr>
+                                                <td className=' border-black w-2/5'></td>
+                                                <td >
+                                                    <table >
+                                                        <tbody>
+                                                            <tr>
+                                                                <td colSpan={2} className='font-semibold'>FIRMA</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td className='font-semibold'>ASEGURADO</td>
+                                                                <td className='border border-black w-6'></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td className='font-semibold'>APODERADO</td>
+                                                                <td className='border border-black w-6'></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td className='border-b border-black w-40'></td>
+                                                <td rowSpan={2} className="text-center align-middle">
+                                                    <div className="flex justify-center items-center w-full h-full">
+                                                        <div className="border border-black w-32 h-36">
+                                                            {/* contenido aquí si lo necesitas */}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td className='grid grid-cols-1 font-semibold'><span>APODERADO:</span>   <span>NOMBRES Y APELLIDOS</span></td>
+                                                <td className='border-b border-black w-9'></td>
+                                            </tr>
+                                            <tr>
+                                                <td className='border-t border-black w-9 text-center'>Firma y Sello del Responsable de<br />Procedimiento y/o Farmacia y/o Laboratorio</td>
+                                                <td className='font-semibold'>DNI o CE DEL APODERADO:</td>
+                                                <td className='border-b border-black w-9'></td>
+                                                <td className='text-center'>Huella Digital del Asegurado o del Apoderado</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-
                             </td>
                         </tr>
                     </tbody>
                 </table>
-
             </div>
         </>
     )
