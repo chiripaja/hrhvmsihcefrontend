@@ -42,7 +42,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   };
 
 
-useEffect(() => {
+  useEffect(() => {
     if (
       flagFarmacia &&
       flagOrders &&
@@ -205,7 +205,7 @@ useEffect(() => {
               <tr>
                 <td className='align-top font-semibold'>Médico:</td>
                 <td>{datosPxGeneral?.MedicoPaterno} {datosPxGeneral?.MedicoMaterno} {datosPxGeneral?.MedicoNombres}
-                &nbsp;  Colegiatura: {datosPxGeneral?.MedicoColegitura}  RNE: {datosPxGeneral?.Medicorne}</td>
+                  &nbsp;  Colegiatura: {datosPxGeneral?.MedicoColegitura}  RNE: {datosPxGeneral?.Medicorne}</td>
                 <td className='align-top font-semibold'>Fecha Consulta:</td>
                 <td>{datosPxGeneral?.FechaIngreso}</td>
               </tr>
@@ -352,7 +352,11 @@ useEffect(() => {
               </td>
               <td className='align-top'>
                 <hr className="border-t-2 border-gray-400 border-dashed my-2" />
-                ({datosFarmacia[0]?.Descripcion}) (N° Receta: {datosFarmacia[0]?.idReceta})
+                {datosFarmacia[0]?.Descripcion && datosFarmacia[0]?.idReceta && (
+                  <>
+                    ({datosFarmacia[0].Descripcion}) (N° Receta: {datosFarmacia[0].idReceta})
+                  </>
+                )}
                 {
                   datosFarmacia.map((item: any) => (
                     <div key={item.IdProducto}>
@@ -374,14 +378,8 @@ useEffect(() => {
                 <SeccionOrdenes datos={datosTomografia} />
                 <SeccionOrdenes datos={datosEcografia} />
                 <SeccionOrdenes datos={datosEcografiaObstetrica} />
-
-
-
-
               </td>
             </tr>
-
-
             <tr>
               <td className='align-top font-semibold'>
                 Procedimientos :
@@ -397,13 +395,11 @@ useEffect(() => {
                 }
               </td>
             </tr>
-
             <tr>
               <td className='align-top font-semibold'>
                 Otros Procedimientos :
               </td>
               <td>
-
                 {
                   datosProcedimientosFuera.map((item: any, index: number) => (
                     <span key={item.idSolicitudProc}>
@@ -414,7 +410,6 @@ useEffect(() => {
                 }
               </td>
             </tr>
-
             <tr>
               <td className='align-top font-semibold'>
                 Interconsultas :
@@ -422,16 +417,12 @@ useEffect(() => {
               <td>
                 {
                   datosInterconsulta.map((item: any, index: number) => (
-
-
                     <span key={item.idsolicitudespecialidad}>
-
                       [
                       {item?.Descripcion} {item?.Diagnostico} {item?.motivo}
                       ]
                       {index < datosInterconsulta.length - 1 && ', '}
                     </span>
-
                   ))
                 }
               </td>

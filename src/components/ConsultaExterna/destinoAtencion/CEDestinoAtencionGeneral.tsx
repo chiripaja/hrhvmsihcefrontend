@@ -32,13 +32,14 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const [listadoInterconsulta, setListadoInterconsulta] = useState<any[]>([])
   const [options, setOptions] = useState<any[]>([]);
   const [destinoAtencion, setDestinoAtencion] = useState<any>();
-
+//setFuaNumero
+  const setFuaNumero = useCEDatosStore((state: any) => state.setFuaNumero);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
   const { control: control2, register: register2, handleSubmit: handleSubmit2, setValue: setValue2, reset: reset2, watch: watch2 } = useForm<any>();
   const { formattedDate, hora, fechayhora, formattedDate2 } = obtenerFechaYHora();
   const [referenciaView, setreferenciaView] = useState(false);
-  const [sisfua, setsisfua] = useState<any>();
+
 
   const [sisFuaCabecera, setsisFuaCabecera] = useState<any>();
   const [sisFuaDx, setsisFuaDx] = useState<any[]>([]);
@@ -115,10 +116,6 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
     setDestinoAtencion(data);
   }
 
-  const getSisfua = async () => {
-    const data = await getData(`${process.env.apijimmynew}/fua/sisfua`);
-    setsisfua(data)
-  }
 
 
   const getListadoInterconsulta = async (idatencion: any) => {
@@ -128,7 +125,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   useEffect(() => {
     getListadoDestinoAtencion()
-    getSisfua()
+   
   }, [])
 
 
@@ -168,10 +165,12 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
     handleSubmit2(FormDestino)();
   };
   const destinoAtencionW = watch2('destinoAtencion');
+  let reintentos = 0;
   const generarFua = async () => {
     const validadSis = await getData(`${process.env.apijimmynew}/fua/validadExisteFuaByIdCuenta/${cuentaDatos?.idcuentaatencion}`)
     let dataFuaCabecera;
     if (cuentaDatos?.idSiasis) {
+      const sisfua = await getData(`${process.env.apijimmynew}/fua/sisfua`);
       const ultimoNum = sisfua[0]?.fuaUltimoGenerado;
       console.log("Ultimo numero")
       console.log(ultimoNum)
@@ -215,6 +214,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
           dataDestinoAtencion = 0;
           break;
       }
+       
       dataFuaCabecera = {
         idCuentaAtencion: cuentaDatos?.idcuentaatencion,
         fuaDisa: sisfua[0]?.fuaDisa,
@@ -308,21 +308,50 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         fuaCodOferFlexible: null,
         idUsuarioAuditoria: session?.user?.id
       }
-        if (validadSis?.FuaNumero) {
-      const data = await axios.put(`${process.env.apijimmynew}/fua/modificarfua`, dataFuaCabecera);
-    } else {
-      const data = await axios.post(`${process.env.apijimmynew}/fua/agregarfua`, dataFuaCabecera);
-    }
-    const fuaverdadero = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionSeleccionarPorId/${cuentaDatos?.idcuentaatencion}`)
+      if (validadSis?.FuaNumero) {
+        const data = await axios.put(`${process.env.apijimmynew}/fua/modificarfua`, dataFuaCabecera);
+        console.log("modificar")
+      } else {
+        try {
+          const response = await axios.post(`${process.env.apijimmynew}/fua/agregarfua`, dataFuaCabecera);
+          console.log(response)
+          const resultado = response.data?.resultado || response.data?.error;
 
-    setsisFuaCabecera(fuaverdadero)
+          if (resultado === 'FUA agregado correctamente') {
+            console.log('✅ FUA agregado correctamente');
+            // Swal.fire('Éxito', resultado, 'success');
+          } else if (resultado === 'Ya existe un FUA con ese número') {
+            console.warn('⚠️ Ya existe un FUA con ese número');
+            // Swal.fire('Advertencia', resultado, 'warning');
+          } else {
+            console.error('⚠️ Respuesta inesperada:', resultado);
+            // Swal.fire('Error', resultado || 'Respuesta inesperada del servidor', 'error');
+          }
+
+        } catch (error) {
+          console.error('❌ Error al agregar el FUA:', error);
+
+          if (axios.isAxiosError(error)) {
+            const mensaje = error.response?.data?.error || error.message;
+            console.log('📛 Mensaje de error:', mensaje);
+            // Swal.fire('Error', mensaje, 'error');
+          } else {
+            // Otros errores que no vienen de axios
+            console.error('📛 Error inesperado:', error);
+            // Swal.fire('Error', 'Error inesperado', 'error');
+          }
+        }
+      }
+      const fuaverdadero = await getData(`${process.env.apijimmynew}/fua/SisFuaAtencionSeleccionarPorId/${cuentaDatos?.idcuentaatencion}`)
+      console.log(fuaverdadero)
+      setsisFuaCabecera(fuaverdadero)
     }
-  
+
   }
 
 
   useEffect(() => {
-    if (sisFuaCabecera) {
+    if (sisFuaCabecera?.FuaNumero > 0) {
       getSisFuaDiaAgregar()
     }
   }, [sisFuaCabecera])
@@ -360,6 +389,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         fuaNumero: sisFuaCabecera?.FuaNumero,
         IdDiagnostico: data?.IdDiagnostico
       };
+      setFuaNumero(sisFuaCabecera?.FuaNumero)
       nuevosDiagnosticos.push(objDiag);
       await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionDIAAgregar`, objDiag);
     }
@@ -473,7 +503,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
           codigo: data?.Codigo,
           dxNumero: dxnumeroSacado[0]?.DxNumero,
           cantidadPrescrita: data?.cantidad,
-          cantidadEjecutada: 0,
+          cantidadEjecutada: data?.cantidad,
           precioUnitario: data?.precio,
           cabDniUsuarioRegistra: cuentaDatos?.MedicoDni?.trim(),
           cabFechaFuaPrimeraVez: sisFuaCabecera?.CabFechaFuaPrimeraVez,
@@ -538,7 +568,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
- 
+   
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
@@ -719,13 +749,13 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         }
       </div>
       <div className="flex justify-end mt-6 col-span-2 gap-2">
-                               <Link
-    className="flex items-center px-4 h-12 py-2 mb-2 rounded focus:outline-none bg-blue-700 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
-    href={`/sihce/consultaexterna`}
-       
-  >
-    📄 Lista Pacientes
-  </Link>
+        <Link
+          className="flex items-center px-4 h-12 py-2 mb-2 rounded focus:outline-none bg-blue-700 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
+          href={`/sihce/consultaexterna`}
+
+        >
+          📄 Lista Pacientes
+        </Link>
         <button
           type="submit"
           disabled={isSubmitting}

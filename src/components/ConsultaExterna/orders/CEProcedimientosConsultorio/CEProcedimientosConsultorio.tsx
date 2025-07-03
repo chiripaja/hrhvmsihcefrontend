@@ -119,7 +119,7 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
     return (
         <>
 
-            <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4 col-span-2">
+            <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4 col-span-2 max-w-[104.5rem]">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
                     <span className="flex-grow">Procedimientos en Consultorio</span>

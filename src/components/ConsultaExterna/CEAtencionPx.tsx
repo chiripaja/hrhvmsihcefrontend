@@ -12,7 +12,7 @@ import { MedicamentosCE } from '@/interfaces/MedicamentosCe'
 
 declare global {
   interface Window {
-    HS?: any; 
+    HS?: any;
   }
 }
 
@@ -20,12 +20,12 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   const [dataPx, setDataPx] = useState<any>();
   const [activeTab, setActiveTab] = useState('1');
   const cuentaDatos = useCEDatosStore((state: any) => state.datosce);
-  const setIdAtencionv2=useCEDatosStore((state:any)=>state.setIdAtencionv2);
+  const setIdAtencionv2 = useCEDatosStore((state: any) => state.setIdAtencionv2);
   const setDiagnosticoByCuenta = useCEDatosStore((state: any) => state.setDiagnosticoByCuenta);
   const setRecetaCabezera = useCEDatosStore((state: any) => state.setRecetaCabezera);
   const setRecetaCabezeraProcedimientos = useCEDatosStore((state: any) => state.setRecetaCabezeraProcedimientos);
   const createMedicamento = useCEDatosStore((state: any) => state.createMedicamento);
-  const limpiarMedicamento=useCEDatosStore((state:any)=>state.limpiarMedicamento);
+  const limpiarMedicamento = useCEDatosStore((state: any) => state.limpiarMedicamento);
   const createordenesLaboratorio = useCEDatosStore((state: any) => state.createordenesLaboratorio);
   const createOrdenesImagenes = useCEDatosStore((state: any) => state.createOrdenesImagenes);
   const createordenesOtros = useCEDatosStore((state: any) => state.createordenesOtros);
@@ -33,8 +33,8 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   const setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago = useCEDatosStore((state: any) => state.setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago);
   const [procesados, setProcesados] = useState<Set<number>>(new Set());
   const [procesado, setProcesado] = useState(false);
-  const resetDatosCE=useCEDatosStore((state:any)=>state.resetDatosCE);
-  const limpiarordenesProcedimiento=useCEDatosStore((state:any)=>state.limpiarordenesProcedimiento)
+  const resetDatosCE = useCEDatosStore((state: any) => state.resetDatosCE);
+  const limpiarordenesProcedimiento = useCEDatosStore((state: any) => state.limpiarordenesProcedimiento)
   const [datosAtencion, setDatosAtencion] = useState<any>();
   const [recetaUpdateValidador, setrecetaUpdateValidador] = useState<any>()
   useEffect(() => {
@@ -76,7 +76,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
         data?.FuaCodigoPrestacion,
         data?.NroReferenciaOrigen,
         data?.MedicoColegitura,
-        data?.MedicoDni,
+        data?.MedicoDni?.trim(),
         data?.MedicoMaterno,
         data?.MedicoNombres,
         data?.MedicoPaterno,
@@ -106,16 +106,16 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
       console.log(datosAtencion)
       setDatosAtencion(datosAtencion)
-      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio, 
+      setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio,
         datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago,
-         datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,
-         datosAtencion?.edad,datosAtencion?.idCondicionMaterna,
-         datosAtencion?.idDestinoAtencion)
+        datosAtencion?.servicio?.factPuntosCarga?.idPuntoCarga,
+        datosAtencion?.edad, datosAtencion?.idCondicionMaterna,
+        datosAtencion?.idDestinoAtencion)
       if (Array.isArray(datosAtencion.atencionesDiagnosticos)) {
         datosAtencion.atencionesDiagnosticos.map((data: any) => {
           setDiagnosticoByCuenta(
             data.diagnostico.idDiagnostico,
-            data.diagnostico.codigoCIE10+' - '+data.diagnostico.descripcion,
+            data.diagnostico.codigoCIE10 + ' - ' + data.diagnostico.descripcion,
             data.diagnostico.codigoCIE10,
             data.idSubclasificacionDx,
             data.subclasificacionDiagnosticos.descripcion,
@@ -138,7 +138,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
         const FiltadorDatosRecetaCabeceraProcedimientos = DatosRecetaCabeceraProcedimientos.filter((data: any) => data.IdPuntoCarga == 1);
         FiltadorDatosRecetaCabeceraProcedimientos.length > 0 && setRecetaCabezeraProcedimientos(FiltadorDatosRecetaCabeceraProcedimientos)
       }
-      
+
       setrecetaUpdateValidador(DatosRecetaCabecera)
       DatosRecetaCabecera.length > 0 && setRecetaCabezera(DatosRecetaCabecera);
     } catch (error) {
@@ -152,14 +152,14 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
       const data = await getData(`${process.env.apijimmynew}/recetas/apiRecetaDetallePorIdReceta/${idrecetacabecera}/${idFormaPago}/4`)
       console.log(data)
       data.forEach((info: MedicamentosCE) => {
-        createMedicamento(info); 
+        createMedicamento(info);
       });
     } catch (error) {
       console.log(error)
     }
   }
 
- 
+
 
   const getOrdenesProcedimientosByIdOrden = async (idorden: number) => {
     try {
@@ -207,14 +207,14 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
     }
   }
 
-   useEffect(() => {
+  useEffect(() => {
     const ejecutarFunciones = async () => {
       if (procesado) return;
       const recetaCabezera = cuentaDatos?.recetaCabezera || [];
       const RecetaCabezeraFarmacia = recetaCabezera.filter(
         (data: RecetaCabecera) => data.IdPuntoCarga === 5
       );
-      if (RecetaCabezeraFarmacia?.[0]?.idReceta && cuentaDatos?.idFormaPago) {           
+      if (RecetaCabezeraFarmacia?.[0]?.idReceta && cuentaDatos?.idFormaPago) {
         await getMedicamentosbyIdRecetaCabeceraFarmacia(
           RecetaCabezeraFarmacia[0].idReceta,
           cuentaDatos.idFormaPago
@@ -222,8 +222,8 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
         setProcesado(true);
       }
     };
-    ejecutarFunciones(); 
-  }, [recetaUpdateValidador,cuentaDatos?.idFormaPago]);
+    ejecutarFunciones();
+  }, [recetaUpdateValidador, cuentaDatos?.idFormaPago]);
 
   useEffect(() => {
     const idsPermitidos = [3, 2, 11];
@@ -249,28 +249,29 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
     });
   }, [recetaUpdateValidador, cuentaDatos?.idFormaPago]);
   useEffect(() => {
-  if (cuentaDatos?.recetaCabezeraProcedimientos[0]?.IdOrden) {
+    if (cuentaDatos?.recetaCabezeraProcedimientos[0]?.IdOrden) {
       getOrdenesProcedimientosByIdOrden(cuentaDatos?.recetaCabezeraProcedimientos[0]?.IdOrden)
     }
   }, [cuentaDatos?.recetaCabezeraProcedimientos])
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
   };
+
   if (!cuentaDatos?.idFormaPago) return <div className="flex justify-center items-center h-screen">
-  <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
-</div>;
+    <div className="rounded-full h-20 w-20 bg-blue-600 animate-ping"></div>
+  </div>;
 
   return (
     <div className="flex flex-wrap bg-white p-3 rounded w-full shadow-2xl">
-  
-      <CECabezeraTriaje dataPx={dataPx} cuentaDatos={cuentaDatos}/>
+     
+      <CECabezeraTriaje dataPx={dataPx} cuentaDatos={cuentaDatos} />
       <div className="border-e border-gray-200 dark:border-neutral-700">
         <nav className="flex flex-col space-y-2">
           <button
             type="button"
             className={`py-1 pe-4 inline-flex items-center gap-x-2 border-e-2 border-transparent text-sm whitespace-nowrap ${activeTab === '1'
-                ? 'hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600'
-                : 'text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500'
+              ? 'hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600'
+              : 'text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500'
               } focus:outline-none focus:text-blue-600`}
             onClick={() => handleTabChange('1')}
             id="vertical-tab-with-border-item-1"
@@ -284,8 +285,8 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           <button
             type="button"
             className={`py-1 pe-4 inline-flex items-center gap-x-2 border-e-2 border-transparent text-sm whitespace-nowrap ${activeTab === '2'
-                ? 'hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600'
-                : 'text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500'
+              ? 'hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600'
+              : 'text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500'
               } focus:outline-none focus:text-blue-600`}
             onClick={() => handleTabChange('2')}
             id="vertical-tab-with-border-item-2"
@@ -295,39 +296,39 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           >
             Consulta Medica
           </button>
-{(cuentaDatos?.CitaMotivo && cuentaDatos?.CitaExamenClinico) && (
-<>
-<button
-            type="button"
-            className={`py-1 pe-4 inline-flex items-center gap-x-2 border-e-2 border-transparent text-sm whitespace-nowrap ${activeTab === '3'
-                ? 'hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600'
-                : 'text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500'
-              } focus:outline-none focus:text-blue-600`}
-            onClick={() => handleTabChange('3')}
-            id="vertical-tab-with-border-item-3"
-            aria-selected={activeTab === '3'}
-            aria-controls="vertical-tab-with-border-3"
-            role="tab"
-          >
-            Ordenes Medicas
-          </button>
+          {(cuentaDatos?.CitaMotivo && cuentaDatos?.CitaExamenClinico) && (
+            <>
+              <button
+                type="button"
+                className={`py-1 pe-4 inline-flex items-center gap-x-2 border-e-2 border-transparent text-sm whitespace-nowrap ${activeTab === '3'
+                  ? 'hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600'
+                  : 'text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500'
+                  } focus:outline-none focus:text-blue-600`}
+                onClick={() => handleTabChange('3')}
+                id="vertical-tab-with-border-item-3"
+                aria-selected={activeTab === '3'}
+                aria-controls="vertical-tab-with-border-3"
+                role="tab"
+              >
+                Ordenes Medicas
+              </button>
 
-          <button
-            type="button"
-            className={`py-1 pe-4 inline-flex items-center gap-x-2 border-e-2 border-transparent text-sm whitespace-nowrap ${activeTab === '4'
-                ? 'hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600'
-                : 'text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500'
-              } focus:outline-none focus:text-blue-600`}
-            onClick={() => handleTabChange('4')}
-            id="vertical-tab-with-border-item-4"
-            aria-selected={activeTab === '4'}
-            aria-controls="vertical-tab-with-border-4"
-            role="tab"
-          >
-            Destino de Atencion
-          </button>
-</>
-)}
+              <button
+                type="button"
+                className={`py-1 pe-4 inline-flex items-center gap-x-2 border-e-2 border-transparent text-sm whitespace-nowrap ${activeTab === '4'
+                  ? 'hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600'
+                  : 'text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500'
+                  } focus:outline-none focus:text-blue-600`}
+                onClick={() => handleTabChange('4')}
+                id="vertical-tab-with-border-item-4"
+                aria-selected={activeTab === '4'}
+                aria-controls="vertical-tab-with-border-4"
+                role="tab"
+              >
+                Destino de Atencion
+              </button>
+            </>
+          )}
         </nav>
       </div>
       <div className="ms-3 flex-grow">
@@ -337,7 +338,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           aria-labelledby="vertical-tab-with-border-item-1"
           className={activeTab === '1' ? '' : 'hidden'}
         >
-          <CEAntecedentesGeneral handleTabChange={handleTabChange} cuentaDatos={cuentaDatos}/>
+          <CEAntecedentesGeneral handleTabChange={handleTabChange} cuentaDatos={cuentaDatos} />
         </div>
         <div
           id="vertical-tab-with-border-2"
@@ -345,7 +346,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           role="tabpanel"
           aria-labelledby="vertical-tab-with-border-item-2"
         >
-          <CEConsultaGeneral handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion} cuentaDatos={cuentaDatos}/>
+          <CEConsultaGeneral handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion} cuentaDatos={cuentaDatos} />
         </div>
         <div
           id="vertical-tab-with-border-3"
@@ -353,7 +354,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           role="tabpanel"
           aria-labelledby="vertical-tab-with-border-item-3"
         >
-          <CEOrdenesGeneral session={session} handleTabChange={handleTabChange} cuentaDatos={cuentaDatos}/>
+          <CEOrdenesGeneral session={session} handleTabChange={handleTabChange} cuentaDatos={cuentaDatos} />
         </div>
         <div
           id="vertical-tab-with-border-4"
@@ -361,7 +362,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           role="tabpanel"
           aria-labelledby="vertical-tab-with-border-item-4"
         >
-          <CEDestinoAtencionGeneral session={session} cuentaDatos={cuentaDatos}/>
+          <CEDestinoAtencionGeneral session={session} cuentaDatos={cuentaDatos} />
         </div>
       </div>
     </div>

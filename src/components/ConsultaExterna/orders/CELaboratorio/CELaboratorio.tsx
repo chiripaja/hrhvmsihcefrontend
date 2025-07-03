@@ -216,8 +216,7 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
     };
     return (
         <>
-  
-            <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
+            <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4 max-w-[52rem] w-full ">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
                     <span className="flex-grow">

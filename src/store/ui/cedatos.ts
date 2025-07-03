@@ -112,7 +112,13 @@ export const useCEDatosStore = create<any>((set, get) => ({
     }));
 
   },
-
+setFuaNumero: (nuevoFua: string) =>
+  set((state:any) => ({
+    datosce: {
+      ...state.datosce,
+      FuaNumero: nuevoFua,
+    },
+  })),
   updateProcedimientosIdOrden: (idOrden: number) => {
     set((state: any) => {
       const ordenesProcedimiento = state.datosce.ordenesProcedimiento;

@@ -84,6 +84,7 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
                     <thead className="border-b-2">
                         <tr>
                             <th className="text-left">Concepto</th>
+                            <th>Observaciones</th>
                             <th>Cant.</th>
                         </tr>
                     </thead>
@@ -91,7 +92,11 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
                         {datos.map((item: any) => (
                             <tr key={item.idReceta + item.Nombre}>
                                 <td>{item.Nombre}</td>
-                                <td>{item.CantidadPedida}</td>
+                                <td>{item.observaciones}</td>
+                                <td>{item.CantidadPedida}
+
+                                </td>
+                                
                             </tr>
                         ))}
                     </tbody>
