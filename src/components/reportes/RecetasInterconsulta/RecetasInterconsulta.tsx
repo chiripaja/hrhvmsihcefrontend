@@ -76,8 +76,8 @@ export const RecetasInterconsulta = ({ idcuentaatencion }: any) => {
                 <table className="w-full text-xs mt-2">
                     <thead className="border-b-2">
                         <tr>
-                            <th className="text-left">Concepto</th>
-                            <th>Cant.</th>
+                            <th className="text-left">Consultorio</th>
+                            <th>Obs.</th>
                         </tr>
                     </thead>
                     <tbody className="border-b-2">

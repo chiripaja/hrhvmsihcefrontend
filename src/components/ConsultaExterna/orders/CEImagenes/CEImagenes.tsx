@@ -12,6 +12,7 @@ import axios from 'axios';
 import { RecetaCabecera } from '@/interfaces/RecetaCabezeraI';
 import { CgAdd } from 'react-icons/cg';
 import Link from 'next/link';
+import { CEimagenesTablaMUI } from './CEimagenesTablaMUI';
 interface Option {
     value: string;
     label: string;
@@ -254,7 +255,9 @@ export const CEImagenes = ({ cuentaDatos }: any) => {
                     </button>
                 </div>
 
-                <CEImagenesTabla modificar={1} cuentaDatos={cuentaDatos} />
+                <div className="w-full">
+                      <CEimagenesTablaMUI cuentaDatos={cuentaDatos} />
+                    </div>
             </div>
             {isOffcanvasOpenImagenes && (
                 <div

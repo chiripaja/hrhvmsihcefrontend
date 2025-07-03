@@ -8,7 +8,6 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { ToasterMsj } from "@/components/utils/ToasterMsj";
 import { useCEDatosStore } from "@/store";
-
 interface Medicamento {
     idproducto: number;
     nombre: string;
@@ -23,15 +22,16 @@ interface Props {
     };
 }
 
-export const CEFarmaciaTablaMUI = ({ cuentaDatos }: any) => {
+export const CELaboratorioTablaMUI = ({ cuentaDatos }: any) => {
     const deleteMedicamento = useCEDatosStore((state: any) => state.deleteMedicamento);
     const [rows, setRows] = useState<Medicamento[]>([]);
     const [isReady, setIsReady] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const [estadoDespacho, setestadoDespacho] = useState<boolean>(true);
+    const deleteLaboratorio = useCEDatosStore((state: any) => state.deleteLaboratorio);
     useEffect(() => {
-        if (!cuentaDatos?.medicamentos) return;
-        setRows(cuentaDatos.medicamentos);
+        if (!cuentaDatos?.ordenesLaboratorio) return;
+        setRows(cuentaDatos.ordenesLaboratorio);
     }, [cuentaDatos]);
 
     useEffect(() => {
@@ -69,18 +69,37 @@ export const CEFarmaciaTablaMUI = ({ cuentaDatos }: any) => {
         await axios.put(`${process.env.apijimmynew}/recetas/apiUpdateRecetadaDetalleCantidadObservaciones`, obj);
         ToasterMsj('Éxito', 'success', 'Se actualizó correctamente.');
     };
-
     const handleProcessRowUpdate = async (
-        newRow: Medicamento,
+        newRow: any,
         oldRow: Medicamento
     ): Promise<Medicamento> => {
+        const receta = cuentaDatos?.recetaCabezera?.find(
+            (data: any) => data.idReceta === newRow.idrecetacabecera
+        );
+
+        if (receta?.idEstado != '1') {
+            // Mostrar alerta con SweetAlert2
+            Swal.fire({
+                icon: 'warning',
+                title: 'No editable',
+                text: 'No se puede editar la cantidad porque la receta ya está cerrada.',
+            });
+
+            // Revertir el cambio
+            return oldRow;
+        }
+
+        // Si es editable, continúa con la actualización
         onMedicamentoActualizado(newRow, oldRow);
+
         const updatedRow = { ...newRow };
+
         setRows((prev) =>
             prev.map((row) =>
                 row.idproducto === updatedRow.idproducto ? updatedRow : row
             )
         );
+
         return updatedRow;
     };
 
@@ -99,10 +118,10 @@ export const CEFarmaciaTablaMUI = ({ cuentaDatos }: any) => {
 
         if (result.isConfirmed) {
             try {
-                // Aquí puedes agregar lógica para eliminar desde el backend si aplica
-                const data = await axios.delete(`${process.env.apijimmynew}/recetas/apiDeleteRecetaDetalleByIdRecetaAndIdItem/${medicamento?.idrecetacabecera}/${medicamento?.idproducto}`)
-
-                deleteMedicamento(medicamento?.idproducto)
+                
+               const data = await axios.delete(`${process.env.apijimmynew}/recetas/apiDeleteRecetaDetalleByIdRecetaAndIdItem/${medicamento?.idrecetacabecera}/${medicamento?.idproducto}`)
+               deleteLaboratorio(medicamento?.idproducto, medicamento?.puntoCarga)
+               
 
                 ToasterMsj("Eliminado", "success", "Medicamento eliminado correctamente.");
             } catch (error) {
@@ -112,10 +131,10 @@ export const CEFarmaciaTablaMUI = ({ cuentaDatos }: any) => {
         }
     };
 
-    const columns: GridColDef<Medicamento>[] = [
+    const columns: GridColDef<any>[] = [
         {
             field: "nombre",
-            headerName: "Medicamento",
+            headerName: "Procedimientos",
             flex: 1,
             renderCell: (params) => (
                 <span>
@@ -127,8 +146,9 @@ export const CEFarmaciaTablaMUI = ({ cuentaDatos }: any) => {
             field: "cantidad",
             headerName: "Cantidad",
             type: "number",
-            editable: estadoDespacho,
+
             width: 100,
+            editable: true,
         },
         {
             field: "observaciones",
@@ -143,10 +163,17 @@ export const CEFarmaciaTablaMUI = ({ cuentaDatos }: any) => {
             sortable: false,
             filterable: false,
             disableColumnMenu: true,
-            renderCell: (params) => (
-                <>
-                    {estadoDespacho && (
-                        <>
+            renderCell: (params) => {
+                const receta = cuentaDatos?.recetaCabezera?.find(
+                    (data: any) => data.idReceta == params.row?.idrecetacabecera
+                );
+
+                const mostrarBotonEliminar = receta?.idEstado != '2';
+
+                return (
+                    <>
+
+                        {mostrarBotonEliminar && (
                             <Tooltip title="Eliminar">
                                 <IconButton
                                     aria-label="delete"
@@ -156,20 +183,17 @@ export const CEFarmaciaTablaMUI = ({ cuentaDatos }: any) => {
                                     <MdDelete />
                                 </IconButton>
                             </Tooltip>
-                        </>
-                    )
-                    }
-
-                </>
-
-            ),
+                        )}
+                    </>
+                );
+            },
         },
     ];
 
     return (
         <div ref={containerRef} className="w-full">
-
-            {isReady && cuentaDatos?.medicamentos.length > 0 && (
+           
+            {isReady && cuentaDatos?.ordenesLaboratorio.length > 0 && (
                 <Box sx={{ width: '100%' }}>
                     <DataGrid
                         rows={rows}
@@ -185,7 +209,7 @@ export const CEFarmaciaTablaMUI = ({ cuentaDatos }: any) => {
                             },
                         }}
                         sx={{
-                         height: 300,
+                            height: 300,
                             "& .MuiDataGrid-cell": { fontSize: "0.875rem" },
                             "& .MuiDataGrid-columnHeaders": { fontWeight: "bold" },
                         }}
@@ -193,5 +217,5 @@ export const CEFarmaciaTablaMUI = ({ cuentaDatos }: any) => {
                 </Box>
             )}
         </div>
-    );
-};
+    )
+}

@@ -15,6 +15,8 @@ import { PiJarLabel } from 'react-icons/pi';
 import { HandleLaboratorio } from './HandleLaboratorio';
 import Link from 'next/link';
 import { SlPrinter } from "react-icons/sl";
+import { CEFarmaciaTablaMUI } from '../CEFarmacia/CEFarmaciaTablaMUI';
+import { CELaboratorioTablaMUI } from './CELaboratorioTablaMUI';
 //import { handleCanastaPorPuntoDeCarga } from './HandleLaboratorio';
 
 export const CELaboratorio = ({ cuentaDatos }: any) => {
@@ -264,7 +266,10 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
                         Registrar Examenes activos
                     </button>
                 </div>
-                <CELaboratorioTabla modificar={1} cuentaDatos={cuentaDatos} />
+              
+                <div className="w-full">
+                  <CELaboratorioTablaMUI cuentaDatos={cuentaDatos} />
+                </div>
             </div>
             {isOffcanvasOpenLaboratorio && (
                 <div
@@ -361,6 +366,7 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
                         />
                         <input type="number" className='inputSelect mt-2 mb-1'
                             min="0"
+                            defaultValue={1}
                             {...register('cantlaboratorio', {
                                 required: true,
                                 validate: value => value >= 0 || "La cantidad no puede ser negativa"

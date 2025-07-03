@@ -116,7 +116,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
     );
     return (
         <>
-            <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4 max-w-[52rem]">
+            <div className="w-full bg-white border border-gray-300 rounded-md shadow-sm p-4 max-w-[52rem] ">
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
                        <span className="flex-grow">
@@ -161,12 +161,10 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
                         Registrar medicamentos activos
                     </button>
                 </div>
-                <CEFarmaciaTabla modificar={1} cuentaDatos={cuentaDatos} />
+           
 
-               <div style={{ display: 'flex', width: '100%' }}>
-<div className="w-full max-w-4xl mx-auto">
+<div className="w-full">
   <CEFarmaciaTablaMUI cuentaDatos={cuentaDatos} />
-</div>
 </div>
             </div>
             {isOffcanvasOpenFarmacia && (

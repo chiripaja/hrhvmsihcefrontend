@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { FaPrint } from 'react-icons/fa';
 import { FiSave } from 'react-icons/fi';
 import Link from "next/link";
+import { SlPrinter } from 'react-icons/sl';
 const opcionCondicionMaterna = [
   { id: 1, valor: "Gestante" },
   { id: 2, valor: "Puerpera" },
@@ -100,7 +101,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         motivo: data?.motivo,
         idUsuario: session?.user?.id
       }
-      await axios.post(`${process.env.apijimmynew}/atenciones/interconsulta`, objetoEnvio)
+    const response=  await axios.post(`${process.env.apijimmynew}/atenciones/interconsulta`, objetoEnvio)
+    console.log(response)
       getListadoInterconsulta(cuentaDatos?.idatencion)
       ToasterMsj("Procesado", "success", "Interconsulta agregado correctamente.");
       reset()
@@ -572,7 +574,20 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
-            <legend className='font-bold'>Modulo Interconsultas</legend>
+            <legend className='font-bold'>Modulo Interconsultas  
+{listadoInterconsulta?.length > 0 &&
+<> <Link
+                                        href={`/reportes/recetaInterconsulta/${cuentaDatos?.idcuentaatencion}`}
+                                        target="_blank"
+                                        className="inline-flex items-center px-3 py-1.5 text-blue-600 text-sm rounded-md hover:bg-blue-100 transition-colors duration-200"
+                                    >
+                                        <SlPrinter className="m-2" />
+                                        <span>Imprimir</span>
+                                    </Link>
+
+</>}
+
+            </legend>
             <form onSubmit={handleSubmit(FormInterconsulta)}>
 
               {cuentaDatos?.diagnosticos?.length > 0 && (
