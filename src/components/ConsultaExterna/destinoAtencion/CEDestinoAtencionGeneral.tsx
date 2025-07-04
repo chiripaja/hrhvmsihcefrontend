@@ -36,7 +36,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 //setFuaNumero
   const setFuaNumero = useCEDatosStore((state: any) => state.setFuaNumero);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
+  const { control, register, handleSubmit, setValue, reset,getValues, formState: { errors } } = useForm<any>();
   const { control: control2, register: register2, handleSubmit: handleSubmit2, setValue: setValue2, reset: reset2, watch: watch2 } = useForm<any>();
   const { formattedDate, hora, fechayhora, formattedDate2 } = obtenerFechaYHora();
   const [referenciaView, setreferenciaView] = useState(false);
@@ -105,7 +105,11 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
     console.log(response)
       getListadoInterconsulta(cuentaDatos?.idatencion)
       ToasterMsj("Procesado", "success", "Interconsulta agregado correctamente.");
-      reset()
+ reset({
+  motivo: '',
+  especialidad: null,
+  diagnostico: getValues('diagnostico'), // mantiene el valor actual
+});
     } catch (error) {
       console.log(error)
     }

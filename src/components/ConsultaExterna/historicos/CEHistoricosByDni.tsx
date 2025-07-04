@@ -62,8 +62,6 @@ export const CEHistoricosByDni = ({ dni }: props) => {
               <span> {pxDatos.primerNombre} {pxDatos.apellidoPaterno} {pxDatos.apellidoMaterno} {pxDatos.nroDocumento && "(" + pxDatos.nroDocumento + ")"}  </span>
             </div>
           </div>
-
-
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
               <thead>
@@ -76,9 +74,11 @@ export const CEHistoricosByDni = ({ dni }: props) => {
                 </tr>
               </thead>
               <tbody className="text-gray-600 text-sm font-light">
-
                 {pxDatos.atenciones && pxDatos.atenciones.length > 0 && (
-                  pxDatos.atenciones.map((item: any) => (
+                  pxDatos.atenciones
+                  ?.slice() // para no mutar el array original
+  .sort((a: any, b: any) => new Date(a.fechaIngreso).getTime() - new Date(b.fechaIngreso).getTime())
+                  .map((item: any) => (
                     <React.Fragment key={item.idAtencion}>
                       <tr
                         className="border-b border-gray-200 cursor-pointer"

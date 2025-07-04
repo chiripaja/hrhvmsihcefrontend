@@ -32,14 +32,6 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   const [flagProcedimientosDentro, setflagProcedimientosDentro] = useState<boolean>(false);
   let printed = false;
 
-  const handleImprimirConRetardo = () => {
-    if (printed) return; // si ya se imprimió, no hacer nada
-    printed = true;
-
-    setTimeout(() => {
-      // window.print();
-    }, 3000);
-  };
 
 
   useEffect(() => {
@@ -51,7 +43,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
       flagProcedimientosFuera &&
       flagProcedimientosDentro
     ) {
-      window.print();
+      //window.print();
     }
   }, [
     flagFarmacia,
@@ -127,7 +119,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   useEffect(() => {
     if (datosAtencion?.idAtencion) {
       otrosProc();
-      handleImprimirConRetardo();
+     
     }
   }, [datosAtencion])
 
@@ -200,61 +192,61 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
         </h1>
         <div className=" justify-between items-center mt-1 pb-1 text-sm w-full grid-cols-1">
           {/* Datos generales */}
-          <table className='border w-full text-xs'>
+          <table className='border border-black w-full text-xs '>
             <tbody>
               <tr>
-                <td className='align-top font-semibold'>Médico:</td>
+                <td className='align-top font-bold'>Médico:</td>
                 <td>{datosPxGeneral?.MedicoPaterno} {datosPxGeneral?.MedicoMaterno} {datosPxGeneral?.MedicoNombres}
                   &nbsp;  Colegiatura: {datosPxGeneral?.MedicoColegitura}  RNE: {datosPxGeneral?.Medicorne}</td>
-                <td className='align-top font-semibold'>Fecha Consulta:</td>
+                <td className='align-top font-bold'>Fecha Consulta:</td>
                 <td>{datosPxGeneral?.FechaIngreso}</td>
               </tr>
               <tr>
-                <td className='align-top font-semibold'>Paciente:</td>
+                <td className='align-top font-bold'>Paciente:</td>
                 <td>({datosPxGeneral?.nroDocumento}) {datosPxGeneral?.nombreCompleto} (Edad: {datosPxGeneral?.triajeEdad} Años) ({datosPxGeneral?.FuentesFinanciamiento})</td>
-                <td className='align-top font-semibold'>Hora Atención:</td>
+                <td className='align-top font-bold'>Hora Atención:</td>
                 <td>{datosPxGeneral?.HoraEgreso}</td>
               </tr>
               <tr>
-                <td className='align-top font-semibold'>Consultorio:</td>
+                <td className='align-top font-bold'>Consultorio:</td>
                 <td>{datosPxGeneral?.servnom}</td>
-                <td className='align-top font-semibold'>N° Cuenta:</td>
+                <td className='align-top font-bold'>N° Cuenta:</td>
                 <td>{datosPxGeneral?.idCuentaAtencion}</td>
               </tr>
               <tr>
                 <td></td>
                 <td></td>
-                <td className='align-top font-semibold'>Fecha Proxima:</td>
+                <td className='align-top font-bold'>Fecha Proxima:</td>
                 <td></td>
               </tr>
             </tbody>
           </table>
 
           {/* Triaje */}
-          <table className='border w-full mt-1 text-xs'>
+          <table className='border w-full mt-1 text-xs border border-black'>
             <tbody>
               <tr>
-                <td className='align-top font-semibold'>P.Arterial:</td>
+                <td className='align-top font-bold'>P.Arterial:</td>
                 <td>{datosPxGeneral?.triajePresion} Sistólica/Diastólica </td>
-                <td className='align-top font-semibold'>Talla:</td>
+                <td className='align-top font-bold'>Talla:</td>
                 <td>{datosPxGeneral?.triajeTalla} cm</td>
               </tr>
               <tr>
-                <td className='align-top font-semibold'>Temperatura:</td>
+                <td className='align-top font-bold'>Temperatura:</td>
                 <td>{datosPxGeneral?.triajeTemperatura} °C</td>
-                <td className='align-top font-semibold'>Peso: </td>
+                <td className='align-top font-bold'>Peso: </td>
                 <td>{datosPxGeneral?.triajePeso}</td>
               </tr>
               <tr>
-                <td className='align-top font-semibold'>F.Cardiaca:</td>
+                <td className='align-top font-bold'>F.Cardiaca:</td>
                 <td>{datosPxGeneral?.triajeFrecCardiaca} rpm.</td>
-                <td className='align-top font-semibold'>F.Respiratoria:</td>
+                <td className='align-top font-bold'>F.Respiratoria:</td>
                 <td>{datosPxGeneral?.TriajeFrecRespiratoria} rpm.</td>
               </tr>
               <tr>
                 <td></td>
                 <td></td>
-                <td className='align-top font-semibold'>IMC:</td>
+                <td className='align-top font-bold'>IMC:</td>
                 <td> {(() => {
                   const tallaCm = datosPxGeneral?.triajeTalla;
                   const peso = datosPxGeneral?.triajePeso;
@@ -273,46 +265,46 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
         </div>
 
         {/* Antecedentes Personales */}
-        <table className="border col-span-2  text-xs w-full">
+        <table className="border border-black col-span-2  text-xs w-full">
           <thead>
             <tr>
-              <th className="border text-left" colSpan={2}>
+              <th className="border-black border-b text-left" colSpan={2}>
                 Antecedentes Personales
               </th>
             </tr>
           </thead>
           <tbody>
             <tr className="border-b border-gray-100">
-              <td className="w-1/5 align-top font-semibold">Quirúrgico :</td>
+              <td className="w-1/5 align-top font-bold">Quirúrgico :</td>
               <td className="align-top">{datosPxGeneral?.antecedQuirurgico}</td>
             </tr>
             <tr className="border-b border-gray-100">
-              <td className="align-top font-semibold">Patológico :</td>
+              <td className="align-top font-bold">Patológico :</td>
               <td className="align-top text-justify">{datosPxGeneral?.antecedPatologico}</td>
             </tr>
             <tr className="border-b border-gray-100">
-              <td className="align-top font-semibold">Alergias :</td>
+              <td className="align-top font-bold">Alergias :</td>
               <td className="align-top text-justify">{datosPxGeneral?.antecedAlergico}</td>
             </tr>
             <tr className="border-b border-gray-100">
-              <td className="align-top font-semibold">Obstétricos :</td>
+              <td className="align-top font-bold">Obstétricos :</td>
               <td className="align-top text-justify">{datosPxGeneral?.antecedObstetrico}</td>
             </tr>
             <tr className="border-b border-gray-100">
-              <td className="align-top font-semibold">Otros :</td>
+              <td className="align-top font-bold">Otros :</td>
               <td className="align-top text-justify">{datosPxGeneral?.antecedentes}</td>
             </tr>
-            <tr className="border-b border-gray-100">
-              <td className="align-top font-semibold">Ant. Familiares :</td>
+            <tr className="border-b border-black">
+              <td className="align-top font-bold">Ant. Familiares :</td>
               <td className="align-top text-justify">{datosPxGeneral?.antecedFamiliar}</td>
             </tr>
           </tbody>
         </table>
         {/* Motivo Consulta */}
-        <table className='border col-span-2  mt-2 text-xs w-full'>
+        <table className='border border-black col-span-2  mt-2 text-xs w-full'>
           <tbody>
             <tr className='border-b border-gray-100'>
-              <td className='w-1/5 align-top font-semibold'>
+              <td className='w-1/5 align-top font-bold'>
                 Motivo de Consulta  :
               </td>
               <td className='align-top text-justify'>
@@ -320,7 +312,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
               </td>
             </tr>
             <tr className='border-b border-gray-100 '>
-              <td className='align-top text-justify font-semibold'>
+              <td className='align-top text-justify font-bold'>
                 Exámen Clínico :
               </td>
               <td>
@@ -328,7 +320,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
               </td>
             </tr>
             <tr>
-              <td className='align-top text-justify font-semibold'>
+              <td className='align-top text-justify font-bold'>
                 Diagnóstico CIE 10  :
               </td>
               <td>
@@ -347,7 +339,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
               </td>
             </tr>
             <tr>
-              <td className='align-top font-semibold'>
+              <td className='align-top font-bold'>
                 Tratamiento :
               </td>
               <td className='align-top'>
@@ -367,7 +359,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
               </td>
             </tr>
             <tr>
-              <td className='align-top font-semibold'>
+              <td className='align-top font-bold'>
                 Ord.Médicas  :
               </td>
               <td>
@@ -381,7 +373,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
               </td>
             </tr>
             <tr>
-              <td className='align-top font-semibold'>
+              <td className='align-top font-bold'>
                 Procedimientos :
               </td>
               <td>
@@ -396,7 +388,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
               </td>
             </tr>
             <tr>
-              <td className='align-top font-semibold'>
+              <td className='align-top font-bold'>
                 Otros Procedimientos :
               </td>
               <td>
@@ -411,7 +403,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
               </td>
             </tr>
             <tr>
-              <td className='align-top font-semibold'>
+              <td className='align-top font-bold'>
                 Interconsultas :
               </td>
               <td>

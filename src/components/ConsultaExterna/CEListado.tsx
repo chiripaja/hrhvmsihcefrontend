@@ -76,7 +76,7 @@ function handleFUAClick(row:any):void{
    //  const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4902/2024-07-16`)
    // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4147/2024-10-03`)
 
-    console.log(data)
+    
     const groupedData = groupByIdProgramacion(data);
     setDataTotal(groupedData);
     const names = Object.keys(groupedData).map(key => {
@@ -101,9 +101,7 @@ function handleFUAClick(row:any):void{
   }
 
   const getConsultorio = async (id: number) => {
-
     if (id > 0) {
-
       const dataC = await dataTotal[id];
       const dataTablaRows: any[] = [];
       console.log(dataC)
