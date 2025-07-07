@@ -13,7 +13,7 @@ import useUserStore from '@/store/ui/useUserStore';
 import { useCEDatosStore } from '@/store';
 import { obtenerFechaYHora } from '../utils/obtenerFechaYHora';
 import LinearWithValueLabel from '../ui/LinearProgressWithLabel';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Button } from '@mui/material';
 import { FiActivity } from 'react-icons/fi';
 
 
@@ -31,6 +31,7 @@ export const CEListado = ({ session }: any) => {
   const { formattedDate, hora, fechayhora } = obtenerFechaYHora();
   const resetDatosCE = useCEDatosStore((state: any) => state.resetDatosCE);
   const {
+    setValue,
     register,
     handleSubmit,
     watch,
@@ -49,14 +50,14 @@ export const CEListado = ({ session }: any) => {
     router.push(`/sihce/consultaexterna/${row?.idcuenta}`);
   }
 
-function handleHCClick(row: any): void {
-   const url = `/reportes/hojaatencion/${row?.idcuenta}`;
-  window.open(url, '_blank');
-}
-function handleFUAClick(row:any):void{
-     const url = `/reportes/fua/${row?.idcuenta}`;
-  window.open(url, '_blank');
-}
+  function handleHCClick(row: any): void {
+    const url = `/reportes/hojaatencion/${row?.idcuenta}`;
+    window.open(url, '_blank');
+  }
+  function handleFUAClick(row: any): void {
+    const url = `/reportes/fua/${row?.idcuenta}`;
+    window.open(url, '_blank');
+  }
 
   const groupByIdProgramacion = (arr: any) => {
     return arr.reduce((acc: any, obj: any) => {
@@ -71,12 +72,12 @@ function handleFUAClick(row:any):void{
 
   const getDataCE = async () => {
     setIsLoading(true)
-     const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
+    const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
 
-   //  const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4902/2024-07-16`)
-   // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4147/2024-10-03`)
+    //  const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4902/2024-07-16`)
+    // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4147/2024-10-03`)
 
-    
+
     const groupedData = groupByIdProgramacion(data);
     setDataTotal(groupedData);
     const names = Object.keys(groupedData).map(key => {
@@ -104,7 +105,7 @@ function handleFUAClick(row:any):void{
     if (id > 0) {
       const dataC = await dataTotal[id];
       const dataTablaRows: any[] = [];
-      console.log(dataC)
+
       const nullCount = dataC.filter((item: any) => item.FyHFinal === null).length;
       const nonNullCount = dataC.filter((item: any) => item.FyHFinal !== null).length;
       setNullCount(nullCount);
@@ -120,8 +121,8 @@ function handleFUAClick(row:any):void{
           nompx: `${data.NombreCompleto} (${data.nroDocumento}) `,
           Triaje: data.Triaje,
           TriajePeso: data.TriajePeso,
-          FuaNumero:data.FuaNumero,
-          CitaExamenClinico:data.CitaExamenClinico
+          FuaNumero: data.FuaNumero,
+          CitaExamenClinico: data.CitaExamenClinico
         })
       });
       setDataTablaRowsPacientes(dataTablaRows);
@@ -221,29 +222,44 @@ function handleFUAClick(row:any):void{
           }
 
 
- {params.row?.CitaExamenClinico != null &&
-          <button type="button" onClick={() => handleHCClick(params.row)} className="btnyellow hidden">
-            <PiPrinter />
-            Historia
-          </button>
-         }
-          
-               {params.row?.FuaNumero != null &&
+          {params.row?.CitaExamenClinico != null &&
+            <button type="button" onClick={() => handleHCClick(params.row)} className="btnyellow hidden">
+              <PiPrinter />
+              Historia
+            </button>
+          }
+
+          {params.row?.FuaNumero != null &&
             <button type="button" onClick={() => handleFUAClick(params.row)} className="btngreen hidden">
-            <PiPrinter />
-            FUA
-          </button>
-    }
+              <PiPrinter />
+              FUA
+            </button>
+          }
 
         </div>
       ),
     },
   ];
 
+  useEffect(() => {
+    console.log(dataServiciosProgramados)
+  }, [dataServiciosProgramados])
 
+  useEffect(() => {
+    if (dataServiciosProgramados.length > 0) {
+      // Asigna automáticamente el primer valor del select
+      setValue("idprogramacion", dataServiciosProgramados[0].id);
+    }
+  }, [dataServiciosProgramados]);
+
+  const handlePrint = () => {
+
+  }
   return (
     <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
-
+      <pre>
+        {JSON.stringify(idprogramacion, null, 2)}
+      </pre>
       {/* Sección de estado de atención en una fila */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mb-6">
         {/* Pacientes no atendidos */}
@@ -273,14 +289,40 @@ function handleFUAClick(row:any):void{
 
 
       {/* Formulario de selección */}
-      <form className="bg-white p-6 rounded-lg shadow-lg mb-8">
-        <SelectUI
-          opciones={dataServiciosProgramados}
-          deshabilitado={false}
-          {...register("idprogramacion")}
-        />
-      </form>
+      <form className="bg-white p-6 rounded-lg shadow-lg mb-8 flex gap-4">
+        <div className="w-4/5">
+          <SelectUI
+            opciones={dataServiciosProgramados}
+            deshabilitado={false}
+            {...register("idprogramacion")}
+            className="w-full"
+          />
+        </div>
 
+        <div className="w-1/5 flex justify-end">
+          <button
+            onClick={handlePrint}
+            type="button"
+            className="w-full flex items-center justify-center gap-2 px-2 py-1 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow hover:bg-blue-700 active:scale-95 transition-transform duration-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 9V2h12v7M6 18h12v4H6v-4zM6 14h12v2H6v-2z"
+              />
+            </svg>
+            Imprimir HIS
+          </button>
+        </div>
+      </form>
       {/* Tabla de pacientes */}
       <div>
 

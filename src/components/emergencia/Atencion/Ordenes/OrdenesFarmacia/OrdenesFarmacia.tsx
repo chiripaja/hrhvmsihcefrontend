@@ -25,7 +25,7 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
     const [options, setOptions] = useState<Option[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [tiposViasAdministracion, setTiposViasAdministracion] = useState<any[]>([]);
-    const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
+    const { control, register, handleSubmit, setValue, watch, reset, getValues, formState: { errors } } = useForm<any>();
     const setRecetaCabezera = useEmergenciaDatosStore((state: any) => state.setRecetaCabezera);
     const createMedicamento = useEmergenciaDatosStore((state: any) => state.createMedicamento);
     const updateMedicamentos = useEmergenciaDatosStore((state: any) => state.updateMedicamentos);
@@ -37,8 +37,9 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
         setIsOffcanvasOpenFarmacia(!isOffcanvasOpenFarmacia);
     };
     const FormFarmacia: SubmitHandler<any> = async (data: any) => {
+        console.log("entro correcto")
         if (recetaIdTemporal == 0) {
-        const datosMedicamentos: any = {
+            const datosMedicamentos: any = {
                 idrecetacabecera: "",
                 idproducto: data?.idproductoFarmacia?.value,
                 cantidad: data?.cantmedicamento,
@@ -55,7 +56,13 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
             }
             createMedicamento(datosMedicamentos);
             ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
-            reset();
+            const currentValues = getValues();
+            reset({
+                ...currentValues,
+                idproductoFarmacia: '',
+                cantmedicamento: '',
+                frecuencia: ''
+            });
 
         } else {
 
@@ -76,7 +83,13 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
             }
             createMedicamento(datosMedicamentos);
             ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
-            reset();
+            const currentValues = getValues();
+            reset({
+                ...currentValues,
+                idproductoFarmacia: '',
+                cantmedicamento: '',
+                frecuencia: ''
+            });
 
         }
 
@@ -253,17 +266,17 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
                 <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between relative">
                     <span className="border-l-4 borderfondo h-6 mr-2"></span>
                     <span className="flex-grow">Farmacia</span>
-                    {datosEmergencia?.idTipoAlta==null &&(
-                    <button
-                        onClick={toggleOffcanvasFarmacia}
-                        className={
-                            recetaCabeceraF.length > 0
-                                ? "text-blue-500 hover:underline text-sm"
-                                : "hidden"
-                        }
-                    >
-                        Agregar
-                    </button>)}
+                    {datosEmergencia?.idTipoAlta == null && (
+                        <button
+                            onClick={toggleOffcanvasFarmacia}
+                            className={
+                                recetaCabeceraF.length > 0
+                                    ? "text-blue-500 hover:underline text-sm"
+                                    : "hidden"
+                            }
+                        >
+                            Agregar
+                        </button>)}
                 </h2>
                 <div className={recetaCabeceraF.length == 0 ? "flex flex-col items-center justify-center mt-6 " : "hidden"}>
                     <div className="mb-4">
@@ -272,13 +285,13 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
                     <p className="text-gray-500 text-sm mb-4">
                         No hay recetas activas para mostrar para este paciente
                     </p>
-                    {datosEmergencia?.idTipoAlta==null &&(
-                    <button
-                        onClick={toggleOffcanvasFarmacia}
-                        className="text-blue-500 hover:underline text-sm"
-                    >
-                        Registrar recetas activos
-                    </button>)}
+                    {datosEmergencia?.idTipoAlta == null && (
+                        <button
+                            onClick={toggleOffcanvasFarmacia}
+                            className="text-blue-500 hover:underline text-sm"
+                        >
+                            Registrar recetas activos
+                        </button>)}
                 </div>
                 <OrdenesFarmaciaTablaRecetasCabecera datosEmergencia={datosEmergencia} handleOpenMenu={handleOpenMenu} />
             </div>
@@ -376,13 +389,13 @@ export const OrdenesFarmacia = ({ datosEmergencia, session }: any) => {
                                 placeholder="Cantidad"
                             />
                             <textarea {...register('frecuencia')} className='w-full border shadow mt-2 p-1' placeholder='Frecuencia' ></textarea>
-                            {datosEmergencia?.idTipoAlta==null &&(<button type="submit" className="btnprimario m-2" >Agregar</button>)}
+                            {datosEmergencia?.idTipoAlta == null && (<button type="submit" className="btnprimario m-2" >Agregar</button>)}
                         </form>
                     </div>
 
                     <OrdenesFarmaciaTabla datosEmergencia={datosEmergencia} recetaIdTemporal={recetaIdTemporal} />
                     <div className={datosEmergencia?.medicamentos.length > 0 ? "block" : "hidden"}>
-                    {datosEmergencia?.idTipoAlta==null &&( <button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                        {datosEmergencia?.idTipoAlta == null && (<button onClick={handleCanasta} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden
                             <CgAdd />
                         </button>)}

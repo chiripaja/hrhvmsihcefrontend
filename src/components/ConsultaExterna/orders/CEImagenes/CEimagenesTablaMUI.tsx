@@ -107,7 +107,7 @@ export const CEimagenesTablaMUI = ({ cuentaDatos }: any) => {
     const handleEliminarMedicamento = async (medicamento: any) => {
         const result = await Swal.fire({
             title: '¿Eliminar medicamento?',
-            text: `(${medicamento.Codigo}) - ${medicamento.nombre}`,
+            text: `(${medicamento.nombre}`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -138,7 +138,7 @@ export const CEimagenesTablaMUI = ({ cuentaDatos }: any) => {
             flex: 1,
             renderCell: (params) => (
                 <span>
-                    ({params.row.Codigo}) - {params.row.nombre}
+                     {params.row.nombre}
                 </span>
             ),
         },

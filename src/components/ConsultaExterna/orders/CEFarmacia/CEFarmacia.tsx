@@ -27,7 +27,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
     const [options, setOptions] = useState<Option[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [tiposViasAdministracion, setTiposViasAdministracion] = useState<any[]>([]);
-    const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
+    const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } ,getValues} = useForm<any>();
     const setRecetaCabezera = useCEDatosStore((state: any) => state.setRecetaCabezera);
     const createMedicamento = useCEDatosStore((state: any) => state.createMedicamento);
     const updateMedicamentos = useCEDatosStore((state: any) => state.updateMedicamentos);
@@ -35,7 +35,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
         setIsOffcanvasOpenFarmacia(!isOffcanvasOpenFarmacia);
     };
     const FormFarmacia: SubmitHandler<any> = async (data: any) => {
-        console.log(data)
+        console.log("entre aca estaba haciendo mal")
         const datosMedicamentos: MedicamentosCE = {
             idrecetacabecera: "",
             idproducto: data?.idproductoFarmacia?.value,
@@ -59,7 +59,15 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
         if (!existeMedicamento) {
             createMedicamento(datosMedicamentos);
             ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
-            reset();
+           const current = getValues()
+
+  // Hacemos reset solo de los campos que queremos limpiar
+  reset({
+    ...current,
+    idproductoFarmacia: '',
+    cantmedicamento: '',
+    frecuencia: ''
+  })
         } else {
             Swal.fire({
                 icon: "error",

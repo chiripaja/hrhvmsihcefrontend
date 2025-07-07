@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { getData } from "@/components/helper/axiosHelper";
+import Image from 'next/image';
 
 export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
     const [datosPxGeneral, setdatosPxGeneral] = useState<any>();
@@ -22,89 +23,299 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
         setdatosAtencion(datosAtencion)
     }
 
-    const getDatosFarmacia=async(idcuenta:any)=>{
+    const getDatosFarmacia = async (idcuenta: any) => {
         const datos = await getData(`${process.env.apijimmynew}/recetas/apiordenesfarmaciabycuenta/${idcuenta}`);
         setdatos(datos)
     }
     useEffect(() => {
-    if (datosAtencion?.idCuentaAtencion) {
-      getDatosFarmacia(datosAtencion?.idCuentaAtencion)
-    }
-  }, [datosAtencion?.idCuentaAtencion])
+        if (datosAtencion?.idCuentaAtencion) {
+            getDatosFarmacia(datosAtencion?.idCuentaAtencion)
+        }
+    }, [datosAtencion?.idCuentaAtencion])
 
-  useEffect(() => {
-    console.log(datos[0]?.idReceta)
-        if(datos[0]?.idReceta){
+    useEffect(() => {
+        console.log(datos[0]?.idReceta)
+        if (datos[0]?.idReceta) {
             window.print()
         }
-  }, [datos])
-  
+    }, [datos])
+
 
     return (
-        <div className={`flex justify-center print-page-break`}>
-            <div className="w-full max-w-md p-6 break-inside-avoid">
-                {/* Encabezado */}
-                <div className="text-center border-b pb-2 text-xs">
-                    <h2 className="font-bold">HOSPITAL REGIONAL HERMINIO VALDIZÁN</h2>
-                    <p>JIRÓN HERMILIO VALDIZAN NÚMERO 950 DISTRITO HUÁNUCO</p>
-                    <p>TELÉFONO: (062)</p>
-                </div>
-
-                <div className="text-center">ORDEN MEDICA</div>
-                   
-                <div className="text-xs">Servicio: {datos[0]?.Descripcion}</div>
-                <div className="text-xs">
-                 
-                    Fecha/Hora Atencion: {datosPxGeneral?.FechaIngreso} {datosPxGeneral?.HoraEgreso}
-                </div>
-
-                <div className="text-xs flex justify-between">
-                    <span>N° Ord. Med: {datos[0]?.idReceta}</span>
-                    <span>N° Cta: {datosPxGeneral?.idCuentaAtencion}</span>
-                </div>
-
-                <div className="text-xs">Consultorio: {datosPxGeneral?.servnom}</div>
-                <div className="text-xs">
-                    Prof. de la Salud : {datosPxGeneral?.MedicoPaterno} {datosPxGeneral?.MedicoMaterno} {datosPxGeneral?.MedicoNombres}
-                </div>
-                <div className="text-xs">Paciente: {datosPxGeneral?.nombreCompleto}</div>
-                <div className="text-xs">Tipo Plan: {datosPxGeneral?.FuentesFinanciamiento}</div>
-
-                <div className="text-xs">
-                    {datosAtencion?.atencionesDiagnosticos?.length > 0 &&
-                        datosAtencion.atencionesDiagnosticos.map((data: any, index: number) => (
-                            <span key={data?.idDiagnostico}>
-                                ({data?.diagnostico?.codigoCIE10} - {data?.diagnostico?.descripcion})
-                                {index < datosAtencion.atencionesDiagnosticos.length - 1 && ', '}
-                            </span>
-                        ))}
-                </div>
-
-   <table className="w-full text-xs mt-2">
-                    <thead className="border-b-2">
-                        <tr>
-                            <th className="text-left">Concepto</th>
-                            <th>Observaciones</th>
-                            <th>Cant.</th>
-                        </tr>
-                    </thead>
-                    <tbody className="border-b-2">
-                        {datos.map((item: any) => (
-                            <tr key={item.idReceta + item.Nombre}>
-                                <td>{item.Nombre}</td>
-                                <td>{item.observaciones}</td>
-                                <td>{item.CantidadPedida}
-
+        <div className={`flex justify-center print-page-break scale-[0.9]`}>
+            <div className='grid grid-cols-2 gap-1 items-start'>
+                {/* primer componente*/}
+                <div className="p-6 border flex flex-col justify-between min-h-[650px] w-full">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <Image
+                                        src="/img/loghrhvm.png"
+                                        alt="Logo del hospital"
+                                        width={80}
+                                        height={80}
+                                        className="w-30 h-auto"
+                                    />
                                 </td>
-                                
+                                <td className='text-xs'>
+                                    <div className='text-center'>
+                                        <h2 className="font-bold">HOSPITAL REGIONAL HERMINIO VALDIZÁN</h2>
+                                        <p>RUC: 20146038329</p>
+                                        <p>JIRÓN HERMILIO VALDIZAN NÚMERO 950 DISTRITO HUÁNUCO</p>
+                                        <p>TELÉFONO: (062)</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <table className='border-collapse text-xs'>
+                                        <tbody>
+                                            <tr>
+                                                <td className='border border-black text-center'> N° de Receta </td>
+                                            </tr>
+                                            <tr>
+                                                <td className='border border-black text-center'> {datos[0]?.idReceta}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <div className="text-xs mt-2">Fecha: {datosPxGeneral?.FechaIngreso}</div>
+                        </tbody>
 
-                <div className="text-xs">Terminal: SRV-SIHCE</div>
+                    </table>
+                    {/* Encabezado */}
+
+
+                    <div className="text-center font-bold">RECETA MÉDICA</div>
+
+                    <div className="text-xs w-full ">
+                        <span className='font-bold'>
+                            F. Vigencia:
+                        </span>
+                        <span className='ml-1'>
+                            {datosPxGeneral?.FechaIngreso}
+                        </span>
+
+                    </div>
+                    <div className='w-full mt-1'>
+                        <table className='w-full'>
+                            <tbody className='text-xs'>
+                                <tr>
+                                    <td className='font-bold'>Paciente</td>
+                                    <td className='border border-black'>{datosPxGeneral?.nombreCompleto} </td>
+                                    <td className='font-bold'>N° H.C:</td>
+                                    <td className='border border-black text-center'>{datosPxGeneral?.NroHistoriaClinica}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div className='w-full mt-1'>
+                        <table className='w-full'>
+                            <tbody className='text-xs'>
+                                <tr>
+                                    <td className='font-bold'>Tipo Financ:</td>
+                                    <td className='border border-black'>{datosPxGeneral?.FuentesFinanciamiento}</td>
+                                    <td className='font-bold'>Edad:</td>
+                                    <td className='border border-black'>{datosPxGeneral?.edad} años</td>
+                                    <td className='font-bold'> N° Cuenta:</td>
+                                    <td className='border border-black text-center'>{datosPxGeneral?.idCuentaAtencion}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className='w-full mt-1'>
+                        <table className='w-full'>
+                            <tbody className='text-xs'>
+                                <tr>
+                                    <td className='border border-black w-1/2 text-center' >  {datosPxGeneral?.AfiliacionDisa} {datosPxGeneral?.AfiliacionTipoFormato} {datosPxGeneral?.AfiliacionNroFormato} </td>
+                                    <td> Especialidad:</td>
+                                    <td className='border border-black'>{datosPxGeneral?.espnom}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className='w-full mt-1'>
+                        <table className='w-full'>
+                            <tbody className='text-xs'>
+                                <tr>
+                                    <td>Serv.:</td>
+                                    <td className='border border-black'>{datosPxGeneral?.tiposervicio} </td>
+                                    <td>Consultorio:</td>
+                                    <td className='border border-black'>{datosPxGeneral?.servnom}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+
+                    <div className='mt-2 font-semibold'>
+                        DIAGNOSTICOS
+                    </div>
+                    <table className="w-full text-xs ">
+                        <thead className="border-b border-t border-black">
+                            <tr>
+                                <th className="text-left">TIPO</th>
+                                <th>CIE 10</th>
+                                <th >DESCRIPCION</th>
+                            </tr>
+                        </thead>
+                        <tbody className="">
+                            {datosAtencion?.atencionesDiagnosticos?.length > 0 &&
+                                datosAtencion.atencionesDiagnosticos.map((data: any, index: number) => (
+                                    <tr key={data?.diagnostico?.codigoCIE10 || index}>
+                                        <td>{data?.subclasificacionDiagnosticos?.descripcion}</td>
+                                        <td>{data?.diagnostico?.codigoCIE10}</td>
+                                        <td>{data?.diagnostico?.descripcion}</td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </table>
+
+
+
+
+
+                    <table className="w-full text-xs mt-7">
+                        <thead className="border-b border-t border-black">
+                            <tr>
+                                <th className="text-left">Medicamento o Insumo</th>
+
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody className="">
+                            {datos.map((item: any) => (
+                                <tr key={item.idReceta + item.Nombre}>
+                                    <td>{item.Nombre}</td>
+
+                                    <td>{item.CantidadPedida}
+
+                                    </td>
+
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    <div className="text-xs mt-44 text-right">
+                        <span className='border-t border-black pl-2 pr-2'>
+                            {datosPxGeneral?.MedicoPaterno} {datosPxGeneral?.MedicoMaterno} {datosPxGeneral?.MedicoNombres}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                {/* segundo componente*/}
+                <div className="p-6 border flex flex-col justify-between min-h-[650px]  w-full">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <Image
+                                        src="/img/loghrhvm.png"
+                                        alt="Logo del hospital"
+                                        width={80}
+                                        height={80}
+                                        className="w-30 h-auto"
+                                    />
+                                </td>
+                                <td className='text-xs'>
+                                    <div className='text-center'>
+                                        <h2 className="font-bold">HOSPITAL REGIONAL HERMINIO VALDIZÁN</h2>
+                                        <p>RUC: 20146038329</p>
+                                        <p>JIRÓN HERMILIO VALDIZAN NÚMERO 950 DISTRITO HUÁNUCO</p>
+                                        <p>TELÉFONO: (062)</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <table className='border-collapse text-xs'>
+                                        <tbody>
+                                            <tr>
+                                                <td className='border border-black text-center'> N° de Receta </td>
+                                            </tr>
+                                            <tr>
+                                                <td className='border border-black text-center'> {datos[0]?.idReceta}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                    {/* Encabezado */}
+
+
+                    <div className="text-center font-bold">RECETA MÉDICA</div>
+
+                    <div className="text-xs w-full ">
+                        <span className='font-bold'>
+                            F. Vigencia:
+                        </span>
+                        <span className='ml-1'>
+                            {datosPxGeneral?.FechaIngreso}
+                        </span>
+
+                    </div>
+                    <div className='w-full mt-1'>
+                        <table className='w-full'>
+                            <tbody className='text-xs'>
+                                <tr>
+                                    <td className='font-bold'>Paciente</td>
+                                    <td className='border border-black'>{datosPxGeneral?.nombreCompleto} </td>
+                                    <td className='font-bold'>N° H.C:</td>
+                                    <td className='border border-black text-center'>{datosPxGeneral?.NroHistoriaClinica}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <table className="w-full text-xs mt-7">
+                        <thead className="border-b border-t border-black">
+                            <tr>
+                                <th className="text-left">Medicamento o Insumo</th>
+
+                                <th>Via</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {datos.map((item: any) => (
+                                <React.Fragment key={item.idReceta + item.Nombre}>
+                                    <tr className="border-b">
+                                        <td className="p-2 font-semibold">{item.Nombre}</td>
+                                        <td className="p-2 font-semibold">{item.viaadministracion}</td>
+                                    </tr>
+                                    {item.observaciones && (
+                                        <tr className="bg-gray-100">
+                                            <td colSpan={2} className="p-2 text-sm text-gray-700 italic">
+                                                Frecuencia: {item.observaciones}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    <div className="text-xs mt-44 text-right">
+                        <span className='border-t border-black pl-2 pr-2'>
+                            {datosPxGeneral?.MedicoPaterno} {datosPxGeneral?.MedicoMaterno} {datosPxGeneral?.MedicoNombres}
+                        </span>
+
+                    </div>
+
+                </div>
+
             </div>
+
+
         </div>
     )
 }
