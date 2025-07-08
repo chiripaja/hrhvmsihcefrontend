@@ -12,7 +12,7 @@ import { HandleLaboratorio } from "../CELaboratorio/HandleLaboratorio";
 import { HandleImagenes } from "../CEImagenes/HandleImagenes";
 import Swal from "sweetalert2";
 
-
+import Select from 'react-select';
 export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     const [OptionPuntoCarga, setOptionPuntoCarga] = useState<any[]>([]);
 
@@ -329,7 +329,8 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
     const idFactPaqueteW = watch("idFactPaquete")
     useEffect(() => {
         if (idFactPaqueteW) {
-            MostrarPaquete(idFactPaqueteW);
+            console.log(idFactPaqueteW)
+            MostrarPaquete(idFactPaqueteW?.value);
         }
     }, [idFactPaqueteW])
 
@@ -352,21 +353,30 @@ export const CEPaquetes = ({ onClose, cuentaDatos, session }: any) => {
                 </select>
                 {/* Select para Paquetes */}
                 <div className="mt-4">
-                    <select
-                        className={`w-full px-3 py-2 border ${errors.idFactPaquete ? "border-red-500" : "border-gray-300"} rounded-md focus:outline-none focus:ring-2 ${errors.idFactPaquete ? "focus:ring-red-500" : "focus:ring-blue-500"}`}
-                        {...register("idFactPaquete", {
-                            required: "Por favor, seleccione un paquete.",
-                        })}
-                    >
-                        <option value="">Seleccione un paquete</option>
-                        {OptionPaquetes &&
-                            OptionPaquetes.length > 0 &&
-                            OptionPaquetes.map((opcion: any) => (
-                                <option key={opcion.idFactPaquete} value={opcion.idFactPaquete}>
-                                    {opcion.descripcion}
-                                </option>
-                            ))}
-                    </select>
+                   <Controller
+  name="idFactPaquete"
+  control={control}
+  defaultValue={null}
+  rules={{ required: "Por favor, seleccione un paquete." }}
+  render={({ field, fieldState }) => (
+    <>
+      <Select
+        {...field}
+        options={OptionPaquetes?.map((opcion: any) => ({
+          value: opcion.idFactPaquete,
+          label: opcion.descripcion,
+        }))}
+        placeholder="Seleccione un paquete"
+        className="mt-2 mb-2"
+        classNamePrefix="react-select"
+        isClearable
+      />
+      {fieldState.error && (
+        <span className="text-red-500 text-sm">{fieldState.error.message}</span>
+      )}
+    </>
+  )}
+/>
                     {/* Mensaje de error */}
                     {errors.idFactPaquete?.message && typeof errors.idFactPaquete.message === "string" && (
                         <p className="mt-1 text-sm text-red-500">{errors.idFactPaquete.message}</p>

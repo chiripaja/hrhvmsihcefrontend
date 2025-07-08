@@ -89,7 +89,7 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
 
                     <div className="text-xs w-full ">
                         <span className='font-bold'>
-                            F. Vigencia:
+                            F. Atencion:
                         </span>
                         <span className='ml-1'>
                             {datosPxGeneral?.FechaIngreso}
@@ -257,7 +257,7 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
 
                     <div className="text-xs w-full ">
                         <span className='font-bold'>
-                            F. Vigencia:
+                            F. Atencion:
                         </span>
                         <span className='ml-1'>
                             {datosPxGeneral?.FechaIngreso}

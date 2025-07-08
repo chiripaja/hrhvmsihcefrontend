@@ -15,7 +15,7 @@ import Swal from "sweetalert2";
 export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
     const [isOffcanvasOpenProcedimientos, setIsOffcanvasOpenProcedimientos] = useState(false);
     const [options, setOptions] = useState<any[]>([]);
-    const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
+    const { control, register, handleSubmit, setValue, watch, reset,resetField , formState: { errors } } = useForm<any>();
     const createordenesProcedimiento = useCEDatosStore((state: any) => state.createordenesProcedimiento);
     const updateProcedimientosIdOrden = useCEDatosStore((state: any) => state.updateProcedimientosIdOrden);
     const setRecetaCabezeraProcedimientos = useCEDatosStore((state: any) => state.setRecetaCabezeraProcedimientos);
@@ -35,7 +35,8 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
             Codigo:data?.factservicio?.Codigo
         }
         createordenesProcedimiento(datosProcedimientos)
-        reset()
+         resetField("factservicio");
+    resetField("cantidad");
         ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
     }
     const handleCanastaProcedimientos = async () => {

@@ -15,36 +15,80 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
     console.log(agrupado)
   }
 
-  const agruparPorCuenta = (data: any[]) => {
-    const map = new Map<number, any>()
+const agruparPorCuenta = (data: any[]) => {
+  const map = new Map<number, any>()
 
-    data.forEach((item) => {
-      const id = item.IdCuentaAtencion
+  data.forEach((item) => {
+    const id = item.IdCuentaAtencion
 
-      const diagnostico = {
-        CodigoCIE10: item.CodigoCIE10?.trim(),
-        DiagnosticoDescripcion: item.DiagnosticoDescripcion,
-        SubclasificacionDiagnostico: item.SubclasificacionDiagnostico
+    // Diagnóstico original del item
+    const diagnostico = {
+      CodigoCIE10: item.CodigoCIE10?.trim(),
+      DiagnosticoDescripcion: item.DiagnosticoDescripcion,
+      SubclasificacionDiagnostico: item.SubclasificacionDiagnostico
+    }
+
+    // Si hay procedimiento, crear también un "diagnóstico" con su nombre
+    const diagnosticoDesdeProcedimiento = item.nombreproc?.trim()
+      ? {
+          CodigoCIE10: item.codigoproc.trim(),
+          DiagnosticoDescripcion: item.nombreproc.trim(),
+          SubclasificacionDiagnostico: "Procedimiento"
+        }
+      : null
+
+    if (!map.has(id)) {
+      map.set(id, {
+        IdCuentaAtencion: id,
+        Sexo: item.Sexo,
+        ApellidoPaterno: item.ApellidoPaterno,
+        ApellidoMaterno: item.ApellidoMaterno,
+        NroDocumento: item.NroDocumento,
+        NombresEmpleado: item.NombresEmpleado,
+        Servicio: item.Servicio,
+        Diagnosticos: [],
+        Procedimientos: []
+      })
+    }
+
+    const paciente = map.get(id)
+
+    // Agregar diagnóstico si no está repetido
+    const yaExisteDx = paciente.Diagnosticos.some(
+      (dx: any) =>
+        dx.CodigoCIE10 === diagnostico.CodigoCIE10 &&
+        dx.DiagnosticoDescripcion === diagnostico.DiagnosticoDescripcion &&
+        dx.SubclasificacionDiagnostico === diagnostico.SubclasificacionDiagnostico
+    )
+    if (!yaExisteDx) {
+      paciente.Diagnosticos.push(diagnostico)
+    }
+
+    // Agregar diagnóstico generado desde procedimiento si no está repetido
+    if (diagnosticoDesdeProcedimiento) {
+      const yaExisteProcComoDx = paciente.Diagnosticos.some(
+        (dx: any) =>
+          dx.DiagnosticoDescripcion === diagnosticoDesdeProcedimiento.DiagnosticoDescripcion &&
+          dx.SubclasificacionDiagnostico === "Procedimiento"
+      )
+      if (!yaExisteProcComoDx) {
+        paciente.Diagnosticos.push(diagnosticoDesdeProcedimiento)
       }
+    }
 
-      if (map.has(id)) {
-        map.get(id).Diagnosticos.push(diagnostico)
-      } else {
-        map.set(id, {
-          IdCuentaAtencion: id,
-          Sexo: item.Sexo,
-          ApellidoPaterno: item.ApellidoPaterno,
-          ApellidoMaterno: item.ApellidoMaterno,
-          NroDocumento: item.NroDocumento,
-          NombresEmpleado: item.NombresEmpleado,
-          Servicio: item.Servicio,
-          Diagnosticos: [diagnostico]
-        })
-      }
-    })
+    // Agregar procedimiento a lista normal si no está repetido
+    if (
+      diagnosticoDesdeProcedimiento?.DiagnosticoDescripcion &&
+      !paciente.Procedimientos.includes(diagnosticoDesdeProcedimiento.DiagnosticoDescripcion)
+    ) {
+      paciente.Procedimientos.push(diagnosticoDesdeProcedimiento.DiagnosticoDescripcion)
+    }
+  })
 
-    return Array.from(map.values())
-  }
+  return Array.from(map.values())
+}
+
+
 
   useEffect(() => {
     if (idprogramacion) {
@@ -80,42 +124,55 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
       </button>
        <div ref={pdfRef}>
 
-      
-            {dataAgrupada.map((item: any, index: any) => (
-                <div key={index} className="border border-black p-2 mb-4">
-                    <div className="flex justify-between items-center font-bold text-lg">
-                        <div>
-                            <p>DNI: {item.NroDocumento}</p>
-                        </div>
-                        <div>
-                            <p></p>
-                        </div>
-                    </div>
+{dataAgrupada.length>0 &&
+    (
+      <>
+<p>{dataAgrupada[0]?.ApellidoPaterno} {dataAgrupada[0]?.ApellidoMaterno} {dataAgrupada[0]?.ApellidoMaterno} </p>      
+      <p>
+        {dataAgrupada[0]?.Servicio}
+      </p>
 
-                    <div className="text-sm text-gray-600 mb-2">
-                        {item.Servicio}
-                    </div>
+      </>
 
-                    <table className="w-full table-auto border-collapse text-sm">
-                        <thead>
-                            <tr className="border-t border-b">
-                                <th className="text-left py-1">Diagnóstico</th>
-                                <th className="text-center px-2">Tipo</th>
-                                <th className="text-right py-1">CIE10</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {item.Diagnosticos.map((dx: any, i: number) => (
-                                <tr key={i} className="border-b">
-                                    <td className="py-1">{dx.DiagnosticoDescripcion}</td>
-                                    <td className="text-center">{dx?.SubclasificacionDiagnostico}</td>
-                                    <td className="text-right font-bold">{dx.CodigoCIE10}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            ))}
+    )
+}
+
+       {dataAgrupada.map((item: any, index: number) => (
+  <div key={index} className="border border-black p-2 mb-4">
+  
+
+    <div className="text-sm text-gray-600 mb-2">{item.Servicio}</div>
+
+    
+
+    <table className="w-full table-auto border-collapse text-sm">
+      <thead>
+        <tr className="border-t border-b">
+            <th className="text-left py-1">DNI:</th>
+          <th className="text-left py-1">Diagnóstico</th>
+          <th className="text-center px-2">Tipo</th>
+          <th className="text-right py-1">CIE10</th>
+        </tr>
+      </thead>
+      <tbody>
+        {item.Diagnosticos.map((dx: any, i: number) => (
+          <tr key={i} className="border-b">
+             <td className="py-1">{item.NroDocumento}</td>
+            <td className="py-1">{dx.DiagnosticoDescripcion}</td>
+            <td className="text-center">{dx.SubclasificacionDiagnostico}</td>
+            <td className="text-right font-bold">{dx.CodigoCIE10}</td>
+          </tr>
+        ))}
+        
+      </tbody>
+    </table>
+
+
+  </div>
+))}
+
+
+
             
              </div>        </>
     )

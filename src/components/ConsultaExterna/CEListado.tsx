@@ -253,7 +253,8 @@ export const CEListado = ({ session }: any) => {
   }, [dataServiciosProgramados]);
 
   const handlePrint = () => {
-
+ const url = `/reportes/impresionHis/${idprogramacion}`;
+    window.open(url, '_blank');
   }
   return (
     <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
