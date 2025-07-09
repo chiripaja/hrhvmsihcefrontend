@@ -410,8 +410,11 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   }, [sisFuaDx])
 
   const getMedicamentos = async () => {
-    if (cuentaDatos?.medicamentos.length >= 0 && cuentaDatos?.FuaCodigoPrestacion!='907') {
-      await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionMEDEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+    await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionMEDEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+     await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionINSEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+    if (cuentaDatos?.medicamentos.length >= 0 && cuentaDatos?.FuaCodigoPrestacion!='300') {
+      console.log("entro a medicamentos")
+      
       const SisFuaAtencionMEDObj = cuentaDatos.medicamentos.filter((data: any) => data?.TipoProducto == 0)
       for (const [index, data] of SisFuaAtencionMEDObj.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
@@ -431,7 +434,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         }
         const response = await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionMEDAgregar`, obj);
       }
-      await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionINSEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+     
       const SisFuaAtencionINSObj = cuentaDatos.medicamentos.filter((data: any) => data?.TipoProducto == 1)
       for (const [index, data] of SisFuaAtencionINSObj.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
@@ -457,7 +460,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const getProcedimientos = async () => {
     await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionPROEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
     //ordenes laboratorio
-    if (cuentaDatos?.ordenesLaboratorio.length >= 0  && cuentaDatos?.FuaCodigoPrestacion!='907') {
+    if (cuentaDatos?.ordenesLaboratorio.length >= 0  && cuentaDatos?.FuaCodigoPrestacion!='300') {
       for (const [index, data] of cuentaDatos?.ordenesLaboratorio.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
         const objlaboratorio = {
@@ -478,7 +481,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       }
     }
     //ordenes imagenes
-    if (cuentaDatos?.ordenesImagenes.length >= 0  && cuentaDatos?.FuaCodigoPrestacion!='907') {
+    if (cuentaDatos?.ordenesImagenes.length >= 0  && cuentaDatos?.FuaCodigoPrestacion!='300') {
       for (const [index, data] of cuentaDatos?.ordenesImagenes.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
         const objlaboratorio = {
@@ -521,7 +524,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       }
     }
 
-    if (cuentaDatos?.ordenesOtros.length >= 0  && cuentaDatos?.FuaCodigoPrestacion!='907') {
+    if (cuentaDatos?.ordenesOtros.length >= 0  && cuentaDatos?.FuaCodigoPrestacion!='300') {
       for (const [index, data] of cuentaDatos?.ordenesOtros.entries()) {
         const objotrosproc = {
           idTablaDx: sisFuaDx[0].id,
@@ -574,7 +577,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-   
+   {cuentaDatos?.FuaCodigoPrestacion}
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>

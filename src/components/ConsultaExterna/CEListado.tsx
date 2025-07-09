@@ -258,9 +258,7 @@ export const CEListado = ({ session }: any) => {
   }
   return (
     <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
-      <pre>
-        {JSON.stringify(idprogramacion, null, 2)}
-      </pre>
+    
       {/* Sección de estado de atención en una fila */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mb-6">
         {/* Pacientes no atendidos */}

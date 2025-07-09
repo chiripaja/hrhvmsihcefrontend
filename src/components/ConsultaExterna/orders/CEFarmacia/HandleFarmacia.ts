@@ -43,11 +43,14 @@ export const handleFarmacia = async (
       idComprobantePago: null,
       idMedicoReceta: cuentaDatos?.idMedicoIngreso,
       fechaVigencia: (() => {
-        const fecha = new Date();
-        fecha.setDate(fecha.getDate() + 1);
-        fecha.setHours(0, 0, 0, 0);
-        return fecha.toISOString();
-      })(),
+  const fecha = new Date();
+  fecha.setDate(fecha.getDate() + 1);
+  fecha.setHours(0, 0, 0, 0);
+  const año = fecha.getFullYear();
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  const dia = String(fecha.getDate()).padStart(2, '0');
+  return `${año}-${mes}-${dia} 00:00:00.000-05:00`; // <-- importante
+})(),
       idUsuarioAuditoria: 1,
     };
 

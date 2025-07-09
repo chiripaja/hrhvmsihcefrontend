@@ -53,7 +53,7 @@ export const CELaboratorio = ({ cuentaDatos }: any) => {
         if (!existeProducto) {
             createordenesLaboratorio(datosServicios)
             setValue('factservicio', null);
-            setValue('cantlaboratorio', null);
+            setValue('cantlaboratorio', '1');
             setValue('frecuencia', null);
             ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
         } else {

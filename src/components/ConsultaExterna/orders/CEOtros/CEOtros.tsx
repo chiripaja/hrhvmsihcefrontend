@@ -39,10 +39,15 @@ export const CEOtros = ({ session,cuentaDatos }: any) => {
         const existeProducto = cuentaDatos?.ordenesOtros?.some(
             (ordenesOtros: any) => ordenesOtros.idProducto === ProcidimientosObjeto.idProducto
         );
+
+  
          if (!existeProducto) {
             createordenesOtros(ProcidimientosObjeto);
             ToasterMsj("Procesado", "success", "Procedimiento agregado correctamente.");
-            reset();
+            setValue('idproductoServicio', null);
+            setValue('cantmedicamento', '1');
+            setValue('frecuencia', '');
+            
                 } else {
                     Swal.fire({
                         icon: "error",
@@ -227,7 +232,12 @@ export const CEOtros = ({ session,cuentaDatos }: any) => {
                                     />
                                 )}
                             />
-                            <input type="number" className='inputSelect mt-2 mb-1' {...register('cantmedicamento')} placeholder="Cantidad" />
+                            <input type="number" 
+                            defaultValue={1}
+                            className='inputSelect mt-2 mb-1' 
+                            {...register('cantmedicamento')} 
+                            placeholder="Cantidad" 
+                            />
                             <textarea {...register('frecuencia')} className='w-full border shadow mt-2 p-1' placeholder='Observaciones' ></textarea>
                             <button type="submit" className="btnprimario mt-2">Guardar</button>
                         </form>

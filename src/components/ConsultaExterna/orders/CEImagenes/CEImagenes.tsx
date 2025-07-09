@@ -48,7 +48,7 @@ export const CEImagenes = ({ cuentaDatos }: any) => {
         if (!existeProducto) {
             createOrdenesImagenes(datosServicios)
             setValue('factservicio', null);
-            setValue('cantimagenes', null);
+            setValue('cantimagenes', '1');
             setValue('frecuencia', null);
             ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
         } else {
@@ -342,6 +342,7 @@ export const CEImagenes = ({ cuentaDatos }: any) => {
                         />
                         <input type="number" className='inputSelect mt-2 mb-1'
                             min="0"
+                            defaultValue={1}
                             {...register('cantimagenes', {
                                 required: true,
                                 validate: value => value >= 0 || "La cantidad no puede ser negativa"

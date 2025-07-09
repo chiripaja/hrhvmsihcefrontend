@@ -11,6 +11,7 @@ interface props {
   dni: string
 }
 export const CEHistoricosByDni = ({ dni }: props) => {
+  const [filtro, setFiltro] = useState("");
   const [pxDatos, setPxDatos] = useState<any>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState("");
@@ -61,6 +62,15 @@ export const CEHistoricosByDni = ({ dni }: props) => {
               <span>Paciente :</span>
               <span> {pxDatos.primerNombre} {pxDatos.apellidoPaterno} {pxDatos.apellidoMaterno} {pxDatos.nroDocumento && "(" + pxDatos.nroDocumento + ")"}  </span>
             </div>
+            <div className="my-4">
+  <input
+    type="text"
+    className="border border-gray-300 rounded px-4 py-2 w-full md:w-1/3"
+    placeholder="Buscar por servicio, médico o motivo..."
+    value={filtro}
+    onChange={(e) => setFiltro(e.target.value)}
+  />
+</div>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
@@ -75,9 +85,21 @@ export const CEHistoricosByDni = ({ dni }: props) => {
               </thead>
               <tbody className="text-gray-600 text-sm font-light">
                 {pxDatos.atenciones && pxDatos.atenciones.length > 0 && (
-                  pxDatos.atenciones
-                  ?.slice() // para no mutar el array original
+  
+ pxDatos.atenciones
+  ?.slice()
   .sort((a: any, b: any) => new Date(a.fechaIngreso).getTime() - new Date(b.fechaIngreso).getTime())
+  .filter((item: any) => {
+    const texto = filtro.toLowerCase();
+    return (
+      item.servicio?.nombre?.toLowerCase().includes(texto) ||
+      item.medico?.empleado?.apellidoPaterno?.toLowerCase().includes(texto) ||
+      item.medico?.empleado?.apellidomaterno?.toLowerCase().includes(texto) ||
+      item.medico?.empleado?.nombres?.toLowerCase().includes(texto) ||
+      item.atencionesCE?.citaMotivo?.toLowerCase().includes(texto)
+    );
+  })
+
                   .map((item: any) => (
                     <React.Fragment key={item.idAtencion}>
                       <tr
@@ -86,9 +108,10 @@ export const CEHistoricosByDni = ({ dni }: props) => {
                       >
                         <td className="py-3 px-6 text-left whitespace-nowrap">{item.fechaIngreso}</td>
                         <td className="py-3 px-6 text-left">
-                          <pre>
-                            {JSON.stringify(item?.idCuentaAtencion, null, 2)}
-                          </pre>
+                          <p>
+{item?.idCuentaAtencion}        
+                          </p>
+                
                           {item.servicio?.nombre}</td>
                         <td className="py-3 px-6 text-left">{item.medico?.empleado?.apellidoPaterno} {item.medico?.empleado?.apellidomaterno} {item.medico?.empleado?.nombres}</td>
                         <td className="py-3 px-6 text-left">
@@ -113,7 +136,8 @@ export const CEHistoricosByDni = ({ dni }: props) => {
                         <tr className="bg-gray-200">
                           <td className="py-3 px-6" colSpan={5}>
                             <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-
+                        
+                        
                               {/* Triaje Section */}
                               {item.atencionesCE?.triajePeso && (
                                 <div className='bg-white shadow-lg rounded-lg p-4 mb-4 border border-gray-200 w-full md:w-1/3'>

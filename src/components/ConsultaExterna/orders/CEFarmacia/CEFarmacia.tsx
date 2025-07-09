@@ -50,7 +50,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
             nombre: data?.idproductoFarmacia?.label,
             usuarioauditoria: 0,
             idEstadoDetalle: 1,
-            Codigo:data?.idproductoFarmacia?.Codigo,
+            Codigo:data?.idproductoFarmacia?.Codigo?.trim(),
             TipoProducto:data?.idproductoFarmacia?.TipoProducto
         }
         const existeMedicamento = cuentaDatos?.medicamentos?.some(
@@ -109,7 +109,7 @@ export const CEFarmacia = ({ cuentaDatos }: any) => {
                     label: `${est.Codigo?.trim()} - ${est.Nombre.trim()}`,
                     cantidad: est.cantidad,
                     PrecioUnitario: est.PrecioUnitario,
-                    Codigo:est.Codigo,
+                    Codigo:est.Codigo?.trim(),
                     TipoProducto:est.TipoProducto
                 }));
                 setOptions(mappedOptions);

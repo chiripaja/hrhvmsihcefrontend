@@ -7,6 +7,7 @@ export const SeccionImpresion = ({ datosPxGeneral, datosAtencion, datos, isLast 
         <div className={`flex justify-center ${!isLast ? 'print-page-break' : ''}`}>
             <div className="w-full max-w-md p-6 break-inside-avoid">
                 {/* Encabezado */}
+              
                 <div className="text-center border-b pb-2 text-xs">
                     <h2 className="font-bold">HOSPITAL REGIONAL HERMINIO VALDIZÁN</h2>
                     <p>JIRÓN HERMILIO VALDIZAN NÚMERO 950 DISTRITO HUÁNUCO</p>
@@ -50,10 +51,19 @@ export const SeccionImpresion = ({ datosPxGeneral, datosAtencion, datos, isLast 
                     </thead>
                     <tbody className="border-b-2">
                         {datos.map((item: any) => (
+                              <React.Fragment key={item.idReceta + item.Nombre}>
                             <tr key={item.idReceta + item.Nombre}>
                                 <td>{item.Nombre}</td>
                                 <td>{item.CantidadPedida}</td>
                             </tr>
+                            {item.observaciones && (
+                                        <tr className="bg-gray-100">
+                                            <td colSpan={2} className="p-2 text-sm text-gray-700 italic">
+                                                Obs: {item.observaciones}
+                                            </td>
+                                        </tr>
+                                    )}
+                            </React.Fragment>
                         ))}
                     </tbody>
                 </table>

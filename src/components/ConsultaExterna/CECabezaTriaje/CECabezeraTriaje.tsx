@@ -134,7 +134,7 @@ export const CECabezeraTriaje = ({ dataPx,cuentaDatos }: any) => {
                 </div>
             </div>
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal} css={style.modalSize}>
-                <label className="text-lg font-semibold text-gray-900">Historial del Paciente</label>
+               
                 <div className="text-sm text-gray-600">
                     <CEHistoricosByDni dni={dataPx?.nroDocumento} />
                 </div>
