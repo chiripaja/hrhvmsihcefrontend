@@ -462,7 +462,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const getProcedimientos = async () => {
     await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionPROEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
     //ordenes laboratorio
-    if (cuentaDatos?.ordenesLaboratorio.length >= 0 && cuentaDatos?.FuaCodigoPrestacion != '300') {
+    if (cuentaDatos?.ordenesLaboratorio.length >= 0 &&
+  !['300', '907'].includes(cuentaDatos?.FuaCodigoPrestacion)) {
       for (const [index, data] of cuentaDatos?.ordenesLaboratorio.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
         const objlaboratorio = {
@@ -483,7 +484,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       }
     }
     //ordenes imagenes
-    if (cuentaDatos?.ordenesImagenes.length >= 0 && cuentaDatos?.FuaCodigoPrestacion != '300') {
+    if (cuentaDatos?.ordenesImagenes.length >= 0 &&
+  !['300', '907'].includes(cuentaDatos?.FuaCodigoPrestacion)) {
       for (const [index, data] of cuentaDatos?.ordenesImagenes.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
         const objlaboratorio = {
@@ -526,7 +528,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       }
     }
 
-    if (cuentaDatos?.ordenesOtros.length >= 0 && cuentaDatos?.FuaCodigoPrestacion != '300') {
+    if (cuentaDatos?.ordenesOtros.length >= 0 &&
+  !['300', '907'].includes(cuentaDatos?.FuaCodigoPrestacion)) {
       for (const [index, data] of cuentaDatos?.ordenesOtros.entries()) {
         const objotrosproc = {
           idTablaDx: sisFuaDx[0].id,
@@ -579,7 +582,8 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-      {cuentaDatos?.FuaCodigoPrestacion}
+      
+      
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
