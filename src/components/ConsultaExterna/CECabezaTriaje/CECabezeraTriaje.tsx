@@ -49,7 +49,7 @@ export const CECabezeraTriaje = ({ dataPx,cuentaDatos }: any) => {
                             </div>
                             <div className={style.mainTriaje__body__container__item}>
                                 <div className={style.mainTriaje__body__container__item__container}>
-                                    <span className={style.mainTriaje__body__container__item__container__txtprincipal}>Paciente:({dataPx?.nroDocumento})</span>
+                                    <span className={style.mainTriaje__body__container__item__container__txtprincipal}>Paciente:({dataPx?.nroDocumento}) {dataPx?.FuentesFinanciamiento}</span>
                                     <span className={style.txtColorContenido}>{dataPx?.nombreCompleto} </span>
                                 </div>
                                 <div className={style.mainTriaje__body__container__item__container}>

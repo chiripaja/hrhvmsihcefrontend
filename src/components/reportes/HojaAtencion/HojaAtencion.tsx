@@ -43,7 +43,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
       flagProcedimientosFuera &&
       flagProcedimientosDentro
     ) {
-      //window.print();
+      window.print();
     }
   }, [
     flagFarmacia,
@@ -119,7 +119,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
   useEffect(() => {
     if (datosAtencion?.idAtencion) {
       otrosProc();
-     
+
     }
   }, [datosAtencion])
 
@@ -223,23 +223,43 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
           </table>
 
           {/* Triaje */}
-          <table className='border w-full mt-1 text-xs border border-black'>
+          <table className='border w-full mt-1 text-xs  border-black'>
             <tbody>
               <tr>
-                <td className='align-top font-bold'>P.Arterial:</td>
-                <td>{datosPxGeneral?.triajePresion} Sistólica/Diastólica </td>
-                <td className='align-top font-bold'>Talla:</td>
-                <td>{datosPxGeneral?.triajeTalla} cm</td>
+                <td className='align-top font-bold w-1/4'>P.Arterial:</td>
+                <td className='w-1/4'>
+                  {datosPxGeneral?.triajePresion && (
+                    <>
+                      {datosPxGeneral?.triajePresion} Sistólica/Diastólica
+                    </>
+                  )}
+                </td>
+                <td className='align-top font-bold w-1/4'>Talla:</td>
+                <td className='w-1/4'>
+                  {datosPxGeneral?.triajeTalla && (<>
+                    {datosPxGeneral?.triajeTalla} cm
+                  </>)}
+                </td>
               </tr>
               <tr>
                 <td className='align-top font-bold'>Temperatura:</td>
-                <td>{datosPxGeneral?.triajeTemperatura} °C</td>
+                <td>
+                  {datosPxGeneral?.triajeTemperatura && <>
+                  {datosPxGeneral?.triajeTemperatura} °C
+                  </>}
+                  </td>
                 <td className='align-top font-bold'>Peso: </td>
-                <td>{datosPxGeneral?.triajePeso}</td>
+                <td>
+                {datosPxGeneral?.triajePeso}
+                </td>
               </tr>
               <tr>
                 <td className='align-top font-bold'>F.Cardiaca:</td>
-                <td>{datosPxGeneral?.triajeFrecCardiaca} rpm.</td>
+                <td>
+                  {datosPxGeneral?.triajeFrecCardiaca && (<>
+                  {datosPxGeneral?.triajeFrecCardiaca} rpm.
+                  </>)}
+                  </td>
                 <td className='align-top font-bold'>F.Respiratoria:</td>
                 <td>{datosPxGeneral?.TriajeFrecRespiratoria} rpm.</td>
               </tr>
@@ -256,7 +276,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
                     const imc = peso / (tallaM * tallaM);
                     return imc.toFixed(2); // Redondea a 2 decimales
                   } else {
-                    return 'N/A';
+                    return '';
                   }
                 })()}</td>
               </tr>
@@ -328,7 +348,8 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
                   datosAtencion?.atencionesDiagnosticos && datosAtencion.atencionesDiagnosticos.length > 0 ? (
                     datosAtencion.atencionesDiagnosticos.map((data: any, index: number) => (
                       <span key={data?.idDiagnostico}>
-                        ({data?.diagnostico?.codigoCIE10} - {data?.diagnostico?.descripcion})
+                        
+                        ({data?.diagnostico?.codigoCIE10} - {data?.subclasificacionDiagnosticos?.codigo} - {data?.diagnostico?.descripcion})
                         {index < datosAtencion.atencionesDiagnosticos.length - 1 && ', '}
                       </span>
                     ))

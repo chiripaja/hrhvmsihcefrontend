@@ -37,7 +37,7 @@ export const SeccionImpresion = ({ datosPxGeneral, datosAtencion, datos, isLast 
                     {datosAtencion?.atencionesDiagnosticos?.length > 0 &&
                         datosAtencion.atencionesDiagnosticos.map((data: any, index: number) => (
                             <span key={data?.idDiagnostico}>
-                                ({data?.diagnostico?.codigoCIE10} - {data?.diagnostico?.descripcion})
+                                ({data?.diagnostico?.codigoCIE10} - {data?.subclasificacionDiagnosticos?.codigo} - {data?.diagnostico?.descripcion})
                                 {index < datosAtencion.atencionesDiagnosticos.length - 1 && ', '}
                             </span>
                         ))}

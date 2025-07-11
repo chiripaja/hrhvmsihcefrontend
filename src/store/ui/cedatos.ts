@@ -197,12 +197,26 @@ setFuaNumero: (nuevoFua: string) =>
     })),
 
   createordenesLaboratorio: (newOrdenesLaboratorio: any) =>
-    set((state: any) => ({
+  set((state: any) => {
+    const yaExiste = state.datosce.ordenesLaboratorio.some(
+      (orden: any) =>
+        orden.idproducto === newOrdenesLaboratorio.idproducto &&
+        orden.iddiagnostico === newOrdenesLaboratorio.iddiagnostico &&
+        orden.puntoCarga === newOrdenesLaboratorio.puntoCarga
+    );
+
+    if (yaExiste) return {}; // No actualizar si ya existe
+
+    return {
       datosce: {
         ...state.datosce,
-        ordenesLaboratorio: [...state.datosce.ordenesLaboratorio, { ...newOrdenesLaboratorio }]
-      }
-    })),
+        ordenesLaboratorio: [
+          ...state.datosce.ordenesLaboratorio,
+          { ...newOrdenesLaboratorio },
+        ],
+      },
+    };
+  }),
 
 
   deleteLaboratorio: (idproducto: number, puntocarga: any) =>
@@ -263,13 +277,24 @@ setFuaNumero: (nuevoFua: string) =>
     const updatedOrdenes = get().datosce.ordenesImagenes;
     return updatedOrdenes;
   },
-  createMedicamento: (nuevoMedicamento: MedicamentosCE) =>
-    set((state: any) => ({
+ createMedicamento: (nuevoMedicamento: MedicamentosCE) =>
+  set((state: any) => {
+    const yaExiste = state.datosce.medicamentos.some(
+      (med: MedicamentosCE) =>
+        med.idproducto === nuevoMedicamento.idproducto &&
+        med.iddiagnostico === nuevoMedicamento.iddiagnostico &&
+        med.Codigo?.trim() === nuevoMedicamento.Codigo?.trim()
+    );
+
+    if (yaExiste) return {}; // No agregar si ya existe
+
+    return {
       datosce: {
         ...state.datosce,
-        medicamentos: [...state.datosce.medicamentos, { ...nuevoMedicamento }]
-      }
-    })),
+        medicamentos: [...state.datosce.medicamentos, { ...nuevoMedicamento }],
+      },
+    };
+  }),
   limpiarMedicamento: () =>
     set((state: any) => ({
       datosce: {

@@ -33,10 +33,10 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const [listadoInterconsulta, setListadoInterconsulta] = useState<any[]>([])
   const [options, setOptions] = useState<any[]>([]);
   const [destinoAtencion, setDestinoAtencion] = useState<any>();
-//setFuaNumero
+  //setFuaNumero
   const setFuaNumero = useCEDatosStore((state: any) => state.setFuaNumero);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { control, register, handleSubmit, setValue, reset,getValues, formState: { errors } } = useForm<any>();
+  const { control, register, handleSubmit, setValue, reset, getValues, formState: { errors } } = useForm<any>();
   const { control: control2, register: register2, handleSubmit: handleSubmit2, setValue: setValue2, reset: reset2, watch: watch2 } = useForm<any>();
   const { formattedDate, hora, fechayhora, formattedDate2 } = obtenerFechaYHora();
   const [referenciaView, setreferenciaView] = useState(false);
@@ -101,15 +101,15 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         motivo: data?.motivo,
         idUsuario: session?.user?.id
       }
-    const response=  await axios.post(`${process.env.apijimmynew}/atenciones/interconsulta`, objetoEnvio)
-    console.log(response)
+      const response = await axios.post(`${process.env.apijimmynew}/atenciones/interconsulta`, objetoEnvio)
+      console.log(response)
       getListadoInterconsulta(cuentaDatos?.idatencion)
       ToasterMsj("Procesado", "success", "Interconsulta agregado correctamente.");
- reset({
-  motivo: '',
-  especialidad: null,
-  diagnostico: getValues('diagnostico'), // mantiene el valor actual
-});
+      reset({
+        motivo: '',
+        especialidad: null,
+        diagnostico: getValues('diagnostico'), // mantiene el valor actual
+      });
     } catch (error) {
       console.log(error)
     }
@@ -131,7 +131,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   useEffect(() => {
     getListadoDestinoAtencion()
-   
+
   }, [])
 
 
@@ -173,8 +173,10 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const destinoAtencionW = watch2('destinoAtencion');
   let reintentos = 0;
   const generarFua = async () => {
+    console.log("entro a generar la fua")
     const validadSis = await getData(`${process.env.apijimmynew}/fua/validadExisteFuaByIdCuenta/${cuentaDatos?.idcuentaatencion}`)
     let dataFuaCabecera;
+    
     if (cuentaDatos?.idSiasis) {
       const sisfua = await getData(`${process.env.apijimmynew}/fua/sisfua`);
       const ultimoNum = sisfua[0]?.fuaUltimoGenerado;
@@ -220,7 +222,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
           dataDestinoAtencion = 0;
           break;
       }
-      let codigoPrestacionC=cuentaDatos?.FuaCodigoPrestacion=='907' ? '300': cuentaDatos?.FuaCodigoPrestacion
+      let codigoPrestacionC = cuentaDatos?.FuaCodigoPrestacion == '907' ? '300' : cuentaDatos?.FuaCodigoPrestacion
       dataFuaCabecera = {
         idCuentaAtencion: cuentaDatos?.idcuentaatencion,
         fuaDisa: sisfua[0]?.fuaDisa,
@@ -411,10 +413,10 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   const getMedicamentos = async () => {
     await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionMEDEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
-     await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionINSEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
-    if (cuentaDatos?.medicamentos.length >= 0 && cuentaDatos?.FuaCodigoPrestacion!='300') {
+    await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionINSEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
+    if (cuentaDatos?.medicamentos.length >= 0 && cuentaDatos?.FuaCodigoPrestacion != '300') {
       console.log("entro a medicamentos")
-      
+
       const SisFuaAtencionMEDObj = cuentaDatos.medicamentos.filter((data: any) => data?.TipoProducto == 0)
       for (const [index, data] of SisFuaAtencionMEDObj.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
@@ -434,7 +436,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         }
         const response = await axios.post(`${process.env.apijimmynew}/fua/SisFuaAtencionMEDAgregar`, obj);
       }
-     
+
       const SisFuaAtencionINSObj = cuentaDatos.medicamentos.filter((data: any) => data?.TipoProducto == 1)
       for (const [index, data] of SisFuaAtencionINSObj.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
@@ -460,7 +462,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
   const getProcedimientos = async () => {
     await axios.delete(`${process.env.apijimmynew}/fua/SisFuaAtencionPROEliminarIdCuentaAtencion/${cuentaDatos?.idcuentaatencion}`)
     //ordenes laboratorio
-    if (cuentaDatos?.ordenesLaboratorio.length >= 0  && cuentaDatos?.FuaCodigoPrestacion!='300') {
+    if (cuentaDatos?.ordenesLaboratorio.length >= 0 && cuentaDatos?.FuaCodigoPrestacion != '300') {
       for (const [index, data] of cuentaDatos?.ordenesLaboratorio.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
         const objlaboratorio = {
@@ -481,7 +483,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       }
     }
     //ordenes imagenes
-    if (cuentaDatos?.ordenesImagenes.length >= 0  && cuentaDatos?.FuaCodigoPrestacion!='300') {
+    if (cuentaDatos?.ordenesImagenes.length >= 0 && cuentaDatos?.FuaCodigoPrestacion != '300') {
       for (const [index, data] of cuentaDatos?.ordenesImagenes.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.iddiagnostico)
         const objlaboratorio = {
@@ -503,7 +505,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       }
     }
     //ordenes procedimientos dentro del consultorio
-    if (cuentaDatos?.ordenesProcedimiento.length >= 0 ) {
+    if (cuentaDatos?.ordenesProcedimiento.length >= 0) {
       for (const [index, data] of cuentaDatos?.ordenesProcedimiento.entries()) {
         const dxnumeroSacado = sisFuaDx.filter((dat: any) => dat?.IdDiagnostico == data?.idDiagnostico)
         const objprocdentroconsultorio = {
@@ -524,7 +526,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
       }
     }
 
-    if (cuentaDatos?.ordenesOtros.length >= 0  && cuentaDatos?.FuaCodigoPrestacion!='300') {
+    if (cuentaDatos?.ordenesOtros.length >= 0 && cuentaDatos?.FuaCodigoPrestacion != '300') {
       for (const [index, data] of cuentaDatos?.ordenesOtros.entries()) {
         const objotrosproc = {
           idTablaDx: sisFuaDx[0].id,
@@ -577,22 +579,22 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
 
   return (
     <div className="bg-white border border-gray-300  rounded-md shadow-sm p-4">
-   {cuentaDatos?.FuaCodigoPrestacion}
+      {cuentaDatos?.FuaCodigoPrestacion}
       <div className='flex justify-evenly'>
         <div className='w-2/3'>
           <fieldset className='border p-3  rounded-lg'>
-            <legend className='font-bold'>Modulo Interconsultas  
-{listadoInterconsulta?.length > 0 &&
-<> <Link
-                                        href={`/reportes/recetaInterconsulta/${cuentaDatos?.idcuentaatencion}`}
-                                        target="_blank"
-                                        className="inline-flex items-center px-3 py-1.5 text-blue-600 text-sm rounded-md hover:bg-blue-100 transition-colors duration-200"
-                                    >
-                                        <SlPrinter className="m-2" />
-                                        <span>Imprimir</span>
-                                    </Link>
+            <legend className='font-bold'>Modulo Interconsultas
+              {listadoInterconsulta?.length > 0 &&
+                <> <Link
+                  href={`/reportes/recetaInterconsulta/${cuentaDatos?.idcuentaatencion}`}
+                  target="_blank"
+                  className="inline-flex items-center px-3 py-1.5 text-blue-600 text-sm rounded-md hover:bg-blue-100 transition-colors duration-200"
+                >
+                  <SlPrinter className="m-2" />
+                  <span>Imprimir</span>
+                </Link>
 
-</>}
+                </>}
 
             </legend>
             <form onSubmit={handleSubmit(FormInterconsulta)}>
