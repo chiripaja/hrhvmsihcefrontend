@@ -15,6 +15,7 @@ import { obtenerFechaYHora } from '../utils/obtenerFechaYHora';
 import LinearWithValueLabel from '../ui/LinearProgressWithLabel';
 import { CircularProgress, Button } from '@mui/material';
 import { FiActivity } from 'react-icons/fi';
+import { useMyStore } from '@/store/ui/useProgramacionStore';
 
 
 
@@ -27,6 +28,7 @@ interface formBusqueda {
 
 export const CEListado = ({ session }: any) => {
   const router = useRouter();
+  const { idprogramacionzus, setIdProgramacionzus } = useMyStore()
 
   const { formattedDate, hora, fechayhora } = obtenerFechaYHora();
   const resetDatosCE = useCEDatosStore((state: any) => state.resetDatosCE);
@@ -51,6 +53,7 @@ export const CEListado = ({ session }: any) => {
   }
 
   function handleHCClick(row: any): void {
+  
     const url = `/reportes/hojaatencion/${row?.idcuenta}`;
     window.open(url, '_blank');
   }
@@ -72,11 +75,11 @@ export const CEListado = ({ session }: any) => {
 
   const getDataCE = async () => {
     setIsLoading(true)
-  //  const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
-const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/3095/2025-06-23`)
+    const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/${session?.user?.id}/${formattedDate}`)
+    // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/3095/2025-06-23`)
     //  const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4902/2024-07-16`)
     // const { data } = await axios.get(`${process.env.apijimmynew}/programacionmedica/findbyidmedicofecha/4147/2024-10-03`)
-console.log("andres robles")
+
 
     const groupedData = groupByIdProgramacion(data);
     setDataTotal(groupedData);
@@ -102,6 +105,7 @@ console.log("andres robles")
   }
 
   const getConsultorio = async (id: number) => {
+    console.log(id)
     if (id > 0) {
       const dataC = await dataTotal[id];
       const dataTablaRows: any[] = [];
@@ -122,7 +126,8 @@ console.log("andres robles")
           Triaje: data.Triaje,
           TriajePeso: data.TriajePeso,
           FuaNumero: data.FuaNumero,
-          CitaExamenClinico: data.CitaExamenClinico
+          CitaExamenClinico: data.CitaExamenClinico,
+          idSiasis: data?.idSiasis
         })
       });
       setDataTablaRowsPacientes(dataTablaRows);
@@ -154,11 +159,43 @@ console.log("andres robles")
 
     setMostraNomEsp(data)
   }
+/*
+  useEffect(() => {   
+      getConsultorio(idprogramacion)
+      getEspecilidad(idprogramacion)
+   }, [idprogramacion])
+*/
+// 1. Si Zustand está vacío y llega data, usar primer valor
+useEffect(() => {
+  if (
+    dataServiciosProgramados.length > 0 &&
+    !idprogramacionzus
+  ) {
+    const primerId = dataServiciosProgramados[0].id;
+    setIdProgramacionzus(primerId);
+    setValue('idprogramacion', primerId);
+  }
+}, [dataServiciosProgramados, idprogramacionzus]);
 
-  useEffect(() => {
-    getConsultorio(idprogramacion)
-    getEspecilidad(idprogramacion)
-  }, [idprogramacion])
+// 2. Si Zustand ya tiene valor (por persistencia), actualizar el select
+useEffect(() => {
+  if (idprogramacionzus) {
+    setValue('idprogramacion', idprogramacionzus);
+  }
+}, [idprogramacionzus]);
+
+// 3. Cuando el usuario cambia el select, actualizar Zustand
+useEffect(() => {
+  if (idprogramacion && idprogramacion !== idprogramacionzus) {
+    setIdProgramacionzus(idprogramacion);
+  }
+}, [idprogramacion]);
+useEffect(() => {
+  if (idprogramacionzus && dataTotal && dataTotal[idprogramacionzus]) {
+    getEspecilidad(idprogramacionzus);
+    getConsultorio(idprogramacionzus);
+  }
+}, [idprogramacionzus, dataTotal]);
 
   const validacionTriaje = (Triaje: any, TriajePeso: any) => {
     if (!Triaje) {
@@ -177,88 +214,84 @@ console.log("andres robles")
   const columns: GridColDef[] = [
     {
       field: 'idcuenta', headerName: 'Numero de Cuenta', flex: 1,
-
     },
     { field: 'nompx', headerName: 'Nombre Paciente', flex: 1 },
     { field: 'edad', headerName: 'Edad', flex: 1 },
     { field: 'financiamiento', headerName: 'Financiamiento', flex: 1 },
     { field: 'hora', headerName: 'Hora', flex: 1 },
-
     {
       field: 'id',
       headerName: 'Acciones',
       width: 440,
       renderCell: (params) => (
-        <div className='flex flex-wrap gap-4'>
 
-          {
-            validacionTriaje(params.row?.Triaje, params.row?.TriajePeso) ?
+        <>
+          {(params.row?.idSiasis == null && params.row?.financiamiento == 'SIS') ? <>
+            Validacion SIS
+          </> : <div className='flex flex-wrap gap-4'>
 
+            {
+              validacionTriaje(params.row?.Triaje, params.row?.TriajePeso) ?
+                <>
+                  {params.row?.FyHFinal == null ?
+                    <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent colorFondo text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
+                      <FaRegEdit />
+                      Atender
+                    </button>
+
+                    :
+                    <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
+
+                      <FaRegEdit />
+
+                      Modificar
+                    </button>}
+                </> :
+                <>
+                  <a href='/sihce/triaje' target='_blank' className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
+                    <FiActivity className="w-5 h-5" />
+                    Triaje
+                  </a>
+                </>
+            }
+            {params.row?.CitaExamenClinico != null &&
               <>
-                {params.row?.FyHFinal == null ?
-                  <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent colorFondo text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
-
-                    <FaRegEdit />
-
-                    Atender
-                  </button>
-
-                  :
-                  <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
-
-                    <FaRegEdit />
-
-                    Modificar
-                  </button>}
-              </> :
-              <>
-                <a href='/sihce/triaje' target='_blank' className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
-                  <FiActivity className="w-5 h-5" />
-                  Triaje
-                </a>
+                <button type="button" onClick={() => handleHCClick(params.row)} className="btnyellow hidden">
+                  <PiPrinter />
+                  Historia
+                </button>
               </>
+            }
+            {(params.row?.FuaNumero != null && params.row?.financiamiento == 'SIS') &&
+              <button type="button" onClick={() => handleFUAClick(params.row)} className="btngreen hidden">
+                <PiPrinter />
+                FUA
+              </button>
+            }
+
+          </div>}
 
 
-          }
 
 
-          {params.row?.CitaExamenClinico != null &&
-            <button type="button" onClick={() => handleHCClick(params.row)} className="btnyellow hidden">
-              <PiPrinter />
-              Historia
-            </button>
-          }
-
-          {params.row?.FuaNumero != null &&
-            <button type="button" onClick={() => handleFUAClick(params.row)} className="btngreen hidden">
-              <PiPrinter />
-              FUA
-            </button>
-          }
-
-        </div>
+        </>
       ),
     },
   ];
 
-  useEffect(() => {
-    console.log(dataServiciosProgramados)
-  }, [dataServiciosProgramados])
 
-  useEffect(() => {
-    if (dataServiciosProgramados.length > 0) {
-      // Asigna automáticamente el primer valor del select
-      setValue("idprogramacion", dataServiciosProgramados[0].id);
-    }
-  }, [dataServiciosProgramados]);
+
+ 
 
   const handlePrint = () => {
- const url = `/reportes/impresionHis/${idprogramacion}`;
-    window.open(url, '_blank');
+  
+    const url = `/reportes/impresionHis/${idprogramacion}`;
+   
+    window.open(url, '_blank');/**/
   }
   return (
     <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
-    
+   
       {/* Sección de estado de atención en una fila */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mb-6">
         {/* Pacientes no atendidos */}
@@ -290,12 +323,18 @@ console.log("andres robles")
       {/* Formulario de selección */}
       <form className="bg-white p-6 rounded-lg shadow-lg mb-8 flex gap-4">
         <div className="w-4/5">
-          <SelectUI
-            opciones={dataServiciosProgramados}
-            deshabilitado={false}
-            {...register("idprogramacion")}
-            className="w-full"
-          />
+      
+<select
+  {...register("idprogramacion")}
+  disabled={false} // o usa una variable si necesitas controlarlo
+  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+>
+  {dataServiciosProgramados.map((opcion) => (
+    <option key={opcion.id} value={opcion.id}>
+      {opcion.descripcion}
+    </option>
+  ))}
+</select>
         </div>
 
         <div className="w-1/5 flex justify-end">

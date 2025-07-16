@@ -15,6 +15,7 @@ export const TopMenu2 = async () => {
   const cetriaje = session?.user?.roles?.some(role => role.idRol === 101);
   const CEAtencion = session?.user?.roles?.some(role => role.idRol === 143);
   const CEAtencionProc = session?.user?.roles?.some(role => role.idRol === 1170);
+  const ArchivoClinico=session?.user?.roles?.some(role => role.idRol === 62);
   const menuItemsConsultaExterna = [
     { href: "/sihce/consultaexterna", label: "CE Atencion", condition: webadmin || CEAtencion },
     { href: "/sihce/admision", label: "Admision CE", condition: webadmin || admisionista },
@@ -27,6 +28,8 @@ export const TopMenu2 = async () => {
     { href: "/sihce/listapx", label: "Lista Citados", condition: webadmin },
     { href: "/sihce/nuevousuario", label: "Paciente Nuevo", condition: webadmin || admisionista },
     { href: "/sihce/triaje", label: "Triaje", condition: webadmin || cetriaje },
+    { href: "/sihce/archivos", label: "Archivo", condition: webadmin || ArchivoClinico},
+
   ];
 
   const menuItemsEmergencia = [
@@ -37,7 +40,8 @@ export const TopMenu2 = async () => {
 
   const menuItemsConfiguracion = [
     { href: "/sihce/roles", label: "Roles", condition: webadmin },
-    { href: "/sihce/auditoria", label: "Auditoria", condition: webadmin }
+    { href: "/sihce/auditoria", label: "Auditoria", condition: webadmin },
+
   ];
 
   return (<>
@@ -191,8 +195,6 @@ export const TopMenu2 = async () => {
                       {menuItemsEmergencia
                         .filter(item => item.condition) // Filter based on condition
                         .map(item => (
-
-
                           <Link key={item.href} href={item.href} passHref>
                             <span className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300">
                               {item.label}

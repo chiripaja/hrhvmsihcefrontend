@@ -45,7 +45,7 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
         <div className={`flex justify-center print-page-break scale-[0.9]`}>
             <div className='grid grid-cols-2 gap-1 items-start'>
                 {/* primer componente*/}
-                <div className="p-6 border flex flex-col justify-between min-h-[650px] w-full">
+                <div className="p-6 border border-black flex flex-col justify-between min-h-[650px] w-full">
                     <table>
                         <tbody>
                             <tr>
@@ -213,7 +213,7 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
 
 
                 {/* segundo componente*/}
-                <div className="p-6 border flex flex-col justify-between min-h-[650px]  w-full">
+                <div className="p-6 border border-black flex flex-col justify-between min-h-[650px]  w-full">
                     <table>
                         <tbody>
                             <tr>

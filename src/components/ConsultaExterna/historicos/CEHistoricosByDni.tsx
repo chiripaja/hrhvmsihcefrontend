@@ -66,7 +66,7 @@ export const CEHistoricosByDni = ({ dni }: props) => {
   <input
     type="text"
     className="border border-gray-300 rounded px-4 py-2 w-full md:w-1/3"
-    placeholder="Buscar por servicio, médico o motivo..."
+    placeholder="Buscar por servicio o médico..."
     value={filtro}
     onChange={(e) => setFiltro(e.target.value)}
   />
@@ -95,8 +95,7 @@ export const CEHistoricosByDni = ({ dni }: props) => {
       item.servicio?.nombre?.toLowerCase().includes(texto) ||
       item.medico?.empleado?.apellidoPaterno?.toLowerCase().includes(texto) ||
       item.medico?.empleado?.apellidomaterno?.toLowerCase().includes(texto) ||
-      item.medico?.empleado?.nombres?.toLowerCase().includes(texto) ||
-      item.atencionesCE?.citaMotivo?.toLowerCase().includes(texto)
+      item.medico?.empleado?.nombres?.toLowerCase().includes(texto) 
     );
   })
 

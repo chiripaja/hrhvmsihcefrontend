@@ -42,7 +42,7 @@ export const handleFarmacia = async (
       idEstado: 1,
       idComprobantePago: null,
       idMedicoReceta: cuentaDatos?.idMedicoIngreso,
-      fechaVigencia: (() => {
+    /*  fechaVigencia: (() => {
   const fecha = new Date();
   fecha.setDate(fecha.getDate() + 1);
   fecha.setHours(0, 0, 0, 0);
@@ -50,7 +50,8 @@ export const handleFarmacia = async (
   const mes = String(fecha.getMonth() + 1).padStart(2, '0');
   const dia = String(fecha.getDate()).padStart(2, '0');
   return `${año}-${mes}-${dia} 00:00:00.000-05:00`; // <-- importante
-})(),
+})(),*/
+      fechaVigencia:null,
       idUsuarioAuditoria: 1,
     };
 

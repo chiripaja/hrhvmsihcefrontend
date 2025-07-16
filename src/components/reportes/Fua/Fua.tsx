@@ -23,6 +23,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
         const fuains = await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionINSbyIdCuenta/${idcuenta}`)
         setsisFuaAtencionINS(fuains)
         const fuaprod = await getData(`${process.env.apijimmynew}/fua/apiSisFuaAtencionPRObyIdCuenta/${idcuenta}`)
+        console.log(fuaprod)
         setSisFuaAtencionPRO(fuaprod)
         setLoadingFua(false);
     }
