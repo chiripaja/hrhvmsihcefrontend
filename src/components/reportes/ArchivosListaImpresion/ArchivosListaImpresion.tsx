@@ -233,14 +233,14 @@ export const ArchivosListaImpresion = () => {
                   {departamentoLabel?.label} {especialidadLabel?.label ? ' - ' + especialidadLabel?.label : ''} {servicioLabel?.label ? ' - ' + servicioLabel?.label : ''}
                 </label>
               )}
-    
 
           <div>
               <table className='border border-black border-collapse w-full text-xs mt-1'>
                 <tbody>
                     <tr>
                         <td className='border border-black bg-gray-300'>Fecha/hora de Atención</td>
-                        <td className='border border-black bg-gray-300'>N° Historia</td>  
+                        <td className='border border-black bg-gray-300'>N° Historia</td> 
+                           <td className='border border-black bg-gray-300'>IdCuenta</td> 
                         <td className='border border-black bg-gray-300'>Ficha Familiar</td>
                         <td className='border border-black bg-gray-300'>Paciente</td>
                         <td className='border border-black bg-gray-300'>Telefono</td>
@@ -250,6 +250,8 @@ export const ArchivosListaImpresion = () => {
  <tr key={data?.idCita}>
                         <td className='border border-black'>{data?.fechaSolicitud} - {data?.horaInicio}</td>
                         <td className='border border-black'>{data?.nroDocumento}</td>
+                        
+                        <td className='border border-black'>{data?.idCuentaAtencion}</td>
                         <td className='border border-black'></td>
                         <td className='border border-black'>{data?.paciente}</td>
                         <td className='border border-black'>{data?.telefono}</td>

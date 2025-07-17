@@ -16,17 +16,26 @@ export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
-    const getAntecedentes = useCallback(async (idpaciente: any) => {
-        setLoading(true);
+   const getAntecedentes = useCallback(async (idpaciente: any) => {
+    if (!idpaciente) return;
+
+    setLoading(true);
+    try {
         const data = await getData(`${process.env.apijimmynew}/consultaexterna/findbyidpacienteantecedentes/${idpaciente}`);
-        setValue('antecedQuirurgico', data.antecedQuirurgico || '');
-        setValue('antecedAlergico', data.antecedAlergico || '');
-        setValue('antecedPatologico', data.antecedPatologico || '');
-        setValue('antecedFamiliar', data.antecedFamiliar || '');
-        setValue('antecedObstetrico', data.antecedObstetrico || '');
-        setValue('antecedentes', data.antecedentes || '');
+
+        setValue('antecedQuirurgico', data?.antecedQuirurgico || '');
+        setValue('antecedAlergico', data?.antecedAlergico || '');
+        setValue('antecedPatologico', data?.antecedPatologico || '');
+        setValue('antecedFamiliar', data?.antecedFamiliar || '');
+        setValue('antecedObstetrico', data?.antecedObstetrico || '');
+        setValue('antecedentes', data?.antecedentes || '');
+    } catch (error) {
+        console.error('Error cargando antecedentes:', error);
+        // Puedes mostrar un toast o alerta si quieres
+    } finally {
         setLoading(false);
-    }, []);
+    }
+}, [setValue]);
     useEffect(() => {
         if (cuentaDatos?.idpaciente) {
             getAntecedentes(cuentaDatos?.idpaciente);

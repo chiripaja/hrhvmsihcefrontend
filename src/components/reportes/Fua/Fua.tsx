@@ -1,11 +1,13 @@
 'use client'
 import './fua.css'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { getData } from "@/components/helper/axiosHelper";
 import { HiX } from 'react-icons/hi';
 import Image from 'next/image';
-
+// @ts-ignore
+import html2pdf from "html2pdf.js"
 export const Fua = ({ idcuentaatencion }: any) => {
+    const refContenido = useRef<HTMLDivElement>(null); // ✅ aquí el tipado
     const [sisFuaAtencion, setSisFuaAtencion] = useState<any>();
     const [sisFuaAtencionDIA, setSisFuaAtencionDIA] = useState<any[]>([]);
     const [sisFuaAtencionMED, setSisFuaAtencionMED] = useState<any[]>([]);
@@ -46,7 +48,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
             sisFuaAtencionPRO !== undefined
         ) {
             setTimeout(() => {
-                 window.print();
+                // window.print();
             }, 500); // opcional: pequeño retraso para asegurar el render
         }
     }, [
@@ -58,11 +60,32 @@ export const Fua = ({ idcuentaatencion }: any) => {
         sisFuaAtencionPRO,
     ]);
 
+const generarPDF = () => {
+    if (!refContenido.current) return; // Evita errores si aún no está montado
 
+    const opciones = {
+      margin: 0.5,
+      filename: 'documento.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opciones).from(refContenido.current).save();
+  };
 
 
     return (
         <>
+        <div className='text-center w-full bg-slate-400'>
+        <div  onClick={generarPDF} className="bg-blue-600 text-white px-4 py-2 rounded print:hidden w-48">
+  imprimir firma digital
+</div>
+        </div>
+
+
+<div ref={refContenido}>
+
 
             <div className="flex justify-center print-page-break bg-white ">
                 <table className="w-full" style={{
@@ -1306,6 +1329,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
                     </tbody>
                 </table>
 
+            </div>
             </div>
         </>
     )
