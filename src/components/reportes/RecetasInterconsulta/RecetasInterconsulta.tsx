@@ -38,7 +38,7 @@ export const RecetasInterconsulta = ({ idcuentaatencion }: any) => {
     useEffect(() => {
 
         if (datos?.length > 0) {
-            //window.print()
+            window.print()
         }
     }, [datos])
     return (

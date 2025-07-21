@@ -7,6 +7,8 @@ import { obtenerFechaYHora } from '@/components/utils/obtenerFechaYHora';
 import { getData } from '@/components/helper/axiosHelper';
 import { RecetaCabecera } from '../../../interfaces/RecetaCabezeraI';
 import { SeccionOrdenes } from './SeccionOrdenes';
+// @ts-ignore
+import html2pdf from "html2pdf.js"
 export const HojaAtencion = ({ idcuentaatencion }: any) => {
 
   const [datosPxGeneral, setdatosPxGeneral] = useState<any>();
@@ -43,7 +45,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
       flagProcedimientosFuera &&
       flagProcedimientosDentro
     ) {
-      window.print();
+      //window.print();
     }
   }, [
     flagFarmacia,
@@ -156,12 +158,57 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
 
   }, [idcuentaatencion])
 
+const handleFirmarPDF = async () => {
+  const element = document.getElementById('hoja-atencion');
+  if (!element) return;
+
+  const opt = {
+    margin: 0,
+    filename: `${idcuentaatencion}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 3 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  const worker = html2pdf().set(opt).from(element);
+  const blob = await worker.outputPdf('blob');
+
+  const tempForm = new FormData();
+  tempForm.append('file', blob, `${idcuentaatencion}.pdf`);
+
+  // 1. Enviar el PDF al backend
+  const uploadResp = await fetch(`${process.env.apifirma}/api/upload-temp`, {
+    method: 'POST',
+    body: tempForm,
+  });
+
+  const { tempUrl, param_token } = await uploadResp.json();
+  console.log("*****************")
+  console.log(tempUrl)
+  console.log(param_token)
+console.log("*****************")
+  // 2. Llamar a /api/param con la URL dinámica
+  const paramResp = await fetch(`${process.env.apifirma}/api/param`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ param_token, tempUrl }),
+  });
+
+  const base64 = await paramResp.text();
+  console.log("Firma base64:", base64);
+};
 
 
   const { formattedDate, hora, fechayhora } = obtenerFechaYHora();
   return (
-
-    <div className="  min-h-screen flex justify-center scale-[0.9] origin-top bg-white">
+<>
+<button
+  onClick={handleFirmarPDF}
+  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
+>
+  Generar y Firmar PDF
+</button>
+<div className="  min-h-screen flex justify-center scale-[0.9] origin-top bg-white" id='hoja-atencion'>
 
       <div className=" w-full max-w-4xl p-6 ">
         {/* Encabezado */}
@@ -445,5 +492,8 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
 
       </div>
     </div>
+
+</>
+    
   )
 }

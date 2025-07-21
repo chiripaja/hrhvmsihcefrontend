@@ -77,7 +77,7 @@ const generarPDF = () => {
 
     return (
         <>
-        <div className='text-center w-full bg-slate-400'>
+        <div className='text-center w-full hidden'>
         <div  onClick={generarPDF} className="bg-blue-600 text-white px-4 py-2 rounded print:hidden w-48">
   imprimir firma digital
 </div>
@@ -1289,7 +1289,7 @@ const generarPDF = () => {
                                                             </tr>
                                                             <tr>
                                                                 <td className='font-semibold'>ASEGURADO</td>
-                                                                <td className='border border-black w-6'></td>
+                                                                <td className='border border-black w-6 text-white'>___</td>
                                                             </tr>
                                                             <tr>
                                                                 <td className='font-semibold'>REPRESENTANTE</td>

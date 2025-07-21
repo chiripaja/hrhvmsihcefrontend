@@ -53,10 +53,10 @@ export const CEListado = ({ session }: any) => {
   }
 
   function handleHCClick(row: any): void {
-  
     const url = `/reportes/hojaatencion/${row?.idcuenta}`;
     window.open(url, '_blank');
   }
+
   function handleFUAClick(row: any): void {
     const url = `/reportes/fua/${row?.idcuenta}`;
     window.open(url, '_blank');
@@ -109,7 +109,6 @@ export const CEListado = ({ session }: any) => {
     if (id > 0) {
       const dataC = await dataTotal[id];
       const dataTablaRows: any[] = [];
-
       const nullCount = dataC.filter((item: any) => item.FyHFinal === null).length;
       const nonNullCount = dataC.filter((item: any) => item.FyHFinal !== null).length;
       setNullCount(nullCount);
@@ -159,43 +158,38 @@ export const CEListado = ({ session }: any) => {
 
     setMostraNomEsp(data)
   }
-/*
-  useEffect(() => {   
-      getConsultorio(idprogramacion)
-      getEspecilidad(idprogramacion)
-   }, [idprogramacion])
-*/
-// 1. Si Zustand está vacío y llega data, usar primer valor
-useEffect(() => {
-  if (
-    dataServiciosProgramados.length > 0 &&
-    !idprogramacionzus
-  ) {
-    const primerId = dataServiciosProgramados[0].id;
-    setIdProgramacionzus(primerId);
-    setValue('idprogramacion', primerId);
-  }
-}, [dataServiciosProgramados, idprogramacionzus]);
 
-// 2. Si Zustand ya tiene valor (por persistencia), actualizar el select
-useEffect(() => {
-  if (idprogramacionzus) {
-    setValue('idprogramacion', idprogramacionzus);
-  }
-}, [idprogramacionzus]);
+  // 1. Si Zustand está vacío y llega data, usar primer valor
+  useEffect(() => {
+    if (
+      dataServiciosProgramados.length > 0 &&
+      !idprogramacionzus
+    ) {
+      const primerId = dataServiciosProgramados[0].id;
+      setIdProgramacionzus(primerId);
+      setValue('idprogramacion', primerId);
+    }
+  }, [dataServiciosProgramados, idprogramacionzus]);
 
-// 3. Cuando el usuario cambia el select, actualizar Zustand
-useEffect(() => {
-  if (idprogramacion && idprogramacion !== idprogramacionzus) {
-    setIdProgramacionzus(idprogramacion);
-  }
-}, [idprogramacion]);
-useEffect(() => {
-  if (idprogramacionzus && dataTotal && dataTotal[idprogramacionzus]) {
-    getEspecilidad(idprogramacionzus);
-    getConsultorio(idprogramacionzus);
-  }
-}, [idprogramacionzus, dataTotal]);
+  // 2. Si Zustand ya tiene valor (por persistencia), actualizar el select
+  useEffect(() => {
+    if (idprogramacionzus) {
+      setValue('idprogramacion', idprogramacionzus);
+    }
+  }, [idprogramacionzus]);
+
+  // 3. Cuando el usuario cambia el select, actualizar Zustand
+  useEffect(() => {
+    if (idprogramacion && idprogramacion !== idprogramacionzus) {
+      setIdProgramacionzus(idprogramacion);
+    }
+  }, [idprogramacion]);
+  useEffect(() => {
+    if (idprogramacionzus && dataTotal && dataTotal[idprogramacionzus]) {
+      getEspecilidad(idprogramacionzus);
+      getConsultorio(idprogramacionzus);
+    }
+  }, [idprogramacionzus, dataTotal]);
 
   const validacionTriaje = (Triaje: any, TriajePeso: any) => {
     if (!Triaje) {
@@ -229,7 +223,6 @@ useEffect(() => {
           {(params.row?.idSiasis == null && params.row?.financiamiento == 'SIS') ? <>
             Validacion SIS
           </> : <div className='flex flex-wrap gap-4'>
-
             {
               validacionTriaje(params.row?.Triaje, params.row?.TriajePeso) ?
                 <>
@@ -238,12 +231,9 @@ useEffect(() => {
                       <FaRegEdit />
                       Atender
                     </button>
-
                     :
                     <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
-
                       <FaRegEdit />
-
                       Modificar
                     </button>}
                 </> :
@@ -268,37 +258,26 @@ useEffect(() => {
                 FUA
               </button>
             }
-
           </div>}
-
-
-
-
         </>
       ),
     },
   ];
 
-
-
- 
-
   const handlePrint = () => {
-  
     const url = `/reportes/impresionHis/${idprogramacion}`;
-   
     window.open(url, '_blank');/**/
   }
+
   return (
     <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
-   
+
       {/* Sección de estado de atención en una fila */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mb-6">
         {/* Pacientes no atendidos */}
         <div className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-red-500 w-full flex flex-col justify-between">
           <h3 className="text-xl font-semibold text-red-600 mb-2">No Atendidos</h3>
           <p className="text-gray-700 text-2xl font-bold">{nullCount} pacientes</p>
-
         </div>
 
         {/* Nombre del Doctor */}
@@ -307,7 +286,6 @@ useEffect(() => {
           {MostraNomEsp[0]?.Especialidad && (
             <p className="text-gray-500 text-lg">{MostraNomEsp[0]?.Especialidad}</p>
           )}
-
         </div>
 
         {/* Pacientes atendidos */}
@@ -318,23 +296,22 @@ useEffect(() => {
       </div>
       {/* Barra de progreso */}
       <LinearWithValueLabel nullCount={nullCount} nonNullCount={nonNullCount} />
-
-
       {/* Formulario de selección */}
       <form className="bg-white p-6 rounded-lg shadow-lg mb-8 flex gap-4">
         <div className="w-4/5">
-      
-<select
-  {...register("idprogramacion")}
-  disabled={false} // o usa una variable si necesitas controlarlo
-  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
->
-  {dataServiciosProgramados.map((opcion) => (
-    <option key={opcion.id} value={opcion.id}>
-      {opcion.descripcion}
-    </option>
-  ))}
-</select>
+          <select
+            {...register("idprogramacion")}
+              value={watch("idprogramacion") || ""}
+            disabled={false} // o usa una variable si necesitas controlarlo
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+          >
+            {dataServiciosProgramados.map((opcion) => (
+              <option key={opcion.id} value={opcion.id}>
+                {opcion.id}-{opcion.descripcion}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="w-1/5 flex justify-end">

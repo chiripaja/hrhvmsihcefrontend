@@ -781,13 +781,7 @@ export const CEDestinoAtencionGeneral = ({ session, cuentaDatos }: any) => {
         }
       </div>
       <div className="flex justify-end mt-6 col-span-2 gap-2">
-        <Link
-          className="flex items-center px-4 h-12 py-2 mb-2 rounded focus:outline-none bg-blue-700 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
-          href={`/sihce/consultaexterna`}
-
-        >
-          📄 Lista Pacientes
-        </Link>
+    
         <button
           type="submit"
           disabled={isSubmitting}

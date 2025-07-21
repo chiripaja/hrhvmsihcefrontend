@@ -36,7 +36,7 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
     useEffect(() => {
         console.log(datos[0]?.idReceta)
         if (datos[0]?.idReceta) {
-            window.print()
+            // window.print()
         }
     }, [datos])
 
@@ -180,35 +180,27 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
 
 
 
-                    <table className="w-full text-xs mt-7">
+                    <table className="w-full mt-7">
                         <thead className="border-b border-t border-black">
                             <tr>
                                 <th className="text-left">Medicamento o Insumo</th>
-
                                 <th>Cantidad</th>
                             </tr>
                         </thead>
                         <tbody className="">
                             {datos.map((item: any) => (
                                 <tr key={item.idReceta + item.Nombre}>
-                                    <td>{item.Nombre}</td>
-
-                                    <td>{item.CantidadPedida}
-
-                                    </td>
-
+                                    <td className=' text-[10px]'>{item.Nombre}</td>
+                                    <td className=' text-[10px] text-center'>{item.CantidadPedida}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-
                     <div className="text-xs mt-44 text-right">
                         <span className='border-t border-black pl-2 pr-2'>
                             {datosPxGeneral?.MedicoPaterno} {datosPxGeneral?.MedicoMaterno} {datosPxGeneral?.MedicoNombres}
                         </span>
-
                     </div>
-
                 </div>
 
 
@@ -277,24 +269,23 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
                         </table>
                     </div>
 
-                    <table className="w-full text-xs mt-7">
+                    <table className="w-full mt-7">
                         <thead className="border-b border-t border-black">
                             <tr>
-                                <th className="text-left">Medicamento o Insumo</th>
-
-                                <th>Via</th>
+                                <th className="text-left text-[10px]">Medicamento o Insumo</th>
+                                <th className="text-[10px]">Via</th>
                             </tr>
                         </thead>
                         <tbody>
                             {datos.map((item: any) => (
                                 <React.Fragment key={item.idReceta + item.Nombre}>
                                     <tr className="border-b">
-                                        <td className="p-2 font-semibold">{item.Nombre}</td>
-                                        <td className="p-2 font-semibold">{item.viaadministracion}</td>
+                                        <td className="p-1 text-[10px]">{item.Nombre}</td>
+                                        <td className="p-1 text-[10px]">{item.viaadministracion}</td>
                                     </tr>
                                     {item.observaciones && (
                                         <tr className="bg-gray-100">
-                                            <td colSpan={2} className="p-2 text-sm text-gray-700 italic">
+                                            <td colSpan={2} className="p-1 text-[10px] text-gray-700 italic">
                                                 Frecuencia: {item.observaciones}
                                             </td>
                                         </tr>

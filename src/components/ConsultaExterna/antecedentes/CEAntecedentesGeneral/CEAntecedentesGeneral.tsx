@@ -12,45 +12,46 @@ import { Loading } from '@/components/utils/Loading'
 import { ToasterMsj } from '@/components/utils/ToasterMsj'
 
 
-export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
+export const CEAntecedentesGeneral = ({ handleTabChange, cuentaDatos }: any) => {
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
-   const getAntecedentes = useCallback(async (idpaciente: any) => {
-    if (!idpaciente) return;
+    const getAntecedentes = useCallback(async (idpaciente: any) => {
+        if (!idpaciente) return;
 
-    setLoading(true);
-    try {
-        const data = await getData(`${process.env.apijimmynew}/consultaexterna/findbyidpacienteantecedentes/${idpaciente}`);
-
-        setValue('antecedQuirurgico', data?.antecedQuirurgico || '');
-        setValue('antecedAlergico', data?.antecedAlergico || '');
-        setValue('antecedPatologico', data?.antecedPatologico || '');
-        setValue('antecedFamiliar', data?.antecedFamiliar || '');
-        setValue('antecedObstetrico', data?.antecedObstetrico || '');
-        setValue('antecedentes', data?.antecedentes || '');
-    } catch (error) {
-        console.error('Error cargando antecedentes:', error);
-        // Puedes mostrar un toast o alerta si quieres
-    } finally {
-        setLoading(false);
-    }
-}, [setValue]);
+        setLoading(true);
+        try {
+            const data = await getData(`${process.env.apijimmynew}/consultaexterna/findbyidpacienteantecedentes/${idpaciente}`);
+            console.log(data)
+            setValue('antecedQuirurgico', data?.antecedQuirurgico || '');
+            setValue('antecedAlergico', data?.antecedAlergico || '');
+            setValue('antecedPatologico', data?.antecedPatologico || '');
+            setValue('antecedFamiliar', data?.antecedFamiliar || '');
+            setValue('antecedObstetrico', data?.antecedObstetrico || '');
+            setValue('antecedentes', data?.antecedentes || '');
+        } catch (error) {
+           // console.error('Error cargando antecedentes:', error);
+            // Puedes mostrar un toast o alerta si quieres
+        } finally {
+            setLoading(false);
+        }
+    }, [setValue]);
     useEffect(() => {
         if (cuentaDatos?.idpaciente) {
             getAntecedentes(cuentaDatos?.idpaciente);
         }
     }, [cuentaDatos, getAntecedentes]);
 
-   
+
     const FormAntecedentes: SubmitHandler<any> = async (data: any) => {
+        console.log(data)
         setIsSubmitting(true);
         try {
             await axios.put(`${process.env.apijimmynew}/consultaexterna/actualizarAntecedentes/${cuentaDatos?.idpaciente}`, data);
             ToasterMsj('Exito', 'success', 'Se pasará a diagnostico.');
             handleTabChange('2')
         } catch (error) {
-            console.error('Error al enviar el formulario:', error); 
+            console.error('Error al enviar el formulario:', error);
         } finally {
             setIsSubmitting(false);
         }
@@ -89,7 +90,7 @@ export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
 
                     <div className={style.card}>
                         <h2 className={style.card__header}>
-                        <span className={`${style.card__header__borderGreen} borderfondo`}></span>
+                            <span className={`${style.card__header__borderGreen} borderfondo`}></span>
                             Alergias      <TfiClipboard size={23} className="text-gray-400 ml-4" />
                         </h2>
                         <div className={style.card__body}>
@@ -107,7 +108,7 @@ export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
 
                     <div className={style.card}>
                         <h2 className={style.card__header}>
-                        <span className={`${style.card__header__borderGreen} borderfondo`}></span>
+                            <span className={`${style.card__header__borderGreen} borderfondo`}></span>
                             Patologicos      <TfiRss size={23} className="text-gray-400 ml-4" />
                         </h2>
                         <div className={style.card__body}>
@@ -124,7 +125,7 @@ export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
 
                     <div className={style.card}>
                         <h2 className={style.card__header}>
-                        <span className={`${style.card__header__borderGreen} borderfondo`}></span>
+                            <span className={`${style.card__header__borderGreen} borderfondo`}></span>
                             Familiares      <TfiWrite size={23} className="text-gray-400 ml-4" />
                         </h2>
                         <div className={style.card__body}>
@@ -141,7 +142,7 @@ export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
 
                     <div className={style.card}>
                         <h2 className={style.card__header}>
-                        <span className={`${style.card__header__borderGreen} borderfondo`}></span>
+                            <span className={`${style.card__header__borderGreen} borderfondo`}></span>
                             Obstetricos      <TfiBookmarkAlt size={23} className="text-gray-400 ml-4" />
                         </h2>
                         <div className={style.card__body}>
@@ -158,7 +159,7 @@ export const CEAntecedentesGeneral = ({ handleTabChange,cuentaDatos }: any) => {
 
                     <div className={style.card}>
                         <h2 className={style.card__header}>
-                        <span className={`${style.card__header__borderGreen} borderfondo`}></span>
+                            <span className={`${style.card__header__borderGreen} borderfondo`}></span>
                             Otros      <TfiClipboard size={23} className="text-gray-400 ml-4" />
                         </h2>
                         <div className={style.card__body}>

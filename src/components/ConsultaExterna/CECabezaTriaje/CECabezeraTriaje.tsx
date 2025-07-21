@@ -102,6 +102,13 @@ export const CECabezeraTriaje = ({ dataPx,cuentaDatos }: any) => {
                                 <div className={style.mainTriaje__body__container__item__container}>
                                     
                                     <span className={style.txtColorContenido}>
+                                            <Link
+          className="flex items-center px-4 h-12 py-2 mb-2 rounded focus:outline-none bg-blue-500 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
+          href={`/sihce/consultaexterna`}
+
+        >
+          📄 Lista Pacientes
+        </Link>
                                         {(cuentaDatos?.FuaNumero && cuentaDatos?.idFuenteFinanciamiento=='3')&& (
                                           <Link
     className="flex items-center px-4 py-2 mb-2 rounded focus:outline-none bg-blue-700 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
