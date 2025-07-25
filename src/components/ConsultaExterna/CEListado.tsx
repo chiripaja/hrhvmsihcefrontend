@@ -16,6 +16,7 @@ import LinearWithValueLabel from '../ui/LinearProgressWithLabel';
 import { CircularProgress, Button } from '@mui/material';
 import { FiActivity } from 'react-icons/fi';
 import { useMyStore } from '@/store/ui/useProgramacionStore';
+import Swal from 'sweetalert2';
 
 
 
@@ -103,6 +104,34 @@ export const CEListado = ({ session }: any) => {
     }
     setIsLoading(false)
   }
+const handleValidacionSis = async (row: any) => {
+  try {
+    const { data } = await axios.get(`${process.env.apivalidacionsis}/api/sis/${row?.idcuenta}`);
+    if (data?.idPaciente) {
+      Swal.fire({
+        icon: "success", 
+        title: "Validado correctamente!",
+        timerProgressBar: true,
+        timer: 2000,
+      });
+
+      setDataTablaRowsPacientes((prev) =>
+        prev.map((p) =>
+          p.idcuenta === row.idcuenta
+            ? { ...p, idSiasis: data.idPaciente } // Marcamos como validado
+            : p
+        )
+      ); 
+    }
+  } catch (error) {
+   Swal.fire({
+    icon: "error",
+    title: "Error en la Validación",
+    text: "No se pudo validar el SIS. Intenta nuevamente.",
+    confirmButtonText: "Aceptar",
+  });
+  }
+};
 
   const getConsultorio = async (id: number) => {
     console.log(id)
@@ -221,7 +250,9 @@ export const CEListado = ({ session }: any) => {
 
         <>
           {(params.row?.idSiasis == null && params.row?.financiamiento == 'SIS') ? <>
-            Validacion SIS
+            <button onClick={() => handleValidacionSis(params.row)} className='text-center w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none'>
+              Validar SIS
+            </button>
           </> : <div className='flex flex-wrap gap-4'>
             {
               validacionTriaje(params.row?.Triaje, params.row?.TriajePeso) ?
