@@ -147,8 +147,7 @@ export const FormAdmisionExternos = (data: any) => {
 
     const cargarListadoProgramados = async (idprogramacion: any) => {
         try {
-            const dataProgramacion = await axios.get(`${process.env.apiurl}/Citados/${idprogramacion}`);
-            console.log(dataProgramacion)
+            const dataProgramacion = await axios.get(`${process.env.apiurl}/Citados/${idprogramacion}`);           
             const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0 && data?.idUsuarioCrea == usuario?.user?.id);
             setListadoProgramacion(filteredData);
         } catch (error) {

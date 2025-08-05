@@ -16,6 +16,7 @@ export const TopMenu2 = async () => {
   const CEAtencion = session?.user?.roles?.some(role => role.idRol === 143);
   const CEAtencionProc = session?.user?.roles?.some(role => role.idRol === 1170);
   const ArchivoClinico=session?.user?.roles?.some(role => role.idRol === 62);
+  const AdmisionsitaExterno=session?.user?.roles?.some(role => role.idRol === 1171);
   const menuItemsConsultaExterna = [
     { href: "/sihce/consultaexterna", label: "CE Atencion", condition: webadmin || CEAtencion },
     { href: "/sihce/admision", label: "Admision CE", condition: webadmin || admisionista },
@@ -29,7 +30,7 @@ export const TopMenu2 = async () => {
     { href: "/sihce/nuevousuario", label: "Paciente Nuevo", condition: webadmin || admisionista },
     { href: "/sihce/triaje", label: "Triaje", condition: webadmin || cetriaje },
     { href: "/sihce/archivos", label: "Archivo", condition: webadmin || ArchivoClinico},
-    { href: "/sihce/admisionexternos", label: "Admision Ext.", condition: webadmin || ArchivoClinico},
+    { href: "/sihce/admisionexternos", label: "Admision Ext.", condition: webadmin || AdmisionsitaExterno},
   ];
 
   const menuItemsEmergencia = [
