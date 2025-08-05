@@ -89,7 +89,7 @@ const fetchOptionsByCodigo = async (codigo: string): Promise<Establecimiento[]> 
 
 
 
-export const FormAdmision = (data: any) => {
+export const FormAdmisionExternos = (data: any) => {
 
     const referenciaInputRef = useRef<HTMLInputElement>(null);
     const { diactual } = data
@@ -429,6 +429,9 @@ export const FormAdmision = (data: any) => {
 
     return (
         <>
+        <pre>
+            {JSON.stringify(usuario,null,2)}
+        </pre>
             <div className=" p-3 print:hidden ">
                 <div className="flex justify-center ">
 
