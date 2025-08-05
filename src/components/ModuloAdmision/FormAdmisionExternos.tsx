@@ -148,7 +148,8 @@ export const FormAdmisionExternos = (data: any) => {
     const cargarListadoProgramados = async (idprogramacion: any) => {
         try {
             const dataProgramacion = await axios.get(`${process.env.apiurl}/Citados/${idprogramacion}`);
-            const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0);
+            console.log(dataProgramacion)
+            const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0 && data?.idUsuarioCrea == usuario?.user?.id);
             setListadoProgramacion(filteredData);
         } catch (error) {
             console.error("Error al cargar el listado programado:", error);
@@ -429,9 +430,7 @@ export const FormAdmisionExternos = (data: any) => {
 
     return (
         <>
-        <pre>
-            {JSON.stringify(usuario,null,2)}
-        </pre>
+       
             <div className=" p-3 print:hidden ">
                 <div className="flex justify-center ">
 
