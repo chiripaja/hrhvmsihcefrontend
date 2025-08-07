@@ -1,8 +1,11 @@
 import Credentials from "next-auth/providers/credentials"
-import type { NextAuthConfig } from "next-auth"
+import type { NextAuthConfig, User } from "next-auth"
 import axios from "axios";
 import { UserRole } from "./type/types";
- 
+interface CustomUser extends User {
+  idEstablecimientoExterno: number;
+  roles: UserRole[];
+}
 // Notice this is only an object, not a full Auth.js instance
 export default {
   providers: [
@@ -13,49 +16,50 @@ export default {
         username: {},
         password: {},
       },
-      
+
       authorize: async (credentials) => {
         let user = null
-      
-        if(credentials===null) return null;
-       
+
+        if (credentials === null) return null;
+
         try {
-          const {data} =await axios.post(`${process.env.apiurl}/Usuario/VerificaAcceso`, {
+          const { data } = await axios.post(`${process.env.apiurl}/Usuario/VerificaAcceso`, {
             usuario: credentials?.username,
             clave: credentials?.password
           })
 
-          if(data){
-            user={ id:data.empleado.idEmpleado, name: data.empleado.nombres+' '+data.empleado.apellidoPaterno +' '+data.empleado.apellidoMaterno, email:data.empleado.dni,roles:data.empleado.roles}           
-          }          
+          if (data) {
+            user = { id: data.empleado.idEmpleado, name: data.empleado.nombres + ' ' + data.empleado.apellidoPaterno + ' ' + data.empleado.apellidoMaterno, email: data.empleado.dni, roles: data.empleado.roles, idEstablecimientoExterno: data.empleado.idEstablecimientoExterno }
+          }
         } catch (error) {
           throw new Error("User not found.")
         }
-      
 
-       
+
+
         if (!user) {
           throw new Error("User not found.")
         }
- 
+
         return user
       },
     }),
   ],
-   secret: process.env.AUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {  
-        token.id = user.id,
-        token.roles=user.roles  as UserRole[]
-        token.roles = user.roles as UserRole[]
+      if (user) {
+        const customUser = user as CustomUser;
+        token.id = customUser.id;
+        token.roles = customUser.roles;
+        token.idEstablecimientoExterno = customUser.idEstablecimientoExterno;
       }
       return token
     },
     async session({ session, token }) {
       session.user.id = token.id as string
-      session.user.roles=token.roles  as UserRole[]
-   
+      session.user.roles = token.roles as UserRole[]
+      (session.user as any).idEstablecimientoExterno = token.idEstablecimientoExterno; // 👈 solución directa
       return session
     },
     async redirect({ url, baseUrl }) {
@@ -63,7 +67,7 @@ export default {
     },
   },
   pages: {
-    signOut: '/login', 
+    signOut: '/login',
     signIn: '/login',
   },
 } satisfies NextAuthConfig

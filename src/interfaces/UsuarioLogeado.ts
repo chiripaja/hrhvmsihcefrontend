@@ -11,4 +11,5 @@ export interface Role {
     image?: string; // Puede ser undefined
     id: string;
     roles: Role[];
+    idEstablecimientoExterno:number
   }

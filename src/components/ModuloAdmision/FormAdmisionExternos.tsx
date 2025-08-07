@@ -90,7 +90,7 @@ const fetchOptionsByCodigo = async (codigo: string): Promise<Establecimiento[]> 
 
 
 export const FormAdmisionExternos = (data: any) => {
-
+console.log(data)
     const referenciaInputRef = useRef<HTMLInputElement>(null);
     const { diactual } = data
     const { ffFinanciamiento } = data;
@@ -147,8 +147,9 @@ export const FormAdmisionExternos = (data: any) => {
 
     const cargarListadoProgramados = async (idprogramacion: any) => {
         try {
-            const dataProgramacion = await axios.get(`${process.env.apiurl}/Citados/${idprogramacion}`);           
-            const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0 && data?.idUsuarioCrea == usuario?.user?.id);
+            const dataProgramacion = await axios.get(`${process.env.apiurl}/Citados/${idprogramacion}`);  
+         
+            const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0 && data?.idEstablecimientoExterno ==usuario?.user?.idEstablecimientoExterno);
             setListadoProgramacion(filteredData);
         } catch (error) {
             console.error("Error al cargar el listado programado:", error);
