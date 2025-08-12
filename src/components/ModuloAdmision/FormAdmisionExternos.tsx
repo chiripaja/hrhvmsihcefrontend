@@ -19,6 +19,7 @@ import { Tooltip } from '../ui/Tooltip';
 import { useRouter } from "next/router";
 import Link from 'next/link';
 import { FormReprogramacion } from "./FormReprogramacion";
+import { getData } from '../helper/axiosHelper';
 type InputBusquedadDni = {
     dni: string,
     idDocIdentidad: string,
@@ -31,6 +32,7 @@ type formAdmision = {
     referenciaCodigo: any,
     referenciaNumero: string,
     esAdicional: number,
+    telefono:any
 }
 
 interface Establecimiento {
@@ -90,7 +92,7 @@ const fetchOptionsByCodigo = async (codigo: string): Promise<Establecimiento[]> 
 
 
 export const FormAdmisionExternos = (data: any) => {
-console.log(data)
+
     const referenciaInputRef = useRef<HTMLInputElement>(null);
     const { diactual } = data
     const { ffFinanciamiento } = data;
@@ -113,6 +115,7 @@ console.log(data)
     const [enableNewUser, setEnableNewUser] = useState(false);
     const [validacionListarIafas, setValidacionListarIafas] = useState(0);
     const [isModalOpenR, setIsModalOpenR] = useState(false);
+
     const openModalR = () => {
         setIsModalOpenR(true);
     };
@@ -186,7 +189,17 @@ console.log(data)
                 numeroDocumento: "string"
             }
             const { data }: any = await axios.post(`${process.env.apiurl}/Totem/SolicitaAdmitir?dni=${formdata?.dni}&idDocIdentidad=${formdata?.idDocIdentidad}`, dataEnvio)
+           
             if (data?.paciente?.idPaciente) {
+            const { data: telefono } = await axios.get(
+    `${process.env.apijimmynew}/paciente/findTelefonoByIdPacienteVer/${data?.paciente?.idPaciente}`
+  );
+
+  if (telefono) {
+    setValue("telefono", telefono);
+  } else {
+    setValue("telefono", ""); // o lo dejas sin setear
+  }
                 setDatospx(data);
                 if (data?.sisRpta?.exito == '1') {
                     setValue('idIafa', 3)
@@ -629,9 +642,23 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                                 </div>
 
                                             </div>
+                                            
                                         </div>
                                     )}
+<div className="grid grid-cols-2 gap-2 mt-3">
+                                                <label className="text-center">Telefono : </label>
+                                                <input
+                                                    type="text"
+                                                    className={` focus:ring-blue-500 px-3 py-2 border rounded-r-md focus:outline-none focus:ring-2 
+${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
+                                                    placeholder=""
 
+
+                                                    {...register('telefono')}
+                                                />
+                                               
+
+                                            </div>
 
 
 
