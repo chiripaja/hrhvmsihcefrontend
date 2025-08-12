@@ -148,7 +148,6 @@ console.log(data)
     const cargarListadoProgramados = async (idprogramacion: any) => {
         try {
             const dataProgramacion = await axios.get(`${process.env.apiurl}/Citados/${idprogramacion}`);  
-         
             const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0 && data?.idEstablecimientoExterno ==usuario?.user?.idEstablecimientoExterno);
             setListadoProgramacion(filteredData);
         } catch (error) {
