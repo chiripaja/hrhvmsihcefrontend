@@ -62,14 +62,14 @@ const generarFechas = (citas: Cita[]): string[] => {
     return Array.from(fechas).sort();
 };
 
-export const ModuloAdmisionExternos = ({ usuario }: any) => {
+export const ModuloAdmisionExternos = ({ usuario, porcentaje }: { usuario: any; porcentaje: number | null }) => {
     const ws = useRef<WebSocket | null>(null);
     const [idcuentaActualizacion, setidcuentaActualizacion] = useState();
     const [medicoSeleccionado, setMedicoSeleccionado] = useState<string | null>(null);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
     const diactual = new Date().toISOString().split('T')[0];
 
- 
+
     const [citas, setCitas] = useState<Cita[]>([]);
     const [consultorio, setConsultorio] = useState<Cita[]>()
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -96,6 +96,14 @@ export const ModuloAdmisionExternos = ({ usuario }: any) => {
     const citasFiltradas = medicoSeleccionado
         ? citas.filter((cita: any) => cita?.nombreMedico === medicoSeleccionado)
         : citas;
+
+    const citasConPorcentaje = porcentaje != null
+        ? citasFiltradas.map((cita: any) => {
+            const cupos = Number(cita.cuposLibres);
+            const cuposCalculados = Math.floor((cupos * porcentaje) / 100);
+            return { ...cita, cuposLibres: cuposCalculados };
+        })
+        : citasFiltradas;
 
     const ver = async (id: string, fecha: any) => {
         await setActiveIndex({ id, fecha });
@@ -150,30 +158,30 @@ export const ModuloAdmisionExternos = ({ usuario }: any) => {
     useEffect(() => {
         // Crear conexión WebSocket
         ws.current = new WebSocket(`${process.env.apiws}/ws/chat`);
-    
+
         ws.current.onopen = () => {
-          console.log('✅ Conectado al WebSocket');
+            console.log('✅ Conectado al WebSocket');
         };
-    
+
         ws.current.onmessage = (event: MessageEvent) => {
             setidcuentaActualizacion(event.data)
-          console.log('📩 Mensaje recibido:', event.data);
-      
+            console.log('📩 Mensaje recibido:', event.data);
+
         };
-    
+
         ws.current.onerror = (event: Event) => {
-          console.error('❌ Error en WebSocket:', event);
+            console.error('❌ Error en WebSocket:', event);
         };
-    
+
         ws.current.onclose = (event: CloseEvent) => {
-          console.log('🔌 Conexión cerrada:', event.reason);
+            console.log('🔌 Conexión cerrada:', event.reason);
         };
-    
+
         // Limpiar la conexión al desmontar
         return () => {
-          ws.current?.close();
+            ws.current?.close();
         };
-      }, []);
+    }, []);
 
 
     function toBoolean(value: any) {
@@ -207,7 +215,7 @@ export const ModuloAdmisionExternos = ({ usuario }: any) => {
             console.log(error)
         }
     }
-    const citasAgrupadas = agruparYCuposLibres(citasFiltradas);
+    const citasAgrupadas = agruparYCuposLibres(citasConPorcentaje);
     const fechas = generarFechas(citas);
     const medicoBuscadoW = watch('medicoBuscado')
     useEffect(() => {
@@ -218,12 +226,12 @@ export const ModuloAdmisionExternos = ({ usuario }: any) => {
     }, [medicoBuscadoW])
 
     useEffect(() => {
-     if(idcuentaActualizacion){
-        
-        fetchProductsActualizacionPosterior()
-     }
+        if (idcuentaActualizacion) {
+
+            fetchProductsActualizacionPosterior()
+        }
     }, [idcuentaActualizacion])
-    
+
 
 
     return (
@@ -241,7 +249,7 @@ export const ModuloAdmisionExternos = ({ usuario }: any) => {
                         </div>
                         <div className="col-span-12 print:hidden">
                             <label htmlFor="medico" className=" block text-sm font-medium text-gray-700">
-                                Filtrar por Médico 
+                                Filtrar por Médico
                             </label>
                             <Controller
                                 name="medicoBuscado"
@@ -299,7 +307,7 @@ export const ModuloAdmisionExternos = ({ usuario }: any) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {Object.keys(agruparYCuposLibres(citasFiltradas))
+                                    {Object.keys(agruparYCuposLibres(citasConPorcentaje))
                                         .filter((idEspecialidad) =>
                                             fechas.slice(0, daysToShow).some(
                                                 (fecha) =>
@@ -308,18 +316,18 @@ export const ModuloAdmisionExternos = ({ usuario }: any) => {
                                         )
                                         .sort((a, b) => {
                                             const nombreA =
-                                                citasFiltradas.find(
+                                                citasConPorcentaje.find(
                                                     (cita) => cita.idEspecialidad === parseInt(a)
                                                 )?.nombreEspecialidad || "";
                                             const nombreB =
-                                                citasFiltradas.find(
+                                                citasConPorcentaje.find(
                                                     (cita) => cita.idEspecialidad === parseInt(b)
                                                 )?.nombreEspecialidad || "";
                                             return nombreA.localeCompare(nombreB);
                                         })
                                         .map((idEspecialidad, index) => {
 
-                                            const citaEspecialidad: any = citasFiltradas.find(
+                                            const citaEspecialidad: any = citasConPorcentaje.find(
                                                 (cita) => cita.idEspecialidad === parseInt(idEspecialidad)
                                             );
 
@@ -380,7 +388,7 @@ export const ModuloAdmisionExternos = ({ usuario }: any) => {
                             </table>
                         </div>
                         <div className="col-span-12 md:col-span-4 h-fit border rounded print:col-span-12 print:md:col-span-12 print:border-none print:rounded-none ">
-                            <FormAdmisionExternos diactual={diactual} usuario={usuario} consultorio={consultorio} establecimientos={establecimientosLista} ffFinanciamiento={ffFinanciamiento} tipoDoc={tipoDoc} ejecutarVer={ver} />
+                            <FormAdmisionExternos diactual={diactual} porcentaje={porcentaje} usuario={usuario} consultorio={consultorio} establecimientos={establecimientosLista} ffFinanciamiento={ffFinanciamiento} tipoDoc={tipoDoc} ejecutarVer={ver} />
                         </div>
                     </div>
 

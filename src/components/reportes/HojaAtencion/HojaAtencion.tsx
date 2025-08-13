@@ -202,12 +202,7 @@ console.log("*****************")
   const { formattedDate, hora, fechayhora } = obtenerFechaYHora();
   return (
 <>
-<button
-  onClick={handleFirmarPDF}
-  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
->
-  Generar y Firmar PDF
-</button>
+
 <div className="  min-h-screen flex justify-center scale-[0.9] origin-top bg-white" id='hoja-atencion'>
 
       <div className=" w-full max-w-4xl p-6 ">

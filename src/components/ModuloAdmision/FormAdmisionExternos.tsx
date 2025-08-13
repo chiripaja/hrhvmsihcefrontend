@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FaCalendarAlt, FaPlus } from "react-icons/fa";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
@@ -32,7 +32,7 @@ type formAdmision = {
     referenciaCodigo: any,
     referenciaNumero: string,
     esAdicional: number,
-    telefono:any
+    telefono: any
 }
 
 interface Establecimiento {
@@ -97,8 +97,22 @@ export const FormAdmisionExternos = (data: any) => {
     const { diactual } = data
     const { ffFinanciamiento } = data;
     const { consultorio } = data;
-    const { tipoDoc } = data;
+        const { tipoDoc } = data;
     const { usuario } = data;
+     const { porcentaje } = data;
+
+
+
+ const consultoriocupos = useMemo(() => {
+  return consultorio?.map((item: any) => {
+    const cupos = Number(item.cuposLibres);
+    const cuposCalculados = Math.floor((cupos * (porcentaje ?? 0)) / 100);
+    return {
+      ...item,
+      cuposLibres: cuposCalculados
+    };
+  });
+}, [consultorio, porcentaje]);
     const [nearest, setNearest] = useState<any>(null);
     const [optionsCombo, setOptionsCombo] = useState<any[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
@@ -150,8 +164,8 @@ export const FormAdmisionExternos = (data: any) => {
 
     const cargarListadoProgramados = async (idprogramacion: any) => {
         try {
-            const dataProgramacion = await axios.get(`${process.env.apiurl}/Citados/${idprogramacion}`);  
-            const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0 && data?.idEstablecimientoExterno ==usuario?.user?.idEstablecimientoExterno);
+            const dataProgramacion = await axios.get(`${process.env.apiurl}/Citados/${idprogramacion}`);
+            const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0 && data?.idEstablecimientoExterno == usuario?.user?.idEstablecimientoExterno);
             setListadoProgramacion(filteredData);
         } catch (error) {
             console.error("Error al cargar el listado programado:", error);
@@ -189,17 +203,24 @@ export const FormAdmisionExternos = (data: any) => {
                 numeroDocumento: "string"
             }
             const { data }: any = await axios.post(`${process.env.apiurl}/Totem/SolicitaAdmitir?dni=${formdata?.dni}&idDocIdentidad=${formdata?.idDocIdentidad}`, dataEnvio)
-           
-            if (data?.paciente?.idPaciente) {
-            const { data: telefono } = await axios.get(
-    `${process.env.apijimmynew}/paciente/findTelefonoByIdPacienteVer/${data?.paciente?.idPaciente}`
-  );
 
-  if (telefono) {
-    setValue("telefono", telefono);
-  } else {
-    setValue("telefono", ""); // o lo dejas sin setear
-  }
+            if (data?.paciente?.idPaciente) {
+                try {
+                    const { data: telefono } = await axios.get(
+                        `${process.env.apijimmynew}/paciente/findTelefonoByIdPacienteVer/${data?.paciente?.idPaciente}`
+                    );
+
+                    setValue("telefono", telefono ?? "");
+                } catch (error) {
+                    if (axios.isAxiosError(error) && error.response?.status === 404) {
+                        // No hay teléfono, continuamos sin error
+                        setValue("telefono", "");
+                    } else {
+                        // Si es otro error, lo mostramos o manejamos
+                        console.error("Error obteniendo teléfono:", error);
+                    }
+                }
+
                 setDatospx(data);
                 if (data?.sisRpta?.exito == '1') {
                     setValue('idIafa', 3)
@@ -248,7 +269,10 @@ export const FormAdmisionExternos = (data: any) => {
     }
 
     const AdmisionarPx: SubmitHandler<formAdmision> = async (formData: any) => {
+        console.log(formData)
         setIsLoadingAdmisionar(true)
+        const data = await axios.put(`${process.env.apijimmynew}/paciente/actualizarcelxidpaciente/${formData?.idPaciente}/${formData?.telefono}`)
+
         if (formData.idIafa === 3) {
             if (!formData?.idPaciente) {
                 showAlert("Atencion", "No se encuentra al paciente.")
@@ -442,7 +466,7 @@ export const FormAdmisionExternos = (data: any) => {
 
     return (
         <>
-       
+
             <div className=" p-3 print:hidden ">
                 <div className="flex justify-center ">
 
@@ -472,7 +496,8 @@ export const FormAdmisionExternos = (data: any) => {
                 <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 mt-3 gap-2">
                     <FormReprogramacion isModalOpenR={isModalOpenR} setIsModalOpenR={setIsModalOpenR} openModalR={openModalR} closeModalR={closeModalR} />
                     {
-                        consultorio?.map((data: any, index: number) => {
+                        consultoriocupos?.map((data: any, index: number) => {
+  
                             if (data.cuposLibres <= 0 && diactual !== data.fecha) {
                                 return null; // No mostrar nada si no cumple la condición
                             }
@@ -571,8 +596,8 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                         <span className='text-center'>
                                             Financiamiento :
                                         </span>
-                                   
-                                        
+
+
                                         <select
                                             {...register('idIafa')}
                                             className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
@@ -642,23 +667,23 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                                 </div>
 
                                             </div>
-                                            
+
                                         </div>
                                     )}
-<div className="grid grid-cols-2 gap-2 mt-3">
-                                                <label className="text-center">Telefono : </label>
-                                                <input
-                                                    type="text"
-                                                    className={` focus:ring-blue-500 px-3 py-2 border rounded-r-md focus:outline-none focus:ring-2 
+                                    <div className="grid grid-cols-2 gap-2 mt-3">
+                                        <label className="text-center">Telefono : </label>
+                                        <input
+                                            type="text"
+                                            className={` focus:ring-blue-500 px-3 py-2 border rounded-r-md focus:outline-none focus:ring-2 
 ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
-                                                    placeholder=""
+                                            placeholder=""
 
 
-                                                    {...register('telefono')}
-                                                />
-                                               
+                                            {...register('telefono')}
+                                        />
 
-                                            </div>
+
+                                    </div>
 
 
 
