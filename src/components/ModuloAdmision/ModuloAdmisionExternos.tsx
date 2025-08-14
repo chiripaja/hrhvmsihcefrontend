@@ -243,6 +243,7 @@ export const ModuloAdmisionExternos = ({ usuario, porcentaje }: { usuario: any; 
                 </div>
             ) : (
                 <>
+                {porcentaje}
                     <div className="grid grid-cols-12 gap-4  h-[90vh] sm:overflow-hidden bg-white">
                         <div className="col-span-12 print:hidden">
                             <h1>{TextoLoading}</h1>
@@ -349,17 +350,27 @@ export const ModuloAdmisionExternos = ({ usuario, porcentaje }: { usuario: any; 
                                                             <td key={fecha} className="p-1">
                                                                 {citasAgrupadas[parseInt(idEspecialidad)]?.[fecha] ? (
                                                                     esHoy ? (
-                                                                        <div
-                                                                            onClick={() => ver(idEspecialidad, fecha)}
-                                                                            className={`cursor-pointer text-center rounded  hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
-                        ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}
-                        ${cuposLibres > 0 ? "bg-teal-500" : "bg-orange-600"}
-                        `}
-                                                                        >
-                                                                            {/* Mostrar cupos libres si hay más de 0, de lo contrario mostrar 0 */}
-                                                                            [{cuposLibres > 0 ? cuposLibres : 0}]
-
-                                                                        </div>
+                                                                        <>
+                                                                    {cuposLibres > 0 ? (
+  <div
+    onClick={() => ver(idEspecialidad, fecha)}
+    className={`cursor-pointer text-center rounded hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
+      ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}
+      bg-teal-500
+    `}
+  >
+    [{cuposLibres}]
+  </div>
+) : (
+  <div
+    className={`bg-gray-300 rounded`}
+  >
+    &nbsp;
+  </div>
+)}
+                                                                      
+                                                                        </>
+                                                                        
                                                                     ) : cuposLibres > 0 ? (
                                                                         <div
                                                                             onClick={() => ver(idEspecialidad, fecha)}
@@ -370,12 +381,23 @@ export const ModuloAdmisionExternos = ({ usuario, porcentaje }: { usuario: any; 
                                                                         </div>
                                                                     ) : (
                                                                         <div className="bg-gray-300 rounded">
-                                                                            <button onClick={() => ver(idEspecialidad, fecha)}></button>
+                                                                       
+
+                                                                       
+                                                                              <div
+    onClick={() => ver(idEspecialidad, fecha)}
+    className={`cursor-pointer text-center rounded hover:bg-yellow-200 shadow-md transition duration-300 ease-in-out transform hover:scale-105
+      ${activeIndex?.id === idEspecialidad && activeIndex?.fecha === fecha ? "bg-yellow-400 font-bold" : ""}
+      bg-teal-500
+    `}
+  >
+    [{cuposLibres}]
+  </div>
                                                                         </div>
                                                                     )
                                                                 ) : (
                                                                     <div className="bg-gray-300 rounded">
-                                                                        <button onClick={() => ver(idEspecialidad, fecha)}></button>
+                                                                        <button onClick={() => ver(idEspecialidad, fecha)}></button> 
                                                                     </div>
                                                                 )}
                                                             </td>

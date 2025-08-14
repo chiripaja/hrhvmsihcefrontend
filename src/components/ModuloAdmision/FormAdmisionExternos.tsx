@@ -92,7 +92,7 @@ const fetchOptionsByCodigo = async (codigo: string): Promise<Establecimiento[]> 
 
 
 export const FormAdmisionExternos = (data: any) => {
-
+    console.log(data)
     const referenciaInputRef = useRef<HTMLInputElement>(null);
     const { diactual } = data
     const { ffFinanciamiento } = data;
@@ -497,10 +497,10 @@ export const FormAdmisionExternos = (data: any) => {
                     <FormReprogramacion isModalOpenR={isModalOpenR} setIsModalOpenR={setIsModalOpenR} openModalR={openModalR} closeModalR={closeModalR} />
                     {
                         consultoriocupos?.map((data: any, index: number) => {
-  
+  /*
                             if (data.cuposLibres <= 0 && diactual !== data.fecha) {
                                 return null; // No mostrar nada si no cumple la condición
-                            }
+                            }*/
                             return (
 
                                 <div
@@ -526,13 +526,11 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                         })
                     }
                 </div>
-                {(datosConsultorio?.cuposLibres <= 0) ? <>
-                    <div className="p-4 mb-4 mt-3 text-sm text-red-700 rounded-lg bg-red-200 dark:bg-gray-800 dark:text-red-700" role="alert">
-                        <span className="font-medium">Atencion!</span> Estara admisionando una cita adicional
-                    </div>
-                </> : <></>}
-                {datosConsultorio?.nombreServicio && (
+             
+                {(datosConsultorio?.nombreServicio && datosConsultorio?.cuposLibres>0) && (
                     <>
+
+                    
                         <form onSubmit={handleSubmit2(BuscadorDni)}>
                             <div className="grid grid-cols-3 gap-2 mt-3">
                                 <select
