@@ -92,7 +92,7 @@ const fetchOptionsByCodigo = async (codigo: string): Promise<Establecimiento[]> 
 
 
 export const FormAdmisionExternos = (data: any) => {
-    console.log(data)
+  
     const referenciaInputRef = useRef<HTMLInputElement>(null);
     const { diactual } = data
     const { ffFinanciamiento } = data;
@@ -269,7 +269,7 @@ export const FormAdmisionExternos = (data: any) => {
     }
 
     const AdmisionarPx: SubmitHandler<formAdmision> = async (formData: any) => {
-        console.log(formData)
+     
         setIsLoadingAdmisionar(true)
         const data = await axios.put(`${process.env.apijimmynew}/paciente/actualizarcelxidpaciente/${formData?.idPaciente}/${formData?.telefono}`)
 

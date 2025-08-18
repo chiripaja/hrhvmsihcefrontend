@@ -227,7 +227,19 @@ export const ModuloAdmision = ({ usuario }: any) => {
      }
     }, [idcuentaActualizacion])
     
-
+useEffect(() => {
+  if (activeIndex) {
+    const especilidadDatos = citas.filter(
+      (item: Cita) =>
+        item.idEspecialidad.toString() === activeIndex.id &&
+        item.fecha === activeIndex.fecha
+    );
+    setConsultorio(especilidadDatos);
+  } else {
+    // 👇 si no hay consultorio seleccionado, vaciamos
+    setConsultorio([]);
+  }
+}, [citas, activeIndex]);
 
     return (
         <div className="px-2 bg-white rounded print:m-0 print:p-0 print:bg-transparent print:rounded-none">

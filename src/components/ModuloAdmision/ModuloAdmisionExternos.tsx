@@ -232,7 +232,19 @@ export const ModuloAdmisionExternos = ({ usuario, porcentaje }: { usuario: any; 
         }
     }, [idcuentaActualizacion])
 
-
+useEffect(() => {
+  if (activeIndex) {
+    const especilidadDatos = citas.filter(
+      (item: Cita) =>
+        item.idEspecialidad.toString() === activeIndex.id &&
+        item.fecha === activeIndex.fecha
+    );
+    setConsultorio(especilidadDatos);
+  } else {
+    // 👇 si no hay consultorio seleccionado, vaciamos
+    setConsultorio([]);
+  }
+}, [citas, activeIndex]);
 
     return (
         <div className="px-2 bg-white rounded print:m-0 print:p-0 print:bg-transparent print:rounded-none">
@@ -243,7 +255,7 @@ export const ModuloAdmisionExternos = ({ usuario, porcentaje }: { usuario: any; 
                 </div>
             ) : (
                 <>
-                {porcentaje}
+                
                     <div className="grid grid-cols-12 gap-4  h-[90vh] sm:overflow-hidden bg-white">
                         <div className="col-span-12 print:hidden">
                             <h1>{TextoLoading}</h1>
