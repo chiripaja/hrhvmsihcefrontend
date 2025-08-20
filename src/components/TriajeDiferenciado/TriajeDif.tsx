@@ -639,10 +639,10 @@ const fechaHoy = `${dia}/${mes}/${anio}`;
                                     {...register('triajeSaturacion', { required: "La saturacion es obligatoria" })} error={errors?.triajeSaturacion?.message}/>
                                     <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Frec. Cardiaca (FC)" requerido={true} unidadMedida={"x min"} parametro={ParametroFrecuenciaCardiaca} 
                                     {...register('triajeFrecCardiaca', { required: "La frec. cardiaca es obligatoria" })} error={errors?.triajeFrecCardiaca?.message}/>
-                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Frec. Respiratoria" requerido={true} unidadMedida={"x min"} parametro={ParametroFrecuenciaRespiratoria} 
-                                    {...register('triajeFrecRespiratoria', { required: "La frec. respiratoria es obligatoria" })} error={errors?.triajeFrecRespiratoria?.message}/>
+                                    
+                                    <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Frec. Respiratoria" requerido={false} parametro={ParametroFrecuenciaRespiratoria} unidadMedida={"x min"} {...register('triajeFrecRespiratoria', { required: false })}  />
                                     <InputTextTriaje type="number" readOnly={!editable} disabled={!editable} label="Pulso" requerido={true} unidadMedida='bpm' 
-                                    {...register('triajePulso', { required: "El pulso es obligatorio" })} parametro={ParametroPulso}  error={errors?.triajePulso?.message}
+                                    {...register('triajePulso', { required: false })} parametro={ParametroPulso}  error={errors?.triajePulso?.message}
                                      />
                                 </div>
 

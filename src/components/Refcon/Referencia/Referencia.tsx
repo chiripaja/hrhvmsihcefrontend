@@ -10,19 +10,18 @@ export const Referencia = () => {
   const [flagDatosPx, setflagDatosPx] = useState<boolean>(false);
 
 
-    const getDatosHC = async (idcuentaatencion: any) => {
-      const response = await getData(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
-      setdatosPxGeneral(response)
-      setflagDatosPx(true)
-    }
+  const getDatosHC = async (idcuentaatencion: any) => {
+    const response = await getData(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
+    setdatosPxGeneral(response)
+    setflagDatosPx(true)
+  }
 
-      const getdatosAtencion = async (idcuentaatencion: any) => {
-        const datosAtencion = await getData(`${process.env.apijimmynew}/fua/ApiSisFuaAtencionByIdCuentaAtencion/${idcuentaatencion}`);
-        setdatosAtencion(datosAtencion)
-        
-      }
-  
-  const onSubmit =async (data: any) => {
+  const getdatosAtencion = async (idcuentaatencion: any) => {
+    const datosAtencion = await getData(`${process.env.apijimmynew}/fua/ApiSisFuaAtencionByIdCuentaAtencion/${idcuentaatencion}`);
+    setdatosAtencion(datosAtencion)
+  }
+
+  const onSubmit = async (data: any) => {
     getdatosAtencion(data?.idcuentaatencion)
     getDatosHC(data?.idcuentaatencion)
     const cabecera = await getData(`${process.env.apijimmynew}/fua/ApiSisFuaAtencionByIdCuentaAtencion/${data?.idcuentaatencion}`);
@@ -115,9 +114,7 @@ export const Referencia = () => {
 
   return (
     <>
-    <pre>
-      {JSON.stringify(datosAtencion,null,2)}
-    </pre>
+    
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
         <input
           type="text"
