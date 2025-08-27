@@ -97,13 +97,13 @@ export const ModuloAdmisionExternos = ({ usuario, porcentaje }: { usuario: any; 
         ? citas.filter((cita: any) => cita?.nombreMedico === medicoSeleccionado)
         : citas;
 
-    const citasConPorcentaje = porcentaje != null
+    const citasConPorcentaje = (porcentaje != null
         ? citasFiltradas.map((cita: any) => {
             const cupos = Number(cita.cuposLibres);
             const cuposCalculados = Math.floor((cupos * porcentaje) / 100);
             return { ...cita, cuposLibres: cuposCalculados };
         })
-        : citasFiltradas;
+        : citasFiltradas).filter((cita: any) => cita.idEspecialidad !== 179);
 
     const ver = async (id: string, fecha: any) => {
         await setActiveIndex({ id, fecha });
@@ -255,7 +255,7 @@ useEffect(() => {
                 </div>
             ) : (
                 <>
-                
+             
                     <div className="grid grid-cols-12 gap-4  h-[90vh] sm:overflow-hidden bg-white">
                         <div className="col-span-12 print:hidden">
                             <h1>{TextoLoading}</h1>

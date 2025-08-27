@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-white`}>
         {children}
-        <Toaster position="top-right" richColors />
+        <Toaster position="top-left" richColors />
         </body>
       <PrelineScript />
      

@@ -32,8 +32,8 @@ export const RecetasOrdenesOtrosProcedimientos = ({ idcuentaatencion }: any) => 
     }, [datosAtencion?.idCuentaAtencion])
 
     useEffect(() => {
-        
-        if (datos?.length>0) {
+
+        if (datos?.length > 0) {
             window.print()
         }
     }, [datos])
@@ -49,7 +49,7 @@ export const RecetasOrdenesOtrosProcedimientos = ({ idcuentaatencion }: any) => 
 
                 <div className="text-center">ORDEN MEDICA</div>
 
-                <div className="text-xs">Servicio: {datos[0]?.Descripcion}</div>
+
                 <div className="text-xs">
                     Fecha/Hora Atencion: {datosPxGeneral?.FechaIngreso} {datosPxGeneral?.HoraEgreso}
                 </div>
@@ -81,13 +81,15 @@ export const RecetasOrdenesOtrosProcedimientos = ({ idcuentaatencion }: any) => 
                         <tr>
                             <th className="text-left">Concepto</th>
                             <th>Cant.</th>
+                            <th>Observaciones</th>
                         </tr>
                     </thead>
                     <tbody className="border-b-2">
                         {datos.map((item: any) => (
-                            <tr key={item.idProducto }>
+                            <tr key={item.idProducto}>
                                 <td>{item.nombre}</td>
                                 <td>{item.cantidad}</td>
+                                <td>{item.observacion}</td>
                             </tr>
                         ))}
                     </tbody>

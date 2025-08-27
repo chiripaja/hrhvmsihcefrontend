@@ -20,6 +20,11 @@ export const CEOtrosTabla = ({ modificar = 0,cuentaDatos }: { modificar?: number
             <tr>
                 <th scope="col" className="tableth">Cantidad</th>
                 <th scope="col" className="tableth">Procedimiento</th>
+                {
+                (modificar!==0) && 
+                      <th scope="col" className="tableth">Obs.</th>
+                }
+          
                 {(modificar===0) && 
                  <th scope="col" className="tableth">Accion</th>
                 }
@@ -31,6 +36,11 @@ export const CEOtrosTabla = ({ modificar = 0,cuentaDatos }: { modificar?: number
                 <tr key={`${data.idProducto}-${data.nombre}-${index}`}>
                     <td className="tabletd w-1/3">{data.cantidad}  </td>
                     <td className="tabletd w-32"> {data.nombre} </td>
+                      {
+                (modificar!==0) && 
+                      <td className="tabletd w-32"> {data.observacion} </td>
+                }
+                   
                     {(modificar===0) && 
                     <td className="tabletd">
                          <Tooltip text="Eliminar">

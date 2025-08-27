@@ -6,6 +6,7 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import { es } from "date-fns/locale/es";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import './calendarStyles.css';
+import { useMyStore } from "@/store/ui/useProgramacionStore";
 const locales = { es: es };
 const localizer = dateFnsLocalizer({
   format,
@@ -17,7 +18,7 @@ const localizer = dateFnsLocalizer({
 
 export default function NamePage() {
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
-
+  const { idprogramacionzus, setIdProgramacionzus } = useMyStore()
   const handleSelectSlot = (slotInfo: { start: Date }) => {
     const dateSelected = format(slotInfo.start, "yyyy-MM-dd");
     setSelectedDates((prevDates) =>
@@ -52,6 +53,7 @@ export default function NamePage() {
 
   return (
     <div className="mx-auto p-6 transition-all duration-500 ease-in-out">
+      <h1>{idprogramacionzus}</h1>
       <h2 className="text-xl font-bold mb-4">Calendario de Programación</h2>
       <Calendar
       style={{ height: "calc(100vh - 100px)", minHeight: "500px" }}

@@ -3,6 +3,7 @@ import { Inicio } from "@/components/inicio/Inicio";
 
 export default async function inicioAdmin() {
   const session = await auth()
+  
   return (
     <>
   

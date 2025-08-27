@@ -53,6 +53,7 @@ export const CEHistoricosByDni = ({ dni }: props) => {
         <Loading messagge='Cargando datos del paciente...' />
       ) : (
         <>
+
           <div className='grid grid-cols-1 bg-white shadow-xl p-2 rounded'>
             <div className='flex justify-center text-xl '>
               Historial de pacientes
@@ -71,7 +72,8 @@ export const CEHistoricosByDni = ({ dni }: props) => {
               />
             </div>
           </div>
-        
+
+
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
               <thead>
@@ -84,26 +86,26 @@ export const CEHistoricosByDni = ({ dni }: props) => {
                 </tr>
               </thead>
               <tbody className="text-gray-600 text-sm font-light">
-         {pxDatos.atenciones && pxDatos.atenciones.length > 0 && (
-  pxDatos.atenciones
-    .slice()
-    .sort((a: any, b: any) => {
-      const parseDate = (fecha: string) => {
-        const [day, month, year] = fecha.split('-');
-        return new Date(Date.UTC(+year, +month - 1, +day));
-      };
-      return parseDate(b.fechaIngreso).getTime() - parseDate(a.fechaIngreso).getTime(); // DESCENDENTE
-    })
-    .filter((item: any) => {
-      const texto = filtro.toLowerCase();
-      return (
-        item.servicio?.nombre?.toLowerCase().includes(texto) ||
-        item.medico?.empleado?.apellidoPaterno?.toLowerCase().includes(texto) ||
-        item.medico?.empleado?.apellidomaterno?.toLowerCase().includes(texto) ||
-        item.medico?.empleado?.nombres?.toLowerCase().includes(texto)
-      );
-    })
-    .map((item: any) => (
+                {pxDatos.atenciones && pxDatos.atenciones.length > 0 && (
+                  pxDatos.atenciones
+                    .slice()
+                    .sort((a: any, b: any) => {
+                      const parseDate = (fecha: string) => {
+                        const [day, month, year] = fecha.split('-');
+                        return new Date(Date.UTC(+year, +month - 1, +day));
+                      };
+                      return parseDate(b.fechaIngreso).getTime() - parseDate(a.fechaIngreso).getTime(); // DESCENDENTE
+                    })
+                    .filter((item: any) => {
+                      const texto = filtro.toLowerCase();
+                      return (
+                        item.servicio?.nombre?.toLowerCase().includes(texto) ||
+                        item.medico?.empleado?.apellidoPaterno?.toLowerCase().includes(texto) ||
+                        item.medico?.empleado?.apellidomaterno?.toLowerCase().includes(texto) ||
+                        item.medico?.empleado?.nombres?.toLowerCase().includes(texto)
+                      );
+                    })
+                    .map((item: any) => (
                       <React.Fragment key={item.idAtencion}>
                         <tr
                           className="border-b border-gray-200 cursor-pointer"
@@ -225,23 +227,28 @@ export const CEHistoricosByDni = ({ dni }: props) => {
                                           {rc.recetaDetalles.map((rd: any) => (
                                             <li key={rd.idItem} className="text-gray-600 flex items-center">
 
-                                              {item?.labMovimientoLaboratorios?.some(
-                                                (labMovimiento: any) => labMovimiento?.labMovimiento?.idPuntoCarga === 3
-                                              ) ? (
-                                                <a
-                                                  className="hover:text-blue-500 flex items-center cursor-pointer"
-                                                  target="_blank"
-                                                  href={`${process.env.apireportespatologia}/inicio/reporte_anatopatologia/${item?.labMovimientoLaboratorios[0]?.idMovimiento}`}
-                                                >
-                                                  <LiaSearchPlusSolid className="mr-2" />
-                                                  {rd.factCatalogoServicios?.nombre || rd.factCatalogoBienesInsumos?.nombre}
-                                                </a>
-                                              ) : (
-                                                <div className="flex items-center">
-                                                  <LiaSearchPlusSolid className="mr-2" />
-                                                  {rd.factCatalogoServicios?.nombre || rd.factCatalogoBienesInsumos?.nombre}
-                                                </div>
-                                              )}
+                                              {(() => {
+                                                const movimiento3 = item?.labMovimientoLaboratorios?.find(
+                                                  (labMovimiento: any) => labMovimiento?.labMovimiento?.idPuntoCarga === 3
+                                                );
+
+                                                return movimiento3 ? (
+                                                  <a
+                                                    className="hover:text-blue-500 flex items-center cursor-pointer"
+                                                    target="_blank"
+                                                    href={`${process.env.apireportespatologia}/inicio/reporte_anatopatologia/${movimiento3.idMovimiento}`}
+                                                  >
+
+                                                    <LiaSearchPlusSolid className="mr-2" />
+                                                    {rd.factCatalogoServicios?.nombre || rd.factCatalogoBienesInsumos?.nombre}
+                                                  </a>
+                                                ) : (
+                                                  <div className="flex items-center">
+                                                    <LiaSearchPlusSolid className="mr-2" />
+                                                    {rd.factCatalogoServicios?.nombre || rd.factCatalogoBienesInsumos?.nombre}
+                                                  </div>
+                                                );
+                                              })()}
                                             </li>
                                           ))}
                                         </ul>

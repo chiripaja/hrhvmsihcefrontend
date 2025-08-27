@@ -226,7 +226,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
         fetchProductsActualizacionPosterior()
      }
     }, [idcuentaActualizacion])
-    
+/*    
 useEffect(() => {
   if (activeIndex) {
     const especilidadDatos = citas.filter(
@@ -239,7 +239,7 @@ useEffect(() => {
     // 👇 si no hay consultorio seleccionado, vaciamos
     setConsultorio([]);
   }
-}, [citas, activeIndex]);
+}, [citas, activeIndex]);*/
 
     return (
         <div className="px-2 bg-white rounded print:m-0 print:p-0 print:bg-transparent print:rounded-none">

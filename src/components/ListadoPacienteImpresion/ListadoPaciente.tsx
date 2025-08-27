@@ -1,16 +1,20 @@
 'use client'
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ModalGenerico } from '../ui/ModalGenerico';
 import { ModalGeneric } from '../ui/ModalGeneric/ModalGeneric';
 import { TriajeDif } from '../TriajeDiferenciado/TriajeDif';
 import { ThemeProvider } from "@emotion/react"
-import { Box, createTheme } from "@mui/material"
+import { Box, createTheme, Button } from "@mui/material"
 import { esES } from '@mui/x-data-grid/locales';
 import { DataGrid, GridColDef, GridRowsProp, GridToolbar } from "@mui/x-data-grid"
-
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+// @ts-ignore
+import html2pdf from "html2pdf.js";
+import { FaFileExcel, FaFilePdf } from 'react-icons/fa';
 const theme = createTheme(
   {
     palette: {
@@ -30,6 +34,7 @@ type InputBusquedad = {
 const Select = dynamic(() => import('react-select'), { ssr: false });
 
 export const ListadoPacienteImpresion = ({ session }: any) => {
+  const tableRef = React.useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataTotal, setDataTotal] = useState<any[]>([]);
   const [departamentos, setDepartamentos] = useState<any[]>([]);
@@ -158,8 +163,8 @@ export const ListadoPacienteImpresion = ({ session }: any) => {
           <button
             onClick={() => openModal({ idcuenta: idCuenta })}
             className={`w-24 h-12 font-semibold rounded-lg shadow-md text-white transition duration-300 ${isTriado
-                ? 'bg-yellow-500 hover:bg-yellow-600'
-                : 'bg-blue-600 hover:bg-blue-700'
+              ? 'bg-yellow-500 hover:bg-yellow-600'
+              : 'bg-blue-600 hover:bg-blue-700'
               }`}
           >
             {isTriado ? 'Modificar' : 'Triar'}
@@ -174,6 +179,71 @@ export const ListadoPacienteImpresion = ({ session }: any) => {
     const valoresActuales = getValues(); // obtienes los valores actuales del formulario
     handleSubmit(onSubmit)(valoresActuales as any);
   };
+
+  // Exportar a Excel con mismas columnas que el PDF (sin "tria")
+  const handleExportExcel = () => {
+    const visibleColumns = columns.filter((col) => col.field !== "tria");
+
+    const exportData = rows.map((row: any) => {
+      const newRow: Record<string, any> = {};
+      visibleColumns.forEach((col) => {
+        const key: string = col.headerName ?? String(col.field); // <-- fallback seguro
+        newRow[key] = row[col.field as keyof typeof row] ?? "";
+      });
+      return newRow;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
+
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "reporte.xlsx");
+  };
+
+
+  // Exportar a PDF SOLO con los rows y headers
+  const handleExportPDF = () => {
+    // Cabeceras desde columns
+    const headers = columns.map((col) => `<th>${col.headerName}</th>`).join("");
+
+    // Filas desde rows
+    const data = rows.map((row: any) =>
+      `<tr>${columns.map((col) => `<td>${row[col.field] ?? ""}</td>`).join("")}</tr>`
+    ).join("");
+
+    // Construcción del HTML que irá al PDF
+    const content = `
+    <div>
+      <h2 style="text-align:center; margin-bottom: 10px;">Reporte de Pacientes</h2>
+      <table style="width:100%; border-collapse: collapse; font-size:12px; text-align:left;">
+        <thead>
+          <tr style="background:#f0f0f0;">
+            ${headers}
+          </tr>
+        </thead>
+        <tbody>
+          ${data}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+    const opt = {
+      margin: 0.5,
+      filename: "reporte.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "a4", orientation: "landscape" },
+    };
+
+    // Generar PDF desde el string HTML
+    html2pdf().set(opt).from(content).save();
+  };
+
   return (
     <div className="h-full bg-slate-400 md:bg-white p-3">
       <style jsx>{`
@@ -336,22 +406,40 @@ export const ListadoPacienteImpresion = ({ session }: any) => {
 
 
       <div className='print:block mt-2'>
-
-
-
-
         <ThemeProvider theme={theme}>
-          <Box sx={{ height: 700, width: 1 }}>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              slots={{ toolbar: GridToolbar }}
-              slotProps={{
-                toolbar: {
-                  showQuickFilter: true,
-                },
-              }}
-            />
+          <Box>
+            {/* Botones, toolbar, filtros, etc. */}
+            <div className="flex gap-3 mb-4">
+              {/* Botón Excel */}
+              <button
+                onClick={handleExportExcel}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 shadow-md transition-all duration-200"
+              >
+                <FaFileExcel className="text-xl" />
+                <span>Exportar Excel triaje</span>
+              </button>
+
+              {/* Botón PDF */}
+              <button
+                onClick={handleExportPDF}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700 shadow-md transition-all duration-200"
+              >
+                <FaFilePdf className="text-xl" />
+                <span>Exportar PDF</span>
+              </button>
+            </div>
+
+            {/* SOLO esta parte se exporta */}
+            <div ref={tableRef}>
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                autoHeight
+                disableRowSelectionOnClick
+                hideFooterSelectedRowCount
+                slots={{}} // 👈 elimina toolbar
+              />
+            </div>
           </Box>
         </ThemeProvider>
 

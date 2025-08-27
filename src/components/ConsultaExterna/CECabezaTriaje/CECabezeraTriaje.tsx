@@ -8,8 +8,13 @@ import { CEHistoricosByDni } from "../historicos/CEHistoricosByDni";
 import Image from "next/image";
 import { CEFormatoRehabilitacion } from "../consultamedica/CEFormatoRehabilitacion";
 import Link from "next/link";
-export const CECabezeraTriaje = ({ dataPx,cuentaDatos }: any) => {
+import { FiActivity } from "react-icons/fi";
+import { BsClipboardPulse } from "react-icons/bs";
+import { TriajeDif } from "@/components/TriajeDiferenciado/TriajeDif";
+export const CECabezeraTriaje = ({ dataPx, cuentaDatos,session }: any) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [cuentaTriar2, setCuentaTriar2] = useState<any[]>([]);
+    const [isModalOpen2, setIsModalOpen2] = useState(false);
     const openModal = () => {
         setIsModalOpen(true);
     };
@@ -17,9 +22,21 @@ export const CECabezeraTriaje = ({ dataPx,cuentaDatos }: any) => {
     const closeModal = () => {
         setIsModalOpen(false);
     };
+    const openModal2 = (idcuentaatencion:any) => {
+        console.log(idcuentaatencion)
+        console.log("entro triaje 2")
+        setCuentaTriar2(idcuentaatencion)
+        setIsModalOpen2(true);
+    };
+    const closeModal2 = () => {
+    setIsModalOpen2(false);
+  };
+  const volverAEjecutarBusqueda = () => {
+
+  
+};
     return (
         <>
-
             <div className='bg-white w-full mb-6 rounded-lg shadow-lg border-b-4 borderfondo'>
                 <div className={style.mainTriaje__grid}>
                     <div className={style.mainTriaje__grid__header}>
@@ -98,50 +115,60 @@ export const CECabezeraTriaje = ({ dataPx,cuentaDatos }: any) => {
                                     </span>
                                 </div>
                             </div>
-                             <div className={style.mainTriaje__body__container__item}>
+                            <div className={style.mainTriaje__body__container__item}>
                                 <div className={style.mainTriaje__body__container__item__container}>
-                                    
-                                    <span className={style.txtColorContenido}>
-                                            <Link
-          className="flex items-center px-4 h-12 py-2 mb-2 rounded focus:outline-none bg-blue-500 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
-          href={`/sihce/consultaexterna`}
 
-        >
-          📄 Lista Pacientes
-        </Link>
-                                        {(cuentaDatos?.FuaNumero && cuentaDatos?.idFuenteFinanciamiento=='3')&& (
-                                          <Link
-    className="flex items-center px-4 py-2 mb-2 rounded focus:outline-none bg-blue-700 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
-    href={`/reportes/fua/${cuentaDatos?.idcuentaatencion}`}
-    target="_blank"
-  >
-    📄 FUA
-  </Link>
-                                        )}
-                                {cuentaDatos?.diagnosticos.length > 0 && (
-  <Link
-    
-    className="flex items-center px-4 py-2 rounded focus:outline-none colorFondo text-white w-44"
-    href={`/reportes/hojaatencion/${cuentaDatos?.idcuentaatencion}`}
-                                    target="__blank"
-  >
-    <FaPrint className="mr-2" />
-    Impresión HC
-  </Link>
-)}
-                                           
-                                      
+                                    <span className={style.txtColorContenido}>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <button
+                                                onClick={() => openModal2(cuentaDatos?.idcuentaatencion)}
+                                                className="flex items-center justify-center px-4 h-12 rounded focus:outline-none bg-indigo-400 hover:bg-indigo-500 text-white w-44 shadow-md transition duration-200"
+                                            >
+                                                <BsClipboardPulse className="w-5 h-5 mr-2" />
+                                                Triaje
+                                            </button>
+
+                                            <Link
+                                                className="flex items-center justify-center px-4 h-12 rounded focus:outline-none bg-blue-500 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
+                                                href={`/sihce/consultaexterna`}
+                                            >
+                                                📄 Lista Pacientes
+                                            </Link>
+
+                                            {(cuentaDatos?.FuaNumero && cuentaDatos?.idFuenteFinanciamiento == '3') && (
+                                                <Link
+                                                    className="flex items-center justify-center px-4 h-12 rounded focus:outline-none bg-blue-700 hover:bg-blue-800 text-white w-44 shadow-md transition duration-200"
+                                                    href={`/reportes/fua/${cuentaDatos?.idcuentaatencion}`}
+                                                    target="_blank"
+                                                >
+                                                    📄 FUA
+                                                </Link>
+                                            )}
+
+                                            {cuentaDatos?.diagnosticos.length > 0 && (
+                                                <Link
+                                                    className="flex items-center justify-center px-4 h-12 rounded focus:outline-none bg-green-600 hover:bg-green-700 text-white w-44 shadow-md transition duration-200"
+                                                    href={`/reportes/hojaatencion/${cuentaDatos?.idcuentaatencion}`}
+                                                    target="__blank"
+                                                >
+                                                    <FaPrint className="mr-2" />
+                                                    Impresión HC
+                                                </Link>
+                                            )}
+                                        </div>
+
                                     </span>
                                 </div>
-                         
+
                             </div>
+
                         </div>
                     </div>
 
                 </div>
             </div>
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal} css={style.modalSize}>
-               
+
                 <div className="text-sm text-gray-600">
                     <CEHistoricosByDni dni={dataPx?.nroDocumento} />
                 </div>
@@ -154,6 +181,21 @@ export const CECabezeraTriaje = ({ dataPx,cuentaDatos }: any) => {
                     </button>
                 </div>
             </ModalGeneric>
+
+               <ModalGeneric isOpen={isModalOpen2} onClose={closeModal2}>
+                    <label className="text-lg font-semibold text-gray-900">Triaje</label>
+                    <div className="text-sm text-gray-600">
+                      <TriajeDif idcuentaatencion={cuentaTriar2} usuario={session} closeModal={closeModal2} volverABuscar={volverAEjecutarBusqueda} />
+                    </div>
+                    <div className="mt-6 flex justify-end">
+                      <button
+                        className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                        onClick={closeModal2}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+                  </ModalGeneric>
         </>
     );
 };

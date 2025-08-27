@@ -48,7 +48,7 @@ export const Fua = ({ idcuentaatencion }: any) => {
             sisFuaAtencionPRO !== undefined
         ) {
             setTimeout(() => {
-                // window.print();
+                 window.print();
             }, 500); // opcional: pequeño retraso para asegurar el render
         }
     }, [

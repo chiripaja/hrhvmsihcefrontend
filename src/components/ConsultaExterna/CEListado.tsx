@@ -17,6 +17,9 @@ import { CircularProgress, Button } from '@mui/material';
 import { FiActivity } from 'react-icons/fi';
 import { useMyStore } from '@/store/ui/useProgramacionStore';
 import Swal from 'sweetalert2';
+import { ModalGeneric } from '../ui/ModalGeneric/ModalGeneric';
+import { TriajeDif } from '../TriajeDiferenciado/TriajeDif';
+import { BsClipboardPulse } from 'react-icons/bs';
 
 
 
@@ -49,6 +52,20 @@ export const CEListado = ({ session }: any) => {
   const [nullCount, setNullCount] = useState(0);
   const [nonNullCount, setNonNullCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [cuentaTriar, setCuentaTriar] = useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = ({ idcuenta }: any) => {
+    console.log("abrir modal")
+    console.log(idcuenta)
+    setCuentaTriar(idcuenta)
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+ 
+
   const handleAtencion = async (row: any) => {
     router.push(`/sihce/consultaexterna/${row?.idcuenta}`);
   }
@@ -105,37 +122,37 @@ export const CEListado = ({ session }: any) => {
     }
     setIsLoading(false)
   }
-const handleValidacionSis = async (row: any) => {
-  try {
-    const { data } = await axios.get(`${process.env.apivalidacionsis}/api/sis/${row?.idcuenta}`);
-    if (data?.idPaciente) {
-      Swal.fire({
-        icon: "success", 
-        title: "Validado correctamente!",
-        timerProgressBar: true,
-        timer: 2000,
-      });
+  const handleValidacionSis = async (row: any) => {
+    try {
+      const { data } = await axios.get(`${process.env.apivalidacionsis}/api/sis/${row?.idcuenta}`);
+      if (data?.idPaciente) {
+        Swal.fire({
+          icon: "success",
+          title: "Validado correctamente!",
+          timerProgressBar: true,
+          timer: 2000,
+        });
 
-      setDataTablaRowsPacientes((prev) =>
-        prev.map((p) =>
-          p.idcuenta === row.idcuenta
-            ? { ...p, idSiasis: data.idPaciente } // Marcamos como validado
-            : p
-        )
-      ); 
+        setDataTablaRowsPacientes((prev) =>
+          prev.map((p) =>
+            p.idcuenta === row.idcuenta
+              ? { ...p, idSiasis: data.idPaciente } // Marcamos como validado
+              : p
+          )
+        );
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error en la Validación",
+        text: "No se pudo validar el SIS. Intenta nuevamente.",
+        confirmButtonText: "Aceptar",
+      });
     }
-  } catch (error) {
-   Swal.fire({
-    icon: "error",
-    title: "Error en la Validación",
-    text: "No se pudo validar el SIS. Intenta nuevamente.",
-    confirmButtonText: "Aceptar",
-  });
-  }
-};
+  };
 
   const getConsultorio = async (id: number) => {
-    console.log(id)
+
     if (id > 0) {
       const dataC = await dataTotal[id];
       const dataTablaRows: any[] = [];
@@ -208,6 +225,12 @@ const handleValidacionSis = async (row: any) => {
     }
   }, [idprogramacionzus]);
 
+const volverAEjecutarBusqueda = () => {
+
+    getDataCE();
+  
+};
+
   // 3. Cuando el usuario cambia el select, actualizar Zustand
   useEffect(() => {
     if (idprogramacion && idprogramacion !== idprogramacionzus) {
@@ -264,16 +287,20 @@ const handleValidacionSis = async (row: any) => {
                       Atender
                     </button>
                     :
-                    <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
+                    <button type="button" onClick={() => handleAtencion(params.row)} className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-500 hover:bg-blue-600 text-white hover: focus:outline-none  disabled:opacity-50 disabled:pointer-events-none">
                       <FaRegEdit />
                       Modificar
                     </button>}
                 </> :
                 <>
-                  <a href='/sihce/triaje' target='_blank' className="w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
-                    <FiActivity className="w-5 h-5" />
-                    Triaje
-                  </a>
+                 
+                  <button
+                    onClick={() => openModal(params.row)}
+                    className={`w-28 m-1 ms-0 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-indigo-400 hover:bg-indigo-500 text-white`}
+                  >
+                    <BsClipboardPulse  className="w-5 h-5" />
+                    Triar
+                  </button>
                 </>
             }
             {params.row?.CitaExamenClinico != null &&
@@ -297,6 +324,7 @@ const handleValidacionSis = async (row: any) => {
   ];
 
   const handlePrint = () => {
+
     const url = `/reportes/impresionHis/${idprogramacion}`;
     window.open(url, '_blank');/**/
   }
@@ -333,7 +361,7 @@ const handleValidacionSis = async (row: any) => {
         <div className="w-4/5">
           <select
             {...register("idprogramacion")}
-              value={watch("idprogramacion") || ""}
+            value={watch("idprogramacion") || ""}
             disabled={false} // o usa una variable si necesitas controlarlo
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 
@@ -374,10 +402,26 @@ const handleValidacionSis = async (row: any) => {
       <div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg">
-          <TableDataGridUI rows={dataTablaRowsPacientes} columns={columns} />
+    <TableDataGridUI rows={[...dataTablaRowsPacientes]} columns={columns} />
         </div>
 
       </div>
+
+
+      <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
+        <label className="text-lg font-semibold text-gray-900">Triaje</label>
+        <div className="text-sm text-gray-600">
+          <TriajeDif idcuentaatencion={cuentaTriar} usuario={session} closeModal={closeModal} volverABuscar={volverAEjecutarBusqueda} />
+        </div>
+        <div className="mt-6 flex justify-end">
+          <button
+            className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            onClick={closeModal}
+          >
+            Cerrar
+          </button>
+        </div>
+      </ModalGeneric>
 
     </div>
 

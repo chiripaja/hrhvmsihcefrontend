@@ -45,7 +45,7 @@ export const HojaAtencion = ({ idcuentaatencion }: any) => {
       flagProcedimientosFuera &&
       flagProcedimientosDentro
     ) {
-      //window.print();
+      window.print();
     }
   }, [
     flagFarmacia,

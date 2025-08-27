@@ -13,6 +13,7 @@ export const TopMenuItem = ({ webadmin, cetriaje, admisionista ,CEAtencion}: { w
     { href: "/sihce/nuevousuario", label: "Paciente Nuevo", condition: webadmin || admisionista },
     { href: "/sihce/triaje", label: "Triaje", condition: webadmin || cetriaje },
     { href: "/sihce/roles", label: "Roles", condition: webadmin },
+    { href: "/sihce/prueba", label: "Roles", condition: webadmin },
   ];
   return (
     <>

@@ -264,7 +264,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   return (
     <div className="flex flex-wrap bg-white p-3 rounded w-full shadow-2xl">
 
-      <CECabezeraTriaje dataPx={dataPx} cuentaDatos={cuentaDatos} />
+      <CECabezeraTriaje dataPx={dataPx} cuentaDatos={cuentaDatos} session={session} />
       <div className="border-e border-gray-200 dark:border-neutral-700">
         <nav className="flex flex-col space-y-2">
           <button

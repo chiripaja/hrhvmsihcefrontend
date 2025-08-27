@@ -9,6 +9,7 @@ export const Referencia = () => {
   const [datosAtencion, setdatosAtencion] = useState<any>([]);
   const [flagDatosPx, setflagDatosPx] = useState<boolean>(false);
 
+  const [dataAtencion, setdataAtencion] = useState();
 
   const getDatosHC = async (idcuentaatencion: any) => {
     const response = await getData(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
@@ -22,15 +23,24 @@ export const Referencia = () => {
   }
 
   const onSubmit = async (data: any) => {
-    getdatosAtencion(data?.idcuentaatencion)
-    getDatosHC(data?.idcuentaatencion)
-    const cabecera = await getData(`${process.env.apijimmynew}/fua/ApiSisFuaAtencionByIdCuentaAtencion/${data?.idcuentaatencion}`);
-    console.log(cabecera)
-    const datanevio = {
+
+
+    const dataver=await getData(`${process.env.apijimmynew}/atenciones/cuenta/${data?.idcuentaatencion}`);
+        setdataAtencion(dataver)
+        const diagnosticos: any[] = [];
+  dataver.atencionesDiagnosticos.forEach((item: any, index: number) => {
+  diagnosticos.push({
+    diagnostico: item.diagnostico?.codigoCIEsinPto.trim(),
+    nro_diagnostico: index + 1,
+    tipo_diagnostico: item.subclasificacionDiagnosticos?.codigo
+  });
+});
+console.log(diagnosticos)
+    const dataenvio = {
       cita: {
         fecha_vencimiento_sis: "",
         id_financiador: 1,
-        num_afil: cabecera?.idSiasis
+        num_afil: ""
       },
       datosContrareferencia: {
         calificacionReferencia: {
@@ -113,8 +123,12 @@ export const Referencia = () => {
   };
 
   return (
-    <>
-    
+    <>  
+    <pre>
+      {JSON.stringify(dataAtencion, null, 2)}
+    </pre>
+      
+      <h1>probar con esta cuenta 444444</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
         <input
           type="text"
