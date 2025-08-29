@@ -5,37 +5,45 @@ import { useForm } from 'react-hook-form';
 export const Referencia = () => {
   const { register, handleSubmit } = useForm();
 
-  const [datosPxGeneral, setdatosPxGeneral] = useState<any>();
-  const [datosAtencion, setdatosAtencion] = useState<any>([]);
-  const [flagDatosPx, setflagDatosPx] = useState<boolean>(false);
 
   const [dataAtencion, setdataAtencion] = useState();
-
-  const getDatosHC = async (idcuentaatencion: any) => {
-    const response = await getData(`${process.env.apijimmynew}/atenciones/${idcuentaatencion}`);
-    setdatosPxGeneral(response)
-    setflagDatosPx(true)
-  }
-
-  const getdatosAtencion = async (idcuentaatencion: any) => {
-    const datosAtencion = await getData(`${process.env.apijimmynew}/fua/ApiSisFuaAtencionByIdCuentaAtencion/${idcuentaatencion}`);
-    setdatosAtencion(datosAtencion)
-  }
-
-  const onSubmit = async (data: any) => {
+  const [verDataProcesada, setverDataProcesada] = useState<any>();
 
 
-    const dataver=await getData(`${process.env.apijimmynew}/atenciones/cuenta/${data?.idcuentaatencion}`);
-        setdataAtencion(dataver)
-        const diagnosticos: any[] = [];
-  dataver.atencionesDiagnosticos.forEach((item: any, index: number) => {
-  diagnosticos.push({
-    diagnostico: item.diagnostico?.codigoCIEsinPto.trim(),
-    nro_diagnostico: index + 1,
-    tipo_diagnostico: item.subclasificacionDiagnosticos?.codigo
-  });
-});
-console.log(diagnosticos)
+
+  const onSubmit = async (dataForm: any) => {
+  
+ const datapaciente = await getData(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`);
+ console.log(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`)
+   console.log("========================================")
+setdataAtencion(datapaciente)
+console.log("========================================")
+    const dataAtenc = await getData(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
+    console.log(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
+
+
+//setdataAtencion(dataAtenc)
+    const diagnosticos: any[] = [];
+    dataAtenc.atencionesDiagnosticos.forEach((item: any, index: number) => {
+      diagnosticos.push({
+        diagnostico: item.diagnostico?.codigoCIEsinPto.trim(),
+        nro_diagnostico: index + 1,
+        tipo_diagnostico: item.subclasificacionDiagnosticos?.codigo
+      });
+    });
+const fechaNacimiento = dataAtenc?.medico?.empleado?.fechanacimiento;
+let fechaFormateada = "";
+if (fechaNacimiento) {
+  const fecha = new Date(fechaNacimiento);
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, "0");
+  const day = String(fecha.getDate()).padStart(2, "0");
+
+  fechaFormateada = `${year}${month}${day}`;
+}
+const sexoDescripcion = dataAtenc?.medico?.empleado?.tiposSexo?.descripcion ?? "";
+const SexoHIS = sexoDescripcion.charAt(0);
+console.log(fechaFormateada)
     const dataenvio = {
       cita: {
         fecha_vencimiento_sis: "",
@@ -64,17 +72,11 @@ console.log(diagnosticos)
         idupsdestino: "220000",
         recomendacion: "demo recomendación"
       },
-      diagnostico: [
-        {
-          diagnostico: "A010",
-          nro_diagnostico: 1,
-          tipo_diagnostico: "P"
-        }
-      ],
+      diagnostico: diagnosticos,
       paciente: {
-        apelmatpac: "GARCIA",
-        apelpatpac: "GOMEZ",
-        direccion: "URB PALOMARES BLOCK D DPTO 12",
+        apelmatpac: datapaciente?.ApellidoMaterno,
+        apelpatpac: datapaciente?.ApellidoPaterno,
+        direccion: datapaciente?.DireccionDomicilio ? datapaciente?.DireccionDomicilio : "",
         fechnacpac: "19671217",
         idsexo: "F",
         idtipodoc: "1",
@@ -85,15 +87,15 @@ console.log(diagnosticos)
         ubigeoreniec: "140122"
       },
       personal_registra: {
-        apellidoMaterno: "GOMEZ",
-        apellidoPaterno: "ARANDA",
-        fechaNacimiento: "19001120",
-        idcolegio: "10",
-        idprofesion: "11",
-        nombres: "JAIME",
-        nroDocumento: "00045680",
-        sexo: "M",
-        tipoDocumento: "1"
+        apellidoMaterno: dataAtenc?.medico?.empleado?.apellidomaterno,
+        apellidoPaterno: dataAtenc?.medico?.empleado?.apellidoPaterno,
+        fechaNacimiento: fechaFormateada,
+        idcolegio:dataAtenc?.medico?.idcolegiohis,
+        idprofesion: dataAtenc?.medico?.empleado?.tiposEmpleado?.tipoEmpleadoHIS,
+        nombres: dataAtenc?.medico?.empleado?.nombres,
+        nroDocumento: dataAtenc?.medico?.empleado?.dni.trim(),
+        sexo: SexoHIS,
+        tipoDocumento: dataAtenc?.medico?.empleado?.idtipodocumento,
       },
       responsableContrareferencia: {
         apelmatrefiere: "GRANDA",
@@ -118,17 +120,17 @@ console.log(diagnosticos)
         }
       ]
     };
-
+    setverDataProcesada(dataenvio)
     console.log()
   };
 
   return (
-    <>  
-    <pre>
-      {JSON.stringify(dataAtencion, null, 2)}
-    </pre>
-      
-      <h1>probar con esta cuenta 444444</h1>
+    <>
+      <pre>
+        {JSON.stringify(dataAtencion, null, 2)}
+      </pre>
+
+      <h1>probar con esta cuenta 481252</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
         <input
           type="text"

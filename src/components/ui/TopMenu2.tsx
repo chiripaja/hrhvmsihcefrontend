@@ -31,6 +31,7 @@ export const TopMenu2 = async () => {
     { href: "/sihce/triaje", label: "Triaje", condition: webadmin || cetriaje },
     { href: "/sihce/archivos", label: "Archivo", condition: webadmin || ArchivoClinico},
     { href: "/sihce/admisionexternos", label: "Admision Ext.", condition: webadmin || AdmisionsitaExterno},
+    { href: "/sihce/validacioncuenta", label: "Validacion Cuenta", condition: webadmin },
   ];
 
   const menuItemsEmergencia = [

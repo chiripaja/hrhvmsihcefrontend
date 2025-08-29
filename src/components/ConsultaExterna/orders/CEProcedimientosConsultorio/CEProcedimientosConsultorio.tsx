@@ -12,10 +12,10 @@ import axios from "axios";
 import { debounce } from "@mui/material";
 import Swal from "sweetalert2";
 
-export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
+export const CEProcedimientosConsultorio = ({ session, cuentaDatos }: any) => {
     const [isOffcanvasOpenProcedimientos, setIsOffcanvasOpenProcedimientos] = useState(false);
     const [options, setOptions] = useState<any[]>([]);
-    const { control, register, handleSubmit, setValue, watch, reset,resetField , formState: { errors } } = useForm<any>();
+    const { control, register, handleSubmit, setValue, watch, reset, resetField, formState: { errors } } = useForm<any>();
     const createordenesProcedimiento = useCEDatosStore((state: any) => state.createordenesProcedimiento);
     const updateProcedimientosIdOrden = useCEDatosStore((state: any) => state.updateProcedimientosIdOrden);
     const setRecetaCabezeraProcedimientos = useCEDatosStore((state: any) => state.setRecetaCabezeraProcedimientos);
@@ -32,11 +32,11 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
             idFuenteFinanciamiento: cuentaDatos?.idFuenteFinanciamiento,
             idTipoFinanciamiento: cuentaDatos?.idFormaPago,
             nombreproc: data?.factservicio?.label,
-            Codigo:data?.factservicio?.Codigo
+            Codigo: data?.factservicio?.Codigo
         }
         createordenesProcedimiento(datosProcedimientos)
-         resetField("factservicio");
-    resetField("cantidad");
+        resetField("factservicio");
+        resetField("cantidad");
         ToasterMsj("Procesado", "success", "Examen agregado correctamente.");
     }
     const handleCanastaProcedimientos = async () => {
@@ -100,9 +100,9 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
                 const response = await getData(`${process.env.apijimmynew}/FactCatalogoServicios/apiCatalogoServiciosSeleccionarSoloConPreciosEnParticularByNombre/${cuentaDatos?.idPuntoCargaProcDentroConsultorio}/${cuentaDatos?.idFormaPago}/${nom}`);
                 const mappedOptions = response.map((est: any) => ({
                     value: est.IdProducto,
-                   label: `${est.Codigo?.trim()} - ${est.Nombre.trim()} `,
+                    label: `${est.Codigo?.trim()} - ${est.Nombre.trim()} `,
                     PrecioUnitario: est.PrecioUnitario,
-                    Codigo:est.Codigo
+                    Codigo: est.Codigo
                 }));
                 setOptions(mappedOptions);
             } catch (error) {
@@ -145,12 +145,12 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
                         No hay examenes activos para mostrar para este paciente
                     </p>
 
-                    <button onClick={toggleOffcanvasProcedimientos} 
+                    <button onClick={toggleOffcanvasProcedimientos}
                         className="text-blue-500 hover:underline text-sm">
                         Registrar examenes activos
                     </button>
                 </div>
-                <CEProcedimientosConsultorioTabla modificar={1} cuentaDatos={cuentaDatos}/>
+                <CEProcedimientosConsultorioTabla modificar={1} cuentaDatos={cuentaDatos} />
             </div>
             {isOffcanvasOpenProcedimientos && (
                 <div
@@ -159,17 +159,17 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
                 ></div>
             )}
 
-            <div id="hs-offcanvas-proc" 
-             className={`fixed top-0 end-0 transition-all duration-300 transform h-full max-w-lg w-96 z-[80] bg-white border-s dark:bg-neutral-800 dark:border-neutral-700 ${isOffcanvasOpenProcedimientos ? "translate-x-0" : "translate-x-full"
-             }`}
-            role="dialog" tabIndex={-1} aria-labelledby="hs-offcanvas-proc-label">
+            <div id="hs-offcanvas-proc"
+                className={`fixed top-0 end-0 transition-all duration-300 transform h-full max-w-lg w-96 z-[80] bg-white border-s dark:bg-neutral-800 dark:border-neutral-700 ${isOffcanvasOpenProcedimientos ? "translate-x-0" : "translate-x-full"
+                    }`}
+                role="dialog" tabIndex={-1} aria-labelledby="hs-offcanvas-proc-label">
                 <div className="flex justify-between items-center py-3 px-4 border-b dark:border-neutral-700">
                     <h3 id="hs-offcanvas-proc-label" className="font-bold text-gray-800 dark:text-white">
                         Modulo de Procedimientos
                     </h3>
-                    <button type="button" 
-                    onClick={toggleOffcanvasProcedimientos}
-                    className="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600" aria-label="Close" data-hs-overlay="#hs-offcanvas-proc">
+                    <button type="button"
+                        onClick={toggleOffcanvasProcedimientos}
+                        className="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600" aria-label="Close" data-hs-overlay="#hs-offcanvas-proc">
                         <span className="sr-only">Close</span>
                         <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M18 6 6 18"></path>
@@ -186,15 +186,15 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
                                 defaultValue={cuentaDatos.diagnosticos[0]?.IdDiagnostico}
                                 render={({ field }) => (
                                     <select {...field} className="w-full border mb-2 p-2 rounded shadow-sm">
-                                       {cuentaDatos.diagnosticos
-                                                .filter((value: any, index: any, self: any) =>
-                                                    index === self.findIndex((t: any) => t.IdDiagnostico === value.IdDiagnostico)
-                                                )
-                                                .map((data: any) => (
-                                                    <option key={data?.IdDiagnostico} value={data?.IdDiagnostico}>
-                                                        {data?.nomdx}
-                                                    </option>
-                                                ))}
+                                        {cuentaDatos.diagnosticos
+                                            .filter((value: any, index: any, self: any) =>
+                                                index === self.findIndex((t: any) => t.IdDiagnostico === value.IdDiagnostico)
+                                            )
+                                            .map((data: any) => (
+                                                <option key={data?.IdDiagnostico} value={data?.IdDiagnostico}>
+                                                    {data?.nomdx}
+                                                </option>
+                                            ))}
                                     </select>
                                 )}
                             />
@@ -222,10 +222,16 @@ export const CEProcedimientosConsultorio = ({ session,cuentaDatos }: any) => {
                                 />
                             )}
                         />
-                        <input type="number" className='inputSelect mt-2 mb-1' {...register('cantidad')} placeholder="Cantidad" />
+                        <input
+                            type="number"
+                            className="inputSelect mt-2 mb-1"
+                            placeholder="Cantidad"
+                            defaultValue={1} // valor inicial 1
+                            {...register("cantidad", { required: "La cantidad es obligatoria" })}
+                        />
                         <button type="submit" className="btnprimario mt-2">Guardar</button>
                     </form>
-                    <CEProcedimientosConsultorioTabla cuentaDatos={cuentaDatos}/>
+                    <CEProcedimientosConsultorioTabla cuentaDatos={cuentaDatos} />
                     <div className={cuentaDatos?.ordenesProcedimiento.length > 0 ? "block" : "hidden"}>
                         <button onClick={handleCanastaProcedimientos} type="button" className="w-full py-3 px-4 flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                             Confirmar Orden

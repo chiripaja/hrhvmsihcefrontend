@@ -215,6 +215,7 @@ export const OrdenesProcedimientosConsultorio = ({ datosEmergencia, session }: a
                         />
                     )}
                 />
+           
                 <input type="number" className='inputSelect mt-2 mb-1' {...register('cantidad')} placeholder="Cantidad" />
                 {datosEmergencia?.idTipoAlta==null &&(
                     <button type="submit" className="btnprimario mt-2">Guardar</button>
