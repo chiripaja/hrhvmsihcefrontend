@@ -9,20 +9,45 @@ export const Referencia = () => {
   const [dataAtencion, setdataAtencion] = useState();
   const [verDataProcesada, setverDataProcesada] = useState<any>();
 
+  function formatearFecha(fechaNacimiento?: string | Date): string {
+    if (!fechaNacimiento) return "";
 
+    const fecha = new Date(fechaNacimiento);
+    if (isNaN(fecha.getTime())) return ""; // valida si no es una fecha válida
+
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, "0");
+    const day = String(fecha.getDate()).padStart(2, "0");
+
+    return `${year}${month}${day}`;
+  }
+
+  function fechaHoy(): string {
+  const hoy = new Date();
+  const year = hoy.getFullYear();
+  const month = String(hoy.getMonth() + 1).padStart(2, "0");
+  const day = String(hoy.getDate()).padStart(2, "0");
+  return `${year}${month}${day}`;
+  }
+  function horaActual(): string {
+  const ahora = new Date();
+  const horas = String(ahora.getHours()).padStart(2, "0");
+  const minutos = String(ahora.getMinutes()).padStart(2, "0");
+  const segundos = String(ahora.getSeconds()).padStart(2, "0");
+  return `${horas}:${minutos}:${segundos}`;
+}
 
   const onSubmit = async (dataForm: any) => {
-  
- const datapaciente = await getData(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`);
- console.log(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`)
-   console.log("========================================")
-setdataAtencion(datapaciente)
-console.log("========================================")
+
+    const datapaciente = await getData(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`);
+   
+    console.log("========================================")
+    console.log(fechaHoy()); 
+    console.log("========================================")
     const dataAtenc = await getData(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
-    console.log(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
 
 
-//setdataAtencion(dataAtenc)
+    //setdataAtencion(dataAtenc)
     const diagnosticos: any[] = [];
     dataAtenc.atencionesDiagnosticos.forEach((item: any, index: number) => {
       diagnosticos.push({
@@ -31,19 +56,13 @@ console.log("========================================")
         tipo_diagnostico: item.subclasificacionDiagnosticos?.codigo
       });
     });
-const fechaNacimiento = dataAtenc?.medico?.empleado?.fechanacimiento;
-let fechaFormateada = "";
-if (fechaNacimiento) {
-  const fecha = new Date(fechaNacimiento);
-  const year = fecha.getFullYear();
-  const month = String(fecha.getMonth() + 1).padStart(2, "0");
-  const day = String(fecha.getDate()).padStart(2, "0");
+    const fechaNacimiento = dataAtenc?.medico?.empleado?.fechanacimiento;
+    let fechaNacMedico = formatearFecha(fechaNacimiento);
+    let fechaNacPaciente = formatearFecha(datapaciente?.FechaNacimiento);
 
-  fechaFormateada = `${year}${month}${day}`;
-}
-const sexoDescripcion = dataAtenc?.medico?.empleado?.tiposSexo?.descripcion ?? "";
-const SexoHIS = sexoDescripcion.charAt(0);
-console.log(fechaFormateada)
+    const sexoDescripcion = dataAtenc?.medico?.empleado?.tiposSexo?.descripcion ?? "";
+    const SexoHIS = sexoDescripcion.charAt(0);
+
     const dataenvio = {
       cita: {
         fecha_vencimiento_sis: "",
@@ -58,9 +77,9 @@ console.log(fechaFormateada)
         codEspecialidad: "1-0008",
         condicion: "ME",
         desc_cartera_servicio: "",
-        fechacontrareferencia: "20220902",
+        fechacontrareferencia: fechaHoy(),
         fgRegistro: "4",
-        horaContrareferencia: "16:00:00",
+        horaContrareferencia: horaActual(),
         idCarteraServicio: null,
         idEnvio: "C",
         idTipoAtencion: "C",
@@ -77,20 +96,20 @@ console.log(fechaFormateada)
         apelmatpac: datapaciente?.ApellidoMaterno,
         apelpatpac: datapaciente?.ApellidoPaterno,
         direccion: datapaciente?.DireccionDomicilio ? datapaciente?.DireccionDomicilio : "",
-        fechnacpac: "19671217",
-        idsexo: "F",
-        idtipodoc: "1",
-        nombpac: "GLADYS MILENA",
-        nrohis: "78963215",
-        numdoc: "08124616",
+        fechnacpac: fechaNacPaciente,
+        idsexo: datapaciente?.ApellidoPaterno.charAt(0),
+        idtipodoc: datapaciente?.IdDocIdentidad,
+        nombpac: datapaciente?.PrimerNombre + (datapaciente?.SegundoNombre ? ` ${datapaciente?.SegundoNombre}` : ""),
+        nrohis: datapaciente?.NroDocumento,
+        numdoc: datapaciente?.NroDocumento,
         ubigeoactual: "140122",
         ubigeoreniec: "140122"
       },
       personal_registra: {
         apellidoMaterno: dataAtenc?.medico?.empleado?.apellidomaterno,
         apellidoPaterno: dataAtenc?.medico?.empleado?.apellidoPaterno,
-        fechaNacimiento: fechaFormateada,
-        idcolegio:dataAtenc?.medico?.idcolegiohis,
+        fechaNacimiento: fechaNacMedico,
+        idcolegio: dataAtenc?.medico?.idcolegiohis,
         idprofesion: dataAtenc?.medico?.empleado?.tiposEmpleado?.tipoEmpleadoHIS,
         nombres: dataAtenc?.medico?.empleado?.nombres,
         nroDocumento: dataAtenc?.medico?.empleado?.dni.trim(),
