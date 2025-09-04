@@ -51,11 +51,12 @@ export default function ValidacionCuenta({ session }: any) {
       const { data } = await axios.get(`${process.env.apivalidacionsis}/api/sis/${row?.idcuenta}`);
       if (data?.idPaciente) {
         Swal.fire({
-          icon: "success",
-          title: "Validado correctamente!",
-          timerProgressBar: true,
-          timer: 2000,
-        });
+  position: "top-end",
+  icon: "success",
+  title: "Your work has been saved",
+  showConfirmButton: false,
+  timer: 1500
+});
 
         setDataTablaRowsPacientes((prev) =>
           prev.map((p) =>

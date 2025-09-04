@@ -6,7 +6,7 @@ export const Referencia = () => {
   const { register, handleSubmit } = useForm();
 
 
-  const [dataAtencion, setdataAtencion] = useState();
+  const [dataAtencion, setdataAtencion] = useState<any>();
   const [verDataProcesada, setverDataProcesada] = useState<any>();
 
   function formatearFecha(fechaNacimiento?: string | Date): string {
@@ -23,31 +23,49 @@ export const Referencia = () => {
   }
 
   function fechaHoy(): string {
-  const hoy = new Date();
-  const year = hoy.getFullYear();
-  const month = String(hoy.getMonth() + 1).padStart(2, "0");
-  const day = String(hoy.getDate()).padStart(2, "0");
-  return `${year}${month}${day}`;
+    const hoy = new Date();
+    const year = hoy.getFullYear();
+    const month = String(hoy.getMonth() + 1).padStart(2, "0");
+    const day = String(hoy.getDate()).padStart(2, "0");
+    return `${year}${month}${day}`;
   }
   function horaActual(): string {
-  const ahora = new Date();
-  const horas = String(ahora.getHours()).padStart(2, "0");
-  const minutos = String(ahora.getMinutes()).padStart(2, "0");
-  const segundos = String(ahora.getSeconds()).padStart(2, "0");
-  return `${horas}:${minutos}:${segundos}`;
-}
+    const ahora = new Date();
+    const horas = String(ahora.getHours()).padStart(2, "0");
+    const minutos = String(ahora.getMinutes()).padStart(2, "0");
+    const segundos = String(ahora.getSeconds()).padStart(2, "0");
+    return `${horas}:${minutos}:${segundos}`;
+  }
 
   const onSubmit = async (dataForm: any) => {
 
     const datapaciente = await getData(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`);
-   
-    console.log("========================================")
-    console.log(fechaHoy()); 
-    console.log("========================================")
+    const tratamiento: any[] = [];
+    console.log(datapaciente)
+
+    setdataAtencion(dataAtencion)
+
     const dataAtenc = await getData(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
-
-
-    //setdataAtencion(dataAtenc)
+    const tratamientos: any[] = [];
+    dataAtenc?.recetaCabeceras
+      ?.filter((cabecera: any) => cabecera.idPuntoCarga == 5) // solo Farmacia
+      .forEach((cabecera: any) => {
+        cabecera.recetaDetalles
+          ?.filter((detalle: any) => detalle.factCatalogoBienesInsumos?.tipoProducto === "0") // solo medicamentos
+          .forEach((detalle: any, index: number) => {
+            tratamientos.push({
+              cantidad: detalle.cantidadPedida ?? null,
+              codigo_medicamento: detalle.factCatalogoBienesInsumos?.codigo ?? "",
+              frecuencia: detalle.observaciones ?? "",
+              nro_diagnostico: index + 1,
+              nro_tratamiento: null,
+              periodo: null,
+              unidad_tiempo: null
+            });
+          });
+      });
+    
+    setdataAtencion(tratamientos)
     const diagnosticos: any[] = [];
     dataAtenc.atencionesDiagnosticos.forEach((item: any, index: number) => {
       diagnosticos.push({
@@ -66,13 +84,13 @@ export const Referencia = () => {
     const dataenvio = {
       cita: {
         fecha_vencimiento_sis: "",
-        id_financiador: 1,
+        id_financiador: 2,
         num_afil: ""
       },
       datosContrareferencia: {
         calificacionReferencia: {
-          calificacion: "J",
-          calificacionComentario: "Demo calificacion"
+          calificacion: "E",
+          calificacionComentario: "ESTABLE"
         },
         codEspecialidad: "1-0008",
         condicion: "ME",
@@ -89,7 +107,7 @@ export const Referencia = () => {
         idreferencia: "1364666",
         idupsOrigen: "220100",
         idupsdestino: "220000",
-        recomendacion: "demo recomendación"
+        recomendacion: " recomendación"
       },
       diagnostico: diagnosticos,
       paciente: {
@@ -127,26 +145,16 @@ export const Referencia = () => {
         nombperrefiere: "NESTOR ABEL",
         numdocref: "10258720"
       },
-      tratamiento: [
-        {
-          cantidad: null,
-          codigo_medicamento: "",
-          frecuencia: "",
-          nro_diagnostico: null,
-          nro_tratamiento: null,
-          periodo: null,
-          unidad_tiempo: null
-        }
-      ]
+      tratamiento: tratamientos
     };
     setverDataProcesada(dataenvio)
-    console.log()
+    console.log(dataenvio)
   };
 
   return (
     <>
       <pre>
-        {JSON.stringify(dataAtencion, null, 2)}
+        {JSON.stringify(verDataProcesada, null, 2)}
       </pre>
 
       <h1>probar con esta cuenta 481252</h1>

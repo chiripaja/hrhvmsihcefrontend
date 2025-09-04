@@ -1,8 +1,9 @@
+import ContraReferencia from '../../../../components/Refcon/ContraReferencia/ContraReferencia';
 
 export default function ContraReferenciaPage() {
   return (
     <div>
-      <h1>Hello Page</h1>
+      <ContraReferencia/>
     </div>
   );
 }
