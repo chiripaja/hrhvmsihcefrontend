@@ -124,8 +124,7 @@ const ContraReferencia = () => {
     };
 
     const onSubmit2 = async (dataForm: any) => {
-        console.log(dataForm)
-
+  
         const tratamientos: any[] = [];
         const diagnosticos: any[] = [];
 
@@ -198,7 +197,7 @@ if (tratamientos.length === 0) {
                 idCarteraServicio: null,
                 idEnvio: "C",
                 idTipoAtencion: "C",
-                idTipoTransporte: dataForm?.tipoTransporte, // ya esta en el select
+                idTipoTransporte: dataForm?.idTipoTransporte?.value, // ya esta en el select
                 idestabDestino: dataForm?.refcon?.codigoestablecimientoOrigen,
                 idestabOrigen: "0754",
                 idreferencia: dataForm?.refcon?.idReferencia,
@@ -244,7 +243,17 @@ if (tratamientos.length === 0) {
             },
             tratamiento: tratamientos
         };
-    setverDataProcesada(dataenvio)
+
+    
+const response = await fetch("/api/refcon/saveContrareferencia", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(dataenvio),
+});
+
+const result = await response.json();
+console.log("Respuesta del backend:", result);
+    /**/
 
     }
 
