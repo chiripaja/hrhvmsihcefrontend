@@ -116,6 +116,53 @@ export default function ValidacionCuenta({ session }: any) {
     resetDatosCE()
   }, [])
 
+  // 🔹 Nueva función para validar de forma masiva
+const handleValidacionSisMasivo = async () => {
+  const pendientes = dataTablaRowsPacientes.filter(
+    (p) => p.financiamiento === "SIS" && !p.idSiasis
+  );
+
+  if (pendientes.length === 0) {
+    Swal.fire({
+      icon: "info",
+      title: "No hay pacientes pendientes",
+      text: "Todos los pacientes SIS ya fueron validados.",
+      confirmButtonText: "Aceptar",
+    });
+    return;
+  }
+
+  setIsLoading(true);
+
+  for (const paciente of pendientes) {
+    try {
+      const { data } = await axios.get(
+        `${process.env.apivalidacionsis}/api/sis/${paciente?.idcuenta}`
+      );
+      if (data?.idPaciente) {
+        // Actualizar el estado de la tabla
+        setDataTablaRowsPacientes((prev) =>
+          prev.map((p) =>
+            p.idcuenta === paciente.idcuenta
+              ? { ...p, idSiasis: data.idPaciente }
+              : p
+          )
+        );
+      }
+    } catch (error) {
+      console.error(`Error validando paciente ${paciente.idcuenta}`, error);
+    }
+  }
+
+  setIsLoading(false);
+
+  Swal.fire({
+    icon: "success",
+    title: "Validación masiva completada",
+    text: "Se validaron todos los pacientes pendientes.",
+    confirmButtonText: "Aceptar",
+  });
+};
   const validacionTriaje = (Triaje: any, TriajePeso: any) => {
     if (!Triaje) return true;
     return TriajePeso !== "" && TriajePeso !== null;
@@ -213,7 +260,15 @@ export default function ValidacionCuenta({ session }: any) {
           <p className="text-gray-700 text-2xl font-bold">{nonNullCount} pacientes</p>
         </div>
       </div>
-
+<div className="flex justify-end mb-4">
+  <button
+    onClick={handleValidacionSisMasivo}
+    disabled={isLoading}
+    className="py-2 px-4 text-sm font-medium rounded-lg bg-blue-700 text-white hover:bg-blue-800 disabled:opacity-50"
+  >
+    {isLoading ? "Validando..." : "Validar SIS Masivo"}
+  </button>
+</div>
       <LinearWithValueLabel nullCount={nullCount} nonNullCount={nonNullCount} />
 
       {/* Tabla de pacientes */}

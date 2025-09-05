@@ -9,6 +9,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 const ContraReferencia = () => {
     const { register, handleSubmit } = useForm();
+    const [datosPxRefCon, setdatosPxRefCon] = useState<any>();
     const [dataPaciente, setdataPaciente] = useState<any>();
     const [listadoTransporte, setlistadoTransporte] = useState<any>();
     const [dataAtencion, setdataAtencion] = useState<any>();
@@ -108,7 +109,7 @@ const ContraReferencia = () => {
         setdataPaciente(datapaciente)
         const dataAtenc = await getData(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
         setdataAtencion(dataAtenc)
-        setverDataProcesada(dataAtenc)
+    
         openModal();
     };
 
@@ -124,6 +125,7 @@ const ContraReferencia = () => {
 
     const onSubmit2 = async (dataForm: any) => {
         console.log(dataForm)
+
         const tratamientos: any[] = [];
         const diagnosticos: any[] = [];
 
@@ -141,22 +143,38 @@ const ContraReferencia = () => {
         const sexoDescripcion = dataAtencion?.medico?.empleado?.tiposSexo?.descripcion ?? "";
         const SexoHIS = sexoDescripcion.charAt(0);
         dataAtencion?.recetaCabeceras
-            ?.filter((cabecera: any) => cabecera.idPuntoCarga == 5)
-            .forEach((cabecera: any) => {
-                cabecera.recetaDetalles
-                    ?.filter((detalle: any) => detalle.factCatalogoBienesInsumos?.tipoProducto === "0") // solo medicamentos
-                    .forEach((detalle: any, index: number) => {
-                        tratamientos.push({
-                            cantidad: detalle.cantidadPedida ?? null,
-                            codigo_medicamento: detalle.factCatalogoBienesInsumos?.codigo ?? "",
-                            frecuencia: detalle.observaciones ?? "",
-                            nro_diagnostico: index + 1,
-                            nro_tratamiento: null,
-                            periodo: null,
-                            unidad_tiempo: null
-                        });
-                    });
-            });
+  ?.filter((cabecera: any) => cabecera.idPuntoCarga == 5)
+  .forEach((cabecera: any) => {
+    cabecera.recetaDetalles
+      ?.filter(
+        (detalle: any) =>
+          detalle.factCatalogoBienesInsumos?.tipoProducto === "0" // solo medicamentos
+      )
+      .forEach((detalle: any, index: number) => {
+        tratamientos.push({
+          cantidad: detalle.cantidadPedida ?? "",
+          codigo_medicamento: detalle.factCatalogoBienesInsumos?.codigo ?? "",
+          frecuencia: detalle.observaciones ?? "",
+          nro_diagnostico: index + 1,
+          nro_tratamiento: "",
+          periodo: "",
+          unidad_tiempo: "",
+        });
+      });
+  });
+
+// 👇 Si no se agregó nada, meter un objeto vacío
+if (tratamientos.length === 0) {
+  tratamientos.push({
+    cantidad: "",
+    codigo_medicamento: "",
+    frecuencia: "",
+    nro_diagnostico: "",
+    nro_tratamiento: "",
+    periodo: "",
+    unidad_tiempo: "",
+  });
+}
 
 
 
@@ -171,8 +189,8 @@ const ContraReferencia = () => {
                     calificacion: dataForm?.condicion?.value,
                     calificacionComentario: dataForm?.condicion?.label
                 },
-                codEspecialidad: dataForm?.condicion?.especialidad, // ya esta en el select
-                condicion: dataForm?.condicion2?.value,  // ya esta en el select
+                codEspecialidad: dataForm?.refcon?.codigoEspecialidad,
+                condicion: dataForm?.condicion2?.value,
                 desc_cartera_servicio: "",
                 fechacontrareferencia: fechaHoy(),
                 fgRegistro: "4",
@@ -181,11 +199,11 @@ const ContraReferencia = () => {
                 idEnvio: "C",
                 idTipoAtencion: "C",
                 idTipoTransporte: dataForm?.tipoTransporte, // ya esta en el select
-                idestabDestino: "6000",
+                idestabDestino: dataForm?.refcon?.codigoestablecimientoOrigen,
                 idestabOrigen: "0754",
-                idreferencia: "1364666",
-                idupsOrigen: "220100",
-                idupsdestino: "220000",
+                idreferencia: dataForm?.refcon?.idReferencia,
+                idupsOrigen: dataForm?.refcon?.upsOrigen,
+                idupsdestino: dataForm?.refcon?.upsDestino,
                 recomendacion: dataForm?.tipoTransporte
             },
             diagnostico: diagnosticos,
@@ -199,8 +217,8 @@ const ContraReferencia = () => {
                 nombpac: dataPaciente?.PrimerNombre + (dataPaciente?.SegundoNombre ? ` ${dataPaciente?.SegundoNombre}` : ""),
                 nrohis: dataPaciente?.NroDocumento,
                 numdoc: dataPaciente?.NroDocumento,
-                ubigeoactual: "140122",
-                ubigeoreniec: "140122"
+                ubigeoactual:  dataPaciente?.IdDocIdentidad == 1 ? dataPaciente?.IdDistritoNacimiento : "",
+                ubigeoreniec: ""
             },
             personal_registra: {
                 apellidoMaterno: dataAtencion?.medico?.empleado?.apellidomaterno,
@@ -226,7 +244,7 @@ const ContraReferencia = () => {
             },
             tratamiento: tratamientos
         };
-
+    setverDataProcesada(dataenvio)
 
     }
 
@@ -287,37 +305,45 @@ const ContraReferencia = () => {
         []
     );
 
-   const getDatosRefconPx = async (dni:any) => {
+    const getDatosRefconPx = async (dni: any) => {
+        const res = await fetch("/api/consultaReferencia", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                establecimientoDestino: "754",
+                limite: "10",
+                // numerodocumento: dni,
+                numerodocumento: "42713040",
+                pagina: "1",
+                tipodocumento: "1",
+            }),
+        });
+        const data = await res.json();
 
-  const res = await fetch("/api/consultaReferencia", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      establecimientoDestino: "754",
-      limite: "10",
-    //  numerodocumento: dni,
-      numerodocumento: "42713040",
-      pagina: "1",
-      tipodocumento: "1",
-    }),
-  });
+        const referenciadatas2 = data?.datos?.datos.map((item: any) => ({
+            value: item.data?.idReferencia,
+            label: `${item.data?.establecimientoOrigen} - ${item.data?.estado} (${item.data?.descUpsDestino} ${item.data?.fechaEnvio})`, // 👈 lo que se ve en el select
+            ...item.data,
+        })) || [];
 
-  const data = await res.json();
-  console.log("Respuesta del backend:", data);
-};
+        setdatosPxRefCon(referenciadatas2);
+    };
 
     useEffect(() => {
         if (dataPaciente?.NroDocumento) {
             getDatosRefconPx(dataPaciente?.NroDocumento)
         }
-
     }, [dataPaciente])
 
 
     return (
         <div>
-      
-            <h1>probar con esta cuenta 481252</h1>
+            <pre>
+                {JSON.stringify(verDataProcesada, null, 2)}
+            </pre>
+            <h1>
+                481252
+            </h1>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
                 <input
                     type="text"
@@ -336,8 +362,45 @@ const ContraReferencia = () => {
                 <h3 className="text-lg font-semibold text-gray-900">Contrareferencia ss</h3>
                 <form onSubmit={handleSubmit2(onSubmit2)} className="space-y-4 p-4 border rounded-lg shadow">
                     {/* Select Condición Paciente */}
-                    <div>
+                    {/*
+   
+                   <div>
+      <label className="block mb-1 font-semibold">Referencia: </label>
+     {datosPxRefCon && datosPxRefCon.length > 0 ? (
+  <select className="border rounded p-2 w-full">
+    {datosPxRefCon.map((item:any) => (
+      <option key={item.data.idReferencia} value={item.data.idReferencia}>
+        {item.data.numeroReferencia} - {item.data.estado} ({item.data.fechaEnvio}) - {item.data.especialidad}
+      </option>
+    ))}
+  </select>
+) : (
+  <p className="text-gray-500">No hay referencias disponibles</p>
+)}
+    </div>
 
+*/}
+                    <div>
+                        <Controller
+                            name="refcon"
+                            control={control2}
+                            defaultValue={null}
+                            render={({ field }: { field: any }) => (
+                                <div>
+                                    <label className="block mb-1 font-semibold">Datos referencia :</label>
+                                    <Select
+                                        {...field}
+                                        instanceId="referencia-select"
+                                        options={datosPxRefCon}
+                                        placeholder="Seleccione una referencia"
+                                        className="mt-2 mb-2"
+                                        isClearable
+                                        value={field.idReferencia} // 👉 ahora field.value es un objeto { value, label }
+                                        onChange={(selected) => field.onChange(selected)} // 👉 guardamos objeto completo
+                                    />
+                                </div>
+                            )}
+                        />
                         <Controller
                             name="condicion"
                             control={control2}
@@ -358,7 +421,6 @@ const ContraReferencia = () => {
                                 </div>
                             )}
                         />
-
                     </div>
                     <Controller
                         name="condicion2"
@@ -401,7 +463,7 @@ const ContraReferencia = () => {
                             </div>
                         )}
                     />
-                    {/* Select Especialidades */}
+                    {/* Select Especialidades 
                     <Controller
                         name="especialidad"
                         control={control2}
@@ -422,7 +484,9 @@ const ContraReferencia = () => {
                             </div>
                         )}
                     />
+*/}
 
+                    {/*
 
                     <Controller
                         name="idestabDestino"
@@ -446,7 +510,8 @@ const ContraReferencia = () => {
                             />
                         )}
                     />
-
+*/}
+                    {/*
                     <Controller
                         name="idupsOrigen"
                         control={control2}
@@ -467,7 +532,7 @@ const ContraReferencia = () => {
                             </div>
                         )}
                     />
-
+*/}
                     <textarea
                         id="recomendacion"
                         {...register("recomendacion")}
