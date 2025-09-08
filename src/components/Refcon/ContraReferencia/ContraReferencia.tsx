@@ -7,6 +7,7 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
+import Swal from 'sweetalert2';
 const ContraReferencia = () => {
     const { register, handleSubmit } = useForm();
     const [datosPxRefCon, setdatosPxRefCon] = useState<any>();
@@ -124,14 +125,14 @@ const ContraReferencia = () => {
     };
 
     const onSubmit2 = async (dataForm: any) => {
-  
+        console.log(dataForm)
         const tratamientos: any[] = [];
         const diagnosticos: any[] = [];
 
         dataAtencion.atencionesDiagnosticos.forEach((item: any, index: number) => {
             diagnosticos.push({
                 diagnostico: item.diagnostico?.codigoCIEsinPto.trim(),
-                nro_diagnostico: index + 1,
+                nro_diagnostico: String(index + 1),
                 tipo_diagnostico: item.subclasificacionDiagnosticos?.codigo
             });
         });
@@ -141,6 +142,7 @@ const ContraReferencia = () => {
 
         const sexoDescripcion = dataAtencion?.medico?.empleado?.tiposSexo?.descripcion ?? "";
         const SexoHIS = sexoDescripcion.charAt(0);
+        const sexoPaciente = dataPaciente?.IdTipoSexo==2 ? "F":"M";
         dataAtencion?.recetaCabeceras
   ?.filter((cabecera: any) => cabecera.idPuntoCarga == 5)
   .forEach((cabecera: any) => {
@@ -154,7 +156,7 @@ const ContraReferencia = () => {
           cantidad: detalle.cantidadPedida ?? "",
           codigo_medicamento: detalle.factCatalogoBienesInsumos?.codigo ?? "",
           frecuencia: detalle.observaciones ?? "",
-          nro_diagnostico: index + 1,
+          nro_diagnostico: String(index + 1),
           nro_tratamiento: "",
           periodo: "",
           unidad_tiempo: "",
@@ -165,13 +167,13 @@ const ContraReferencia = () => {
 // 👇 Si no se agregó nada, meter un objeto vacío
 if (tratamientos.length === 0) {
   tratamientos.push({
-    cantidad: "",
+    cantidad: null,
     codigo_medicamento: "",
     frecuencia: "",
-    nro_diagnostico: "",
-    nro_tratamiento: "",
-    periodo: "",
-    unidad_tiempo: "",
+    nro_diagnostico: null,
+    nro_tratamiento: null,
+    periodo: null,
+    unidad_tiempo: null,
   });
 }
 
@@ -180,7 +182,7 @@ if (tratamientos.length === 0) {
         const dataenvio = {
             cita: {
                 fecha_vencimiento_sis: "",
-                id_financiador: 2,
+                id_financiador: "2",
                 num_afil: ""
             },
             datosContrareferencia: {
@@ -199,25 +201,28 @@ if (tratamientos.length === 0) {
                 idTipoAtencion: "C",
                 idTipoTransporte: dataForm?.idTipoTransporte?.value, // ya esta en el select
                 idestabDestino: dataForm?.refcon?.codigoestablecimientoOrigen,
-                idestabOrigen: "0754",
+                idestabOrigen: "754",
                 idreferencia: dataForm?.refcon?.idReferencia,
-                idupsOrigen: dataForm?.refcon?.upsOrigen,
-                idupsdestino: dataForm?.refcon?.upsDestino,
-                recomendacion: dataForm?.tipoTransporte
+                idupsOrigen: dataForm?.refcon?.upsDestino,
+                idupsdestino: dataForm?.refcon?.upsOrigen,
+                recomendacion: dataForm?.recomendacion
             },
             diagnostico: diagnosticos,
             paciente: {
                 apelmatpac: dataPaciente?.ApellidoMaterno,
                 apelpatpac: dataPaciente?.ApellidoPaterno,
+                celularpac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
+                correopac:dataPaciente?.Email ? dataPaciente?.Email : "",
                 direccion: dataPaciente?.DireccionDomicilio ? dataPaciente?.DireccionDomicilio : "",
                 fechnacpac: fechaNacPaciente,
-                idsexo: dataPaciente?.ApellidoPaterno.charAt(0),
-                idtipodoc: dataPaciente?.IdDocIdentidad,
+                idsexo: sexoPaciente,
+                idtipodoc: String(dataPaciente?.IdDocIdentidad),
                 nombpac: dataPaciente?.PrimerNombre + (dataPaciente?.SegundoNombre ? ` ${dataPaciente?.SegundoNombre}` : ""),
                 nrohis: dataPaciente?.NroDocumento,
                 numdoc: dataPaciente?.NroDocumento,
-                ubigeoactual:  dataPaciente?.IdDocIdentidad == 1 ? dataPaciente?.IdDistritoNacimiento : "",
-                ubigeoreniec: ""
+                telefonopac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
+                ubigeoactual:  dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
+                ubigeoreniec:  dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
             },
             personal_registra: {
                 apellidoMaterno: dataAtencion?.medico?.empleado?.apellidomaterno,
@@ -228,7 +233,7 @@ if (tratamientos.length === 0) {
                 nombres: dataAtencion?.medico?.empleado?.nombres,
                 nroDocumento: dataAtencion?.medico?.empleado?.dni.trim(),
                 sexo: SexoHIS,
-                tipoDocumento: dataAtencion?.medico?.empleado?.idtipodocumento,
+                tipoDocumento: String(dataAtencion?.medico?.empleado?.idtipodocumento),
             },
             responsableContrareferencia: {
                 apelmatrefiere: "GRANDA",
@@ -243,7 +248,9 @@ if (tratamientos.length === 0) {
             },
             tratamiento: tratamientos
         };
-
+        console.log("=================================")
+console.log(dataenvio)
+console.log("=================================")
     
 const response = await fetch("/api/refcon/saveContrareferencia", {
   method: "POST",
@@ -254,7 +261,19 @@ const response = await fetch("/api/refcon/saveContrareferencia", {
 const result = await response.json();
 console.log("Respuesta del backend:", result);
     /**/
+Swal.fire({
+  title: "<strong>Datos</u></strong>",
+  icon: "info",
+  html: `
+    <pre style="text-align:left; white-space:pre-wrap;">
+${JSON.stringify(result, null, 2)}
+    </pre>
+  `,
+  showCloseButton: true,
+  showCancelButton: true,
+  focusConfirm: false,
 
+});
     }
 
     const especialidadOptions = useMemo(() => {
@@ -271,7 +290,7 @@ console.log("Respuesta del backend:", result);
             if (searchValue && searchValue.length >= 3) {
                 try {
                     const res = await fetch(
-                        `http://192.168.13.7:9797/establecimiento/buscar/${searchValue}`
+                        `${process.env.apijimmynew}/establecimiento/buscar/${searchValue}`
                     );
                     const data = await res.json();
 
@@ -347,9 +366,7 @@ console.log("Respuesta del backend:", result);
 
     return (
         <div>
-            <pre>
-                {JSON.stringify(verDataProcesada, null, 2)}
-            </pre>
+    
             <h1>
                 481252
             </h1>
@@ -544,7 +561,8 @@ console.log("Respuesta del backend:", result);
 */}
                     <textarea
                         id="recomendacion"
-                        {...register("recomendacion")}
+                        
+                        {...register2("recomendacion")}
                         className="w-full border rounded-md p-2"
                         rows={4}
                         placeholder="Escribe tus recomendacion aquí..."
