@@ -92,27 +92,27 @@ const fetchOptionsByCodigo = async (codigo: string): Promise<Establecimiento[]> 
 
 
 export const FormAdmisionExternos = (data: any) => {
-  
+
     const referenciaInputRef = useRef<HTMLInputElement>(null);
     const { diactual } = data
     const { ffFinanciamiento } = data;
     const { consultorio } = data;
-        const { tipoDoc } = data;
+    const { tipoDoc } = data;
     const { usuario } = data;
-     const { porcentaje } = data;
+    const { porcentaje } = data;
 
 
 
- const consultoriocupos = useMemo(() => {
-  return consultorio?.map((item: any) => {
-    const cupos = Number(item.cuposLibres);
-    const cuposCalculados = Math.floor((cupos * (porcentaje ?? 0)) / 100);
-    return {
-      ...item,
-      cuposLibres: cuposCalculados
-    };
-  });
-}, [consultorio, porcentaje]);
+    const consultoriocupos = useMemo(() => {
+        return consultorio?.map((item: any) => {
+            const cupos = Number(item.cuposLibres);
+            const cuposCalculados = Math.floor((cupos * (porcentaje ?? 0)) / 100);
+            return {
+                ...item,
+                cuposLibres: cuposCalculados
+            };
+        });
+    }, [consultorio, porcentaje]);
     const [nearest, setNearest] = useState<any>(null);
     const [optionsCombo, setOptionsCombo] = useState<any[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
@@ -187,6 +187,25 @@ export const FormAdmisionExternos = (data: any) => {
     const { control, register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<formAdmision>();
 
     const BuscadorDni: SubmitHandler<InputBusquedadDni> = async (formdata) => {
+        console.log(formdata)
+        if(formdata.idDocIdentidad == "0"){
+            const dataafiltemp={
+                disa:"140",
+                tipo_formato:"E",
+                nro_contrato:formdata?.dni,
+            }
+           const data=await axios.post(`${process.env.apifms}/v1/sis/sisTemporal`,dataafiltemp)
+           console.log(data?.data?.data?.IdError)
+           if(data?.data?.data?.IdError == "14"){
+            setEnableNewUser(true)
+            showAlert("Atencion", "Paciente no posee afiliciación temporal.")
+           }
+           if(data?.data?.data?.IdError == "0"){
+            console.log(data?.data?.data)
+           }
+           
+        }
+        else{
         setEnableNewUser(false)
         try {
             setDatospx(null)
@@ -255,7 +274,7 @@ export const FormAdmisionExternos = (data: any) => {
             showAlert("Atencion", "DNI no encontrado.")
             setbuttonLoading(false)
             console.error(error);
-        }
+        }}
     }
 
     const AutoseleccionEstablecimiento = async (codigo: string) => {
@@ -269,7 +288,7 @@ export const FormAdmisionExternos = (data: any) => {
     }
 
     const AdmisionarPx: SubmitHandler<formAdmision> = async (formData: any) => {
-     
+
         setIsLoadingAdmisionar(true)
         const data = await axios.put(`${process.env.apijimmynew}/paciente/actualizarcelxidpaciente/${formData?.idPaciente}/${formData?.telefono}`)
 
@@ -497,10 +516,10 @@ export const FormAdmisionExternos = (data: any) => {
                     <FormReprogramacion isModalOpenR={isModalOpenR} setIsModalOpenR={setIsModalOpenR} openModalR={openModalR} closeModalR={closeModalR} />
                     {
                         consultoriocupos?.map((data: any, index: number) => {
-  /*
-                            if (data.cuposLibres <= 0 && diactual !== data.fecha) {
-                                return null; // No mostrar nada si no cumple la condición
-                            }*/
+                            /*
+                                                      if (data.cuposLibres <= 0 && diactual !== data.fecha) {
+                                                          return null; // No mostrar nada si no cumple la condición
+                                                      }*/
                             return (
 
                                 <div
@@ -526,11 +545,10 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                         })
                     }
                 </div>
-             
-                {(datosConsultorio?.nombreServicio && datosConsultorio?.cuposLibres>0) && (
+
+                {(datosConsultorio?.nombreServicio && datosConsultorio?.cuposLibres > 0) && (
                     <>
 
-                    
                         <form onSubmit={handleSubmit2(BuscadorDni)}>
                             <div className="grid grid-cols-3 gap-2 mt-3">
                                 <select
@@ -538,10 +556,11 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                     defaultValue="1"
                                     className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 }`}
                                 >
-                                    {tipoDoc && tipoDoc.length > 0 && tipoDoc.map((opcion: any) => {
+                                    {tipoDoc && tipoDoc.length > 0 && tipoDoc
+                                     .filter((opcion: any) => [0, 1, 2].includes(opcion.idDocIdentidad)).map((opcion: any) => {
                                         return (
                                             <option key={opcion.idDocIdentidad} value={opcion.idDocIdentidad}>
-                                                {opcion.descripcion}
+                                                  {opcion.descripcion === "Sin Documento" ? "Temporal" : opcion.descripcion}
                                             </option>
                                         );
                                     })}

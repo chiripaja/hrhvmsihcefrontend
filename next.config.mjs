@@ -6,7 +6,7 @@ const nextConfig = {
     apiws: 'ws://192.168.210.225:6060', // ..produccion manuel
     //   apiurl: 'http://192.168.13.14:6060',//  .. PRUEBA manuel,
      apiurl: 'http://192.168.210.225:6060',//  .. produccion manuel,
-  
+    apifms:'http://192.168.210.18:8001', // ..produccion manuel
     apimanuel: 'http://192.168.11.242:4500',
     apiauditoriosis: 'http://192.168.210.225:8081',
      apijimmynew: "http://192.168.13.7:9797",//prueba

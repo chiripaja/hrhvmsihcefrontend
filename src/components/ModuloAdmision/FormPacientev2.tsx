@@ -182,12 +182,15 @@ export const FormPacientev2 = ({ usuario }: any) => {
         select('pais')
     }, [])
 
-    const tipo_docver=watch('tipo_doc')
+    const tipo_docver = watch('tipo_doc')
     //Tipos Documento    
     const tiposDocumento = async () => {
         try {
+            console.log("entrandooooooo")
             const { data } = await axios.get(`${process.env.apiurl}/Publico/TiposDocumentos`)
-      
+            console.log("===================================================")
+            console.log(data)
+            console.log("===================================================")
             setTipoDoc(data)
             setTipoDocTuto(data)
             setValue('tipo_doc', '1')
@@ -275,8 +278,8 @@ export const FormPacientev2 = ({ usuario }: any) => {
         setUbigeoNacimiento('')
         setImg('')
         const numerodocumentoactual = await watch('num_doc')
-     
-   
+
+
         let apellidoPaterno: any = ''
         let apellidoMaterno: any = ''
         let primer_nombre: any = ''
@@ -814,10 +817,10 @@ export const FormPacientev2 = ({ usuario }: any) => {
 
     useEffect(() => {
         if (usuario) {
-   
-          setValue('tipo_doc', '1'); 
+
+            setValue('tipo_doc', '1');
         }
-      }, [usuario, setValue]);
+    }, [usuario, setValue]);
 
 
 
@@ -846,23 +849,23 @@ export const FormPacientev2 = ({ usuario }: any) => {
                         )}
                     </div>
                     <div>
-                    <Controller
-  name="tipo_doc"
-  control={control}  // Asegúrate de que control esté pasando desde useForm
-  defaultValue="1"  // Establece un valor predeterminado (por ejemplo, "1")
-  render={({ field }) => (
-    <select
-      {...field}  // Es importante pasar las propiedades de field aquí
-      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-    >
-      {tipoDoc && tipoDoc.map((td: any) => (
-        <option key={td.idDocIdentidad} value={td.idDocIdentidad}>
-          {td.descripcion}
-        </option>
-      ))}
-    </select>
-  )}
-/>
+                        <Controller
+                            name="tipo_doc"
+                            control={control}  // Asegúrate de que control esté pasando desde useForm
+                            defaultValue="1"  // Establece un valor predeterminado (por ejemplo, "1")
+                            render={({ field }) => (
+                                <select
+                                    {...field}  // Es importante pasar las propiedades de field aquí
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    {tipoDoc && tipoDoc.map((td: any) => (
+                                        <option key={td.idDocIdentidad} value={td.idDocIdentidad}>
+                                            {td.descripcion}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                        />
                     </div>
                     <div>
                         <input
@@ -943,11 +946,11 @@ export const FormPacientev2 = ({ usuario }: any) => {
                         <InputWithHeader type="date" label="Fecha de Nacimiento" requerido={true} deshabilitado={false} {...register('fch_nac', { required: 'Este campo es requerido' })} error={errors.fch_nac || null} />
                     </div>
                     <div className='col-span-1 sm:col-span-2 md:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-3'>
-                     
+
                         <div className='col-span-2 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6'>
                             {/*  <InputWithHeader label="Tercer Nombre" deshabilitado={false} {...register('tercer_nombre')} />*/}
-                        
-                           
+
+
                         </div>
                     </div>
 
