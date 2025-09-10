@@ -17,9 +17,9 @@ export async function POST(req) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ipclient: "38.250.134.82", // aquí pones el valor real
-          password: "demo@2025@",    // tu password
-          username: "USR_00000754",  // tu username
+          ipclient: "38.250.134.82", 
+          password: "demo@2025@",    
+          username: "USR_00000754",  
         },
         body: JSON.stringify(payload?.contrareferenciaFinal),
       }

@@ -64,7 +64,7 @@ export const Referencia = () => {
             });
           });
       });
-    
+
     setdataAtencion(tratamientos)
     const diagnosticos: any[] = [];
     dataAtenc.atencionesDiagnosticos.forEach((item: any, index: number) => {
@@ -84,69 +84,151 @@ export const Referencia = () => {
     const dataenvio = {
       cita: {
         fecha_vencimiento_sis: "",
-        id_financiador: 2,
-        num_afil: ""
+        frecuencia_cardiaca: "",
+        frecuencia_respiratoria: "",
+        id_financiador: "",
+        num_afil: "",
+        peso: "",
+        presion_arterial_diastolica: "",
+        presion_arterial_sistolica: "",
+        resumeanamnesis: "",
+        resumeexfisico: "",
+        talla: "",
+        temperatura: ""
       },
-      datosContrareferencia: {
-        calificacionReferencia: {
-          calificacion: "E",
-          calificacionComentario: "ESTABLE"
+      cpt: {
+        cpt_1: "",
+        cpt_2: "",
+        cpt_3: "",
+        cpt_4: "",
+        cpt_5: "",
+        cpt_6: "",
+        cpt_7: "",
+        cpt_8: "",
+        cpt_9: "",
+        cpt_10: "",
+        cpt_11: "",
+        cpt_12: "",
+        cpt_13: "",
+        cpt_14: "",
+        cpt_15: "",
+        cpt_16: "",
+        cpt_17: "",
+        cpt_18: ""
+      },
+      datos_referencia: {
+        codEspecialidad: "",
+        condicion: "",
+        desc_Cartera_servicio: "",
+        fechaReferencia: "",
+        fgRegistro: "",
+        horaReferencia: "",
+        idCarteraServicio: "",
+        idEnvio: "",
+        idTipoAtencion: "",
+        idTipoTransporte: "",
+        idestabDestino: "",
+        idestabOrigen: "",
+        idupsOrigen: "",
+        idupsdestino: "",
+        motivo_referencia: {
+          idmotivoref: "",
+          obsmotivoref: ""
         },
-        codEspecialidad: "1-0008",
-        condicion: "ME",
-        desc_cartera_servicio: "",
-        fechacontrareferencia: fechaHoy(),
-        fgRegistro: "4",
-        horaContrareferencia: horaActual(),
-        idCarteraServicio: null,
-        idEnvio: "C",
-        idTipoAtencion: "C",
-        idTipoTransporte: "T",
-        idestabDestino: "6000",
-        idestabOrigen: "7633",
-        idreferencia: "1364666",
-        idupsOrigen: "220100",
-        idupsdestino: "220000",
-        recomendacion: " recomendación"
+        notasobs: ""
       },
-      diagnostico: diagnosticos,
+      diagnostico: [
+        {
+          diagnostico: "",
+          nro_diagnostico: "",
+          tipo_diagnostico: ""
+        }
+      ],
       paciente: {
-        apelmatpac: datapaciente?.ApellidoMaterno,
-        apelpatpac: datapaciente?.ApellidoPaterno,
-        direccion: datapaciente?.DireccionDomicilio ? datapaciente?.DireccionDomicilio : "",
-        fechnacpac: fechaNacPaciente,
-        idsexo: datapaciente?.ApellidoPaterno.charAt(0),
-        idtipodoc: datapaciente?.IdDocIdentidad,
-        nombpac: datapaciente?.PrimerNombre + (datapaciente?.SegundoNombre ? ` ${datapaciente?.SegundoNombre}` : ""),
-        nrohis: datapaciente?.NroDocumento,
-        numdoc: datapaciente?.NroDocumento,
-        ubigeoactual: "140122",
-        ubigeoreniec: "140122"
+        apelmatpac: "",
+        apelpatpac: "",
+        celularpac: "",
+        correopac: "",
+        direccion: "",
+        fechnacpac: "",
+        idsexo: "",
+        idtipodoc: "",
+        nombpac: "",
+        nrohis: "",
+        numdoc: "",
+        telefonopac: "",
+        ubigeoactual: "",
+        ubigeoreniec: ""
+      },
+      persona_acompana: {
+        apelmatacomp: "",
+        apelpatacomp: "",
+        fechanacacomp: "",
+        idcolegioacomp: "",
+        idprofesionacomp: "",
+        idsexoacomp: "",
+        idtipodocacmop: "",
+        nombperacomp: "",
+        numdocacomp: ""
+      },
+      persona_establecimiento: {
+        apelmata: "",
+        apelpata: "",
+        fechanac: "",
+        idcolegio: "",
+        idprofesion: "",
+        idsexo: "",
+        idtipodoc: "",
+        nombper: "",
+        numdoc: ""
       },
       personal_registra: {
-        apellidoMaterno: dataAtenc?.medico?.empleado?.apellidomaterno,
-        apellidoPaterno: dataAtenc?.medico?.empleado?.apellidoPaterno,
-        fechaNacimiento: fechaNacMedico,
-        idcolegio: dataAtenc?.medico?.idcolegiohis,
-        idprofesion: dataAtenc?.medico?.empleado?.tiposEmpleado?.tipoEmpleadoHIS,
-        nombres: dataAtenc?.medico?.empleado?.nombres,
-        nroDocumento: dataAtenc?.medico?.empleado?.dni.trim(),
-        sexo: SexoHIS,
-        tipoDocumento: dataAtenc?.medico?.empleado?.idtipodocumento,
+        apellidoMaterno: "",
+        apellidoPaterno: "",
+        fechaNacimiento: "",
+        idcolegio: "",
+        idprofesion: "",
+        nombres: "",
+        nroDocumento: "",
+        sexo: "",
+        tipoDocumento: ""
       },
-      responsableContrareferencia: {
-        apelmatrefiere: "GRANDA",
-        apelpatrefiere: "JIMENEZ",
-        fechanacrefiere: "19661105",
-        idcolegioref: "123456",
-        idprofesionref: "1",
-        idsexorefiere: "M",
-        idtipodocref: "1",
-        nombperrefiere: "NESTOR ABEL",
-        numdocref: "10258720"
+      responsable_referencia: {
+        apelmatrefiere: "",
+        apelpatrefiere: "",
+        fechanacrefiere: "",
+        idcolegioref: "",
+        idprofesionref: "",
+        idsexorefiere: "",
+        idtipodocref: "",
+        nombperrefiere: "",
+        numdocref: ""
       },
-      tratamiento: tratamientos
+      tratamiento: [
+        {
+          cantidad: 0,
+          codigo_medicamento: "",
+          frecuencia: "",
+          nro_diagnostico: 0,
+          nro_tratamiento: 0,
+          periodo: 0,
+          unidad_tiempo: 0
+        }
+      ],
+      tutor: {
+        apellido_materno: "",
+        apellido_paterno: "",
+        celular: "",
+        correo: "",
+        estado_civil: "",
+        fecha_nacimiento: "",
+        nombres: "",
+        numero_documento: "",
+        sexo: "",
+        tipo_documento: ""
+      }
     };
+
     setverDataProcesada(dataenvio)
     console.log(dataenvio)
   };
