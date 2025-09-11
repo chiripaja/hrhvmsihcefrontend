@@ -142,7 +142,6 @@ export const FormAdmisionExternos = (data: any) => {
         const fetchedOptions = await fetchOptions(inputValue);
         setOptionsCombo(fetchedOptions);
         setIsLoading(false);
-
     }, []);
 
 
@@ -155,6 +154,7 @@ export const FormAdmisionExternos = (data: any) => {
     };
 
     const verdata = async (data: any, index: any) => {
+        
         setCargandoLista(true);
         setDatosConsultorio(data);
         setActiveIndex(index);
@@ -540,15 +540,12 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                         </div>
                                     </div>
                                 </div>
-
                             )
                         })
                     }
                 </div>
-
                 {(datosConsultorio?.nombreServicio && datosConsultorio?.cuposLibres > 0) && (
                     <>
-
                         <form onSubmit={handleSubmit2(BuscadorDni)}>
                             <div className="grid grid-cols-3 gap-2 mt-3">
                                 <select
@@ -682,9 +679,7 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                                 <div className="text-red-500 col-span-3 text-center">
                                                     {errors.referenciaNumero && <span>{errors.referenciaNumero.message}</span>}
                                                 </div>
-
                                             </div>
-
                                         </div>
                                     )}
                                     <div className="grid grid-cols-2 gap-2 mt-3">

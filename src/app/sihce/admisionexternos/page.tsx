@@ -6,6 +6,7 @@ export default async function AdmisionExternosPage() {
   let porcentaje = null;
   try {
     const res = await fetch(`${process.env.apijimmynew}/citas/porcentajecitas`, { cache: 'no-store' });
+    console.log(`${process.env.apijimmynew}/citas/porcentajecitas`)
     if (!res.ok) throw new Error('Error en API');
     const data = await res.json();
     porcentaje = data?.porcentajecitas ?? null;
