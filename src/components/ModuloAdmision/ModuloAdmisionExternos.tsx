@@ -255,7 +255,6 @@ useEffect(() => {
                 </div>
             ) : (
                 <>
-             <h1> hola mundo {JSON.stringify(porcentaje,null,2)}</h1>
                     <div className="grid grid-cols-12 gap-4  h-[90vh] sm:overflow-hidden bg-white">
                         <div className="col-span-12 print:hidden">
                             <h1>{TextoLoading}</h1>

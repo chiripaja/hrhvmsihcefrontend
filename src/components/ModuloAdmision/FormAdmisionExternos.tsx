@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import Link from 'next/link';
 import { FormReprogramacion } from "./FormReprogramacion";
 import { getData } from '../helper/axiosHelper';
+import { TicketImpresionExt } from "./TicketImpresionExt";
 type InputBusquedadDni = {
     dni: string,
     idDocIdentidad: string,
@@ -560,12 +561,8 @@ export const FormAdmisionExternos = (data: any) => {
 
     return (
         <>
-            10030413
-          
-            
-            <div className=" p-3 print:hidden ">
-                <div className="flex justify-center ">
-
+            <div className="p-3 print:hidden">
+                <div className="flex justify-center">
                     {enableNewUser && (
                         <button
                             className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
@@ -889,7 +886,7 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                 </div>
             </div>
             {nearest && (
-                <TicketImpresion Datos={nearest} />
+                <TicketImpresionExt Datos={nearest} />
             )}
         </>
     )
