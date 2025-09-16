@@ -180,7 +180,7 @@ export const FormAdmision = (data: any) => {
             const data = await axios.post(`${process.env.apifms}/v1/sis/sisTemporal`, dataafiltemp)
 
             if (data?.data?.data?.IdError == "14") {
-
+setDatospx(null)
                 setEnableNewUser(true)
                 showAlert("Atencion", "Paciente no posee afiliciación temporal.")
 
@@ -205,7 +205,7 @@ export const FormAdmision = (data: any) => {
                 if(respuestacreacion?.data?.idPaciente){   
 
                     try {
-                           setDatospx(null)
+                          
                 setValue('idIafa', "")
                 setValue('referenciaNumero', "")
                 setValue('referenciaCodigo', "")

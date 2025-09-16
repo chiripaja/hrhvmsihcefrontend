@@ -195,7 +195,7 @@ export const FormAdmisionExternos = (data: any) => {
             const data = await axios.post(`${process.env.apifms}/v1/sis/sisTemporal`, dataafiltemp)
 
             if (data?.data?.data?.IdError == "14") {
-
+ setDatospx(null)
                 setEnableNewUser(true)
                 showAlert("Atencion", "Paciente no posee afiliciación temporal.")
 
@@ -217,68 +217,68 @@ export const FormAdmisionExternos = (data: any) => {
 
                 const respuestacreacion = await axios.post(`${process.env.apijimmynew}/paciente/temporal`, datad)
                 console.log(respuestacreacion?.data?.idPaciente)
-                if(respuestacreacion?.data?.idPaciente){   
-
-                    try {
-                           setDatospx(null)
-                setValue('idIafa', "")
-                setValue('referenciaNumero', "")
-                setValue('referenciaCodigo', "")
-                setbuttonLoading(true)
-                 const dataEnvio = {
-                    ip: "string",
-                    usuario: usuario.user.id,
-                    endPoint: "string",
-                    fechaConsulta: "string",
-                    tipoDocumento: "string",
-                    numeroDocumento: "string"
-                }
-                console.log(respuestacreacion?.data)
                 if (respuestacreacion?.data?.idPaciente) {
-                    try {
-                        const { data: telefono } = await axios.get(
-                            `${process.env.apijimmynew}/paciente/findTelefonoByIdPacienteVer/${respuestacreacion?.data?.idPaciente}`
-                        );
-                        setValue("telefono", telefono ?? "");
-                    } catch (error) {
-                        if (axios.isAxiosError(error) && error.response?.status === 404) {
-                            // No hay teléfono, continuamos sin error
-                            setValue("telefono", "");
-                        } else {
-                            // Si es otro error, lo mostramos o manejamos
-                            console.error("Error obteniendo teléfono:", error);
-                        }
-                    }
 
-                    console.log(data?.data?.data?.EESS)
-                    if (data?.data?.data?.IdError == '0') {
-                        console.log("entra aqui")
-                        setValue('idIafa', 3)
-                    }
-                    if (data?.data?.data?.IdError == '0' ) {
-                    showAlertSuccess("Atencion", "Paciente si posee SIS.")
-                    setValidacionListarIafas(1)
-                                       }
-                                        const dataPx={
-                        paciente:{
- idPaciente:respuestacreacion?.data?.idPaciente,
-                        apenom:respuestacreacion?.data?.apellidoMaterno + " " + respuestacreacion?.data?.apellidoPaterno + " " + respuestacreacion?.data?.primerNombre,
+                    try {
+                       
+                        setValue('idIafa', "")
+                        setValue('referenciaNumero', "")
+                        setValue('referenciaCodigo', "")
+                        setbuttonLoading(true)
+                        const dataEnvio = {
+                            ip: "string",
+                            usuario: usuario.user.id,
+                            endPoint: "string",
+                            fechaConsulta: "string",
+                            tipoDocumento: "string",
+                            numeroDocumento: "string"
                         }
-                                           }
-                                         if (data?.data?.data?.EESS) {
-                    await AutoseleccionEstablecimiento(data?.data?.data?.EESS.slice(-5))
-                }
-                    setDatospx(dataPx);
-                     setbuttonLoading(false)
-                } else {
-                    setEnableNewUser(true)
-                    showAlert("Atencion", "paciente no encontrado.")
-                }
+                        console.log(respuestacreacion?.data)
+                        if (respuestacreacion?.data?.idPaciente) {
+                            try {
+                                const { data: telefono } = await axios.get(
+                                    `${process.env.apijimmynew}/paciente/findTelefonoByIdPacienteVer/${respuestacreacion?.data?.idPaciente}`
+                                );
+                                setValue("telefono", telefono ?? "");
+                            } catch (error) {
+                                if (axios.isAxiosError(error) && error.response?.status === 404) {
+                                    // No hay teléfono, continuamos sin error
+                                    setValue("telefono", "");
+                                } else {
+                                    // Si es otro error, lo mostramos o manejamos
+                                    console.error("Error obteniendo teléfono:", error);
+                                }
+                            }
+
+                            console.log(data?.data?.data?.EESS)
+                            if (data?.data?.data?.IdError == '0') {
+                                console.log("entra aqui")
+                                setValue('idIafa', 3)
+                            }
+                            if (data?.data?.data?.IdError == '0') {
+                                showAlertSuccess("Atencion", "Paciente si posee SIS.")
+                                setValidacionListarIafas(1)
+                            }
+                            const dataPx = {
+                                paciente: {
+                                    idPaciente: respuestacreacion?.data?.idPaciente,
+                                    apenom: respuestacreacion?.data?.apellidoMaterno + " " + respuestacreacion?.data?.apellidoPaterno + " " + respuestacreacion?.data?.primerNombre,
+                                }
+                            }
+                            if (data?.data?.data?.EESS) {
+                                await AutoseleccionEstablecimiento(data?.data?.data?.EESS.slice(-5))
+                            }
+                            setDatospx(dataPx);
+                            setbuttonLoading(false)
+                        } else {
+                            setEnableNewUser(true)
+                            showAlert("Atencion", "paciente no encontrado.")
+                        }
                     } catch (error) {
-                            console.log(error)
+                        console.log(error)
                     }
                 }
-               
+
             }
         }
         else {
@@ -667,6 +667,7 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                 )}
                             </div>
                         </form>
+                        
                         {datospx?.paciente?.idPaciente && (
                             <>
                                 <div className="flex ">
