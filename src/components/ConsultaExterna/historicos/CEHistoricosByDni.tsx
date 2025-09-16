@@ -267,6 +267,34 @@ export const CEHistoricosByDni = ({ dni }: props) => {
                                       )}
                                     </div>
                                   ))}
+
+
+{item?.solicitudProcedimientos?.length > 0 && (
+  <div
+    key={item?.solicitudProcedimientos}
+    className="bg-white shadow-md rounded-xl p-5 mb-6 border border-gray-200"
+  >
+    <h3 className="text-lg font-semibold text-gray-800 mb-4">
+      Procedimientos Solicitados
+    </h3>
+    <ul className="space-y-3">
+      {item?.solicitudProcedimientos?.map((data: any, index: number) => (
+        <li key={index} className="flex flex-col">
+          <div className="flex items-start gap-2">
+            <span className="text-blue-600 font-medium text-sm">
+              {data?.cantidad} unid.
+            </span>
+            <span className="font-semibold text-gray-800">
+              {data?.factCatalogoServicios?.nombre} <span className='text-gray-500'>{data?.observacion || ""}</span>  
+            </span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
+
                                 </div>
 
                                 {/* Receta Cabeceras - Punto Carga 5 Section */}
