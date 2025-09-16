@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FaCalendarAlt, FaPlus } from "react-icons/fa";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
@@ -19,6 +19,8 @@ import { Tooltip } from '../ui/Tooltip';
 import { useRouter } from "next/router";
 import Link from 'next/link';
 import { FormReprogramacion } from "./FormReprogramacion";
+import { getData } from '../helper/axiosHelper';
+import { TicketImpresionExt } from "./TicketImpresionExt";
 type InputBusquedadDni = {
     dni: string,
     idDocIdentidad: string,
@@ -88,9 +90,7 @@ const fetchOptionsByCodigo = async (codigo: string): Promise<Establecimiento[]> 
 
 
 
-
-
-export const FormAdmision = (data: any) => {
+export const FormAdmisionExternos = (data: any) => {
 
     const referenciaInputRef = useRef<HTMLInputElement>(null);
     const { diactual } = data
@@ -98,6 +98,20 @@ export const FormAdmision = (data: any) => {
     const { consultorio } = data;
     const { tipoDoc } = data;
     const { usuario } = data;
+    const { porcentaje } = data;
+
+
+
+    const consultoriocupos = useMemo(() => {
+        return consultorio?.map((item: any) => {
+            const cupos = Number(item.cuposLibres);
+            const cuposCalculados = Math.floor((cupos * (porcentaje ?? 0)) / 100);
+            return {
+                ...item,
+                cuposLibres: cuposCalculados
+            };
+        });
+    }, [consultorio, porcentaje]);
     const [nearest, setNearest] = useState<any>(null);
     const [optionsCombo, setOptionsCombo] = useState<any[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
@@ -114,6 +128,7 @@ export const FormAdmision = (data: any) => {
     const [enableNewUser, setEnableNewUser] = useState(false);
     const [validacionListarIafas, setValidacionListarIafas] = useState(0);
     const [isModalOpenR, setIsModalOpenR] = useState(false);
+
     const openModalR = () => {
         setIsModalOpenR(true);
     };
@@ -126,7 +141,6 @@ export const FormAdmision = (data: any) => {
         const fetchedOptions = await fetchOptions(inputValue);
         setOptionsCombo(fetchedOptions);
         setIsLoading(false);
-
     }, []);
 
 
@@ -139,6 +153,7 @@ export const FormAdmision = (data: any) => {
     };
 
     const verdata = async (data: any, index: any) => {
+
         setCargandoLista(true);
         setDatosConsultorio(data);
         setActiveIndex(index);
@@ -149,7 +164,7 @@ export const FormAdmision = (data: any) => {
     const cargarListadoProgramados = async (idprogramacion: any) => {
         try {
             const dataProgramacion = await axios.get(`${process.env.apiurl}/Citados/${idprogramacion}`);
-            const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0);
+            const filteredData = dataProgramacion?.data.filter((data: any) => data?.idCuentaAtencion !== 0 && data?.idEstablecimientoExterno == usuario?.user?.idEstablecimientoExterno);
             setListadoProgramacion(filteredData);
         } catch (error) {
             console.error("Error al cargar el listado programado:", error);
@@ -170,7 +185,7 @@ export const FormAdmision = (data: any) => {
 
     const { control, register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<formAdmision>();
 
-      const BuscadorDni: SubmitHandler<InputBusquedadDni> = async (formdata) => {
+    const BuscadorDni: SubmitHandler<InputBusquedadDni> = async (formdata) => {
         if (formdata.idDocIdentidad == "0") {
             const dataafiltemp = {
                 disa: "140",
@@ -349,7 +364,10 @@ export const FormAdmision = (data: any) => {
     }
 
     const AdmisionarPx: SubmitHandler<formAdmision> = async (formData: any) => {
+
         setIsLoadingAdmisionar(true)
+        const data = await axios.put(`${process.env.apijimmynew}/paciente/actualizarcelxidpaciente/${formData?.idPaciente}/${formData?.telefono}`)
+
         if (formData.idIafa === 3) {
             if (!formData?.idPaciente) {
                 showAlert("Atencion", "No se encuentra al paciente.")
@@ -543,9 +561,8 @@ export const FormAdmision = (data: any) => {
 
     return (
         <>
-            <div className=" p-3 print:hidden ">
-                <div className="flex justify-center ">
-
+            <div className="p-3 print:hidden">
+                <div className="flex justify-center">
                     {enableNewUser && (
                         <button
                             className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
@@ -572,10 +589,11 @@ export const FormAdmision = (data: any) => {
                 <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 mt-3 gap-2">
                     <FormReprogramacion isModalOpenR={isModalOpenR} setIsModalOpenR={setIsModalOpenR} openModalR={openModalR} closeModalR={closeModalR} />
                     {
-                        consultorio?.map((data: any, index: number) => {
-                            if (data.cuposLibres <= 0 && diactual !== data.fecha) {
-                                return null; // No mostrar nada si no cumple la condición
-                            }
+                        consultoriocupos?.map((data: any, index: number) => {
+                            /*
+                                                      if (data.cuposLibres <= 0 && diactual !== data.fecha) {
+                                                          return null; // No mostrar nada si no cumple la condición
+                                                      }*/
                             return (
 
                                 <div
@@ -596,17 +614,11 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                         </div>
                                     </div>
                                 </div>
-
                             )
                         })
                     }
                 </div>
-                {(datosConsultorio?.cuposLibres <= 0) ? <>
-                    <div className="p-4 mb-4 mt-3 text-sm text-red-700 rounded-lg bg-red-200 dark:bg-gray-800 dark:text-red-700" role="alert">
-                        <span className="font-medium">Atencion!</span> Estara admisionando una cita adicional
-                    </div>
-                </> : <></>}
-                {datosConsultorio?.nombreServicio && (
+                {(datosConsultorio?.nombreServicio && datosConsultorio?.cuposLibres > 0) && (
                     <>
                         <form onSubmit={handleSubmit2(BuscadorDni)}>
                             <div className="grid grid-cols-3 gap-2 mt-3">
@@ -615,7 +627,7 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                     defaultValue="1"
                                     className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 }`}
                                 >
-                                   {tipoDoc && tipoDoc.length > 0 && tipoDoc
+                                    {tipoDoc && tipoDoc.length > 0 && tipoDoc
                                         .filter((opcion: any) => [0, 1, 2].includes(opcion.idDocIdentidad)).map((opcion: any) => {
                                             return (
                                                 <option key={opcion.idDocIdentidad} value={opcion.idDocIdentidad}>
@@ -672,8 +684,8 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                         <span className='text-center'>
                                             Financiamiento :
                                         </span>
-                                   
-                                        
+
+
                                         <select
                                             {...register('idIafa')}
                                             className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
@@ -741,12 +753,10 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                                 <div className="text-red-500 col-span-3 text-center">
                                                     {errors.referenciaNumero && <span>{errors.referenciaNumero.message}</span>}
                                                 </div>
-
                                             </div>
                                         </div>
                                     )}
-
-                   <div className="grid grid-cols-2 gap-2 mt-3">
+                                    <div className="grid grid-cols-2 gap-2 mt-3">
                                         <label className="text-center">Telefono : </label>
                                         <input
                                             type="text"
@@ -760,6 +770,7 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
 
 
                                     </div>
+
 
 
 
@@ -875,7 +886,7 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                 </div>
             </div>
             {nearest && (
-                <TicketImpresion Datos={nearest} />
+                <TicketImpresionExt Datos={nearest} />
             )}
         </>
     )
