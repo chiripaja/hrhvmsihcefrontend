@@ -204,9 +204,7 @@ console.log("*****************")
 <>
 
 <div className="  min-h-screen flex justify-center scale-[0.9] origin-top bg-white" id='hoja-atencion'>
-<pre>
-  {JSON.stringify(datosAtencion,null,2)}
-</pre>
+
       <div className=" w-full max-w-4xl p-6 ">
         {/* Encabezado */}
         <div className="text-center border-b pb-2  flex justify-between">
