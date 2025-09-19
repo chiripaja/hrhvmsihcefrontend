@@ -179,32 +179,61 @@ export const FormAdmisionExternos = (data: any) => {
         watch: watch2,
         reset: reset2,
         formState: { errors: errors2, isValid: isValid2 },
-    } = useForm<InputBusquedadDni>({
+    } = useForm<any>({
         mode: 'onChange',
     })
 
     const { control, register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<formAdmision>();
-
-    const BuscadorDni: SubmitHandler<InputBusquedadDni> = async (formdata) => {
+  const formatToDateTime = (yyyymmdd: any) => {
+        return `${yyyymmdd.substring(0, 4)}-${yyyymmdd.substring(4, 6)}-${yyyymmdd.substring(6, 8)}T00:00:00`;
+    };
+    const BuscadorDni: SubmitHandler<any> = async (formdata) => {
+   
+        console.log(formdata)
         if (formdata.idDocIdentidad == "0") {
+          
             const dataafiltemp = {
                 disa: "140",
                 tipo_formato: "E",
                 nro_contrato: formdata?.dni,
             }
             const data = await axios.post(`${process.env.apifms}/v1/sis/sisTemporal`, dataafiltemp)
-
+            
             if (data?.data?.data?.IdError == "14") {
                 setDatospx(null)
                 setEnableNewUser(true)
                 showAlert("Atencion", "Paciente no posee afiliciación temporal.")
-
             }
-            if (data?.data?.data?.IdError == "0") {
 
+            if (data?.data?.data?.IdError == "0") {
+                 const filiacion = {
+                    idSiasis: Number(data?.data?.data?.IdNumReg),
+                    codigo: data?.data?.data?.Tabla,
+                    afiliacionDisa: data?.data?.data?.Disa,
+                    afiliacionTipoFormato: data?.data?.data?.TipoFormato,
+                    afiliacionNroFormato: formdata?.dni,
+                    afiliacionNroIntegrante: "1",
+                    documentoTipo: data?.data?.data?.TipoDocumento ? data?.data?.data?.TipoDocumento:"1",
+                    codigoEstablAdscripcion: data?.data?.data?.EESS,
+                    afiliacionFecha: formatToDateTime(data?.data?.data?.FecAfiliacion),  // formato ISO
+                    paterno: data?.data?.data?.ApePaterno,
+                    materno: data?.data?.data?.ApeMaterno,
+                    pnombre: data?.data?.data?.Nombres,
+                    onombres: null,
+                    genero: data?.data?.data?.Genero,
+                    fnacimiento: formatToDateTime(data?.data?.data?.FecNacimiento),
+                    idDistritoDomicilio: data?.data?.data?.IdUbigeo,
+                    estado: "1",
+                    fbaja: "",
+                    documentoNumero: data?.data?.data?.numcnvce,
+                    motivoBaja: null,
+                    idUsuarioAuditoria: 1
+                };
+                const ResolvingViewport = await axios.post(`${process.env.apijimmynew}/paciente/ApiSisFiliacionesAgregar`, filiacion)  
+                
                 const sexotrama = data?.data?.data?.Genero == "0" ? "2" : "1"
                 const datad = {
-                    nroDocumento: data?.data?.data?.NroContrato,
+                    nroDocumento: formdata?.numcnvce,
                     iddistrito: data?.data?.data?.IdUbigeo,
                     apellidoPaterno: data?.data?.data?.ApePaterno,
                     apellidoMaterno: data?.data?.data?.ApeMaterno,
@@ -212,15 +241,14 @@ export const FormAdmisionExternos = (data: any) => {
                     fechaNacimiento: data?.data?.data?.FecNacimiento, // formato YYYY-MM-DD
                     telefono: "",
                     idTipoSexo: sexotrama,
-                    idDocIdentidad: formdata?.idDocIdentidad
+                    idDocIdentidad: formdata?.tipodoctmp
                 };
-
+             
+             
                 const respuestacreacion = await axios.post(`${process.env.apijimmynew}/paciente/temporal`, datad)
-                console.log(respuestacreacion?.data?.idPaciente)
+                console.log(respuestacreacion)
                 if (respuestacreacion?.data?.idPaciente) {
-
                     try {
-
                         setValue('idIafa', "")
                         setValue('referenciaNumero', "")
                         setValue('referenciaCodigo', "")
@@ -233,7 +261,7 @@ export const FormAdmisionExternos = (data: any) => {
                             tipoDocumento: "string",
                             numeroDocumento: "string"
                         }
-                        console.log(respuestacreacion?.data)
+                        
                         if (respuestacreacion?.data?.idPaciente) {
                             try {
                                 const { data: telefono } = await axios.get(
@@ -252,7 +280,6 @@ export const FormAdmisionExternos = (data: any) => {
 
                             console.log(data?.data?.data?.EESS)
                             if (data?.data?.data?.IdError == '0') {
-                                console.log("entra aqui")
                                 setValue('idIafa', 3)
                             }
                             if (data?.data?.data?.IdError == '0') {
@@ -620,54 +647,92 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                 </div>
                 {(datosConsultorio?.nombreServicio && datosConsultorio?.cuposLibres > 0) && (
                     <>
-                        <form onSubmit={handleSubmit2(BuscadorDni)}>
-                            <div className="grid grid-cols-3 gap-2 mt-3">
-                                <select
-                                    {...register2('idDocIdentidad')}
-                                    defaultValue="1"
-                                    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 }`}
-                                >
-                                    {tipoDoc && tipoDoc.length > 0 && tipoDoc
-                                        .filter((opcion: any) => [0, 1, 2].includes(opcion.idDocIdentidad)).map((opcion: any) => {
-                                            return (
-                                                <option key={opcion.idDocIdentidad} value={opcion.idDocIdentidad}>
-                                                    {opcion.descripcion === "Sin Documento" ? "Temporal" : opcion.descripcion}
-                                                </option>
-                                            );
-                                        })}
-                                </select>
+                         <form onSubmit={handleSubmit2(BuscadorDni)}>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+  {/* Select */}
+  <select
+    {...register2('idDocIdentidad')}
+    defaultValue="1"
+    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    {tipoDoc &&
+      tipoDoc.length > 0 &&
+      tipoDoc
+        .filter((opcion: any) => [0, 1, 2].includes(opcion.idDocIdentidad))
+        .map((opcion: any) => (
+          <option key={opcion.idDocIdentidad} value={opcion.idDocIdentidad}>
+            {opcion.descripcion === "Sin Documento"
+              ? "Temporal"
+              : opcion.descripcion}
+          </option>
+        ))}
+  </select>
 
-                                <input
-                                    type="number"
-                                    className="px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder=""
-                                    autoComplete="off"
-                                    maxLength={selectedTipoDocumento === '1' ? 8 : undefined}
-                                    {...register2('dni', {
-                                        maxLength: selectedTipoDocumento === '1' ? 8 : undefined,
-                                    })}
-                                />
+  {/* Input número */}
+  <input
+    type="number"
+    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+    autoComplete="off"
+    maxLength={selectedTipoDocumento === '1' ? 8 : undefined}
+    placeholder={selectedTipoDocumento === '0' ? 'Código de afiliación temporal' : 'Nro de documento'}
+    {...register2('dni', {
+      required: 'El DNI es obligatorio',
+      maxLength: selectedTipoDocumento === '1' ? 8 : undefined,
+    })}
+  />
+
+  {/* Segunda fila con radios + CNV + botón */}
+  {selectedTipoDocumento == '0' && (
+    <div className="col-span-2 flex flex-col md:flex-row gap-3 items-center">
+      {/* Radios */}
+      <div className="flex gap-4">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            value="1"
+            {...register2("tipodoctmp", { required: 'Este campo es obligatorio' })}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="text-gray-700">DNI</span>
+        </label>
+
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            value="2"
+            {...register2("tipodoctmp", { required: 'Este campo es obligatorio' })}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="text-gray-700">Carnet Extranjería</span>
+        </label>
+      </div>
+
+      {/* Input CNV/CE */}
+      <input
+        type="text"
+        placeholder="CNV / C.E."
+        {...register2("numcnvce", { required: 'Este campo es obligatorio' })}
+        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      
+    </div>
+  )}
+  {/* Botón */}
+      <button
+        type="submit"
+        className={`px-4 py-2  rounded-md shadow text-white focus:outline-none focus:ring-2 focus:ring-offset-2
+          ${isValid2 ? 'colorFondo' : 'bg-gray-300 cursor-not-allowed'}
+          ${buttonLoading ? 'bg-gray-300 cursor-not-allowed' : ''}
+        `}
+        disabled={!isValid2 || buttonLoading}
+      >
+        {!buttonLoading ? 'Buscar' : 'Cargando...'}
+      </button>
+</div>
 
 
-
-                                <button
-                                    type="submit"
-                                    className={` text-white py-2 px-4 rounded-r-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2  
-                                 ${isValid2 ? 'colorFondo' : 'bg-gray-300 cursor-not-allowed'}
-                                 ${buttonLoading ? 'bg-gray-300 cursor-not-allowed' : ''}
-                                 `}
-                                    disabled={!isValid2 || buttonLoading}
-                                >
-
-                                    {!buttonLoading ? 'Buscar' : 'Cargando...'}
-
-                                </button>
-                                {errors2.dni && (
-                                    <div className="text-red-500 text-sm mt-1 col-span-3 text-center">{errors2?.dni?.message}</div>
-                                )}
-                            </div>
                         </form>
-
                         {datospx?.paciente?.idPaciente && (
                             <>
                                 <div className="flex ">

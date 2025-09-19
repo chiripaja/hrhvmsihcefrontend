@@ -19,6 +19,7 @@ import { Tooltip } from '../ui/Tooltip';
 import { useRouter } from "next/router";
 import Link from 'next/link';
 import { FormReprogramacion } from "./FormReprogramacion";
+import ResolvingViewport from 'next/dist/lib/metadata/types/metadata-interface.js';
 type InputBusquedadDni = {
     dni: string,
     idDocIdentidad: string,
@@ -31,7 +32,7 @@ type formAdmision = {
     referenciaCodigo: any,
     referenciaNumero: string,
     esAdicional: number,
-    telefono: any
+    telefono: any,
 }
 
 interface Establecimiento {
@@ -114,6 +115,7 @@ export const FormAdmision = (data: any) => {
     const [enableNewUser, setEnableNewUser] = useState(false);
     const [validacionListarIafas, setValidacionListarIafas] = useState(0);
     const [isModalOpenR, setIsModalOpenR] = useState(false);
+    
     const openModalR = () => {
         setIsModalOpenR(true);
     };
@@ -164,14 +166,19 @@ export const FormAdmision = (data: any) => {
         watch: watch2,
         reset: reset2,
         formState: { errors: errors2, isValid: isValid2 },
-    } = useForm<InputBusquedadDni>({
+    } = useForm<any>({
         mode: 'onChange',
     })
 
     const { control, register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<formAdmision>();
+    const formatToDateTime = (yyyymmdd: any) => {
+        return `${yyyymmdd.substring(0, 4)}-${yyyymmdd.substring(4, 6)}-${yyyymmdd.substring(6, 8)}T00:00:00`;
+    };
+    const BuscadorDni: SubmitHandler<any> = async (formdata) => {
 
-      const BuscadorDni: SubmitHandler<InputBusquedadDni> = async (formdata) => {
+        console.log(formdata)
         if (formdata.idDocIdentidad == "0") {
+    
             const dataafiltemp = {
                 disa: "140",
                 tipo_formato: "E",
@@ -180,16 +187,40 @@ export const FormAdmision = (data: any) => {
             const data = await axios.post(`${process.env.apifms}/v1/sis/sisTemporal`, dataafiltemp)
 
             if (data?.data?.data?.IdError == "14") {
-setDatospx(null)
+                setDatospx(null)
                 setEnableNewUser(true)
                 showAlert("Atencion", "Paciente no posee afiliciación temporal.")
-
             }
-            if (data?.data?.data?.IdError == "0") {
 
+            if (data?.data?.data?.IdError == "0") {
+                 const filiacion = {
+                    idSiasis: Number(data?.data?.data?.IdNumReg),
+                    codigo: data?.data?.data?.Tabla,
+                    afiliacionDisa: data?.data?.data?.Disa,
+                    afiliacionTipoFormato: data?.data?.data?.TipoFormato,
+                    afiliacionNroFormato: formdata?.dni,
+                    afiliacionNroIntegrante: "1",
+                    documentoTipo: data?.data?.data?.TipoDocumento ? data?.data?.data?.TipoDocumento:"1",
+                    codigoEstablAdscripcion: data?.data?.data?.EESS,
+                    afiliacionFecha: formatToDateTime(data?.data?.data?.FecAfiliacion),  // formato ISO
+                    paterno: data?.data?.data?.ApePaterno,
+                    materno: data?.data?.data?.ApeMaterno,
+                    pnombre: data?.data?.data?.Nombres,
+                    onombres: null,
+                    genero: data?.data?.data?.Genero,
+                    fnacimiento: formatToDateTime(data?.data?.data?.FecNacimiento),
+                    idDistritoDomicilio: data?.data?.data?.IdUbigeo,
+                    estado: "1",
+                    fbaja: "",
+                    documentoNumero: data?.data?.data?.numcnvce,
+                    motivoBaja: null,
+                    idUsuarioAuditoria: 1
+                };
+                const ResolvingViewport = await axios.post(`${process.env.apijimmynew}/paciente/ApiSisFiliacionesAgregar`, filiacion)  
+                
                 const sexotrama = data?.data?.data?.Genero == "0" ? "2" : "1"
                 const datad = {
-                    nroDocumento: data?.data?.data?.NroContrato,
+                    nroDocumento: formdata?.numcnvce,
                     iddistrito: data?.data?.data?.IdUbigeo,
                     apellidoPaterno: data?.data?.data?.ApePaterno,
                     apellidoMaterno: data?.data?.data?.ApeMaterno,
@@ -197,73 +228,71 @@ setDatospx(null)
                     fechaNacimiento: data?.data?.data?.FecNacimiento, // formato YYYY-MM-DD
                     telefono: "",
                     idTipoSexo: sexotrama,
-                    idDocIdentidad: formdata?.idDocIdentidad
+                    idDocIdentidad: formdata?.tipodoctmp
                 };
-
+             
+             
                 const respuestacreacion = await axios.post(`${process.env.apijimmynew}/paciente/temporal`, datad)
-                console.log(respuestacreacion?.data?.idPaciente)
-                if(respuestacreacion?.data?.idPaciente){   
-
-                    try {
-                          
-                setValue('idIafa', "")
-                setValue('referenciaNumero', "")
-                setValue('referenciaCodigo', "")
-                setbuttonLoading(true)
-                 const dataEnvio = {
-                    ip: "string",
-                    usuario: usuario.user.id,
-                    endPoint: "string",
-                    fechaConsulta: "string",
-                    tipoDocumento: "string",
-                    numeroDocumento: "string"
-                }
-                console.log(respuestacreacion?.data)
+                
                 if (respuestacreacion?.data?.idPaciente) {
                     try {
-                        const { data: telefono } = await axios.get(
-                            `${process.env.apijimmynew}/paciente/findTelefonoByIdPacienteVer/${respuestacreacion?.data?.idPaciente}`
-                        );
-                        setValue("telefono", telefono ?? "");
-                    } catch (error) {
-                        if (axios.isAxiosError(error) && error.response?.status === 404) {
-                            // No hay teléfono, continuamos sin error
-                            setValue("telefono", "");
-                        } else {
-                            // Si es otro error, lo mostramos o manejamos
-                            console.error("Error obteniendo teléfono:", error);
+                        setValue('idIafa', "")
+                        setValue('referenciaNumero', "")
+                        setValue('referenciaCodigo', "")
+                        setbuttonLoading(true)
+                        const dataEnvio = {
+                            ip: "string",
+                            usuario: usuario.user.id,
+                            endPoint: "string",
+                            fechaConsulta: "string",
+                            tipoDocumento: "string",
+                            numeroDocumento: "string"
                         }
-                    }
+                        
+                        if (respuestacreacion?.data?.idPaciente) {
+                            try {
+                                const { data: telefono } = await axios.get(
+                                    `${process.env.apijimmynew}/paciente/findTelefonoByIdPacienteVer/${respuestacreacion?.data?.idPaciente}`
+                                );
+                                setValue("telefono", telefono ?? "");
+                            } catch (error) {
+                                if (axios.isAxiosError(error) && error.response?.status === 404) {
+                                    // No hay teléfono, continuamos sin error
+                                    setValue("telefono", "");
+                                } else {
+                                    // Si es otro error, lo mostramos o manejamos
+                                    console.error("Error obteniendo teléfono:", error);
+                                }
+                            }
 
-                    console.log(data?.data?.data?.EESS)
-                    if (data?.data?.data?.IdError == '0') {
-                        console.log("entra aqui")
-                        setValue('idIafa', 3)
-                    }
-                    if (data?.data?.data?.IdError == '0' ) {
-                    showAlertSuccess("Atencion", "Paciente si posee SIS.")
-                    setValidacionListarIafas(1)
-                                       }
-                                        const dataPx={
-                        paciente:{
- idPaciente:respuestacreacion?.data?.idPaciente,
-                        apenom:respuestacreacion?.data?.apellidoMaterno + " " + respuestacreacion?.data?.apellidoPaterno + " " + respuestacreacion?.data?.primerNombre,
+                            console.log(data?.data?.data?.EESS)
+                            if (data?.data?.data?.IdError == '0') {
+                                setValue('idIafa', 3)
+                            }
+                            if (data?.data?.data?.IdError == '0') {
+                                showAlertSuccess("Atencion", "Paciente si posee SIS.")
+                                setValidacionListarIafas(1)
+                            }
+                            const dataPx = {
+                                paciente: {
+                                    idPaciente: respuestacreacion?.data?.idPaciente,
+                                    apenom: respuestacreacion?.data?.apellidoMaterno + " " + respuestacreacion?.data?.apellidoPaterno + " " + respuestacreacion?.data?.primerNombre,
+                                }
+                            }
+                            if (data?.data?.data?.EESS) {
+                                await AutoseleccionEstablecimiento(data?.data?.data?.EESS.slice(-5))
+                            }
+                            setDatospx(dataPx);
+                            setbuttonLoading(false)
+                        } else {
+                            setEnableNewUser(true)
+                            showAlert("Atencion", "paciente no encontrado.")
                         }
-                                           }
-                                         if (data?.data?.data?.EESS) {
-                    await AutoseleccionEstablecimiento(data?.data?.data?.EESS.slice(-5))
-                }
-                    setDatospx(dataPx);
-                     setbuttonLoading(false)
-                } else {
-                    setEnableNewUser(true)
-                    showAlert("Atencion", "paciente no encontrado.")
-                }
                     } catch (error) {
-                            console.log(error)
+                        console.log(error)
                     }
                 }
-               
+
             }
         }
         else {
@@ -540,7 +569,7 @@ setDatospx(null)
             </div>
         );
     }
-
+  const selected = watch2("tipodoctmp");
     return (
         <>
             <div className=" p-3 print:hidden ">
@@ -609,51 +638,90 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                 {datosConsultorio?.nombreServicio && (
                     <>
                         <form onSubmit={handleSubmit2(BuscadorDni)}>
-                            <div className="grid grid-cols-3 gap-2 mt-3">
-                                <select
-                                    {...register2('idDocIdentidad')}
-                                    defaultValue="1"
-                                    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 }`}
-                                >
-                                   {tipoDoc && tipoDoc.length > 0 && tipoDoc
-                                        .filter((opcion: any) => [0, 1, 2].includes(opcion.idDocIdentidad)).map((opcion: any) => {
-                                            return (
-                                                <option key={opcion.idDocIdentidad} value={opcion.idDocIdentidad}>
-                                                    {opcion.descripcion === "Sin Documento" ? "Temporal" : opcion.descripcion}
-                                                </option>
-                                            );
-                                        })}
-                                </select>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+  {/* Select */}
+  <select
+    {...register2('idDocIdentidad')}
+    defaultValue="1"
+    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    {tipoDoc &&
+      tipoDoc.length > 0 &&
+      tipoDoc
+        .filter((opcion: any) => [0, 1, 2].includes(opcion.idDocIdentidad))
+        .map((opcion: any) => (
+          <option key={opcion.idDocIdentidad} value={opcion.idDocIdentidad}>
+            {opcion.descripcion === "Sin Documento"
+              ? "Temporal"
+              : opcion.descripcion}
+          </option>
+        ))}
+  </select>
 
-                                <input
-                                    type="number"
-                                    className="px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder=""
-                                    autoComplete="off"
-                                    maxLength={selectedTipoDocumento === '1' ? 8 : undefined}
-                                    {...register2('dni', {
-                                        maxLength: selectedTipoDocumento === '1' ? 8 : undefined,
-                                    })}
-                                />
+  {/* Input número */}
+  <input
+    type="number"
+    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+    autoComplete="off"
+    maxLength={selectedTipoDocumento === '1' ? 8 : undefined}
+    placeholder={selectedTipoDocumento === '0' ? 'Código de afiliación temporal' : 'Nro de documento'}
+    {...register2('dni', {
+      required: 'El DNI es obligatorio',
+      maxLength: selectedTipoDocumento === '1' ? 8 : undefined,
+    })}
+  />
+
+  {/* Segunda fila con radios + CNV + botón */}
+  {selectedTipoDocumento == '0' && (
+    <div className="col-span-2 flex flex-col md:flex-row gap-3 items-center">
+      {/* Radios */}
+      <div className="flex gap-4">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            value="1"
+            {...register2("tipodoctmp", { required: 'Este campo es obligatorio' })}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="text-gray-700">DNI</span>
+        </label>
+
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            value="2"
+            {...register2("tipodoctmp", { required: 'Este campo es obligatorio' })}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="text-gray-700">Carnet Extranjería</span>
+        </label>
+      </div>
+
+      {/* Input CNV/CE */}
+      <input
+        type="text"
+        placeholder="CNV / C.E."
+        {...register2("numcnvce", { required: 'Este campo es obligatorio' })}
+        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      
+    </div>
+  )}
+  {/* Botón */}
+      <button
+        type="submit"
+        className={`px-4 py-2  rounded-md shadow text-white focus:outline-none focus:ring-2 focus:ring-offset-2
+          ${isValid2 ? 'colorFondo' : 'bg-gray-300 cursor-not-allowed'}
+          ${buttonLoading ? 'bg-gray-300 cursor-not-allowed' : ''}
+        `}
+        disabled={!isValid2 || buttonLoading}
+      >
+        {!buttonLoading ? 'Buscar' : 'Cargando...'}
+      </button>
+</div>
 
 
-
-                                <button
-                                    type="submit"
-                                    className={` text-white py-2 px-4 rounded-r-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2  
-                                 ${isValid2 ? 'colorFondo' : 'bg-gray-300 cursor-not-allowed'}
-                                 ${buttonLoading ? 'bg-gray-300 cursor-not-allowed' : ''}
-                                 `}
-                                    disabled={!isValid2 || buttonLoading}
-                                >
-
-                                    {!buttonLoading ? 'Buscar' : 'Cargando...'}
-
-                                </button>
-                                {errors2.dni && (
-                                    <div className="text-red-500 text-sm mt-1 col-span-3 text-center">{errors2?.dni?.message}</div>
-                                )}
-                            </div>
                         </form>
                         {datospx?.paciente?.idPaciente && (
                             <>
@@ -672,8 +740,8 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                         <span className='text-center'>
                                             Financiamiento :
                                         </span>
-                                   
-                                        
+
+
                                         <select
                                             {...register('idIafa')}
                                             className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
@@ -704,8 +772,8 @@ shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:sca
                                             })()}
                                         </select>
                                     </div>
-
-
+                                         
+                                          
                                     {idIafaValue == 3 && (
                                         <div>
                                             <div className="grid grid-cols-1 gap-2 mt-3">
@@ -746,7 +814,7 @@ ${errors.referenciaNumero ? 'border-red-500 focus:ring-red-500' : 'border-gray-3
                                         </div>
                                     )}
 
-                   <div className="grid grid-cols-2 gap-2 mt-3">
+                                    <div className="grid grid-cols-2 gap-2 mt-3">
                                         <label className="text-center">Telefono : </label>
                                         <input
                                             type="text"
