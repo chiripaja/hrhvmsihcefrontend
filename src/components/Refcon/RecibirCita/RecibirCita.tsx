@@ -8,7 +8,7 @@ const RecibirCita = () => {
       codigoRenipressDestino: "754",
       condicionPaciente: "E",
       fechaCita: "2025-09-11",
-      horaCita: "15:00",
+      horaCita: "11:00",
       idReferencia: "1365805",
       llegoPaciente: "S",
       personalRegistra: {
@@ -38,7 +38,7 @@ const RecibirCita = () => {
     const dataenvio = {
       codUnicoDestino: "754",
       datosCita: {
-        consultorio: "MEDICINA INTERNA 2",
+        consultorio: "ONCOLOGIA 2",
         fecha: "20250911",
         hora: "15:00:00",
         turno: "T",

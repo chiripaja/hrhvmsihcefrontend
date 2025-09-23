@@ -218,7 +218,7 @@ if (tratamientos.length === 0) {
                 idsexo: sexoPaciente,
                 idtipodoc: String(dataPaciente?.IdDocIdentidad),
                 nombpac: dataPaciente?.PrimerNombre + (dataPaciente?.SegundoNombre ? ` ${dataPaciente?.SegundoNombre}` : ""),
-                nrohis: dataPaciente?.NroDocumento,
+                nrohis: dataPaciente?.NroHistoriaClinica,
                 numdoc: dataPaciente?.NroDocumento,
                 telefonopac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
                 ubigeoactual:  dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
@@ -257,7 +257,18 @@ const response = await fetch("/api/refcon/saveContrareferencia", {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(dataenvio),
 });
-
+const datosRespuestaMinsaContrareferencia={
+  "ok": true,
+  "message": "Petición enviada al servicio externo",
+  "result": {
+    "codigo": "0000",
+    "mensaje": null,
+    "datos": {
+      "idreferencia": 1366010,
+      "nroreferencia": "754-00001"
+    }
+  }
+}
 const result = await response.json();
 console.log("Respuesta del backend:", result);
     /**/
@@ -366,10 +377,12 @@ ${JSON.stringify(result, null, 2)}
 
     return (
         <div>
-    
+    paciente recibido 42713040 para contrareferefir
+    paciente recibido cita 42713030
             <h1>
-                481252
+                481252 44444444
             </h1>
+            
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
                 <input
                     type="text"
@@ -387,25 +400,7 @@ ${JSON.stringify(result, null, 2)}
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
                 <h3 className="text-lg font-semibold text-gray-900">Contrareferencia ss</h3>
                 <form onSubmit={handleSubmit2(onSubmit2)} className="space-y-4 p-4 border rounded-lg shadow">
-                    {/* Select Condición Paciente */}
-                    {/*
-   
-                   <div>
-      <label className="block mb-1 font-semibold">Referencia: </label>
-     {datosPxRefCon && datosPxRefCon.length > 0 ? (
-  <select className="border rounded p-2 w-full">
-    {datosPxRefCon.map((item:any) => (
-      <option key={item.data.idReferencia} value={item.data.idReferencia}>
-        {item.data.numeroReferencia} - {item.data.estado} ({item.data.fechaEnvio}) - {item.data.especialidad}
-      </option>
-    ))}
-  </select>
-) : (
-  <p className="text-gray-500">No hay referencias disponibles</p>
-)}
-    </div>
-
-*/}
+                 
                     <div>
                         <Controller
                             name="refcon"
