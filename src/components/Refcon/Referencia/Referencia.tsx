@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import Select from 'react-select';
 import axios from 'axios';
 import { debounce } from '@mui/material';
-export const Referencia = () => {
+export const Referencia = ({session}:{session:any}) => {
   const { register, handleSubmit } = useForm();
 
   const { register: register2, handleSubmit: handleSubmit2, control: control2, watch: watch2 } = useForm();
@@ -15,12 +15,13 @@ export const Referencia = () => {
   const [dataAtencion, setdataAtencion] = useState<any>();
   const [verDataProcesada, setverDataProcesada] = useState<any>();
   const [dataPaciente, setdataPaciente] = useState<any>();
-
+  const [optionMedicosG, setoptionMedicosG] = useState<any[]>([]);
   const [listadoCondicionPaciente, setlistadoCondicionPaciente] = useState<any[]>([]);
   const [listadoCondicionPacientev2, setlistadoCondicionPacientev2] = useState<any[]>([]);
   const [listadoTipoTransporte, setlistadoTipoTransporte] = useState<any[]>([]);
   const [listadoEspecialidades, setlistadoEspecialidades] = useState<any[]>([]);
   const [listadoUpsOrigen, setlistadoUpsOrigen] = useState<any[]>([]);
+  const [datosUsuarioRefcon, setdatosUsuarioRefcon] = useState<any>();
   const [options, setOptions] = useState([]);
   const openModal = () => {
     setIsModalOpen(true);
@@ -56,19 +57,27 @@ export const Referencia = () => {
     const segundos = String(ahora.getSeconds()).padStart(2, "0");
     return `${horas}:${minutos}:${segundos}`;
   }
-
+function obtenerSexo(idTipoSexo?: number): string {
+  if (idTipoSexo === 2) {
+    return "F"; // Femenino
+  }
+  if (idTipoSexo === 1) {
+    return "M"; // Masculino
+  }
+  return "M"; // vacío o puedes poner "N/A"
+}
   const onSubmit = async (dataForm: any) => {
     const datapaciente = await getData(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`);
     setdataPaciente(datapaciente)
+  
     const dataAtenc = await getData(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
     setdataAtencion(dataAtenc)
-
     openModal();
 
   };
 
   const onSubmit2 = async (dataForm: any) => {
-    console.log(dataForm)
+  
     const tratamientos: any[] = [];
     const diagnosticos: any[] = [];
     dataAtencion.atencionesDiagnosticos.forEach((item: any, index: number) => {
@@ -132,6 +141,7 @@ export const Referencia = () => {
       idfinanciadorhldo = equivalencias[idfinanciadorhldo];
     }
     const [sistolica, diastolica] = dataAtencion?.atencionesCE?.triajePresion.split("/");
+    
     const dataenvioref = {
       cita: {
         fecha_vencimiento_sis: "",
@@ -169,19 +179,19 @@ export const Referencia = () => {
       },
       datos_referencia: {
         codEspecialidad: "",
-        condicion: "",
+        condicion: dataForm?.condicion?.value,
         desc_Cartera_servicio: "",
-        fechaReferencia: "",
-        fgRegistro: "",
-        horaReferencia: "",
+        fechaReferencia: fechaHoy(),
+        fgRegistro: "2",
+        horaReferencia: horaActual(),
         idCarteraServicio: "",
         idEnvio: "R",
         idTipoAtencion: "R",
         idTipoTransporte: dataForm?.idTipoTransporte.value,
         idestabDestino: dataForm?.idestabDestino?.value,
         idestabOrigen: "754",
-        idupsOrigen: dataForm?.idupsOrigen?.value,
-        idupsdestino: dataForm?.idupsOrigen?.value,
+        idupsOrigen: "",
+        idupsdestino: dataForm?.idupsDestino?.value,
         motivo_referencia: {
           idmotivoref: "",
           obsmotivoref: ""
@@ -217,14 +227,14 @@ export const Referencia = () => {
         numdocacomp: ""
       },
       persona_establecimiento: {
-        apelmata: "",
-        apelpata: "",
-        fechanac: "",
+        apelmata: "Valdivieso",
+        apelpata: "Ibazeta",
+        fechanac: "19800101",
         idcolegio: "",
         idprofesion: "",
         idsexo: "",
         idtipodoc: "",
-        nombper: "",
+        nombper: "Anni Giovanna",
         numdoc: ""
       },
       personal_registra: {
@@ -239,15 +249,15 @@ export const Referencia = () => {
         tipoDocumento: String(dataAtencion?.medico?.empleado?.idtipodocumento)
       },
       responsable_referencia: {
-        apelmatrefiere: "GRANDA",
-        apelpatrefiere: "JIMENEZ",
-        fechanacrefiere: "19661105",
-        idcolegioref: "123456",
-        idprofesionref: "",
-        idsexorefiere: "",
-        idtipodocref: "",
-        nombperrefiere: "",
-        numdocref: ""
+        apelmatrefiere: datosUsuarioRefcon?.ApellidoMaterno,
+        apelpatrefiere: datosUsuarioRefcon?.ApellidoPaterno,
+        fechanacrefiere: formatearFecha(datosUsuarioRefcon?.FechaNacimiento),
+        idcolegioref: datosUsuarioRefcon?.idColegioHIS ? datosUsuarioRefcon?.idColegioHIS : "",
+        idprofesionref: datosUsuarioRefcon?.TipoEmpleadoHIS ? datosUsuarioRefcon?.TipoEmpleadoHIS : "29",
+        idsexorefiere: obtenerSexo(datosUsuarioRefcon?.sexo),
+        idtipodocref: datosUsuarioRefcon?.idTipoDocumento,
+        nombperrefiere: datosUsuarioRefcon?.Nombres,
+        numdocref: datosUsuarioRefcon?.Nombres,
       },
       tratamiento: tratamientos,
       tutor: {
@@ -324,12 +334,12 @@ export const Referencia = () => {
           })) || [];
           setlistadoTipoTransporte(tipoTransporte);
 
-          setlistadoEspecialidades(EspecialidadesRes.data);
-          const upsOptions = upsRes.data?.datos?.map((item: any) => ({
+      
+          const  upsOptions= upsRes.data?.datos?.map((item: any) => ({
             value: item.codUps,
             label: item.descripcion,
           })) || [];
-
+setlistadoEspecialidades(upsOptions);
 
           const tipocondicion2 = condicionPx.data.map((item: any) => ({
             value: item.codigo_condicion,
@@ -392,10 +402,35 @@ export const Referencia = () => {
 
   }, [idestabDestinoWatch])
 
+ const getMedicosGeneral = async (nom: string) => {
+    try {
+      const response = await getData(`${process.env.apijimmynew}/apimedicobynomape/${nom}`);
+      const mappedOptions = response.map((est: any) => ({
+        value: est.IdMedico,
+        label: est.nommed,
+      }));
+      setoptionMedicosG(mappedOptions);
+    } catch (error) {
+      console.error("Error al obtener médicos:", error);
+    }
+  };
 
-
+  const getDatosUsuario=async(idempleado:any)=>{
+    const data=await getData(`${process.env.apijimmynew}/empleados/apiusuariosessionbyid/${idempleado}`)
+    setdatosUsuarioRefcon(data)
+  }
+  useEffect(() => {
+    if(session?.user?.id){
+      getDatosUsuario(session?.user?.id)
+    }
+  }, [session])
+  
   return (
     <>
+  <pre>
+    {JSON.stringify(datosUsuarioRefcon,null,2)}
+  </pre>
+    481253
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
         <input
           type="text"
@@ -460,6 +495,8 @@ export const Referencia = () => {
             control={control2}
             defaultValue=""
             render={({ field }) => (
+              <>
+                   <label className="block mb-1 font-semibold">Establecimiento Destino :</label>
               <Select
                 instanceId="unique-select-id"
                 {...field}
@@ -475,28 +512,68 @@ export const Referencia = () => {
                   }
                 }}
               />
+              </>
             )}
           />
 
-          <Controller
-            name="idupsOrigen"
-            control={control2}
-            defaultValue=""
-            render={({ field }) => (
-              <div>
-                <label className="block mb-1 font-semibold">UPS que deriva : </label>
-                <Select
+       
+
+       
+<Controller
+  name="idupsDestino"
+  control={control2}
+  defaultValue={null}
+  render={({ field }) => (
+    <div>
+      <label className="block mb-1 font-semibold">UPS que deriva : </label>
+      <Select
+        instanceId="especialidad-select"
+        options={listadoUpsOrigen}
+        placeholder="Seleccione una ups"
+        className="mt-2 mb-2"
+        isClearable
+        value={field.value}
+        onChange={(selected) => field.onChange(selected)}
+      />
+    </div>
+  )}
+/>
+
+<Controller
+              name="idespecialidades"
+              control={control2}
+              defaultValue=""
+              render={({ field }) => (
+                <>
+                      <label className="block mb-1 font-semibold">Especialidades : </label>
+                       <Select
+                  instanceId="unique-select-id"
                   {...field}
-                  instanceId="especialidad-select"
-                  options={listadoUpsOrigen}
-                  placeholder="Seleccione una especialidad"
-                  className="mt-2 mb-2"
+                  options={listadoEspecialidades}
+                  placeholder="especialidades"
+                  className="w-full"
+                  required
                   isClearable
-                  value={listadoUpsOrigen.find((opt: any) => opt.value === field.value) || null}
-                  onChange={(selected) => field.onChange(selected?.value || "")}
+                  isSearchable
+                  onInputChange={(inputValue) => {
+                    if (inputValue.length > 2) {
+                      getMedicosGeneral(inputValue);
+                    }
+                  }}
+                  onChange={(selectedOption) => {
+                    field.onChange(selectedOption);
+                  }}
                 />
-              </div>
-            )}
+                </>
+               
+              )}
+            />
+ <textarea
+            id="obsmotivoref"
+            {...register2("obsmotivoref")}
+            className="w-full border rounded-md p-2"
+            rows={4}
+            placeholder="Observación del motivo de referencia"
           />
           <textarea
             id="recomendacion"

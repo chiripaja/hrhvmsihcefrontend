@@ -1,11 +1,8 @@
 import { Referencia } from "@/components/Refcon/Referencia/Referencia";
-
-export default function ReferenciaPage() {
+import { auth } from '@/auth';
+export default async function ReferenciaPage() {
+    const session = await auth()
   return (
-    <>
-    <h1>hola mundo</h1>
-    <Referencia/>
-    </>
-    
+    <Referencia session={session}/>
   );
 }

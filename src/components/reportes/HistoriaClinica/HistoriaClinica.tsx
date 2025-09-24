@@ -73,7 +73,7 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
 
           {/* Título */}
           <h1 className="text-center text-xl font-bold mt-4">
-          {/*  CONSULTA EXTERNA <br/>*/}
+          {/**/}  CONSULTA EXTERNA <br/>
             HOJA DE FILIACIÓN DE PACIENTE
           </h1>
 
