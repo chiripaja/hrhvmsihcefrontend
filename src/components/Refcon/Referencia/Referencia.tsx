@@ -94,7 +94,15 @@ export const Referencia = ({ session }: { session: any }) => {
 
 
   const onSubmit2 = async (dataForm: any) => {
-
+    try {
+       Swal.fire({
+      title: 'Enviando referencia...',
+      html: 'Por favor espera un momento',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
     const tratamientos: any[] = [];
     const diagnosticos: any[] = [];
     dataAtencion.atencionesDiagnosticos.forEach((item: any, index: number) => {
@@ -319,7 +327,7 @@ export const Referencia = ({ session }: { session: any }) => {
       });
 
       const result = await response.json();
-      console.log(result?.result)
+      Swal.close();
 
       if (result.result?.codigo == "0000") {
           const objResultadoByidCuentaAtencion = {
@@ -359,6 +367,15 @@ export const Referencia = ({ session }: { session: any }) => {
 
 
     }
+    } catch (error) {
+        Swal.close();
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Ocurrió un error al enviar la referencia',
+    });
+    }
+    
   }
 
   
