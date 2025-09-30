@@ -7,10 +7,12 @@ import Swal from 'sweetalert2';
 import Select from 'react-select';
 import axios from 'axios';
 import { debounce } from '@mui/material';
+import { ImSpinner2 } from "react-icons/im"; 
+
 export const Referencia = ({ session }: { session: any }) => {
   const { register, handleSubmit } = useForm();
 
-  const { register: register2, handleSubmit: handleSubmit2, control: control2, watch: watch2,setValue: setValue2 } = useForm();
+  const { register: register2, handleSubmit: handleSubmit2, control: control2, watch: watch2, setValue: setValue2,formState: { errors:errors2 },reset:reset2 } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataAtencion, setdataAtencion] = useState<any>();
   const [verDataProcesada, setverDataProcesada] = useState<any>();
@@ -20,9 +22,11 @@ export const Referencia = ({ session }: { session: any }) => {
   const [listadoCondicionPacientev2, setlistadoCondicionPacientev2] = useState<any[]>([]);
   const [listadoTipoTransporte, setlistadoTipoTransporte] = useState<any[]>([]);
   const [listadoEspecialidades, setlistadoEspecialidades] = useState<any[]>([]);
+  const [listadoMotivo, setlistadoMotivo] = useState<any[]>([])
   const [listadoUpsOrigen, setlistadoUpsOrigen] = useState<any[]>([]);
   const [datosUsuarioRefcon, setdatosUsuarioRefcon] = useState<any>();
   const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -66,24 +70,23 @@ export const Referencia = ({ session }: { session: any }) => {
     }
     return "M"; // vacío o puedes poner "N/A"
   }
+
   const onSubmit = async (dataForm: any) => {
     const datapaciente = await getData(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`);
     setdataPaciente(datapaciente)
 
     const dataAtenc = await getData(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
     setdataAtencion(dataAtenc)
-   
+
 
 
   };
 
   useEffect(() => {
     if (dataAtencion?.idAtencion) {
-    
       setValue2("resumeanamnesis", dataAtencion?.atencionesCE?.citaExamenClinico || "")
       setValue2("resumeexfisico", dataAtencion?.atencionesCE?.citaMotivo || "")
       openModal();
-     
     }
 
 
@@ -91,7 +94,7 @@ export const Referencia = ({ session }: { session: any }) => {
 
 
   const onSubmit2 = async (dataForm: any) => {
- console.log(dataForm)
+
     const tratamientos: any[] = [];
     const diagnosticos: any[] = [];
     dataAtencion.atencionesDiagnosticos.forEach((item: any, index: number) => {
@@ -106,7 +109,7 @@ export const Referencia = ({ session }: { session: any }) => {
     let fechaNacPaciente = formatearFecha(dataPaciente?.FechaNacimiento);
 
     const sexoDescripcion = dataAtencion?.medico?.empleado?.tiposSexo?.descripcion ?? "";
-    const SexoHIS = sexoDescripcion.charAt(0);
+    const SexoHIS = sexoDescripcion ? sexoDescripcion.charAt(0) : "M";
     const sexoPaciente = dataPaciente?.IdTipoSexo == 2 ? "F" : "M";
     dataAtencion?.recetaCabeceras
       ?.filter((cabecera: any) => cabecera.idPuntoCarga == 5)
@@ -128,7 +131,7 @@ export const Referencia = ({ session }: { session: any }) => {
             });
           });
       });
-
+      console.log(dataAtencion)
     // 👇 Si no se agregó nada, meter un objeto vacío
     if (tratamientos.length === 0) {
       tratamientos.push({
@@ -142,200 +145,235 @@ export const Referencia = ({ session }: { session: any }) => {
       });
     }
     const equivalencias: Record<number, string> = {
-      1: "13",
-      2: "2",
-      11: "12",
-      19: "4",
-      21: "7",
+      1:"12",
+      3: "2",
+      4: "4",
+      5: "12",
+      6: "3",
+      7: "8",
+      8: "1",
+      9:"9",
+      10:"10",
+      11:"5",
+      12:"6",
+      13:"7",
+      14:"10",
     };
-    let idfinanciadorhldo = dataPaciente?.idFuenteFinanciamiento;
-
-    // Si es número y existe en el mapa, lo convertimos
+    let idfinanciadorhldo = dataAtencion?.idFuenteFinanciamiento;
+    
     if (typeof idfinanciadorhldo === "number" && equivalencias[idfinanciadorhldo]) {
       idfinanciadorhldo = equivalencias[idfinanciadorhldo];
     }
-    const [sistolica, diastolica] = dataAtencion?.atencionesCE?.triajePresion.split("/");
 
-    const dataenvioref = {
-      cita: {
-        fecha_vencimiento_sis: "",
-        frecuencia_cardiaca: dataAtencion?.atencionesCE?.triajeFrecCardiaca ? String(dataAtencion?.atencionesCE?.triajeFrecCardiaca) : "",
-        frecuencia_respiratoria: dataAtencion?.atencionesCE?.triajeFrecRespiratoria ? String(dataAtencion?.atencionesCE?.triajeFrecRespiratoria) : "",
-        id_financiador: idfinanciadorhldo ? String(idfinanciadorhldo) : "",
-        num_afil: String(dataPaciente?.AfiliacionTipoFormato + "-" + dataPaciente?.AfiliacionNroFormato),
-        peso: dataAtencion?.atencionesCE?.triajePeso ? String(dataAtencion?.atencionesCE?.triajePeso) : "",
-        presion_arterial_diastolica: diastolica ? diastolica : "",
-        presion_arterial_sistolica: sistolica ? sistolica : "",
-        resumeanamnesis: dataForm?.resumeanamnesis,
-        resumeexfisico: dataForm?.resumeexfisico,
-        talla: dataAtencion?.atencionesCE?.triajeTalla,
-        temperatura: dataAtencion?.atencionesCE?.triajeTemperatura
-      },
-      cpt: {
-        cpt_1: "",
-        cpt_2: "",
-        cpt_3: "",
-        cpt_4: "",
-        cpt_5: "",
-        cpt_6: "",
-        cpt_7: "",
-        cpt_8: "",
-        cpt_9: "",
-        cpt_10: "",
-        cpt_11: "",
-        cpt_12: "",
-        cpt_13: "",
-        cpt_14: "",
-        cpt_15: "",
-        cpt_16: "",
-        cpt_17: "",
-        cpt_18: ""
-      },
-      datos_referencia: {
-        codEspecialidad: dataForm?.idespecialidades?.value,
-        condicion: dataForm?.condicion?.value,
-        desc_Cartera_servicio: "",
-        fechaReferencia: fechaHoy(),
-        fgRegistro: "2",
-        horaReferencia: horaActual(),
-        idCarteraServicio: "",
-        idEnvio: "R",
-        idTipoAtencion: "R",
-        idTipoTransporte: dataForm?.idTipoTransporte.value,
-        idestabDestino: dataForm?.idestabDestino?.value,
-        idestabOrigen: "754",
-        idupsOrigen: "",
-        idupsdestino: dataForm?.idupsDestino?.value,
-        motivo_referencia: {
-          idmotivoref: "2",
-          obsmotivoref: dataForm?.obsmotivoref
+    if (!dataAtencion?.atencionesCE?.triajePresion) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Presion arterial incompleta',
+      });
+      return;
+    } else {
+      const idcolegiohismedico = await axios.get(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/refcon-interoperabilidad/v1.0/listadoColegio?idProfesion=${dataAtencion?.medico?.idcolegiohis}`);
+      let idcolegioProf = idcolegiohismedico?.data?.data?.codigo_colegio
+      const [sistolica, diastolica] = dataAtencion?.atencionesCE?.triajePresion.split("/");
+
+      const dataenvioref = {
+        cita: {
+          fecha_vencimiento_sis: "",
+          frecuencia_cardiaca: dataAtencion?.atencionesCE?.triajeFrecCardiaca ? String(dataAtencion?.atencionesCE?.triajeFrecCardiaca) : "",
+          //   frecuencia_respiratoria: dataAtencion?.atencionesCE?.triajeFrecRespiratoria ? String(dataAtencion?.atencionesCE?.triajeFrecRespiratoria) : "90",
+          frecuencia_respiratoria: "90",
+          id_financiador: idfinanciadorhldo ? String(idfinanciadorhldo) : "",
+          num_afil: String(dataPaciente?.AfiliacionTipoFormato + "-" + dataPaciente?.AfiliacionNroFormato),
+          peso: dataAtencion?.atencionesCE?.triajePeso !== undefined && dataAtencion?.atencionesCE?.triajePeso !== null  ? Number(dataAtencion.atencionesCE.triajePeso).toFixed(2)  : "",
+          presion_arterial_diastolica: diastolica ? diastolica : "",
+          presion_arterial_sistolica: sistolica ? sistolica : "",
+          resumeanamnesis: dataForm?.resumeanamnesis,
+          resumeexfisico: dataForm?.resumeexfisico,
+          talla: dataAtencion?.atencionesCE?.triajeTalla,
+          temperatura: dataAtencion?.atencionesCE?.triajeTemperatura
         },
-        notasobs: ""
-      },
-      diagnostico: diagnosticos,
-      paciente: {
-        apelmatpac: dataPaciente?.ApellidoMaterno,
-        apelpatpac: dataPaciente?.ApellidoPaterno,
-        celularpac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
-        correopac: dataPaciente?.Email ? dataPaciente?.Email : "",
-        direccion: dataPaciente?.DireccionDomicilio ? dataPaciente?.DireccionDomicilio : "",
-        fechnacpac: fechaNacPaciente,
-        idsexo: sexoPaciente,
-        idtipodoc: String(dataPaciente?.IdDocIdentidad),
-        nombpac: dataPaciente?.PrimerNombre + (dataPaciente?.SegundoNombre ? ` ${dataPaciente?.SegundoNombre}` : ""),
-        nrohis: dataPaciente?.NroHistoriaClinica.trim(),
-        numdoc: dataAtencion?.medico?.empleado?.dni.trim(),
-        telefonopac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
-        ubigeoactual: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
-        ubigeoreniec: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : ""
-      },
-      persona_acompana: {
-        apelmatacomp: "",
-        apelpatacomp: "",
-        fechanacacomp: "",
-        idcolegioacomp: "",
-        idprofesionacomp: "",
-        idsexoacomp: "",
-        idtipodocacmop: "",
-        nombperacomp: "",
-        numdocacomp: ""
-      },
-      persona_establecimiento: {
-        apelmata: "Valdivieso",
-        apelpata: "Ibazeta",
-        fechanac: "19800101",
-        idcolegio: "01",
-        idprofesion: "01",
-        idsexo: "F",
-        idtipodoc: "1",
-        nombper: "Anni Giovanna",
-        numdoc: "23165404"
-      },
-      personal_registra: {
-        apellidoMaterno: dataAtencion?.medico?.empleado?.apellidomaterno,
-        apellidoPaterno: dataAtencion?.medico?.empleado?.apellidoPaterno,
-        fechaNacimiento: fechaNacMedico,
-        idcolegio: dataAtencion?.medico?.idcolegiohis,
-        idprofesion: dataAtencion?.medico?.empleado?.tiposEmpleado?.tipoEmpleadoHIS,
-        nombres: dataAtencion?.medico?.empleado?.nombres,
-        nroDocumento: dataAtencion?.medico?.empleado?.dni.trim(),
-        sexo: SexoHIS,
-        tipoDocumento: String(dataAtencion?.medico?.empleado?.idtipodocumento)
-      },
-      responsable_referencia: {
-        apelmatrefiere: datosUsuarioRefcon?.ApellidoMaterno,
-        apelpatrefiere: datosUsuarioRefcon?.ApellidoPaterno,
-        fechanacrefiere: formatearFecha(datosUsuarioRefcon?.FechaNacimiento),
-        idcolegioref: datosUsuarioRefcon?.idColegioHIS ? datosUsuarioRefcon?.idColegioHIS : "",
-        idprofesionref: datosUsuarioRefcon?.TipoEmpleadoHIS ? datosUsuarioRefcon?.TipoEmpleadoHIS : "29",
-        idsexorefiere: obtenerSexo(datosUsuarioRefcon?.sexo),
-        idtipodocref: datosUsuarioRefcon?.idTipoDocumento,
-        nombperrefiere: datosUsuarioRefcon?.Nombres,
-        numdocref: datosUsuarioRefcon?.Nombres,
-      },
-      tratamiento: tratamientos,
-      tutor: {
-        apellido_materno: "",
-        apellido_paterno: "",
-        celular: "",
-        correo: "",
-        estado_civil: "",
-        fecha_nacimiento: "",
-        nombres: "",
-        numero_documento: "",
-        sexo: "",
-        tipo_documento: ""
-      }
-    };
+        cpt: {
+          cpt_1: "",
+          cpt_2: "",
+          cpt_3: "",
+          cpt_4: "",
+          cpt_5: "",
+          cpt_6: "",
+          cpt_7: "",
+          cpt_8: "",
+          cpt_9: "",
+          cpt_10: "",
+          cpt_11: "",
+          cpt_12: "",
+          cpt_13: "",
+          cpt_14: "",
+          cpt_15: "",
+          cpt_16: "",
+          cpt_17: "",
+          cpt_18: ""
+        },
+        datos_referencia: {
+          codEspecialidad: dataForm?.idespecialidades?.value,
+          condicion: dataForm?.condicion?.value,
+          desc_Cartera_servicio: "",
+          fechaReferencia: fechaHoy(),
+          fgRegistro: "2",
+          horaReferencia: horaActual(),
+          idCarteraServicio: "",
+          idEnvio: "R",
+          idTipoAtencion: "R",
+          idTipoTransporte: dataForm?.idTipoTransporte.value,
+          idestabDestino: dataForm?.idestabDestino?.value,
+          idestabOrigen: "754",
+          idupsOrigen: dataAtencion?.servicio?.codigoserviciosusalud,
+          idupsdestino: dataForm?.idupsDestino?.value,
+          motivo_referencia: {
+            idmotivoref: dataForm?.motivo?.value,
+            obsmotivoref: dataForm?.motivo?.label
+          },
+          notasobs: ""
+        },
+        diagnostico: diagnosticos,
+        paciente: {
+          apelmatpac: dataPaciente?.ApellidoMaterno,
+          apelpatpac: dataPaciente?.ApellidoPaterno,
+          celularpac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
+          correopac: dataPaciente?.Email ? dataPaciente?.Email : "",
+          direccion: dataPaciente?.DireccionDomicilio ? dataPaciente?.DireccionDomicilio : "Jr. Dos de Mayo N° 928",
+          fechnacpac: fechaNacPaciente,
+          idsexo: sexoPaciente,
+          idtipodoc: String(dataPaciente?.IdDocIdentidad),
+          nombpac: dataPaciente?.PrimerNombre + (dataPaciente?.SegundoNombre ? ` ${dataPaciente?.SegundoNombre}` : ""),
+          nrohis: dataPaciente?.NroHistoriaClinica.trim(),
+          numdoc: dataAtencion?.medico?.empleado?.dni.trim(),
+          telefonopac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
+          ubigeoactual: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
+          ubigeoreniec: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : ""
+        },
+        persona_acompana: {
+          apelmatacomp: "",
+          apelpatacomp: "",
+          fechanacacomp: "",
+          idcolegioacomp: "",
+          idprofesionacomp: "",
+          idsexoacomp: "",
+          idtipodocacmop: "",
+          nombperacomp: "",
+          numdocacomp: ""
+        },
+        persona_establecimiento: {
+          apelmata: "Valdivieso",
+          apelpata: "Ibazeta",
+          fechanac: "19800101",
+          idcolegio: "01",
+          idprofesion: "01",
+          idsexo: "F",
+          idtipodoc: "1",
+          nombper: "Anni Giovanna",
+          numdoc: "23165404"
+        },
+        personal_registra: {
+          apellidoMaterno: dataAtencion?.medico?.empleado?.apellidomaterno,
+          apellidoPaterno: dataAtencion?.medico?.empleado?.apellidoPaterno,
+          fechaNacimiento: fechaNacMedico,
+          idcolegio: dataAtencion?.medico?.idcolegiohis,
+          idprofesion: dataAtencion?.medico?.empleado?.tiposEmpleado?.tipoEmpleadoHIS,
+          nombres: dataAtencion?.medico?.empleado?.nombres,
+          nroDocumento: dataAtencion?.medico?.empleado?.dni.trim(),
+          sexo: SexoHIS,
+          tipoDocumento: String(dataAtencion?.medico?.empleado?.idtipodocumento)
+        },
+        responsable_referencia: {
+          apelmatrefiere: datosUsuarioRefcon?.ApellidoMaterno,
+          apelpatrefiere: datosUsuarioRefcon?.ApellidoPaterno,
+          fechanacrefiere: formatearFecha(datosUsuarioRefcon?.FechaNacimiento),
+          idcolegioref: idcolegioProf,
+          idprofesionref: datosUsuarioRefcon?.TipoEmpleadoHIS ? datosUsuarioRefcon?.TipoEmpleadoHIS : "29",
+          idsexorefiere: obtenerSexo(datosUsuarioRefcon?.sexo),
+          idtipodocref: datosUsuarioRefcon?.idTipoDocumento,
+          nombperrefiere: datosUsuarioRefcon?.Nombres,
+          numdocref: datosUsuarioRefcon?.Nombres,
+        },
+        tratamiento: tratamientos,
+        tutor: {
+          apellido_materno: "",
+          apellido_paterno: "",
+          celular: "",
+          correo: "",
+          estado_civil: "",
+          fecha_nacimiento: "",
+          nombres: "",
+          numero_documento: "",
+          sexo: "",
+          tipo_documento: ""
+        }
+      };
 
- 
-      
-  const response = await fetch("/api/refcon/saveReferencia", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dataenvioref),
-  });
- /* const datosRespuestaMinsaContrareferencia={
-    "ok": true,
-    "message": "Petición enviada al servicio externo",
-    "result": {
-      "codigo": "0000",
-      "mensaje": null,
-      "datos": {
-        "idreferencia": 1366010,
-        "nroreferencia": "754-00001"
-      }
-    }
-  }*/
-  const result = await response.json();
-  console.log("Respuesta del backend:", result);
-      
-  Swal.fire({
-    title: "<strong>Datos</u></strong>",
-    icon: "info",
-    html: `
+      console.log(dataenvioref)
+  
+      const response = await fetch("/api/refcon/saveRefencia", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataenvioref),
+      });
+
+      const result = await response.json();
+      console.log(result?.result)
+
+      if (result.result?.codigo == "0000") {
+          const objResultadoByidCuentaAtencion = {
+          idCuentaAtencion: dataAtencion?.idCuentaAtencion,
+          idReferencia: result?.result?.datos?.idReferencia,
+          nroReferencia: result?.result?.datos?.nro_referencia,
+        }
+        const responseReferenc:any=await axios.post(`${process.env.apijimmynew}/refcon/reference/create`,objResultadoByidCuentaAtencion)
+        if(responseReferenc){
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: 'Referencia registrada correctamente',
+        });
+        closeModal();
+        reset2();
+        }
+
+      } else {
+        Swal.fire({
+          title: "<strong>Datos</u></strong>",
+          icon: "info",
+          html: `
       <pre style="text-align:left; white-space:pre-wrap;">
   ${JSON.stringify(result, null, 2)}
       </pre>
     `,
-    showCloseButton: true,
-    showCancelButton: true,
-    focusConfirm: false,
-  
-  });
+          showCloseButton: true,
+          showCancelButton: true,
+          focusConfirm: false,
+        });
+      }
+     /*
+*/
+
+
+
+
+    }
   }
+
+  
   useEffect(() => {
     let isMounted = true;
     const fetchData = async () => {
       try {
-        const [condicionRes, transporteRes, EspecialidadesRes, upsRes, condicionPx] = await Promise.all([
+        const [condicionRes, transporteRes, EspecialidadesRes, upsRes, condicionPx, listReason] = await Promise.all([
           getData(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/referencia-interoperabilidad/v1.0/listadoCondicionPaciente`),
           getData(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/refcon-interoperabilidad/v1.0/listadoTipoTransporte`),
           getData(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/refcon-interoperabilidad/v1.0/listadoEspecialidades`),
           axios.get("/api/rflistaups/0754"),
           getData(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/contrarreferencia-interoperabilidad/v1.0/listadoCondicionPaciente`),
+          getData(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/refcon-interoperabilidad/v1.0/listadoMotivo`),
         ]);
-
         if (isMounted) {
           const tipocondicion = condicionRes.data.map((item: any) => ({
             value: item.codigo_condicion,
@@ -347,18 +385,21 @@ export const Referencia = ({ session }: { session: any }) => {
             label: item.tipo_transporte,
           })) || [];
           setlistadoTipoTransporte(tipoTransporte);
-
           const upsOptions = EspecialidadesRes.data?.map((item: any) => ({
             value: item.codigo_especialidad,
             label: item.especialidad,
           })) || [];
           setlistadoEspecialidades(upsOptions);
-
           const tipocondicion2 = condicionPx.data.map((item: any) => ({
             value: item.codigo_condicion,
             label: item.condicion,
           })) || [];
           setlistadoCondicionPacientev2(tipocondicion2);
+          const listadoMotivo = listReason.data.map((item: any) => ({
+            value: item.codigo_motivo,
+            label: item.motivo,
+          })) || [];
+          setlistadoMotivo(listadoMotivo)
         }
       } catch (error) {
         console.error(error);
@@ -377,11 +418,9 @@ export const Referencia = ({ session }: { session: any }) => {
     debounce(async (nommed: any) => {
       try {
         const response = await getData(`${process.env.apijimmynew}/establecimiento/buscar/${nommed}`);
-      
         const mappedOptions = response.map((est: any) => ({
           value: est.codigo,
           label: `${est.codigo?.trim()} - ${est.nombre.trim()}`,
-
         }));
         setOptions(mappedOptions);
       } catch (error) {
@@ -410,9 +449,7 @@ export const Referencia = ({ session }: { session: any }) => {
     if (idestabDestinoWatch) {
       setlistadoUpsOrigen([]);
       getUpsEstablecimientoOrigen(idestabDestinoWatch)
-
     }
-
   }, [idestabDestinoWatch])
 
   const getMedicosGeneral = async (nom: string) => {
@@ -440,10 +477,7 @@ export const Referencia = ({ session }: { session: any }) => {
 
   return (
     <>
-      <pre>
-        {JSON.stringify(datosUsuarioRefcon, null, 2)}
-      </pre>
-      481253  501298
+    
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
         <input
           type="text"
@@ -494,7 +528,7 @@ export const Referencia = ({ session }: { session: any }) => {
                   {...field}
                   instanceId="especialidad-select"
                   options={listadoTipoTransporte}
-                  
+
                   placeholder="Seleccione un transporte"
                   className="mt-2 mb-2"
                   isClearable
@@ -587,13 +621,29 @@ export const Referencia = ({ session }: { session: any }) => {
 
             )}
           />
-          <textarea
-            id="obsmotivoref"
-            {...register2("obsmotivoref", { required: true })}
-            className="w-full border rounded-md p-2"
-            rows={4}
-            placeholder="Motivo de referencia"
+          <Controller
+            name="motivo"
+            control={control2}
+            defaultValue={null}
+            rules={{ required: "require condicion" }}
+            render={({ field }) => (
+              <div>
+                <label className="block mb-1 font-semibold">Motivo :</label>
+                <Select
+                  {...field}
+                  instanceId="motivo-select"
+                  options={listadoMotivo}
+                  placeholder="Seleccione una motivo"
+                  className="mt-2 mb-2"
+                  isClearable
+                  value={field.value} // 👉 ahora field.value es un objeto { value, label }
+                  onChange={(selected) => field.onChange(selected)} // 👉 guardamos objeto completo
+                />
+              </div>
+            )}
           />
+
+  <label className="block mb-1 font-semibold">resumeanamnesis :</label>
           <textarea
             id="resumeanamnesis"
             {...register2("resumeanamnesis", { required: true })}
@@ -601,14 +651,23 @@ export const Referencia = ({ session }: { session: any }) => {
             rows={4}
             placeholder="Escribe tu resumen anamnesis..."
           />
+          <label className="block mb-1 font-semibold">resumeexfisico :</label>
           <textarea
-            id="resumeexfisico"
-            {...register2("resumeexfisico", { required: true })}
-            className="w-full border rounded-md p-2"
-            rows={4}
-            placeholder="Escribe tu resumen fisico..."
-          />
-       
+  id="resumeexfisico"
+  {...register2("resumeexfisico", { 
+    required: "Este campo es obligatorio",
+    minLength: { value: 30, message: "Debe tener al menos 30 caracteres" }
+  })}
+  className="w-full border rounded-md p-2"
+  rows={4}
+  placeholder="Escribe tu resumen físico..."
+/>
+{errors2.resumeexfisico && (
+  <p className="text-red-500 text-sm mt-1">
+    {String(errors2.resumeexfisico.message)}
+  </p>
+)}
+
           <button
             type="submit"
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
