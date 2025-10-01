@@ -7,12 +7,12 @@ import Swal from 'sweetalert2';
 import Select from 'react-select';
 import axios from 'axios';
 import { debounce } from '@mui/material';
-import { ImSpinner2 } from "react-icons/im"; 
+import { ImSpinner2 } from "react-icons/im";
 
 export const Referencia = ({ session }: { session: any }) => {
   const { register, handleSubmit } = useForm();
 
-  const { register: register2, handleSubmit: handleSubmit2, control: control2, watch: watch2, setValue: setValue2,formState: { errors:errors2 },reset:reset2 } = useForm();
+  const { register: register2, handleSubmit: handleSubmit2, control: control2, watch: watch2, setValue: setValue2, formState: { errors: errors2 }, reset: reset2 } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataAtencion, setdataAtencion] = useState<any>();
   const [verDataProcesada, setverDataProcesada] = useState<any>();
@@ -95,290 +95,290 @@ export const Referencia = ({ session }: { session: any }) => {
 
   const onSubmit2 = async (dataForm: any) => {
     try {
-       Swal.fire({
-      title: 'Enviando referencia...',
-      html: 'Por favor espera un momento',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-    const tratamientos: any[] = [];
-    const diagnosticos: any[] = [];
-    dataAtencion.atencionesDiagnosticos.forEach((item: any, index: number) => {
-      diagnosticos.push({
-        diagnostico: item.diagnostico?.codigoCIEsinPto.trim(),
-        nro_diagnostico: String(index + 1),
-        tipo_diagnostico: item.subclasificacionDiagnosticos?.codigo
-      });
-    });
-    const fechaNacimiento = dataAtencion?.medico?.empleado?.fechanacimiento;
-    let fechaNacMedico = formatearFecha(fechaNacimiento);
-    let fechaNacPaciente = formatearFecha(dataPaciente?.FechaNacimiento);
-
-    const sexoDescripcion = dataAtencion?.medico?.empleado?.tiposSexo?.descripcion ?? "";
-    const SexoHIS = sexoDescripcion ? sexoDescripcion.charAt(0) : "M";
-    const sexoPaciente = dataPaciente?.IdTipoSexo == 2 ? "F" : "M";
-    dataAtencion?.recetaCabeceras
-      ?.filter((cabecera: any) => cabecera.idPuntoCarga == 5)
-      .forEach((cabecera: any) => {
-        cabecera.recetaDetalles
-          ?.filter(
-            (detalle: any) =>
-              detalle.factCatalogoBienesInsumos?.tipoProducto === "0" // solo medicamentos
-          )
-          .forEach((detalle: any, index: number) => {
-            tratamientos.push({
-              cantidad: detalle.cantidadPedida ?? "",
-              codigo_medicamento: detalle.factCatalogoBienesInsumos?.codigo ?? "",
-              frecuencia: detalle.observaciones ?? "",
-              nro_diagnostico: String(index + 1),
-              nro_tratamiento: "",
-              periodo: "",
-              unidad_tiempo: "",
-            });
-          });
-      });
-      console.log(dataAtencion)
-    // 👇 Si no se agregó nada, meter un objeto vacío
-    if (tratamientos.length === 0) {
-      tratamientos.push({
-        cantidad: null,
-        codigo_medicamento: "",
-        frecuencia: "",
-        nro_diagnostico: null,
-        nro_tratamiento: null,
-        periodo: null,
-        unidad_tiempo: null,
-      });
-    }
-    const equivalencias: Record<number, string> = {
-      1:"12",
-      3: "2",
-      4: "4",
-      5: "12",
-      6: "3",
-      7: "8",
-      8: "1",
-      9:"9",
-      10:"10",
-      11:"5",
-      12:"6",
-      13:"7",
-      14:"10",
-    };
-    let idfinanciadorhldo = dataAtencion?.idFuenteFinanciamiento;
-    
-    if (typeof idfinanciadorhldo === "number" && equivalencias[idfinanciadorhldo]) {
-      idfinanciadorhldo = equivalencias[idfinanciadorhldo];
-    }
-
-    if (!dataAtencion?.atencionesCE?.triajePresion) {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Presion arterial incompleta',
-      });
-      return;
-    } else {
-      const idcolegiohismedico = await axios.get(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/refcon-interoperabilidad/v1.0/listadoColegio?idProfesion=${dataAtencion?.medico?.idcolegiohis}`);
-      let idcolegioProf = idcolegiohismedico?.data?.data?.codigo_colegio
-      const [sistolica, diastolica] = dataAtencion?.atencionesCE?.triajePresion.split("/");
-
-      const dataenvioref = {
-        cita: {
-          fecha_vencimiento_sis: "",
-          frecuencia_cardiaca: dataAtencion?.atencionesCE?.triajeFrecCardiaca ? String(dataAtencion?.atencionesCE?.triajeFrecCardiaca) : "",
-          //   frecuencia_respiratoria: dataAtencion?.atencionesCE?.triajeFrecRespiratoria ? String(dataAtencion?.atencionesCE?.triajeFrecRespiratoria) : "90",
-          frecuencia_respiratoria: "90",
-          id_financiador: idfinanciadorhldo ? String(idfinanciadorhldo) : "",
-          num_afil: String(dataPaciente?.AfiliacionTipoFormato + "-" + dataPaciente?.AfiliacionNroFormato),
-          peso: dataAtencion?.atencionesCE?.triajePeso !== undefined && dataAtencion?.atencionesCE?.triajePeso !== null  ? Number(dataAtencion.atencionesCE.triajePeso).toFixed(2)  : "",
-          presion_arterial_diastolica: diastolica ? diastolica : "",
-          presion_arterial_sistolica: sistolica ? sistolica : "",
-          resumeanamnesis: dataForm?.resumeanamnesis,
-          resumeexfisico: dataForm?.resumeexfisico,
-          talla: dataAtencion?.atencionesCE?.triajeTalla,
-          temperatura: dataAtencion?.atencionesCE?.triajeTemperatura
-        },
-        cpt: {
-          cpt_1: "",
-          cpt_2: "",
-          cpt_3: "",
-          cpt_4: "",
-          cpt_5: "",
-          cpt_6: "",
-          cpt_7: "",
-          cpt_8: "",
-          cpt_9: "",
-          cpt_10: "",
-          cpt_11: "",
-          cpt_12: "",
-          cpt_13: "",
-          cpt_14: "",
-          cpt_15: "",
-          cpt_16: "",
-          cpt_17: "",
-          cpt_18: ""
-        },
-        datos_referencia: {
-          codEspecialidad: dataForm?.idespecialidades?.value,
-          condicion: dataForm?.condicion?.value,
-          desc_Cartera_servicio: "",
-          fechaReferencia: fechaHoy(),
-          fgRegistro: "2",
-          horaReferencia: horaActual(),
-          idCarteraServicio: "",
-          idEnvio: "R",
-          idTipoAtencion: "R",
-          idTipoTransporte: dataForm?.idTipoTransporte.value,
-          idestabDestino: dataForm?.idestabDestino?.value,
-          idestabOrigen: "754",
-          idupsOrigen: dataAtencion?.servicio?.codigoserviciosusalud,
-          idupsdestino: dataForm?.idupsDestino?.value,
-          motivo_referencia: {
-            idmotivoref: dataForm?.motivo?.value,
-            obsmotivoref: dataForm?.motivo?.label
-          },
-          notasobs: ""
-        },
-        diagnostico: diagnosticos,
-        paciente: {
-          apelmatpac: dataPaciente?.ApellidoMaterno,
-          apelpatpac: dataPaciente?.ApellidoPaterno,
-          celularpac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
-          correopac: dataPaciente?.Email ? dataPaciente?.Email : "",
-          direccion: dataPaciente?.DireccionDomicilio ? dataPaciente?.DireccionDomicilio : "Jr. Dos de Mayo N° 928",
-          fechnacpac: fechaNacPaciente,
-          idsexo: sexoPaciente,
-          idtipodoc: String(dataPaciente?.IdDocIdentidad),
-          nombpac: dataPaciente?.PrimerNombre + (dataPaciente?.SegundoNombre ? ` ${dataPaciente?.SegundoNombre}` : ""),
-          nrohis: dataPaciente?.NroHistoriaClinica.trim(),
-          numdoc: dataAtencion?.medico?.empleado?.dni.trim(),
-          telefonopac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
-          ubigeoactual: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
-          ubigeoreniec: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : ""
-        },
-        persona_acompana: {
-          apelmatacomp: "",
-          apelpatacomp: "",
-          fechanacacomp: "",
-          idcolegioacomp: "",
-          idprofesionacomp: "",
-          idsexoacomp: "",
-          idtipodocacmop: "",
-          nombperacomp: "",
-          numdocacomp: ""
-        },
-        persona_establecimiento: {
-          apelmata: "Valdivieso",
-          apelpata: "Ibazeta",
-          fechanac: "19800101",
-          idcolegio: "01",
-          idprofesion: "01",
-          idsexo: "F",
-          idtipodoc: "1",
-          nombper: "Anni Giovanna",
-          numdoc: "23165404"
-        },
-        personal_registra: {
-          apellidoMaterno: dataAtencion?.medico?.empleado?.apellidomaterno,
-          apellidoPaterno: dataAtencion?.medico?.empleado?.apellidoPaterno,
-          fechaNacimiento: fechaNacMedico,
-          idcolegio: dataAtencion?.medico?.idcolegiohis,
-          idprofesion: dataAtencion?.medico?.empleado?.tiposEmpleado?.tipoEmpleadoHIS,
-          nombres: dataAtencion?.medico?.empleado?.nombres,
-          nroDocumento: dataAtencion?.medico?.empleado?.dni.trim(),
-          sexo: SexoHIS,
-          tipoDocumento: String(dataAtencion?.medico?.empleado?.idtipodocumento)
-        },
-        responsable_referencia: {
-          apelmatrefiere: datosUsuarioRefcon?.ApellidoMaterno,
-          apelpatrefiere: datosUsuarioRefcon?.ApellidoPaterno,
-          fechanacrefiere: formatearFecha(datosUsuarioRefcon?.FechaNacimiento),
-          idcolegioref: idcolegioProf,
-          idprofesionref: datosUsuarioRefcon?.TipoEmpleadoHIS ? datosUsuarioRefcon?.TipoEmpleadoHIS : "29",
-          idsexorefiere: obtenerSexo(datosUsuarioRefcon?.sexo),
-          idtipodocref: datosUsuarioRefcon?.idTipoDocumento,
-          nombperrefiere: datosUsuarioRefcon?.Nombres,
-          numdocref: datosUsuarioRefcon?.Nombres,
-        },
-        tratamiento: tratamientos,
-        tutor: {
-          apellido_materno: "",
-          apellido_paterno: "",
-          celular: "",
-          correo: "",
-          estado_civil: "",
-          fecha_nacimiento: "",
-          nombres: "",
-          numero_documento: "",
-          sexo: "",
-          tipo_documento: ""
+        title: 'Enviando referencia...',
+        html: 'Por favor espera un momento',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
         }
-      };
-
-      console.log(dataenvioref)
-  
-      const response = await fetch("/api/refcon/saveRefencia", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataenvioref),
       });
-
-      const result = await response.json();
-      Swal.close();
-
-      if (result.result?.codigo == "0000") {
-          const objResultadoByidCuentaAtencion = {
-          idCuentaAtencion: dataAtencion?.idCuentaAtencion,
-          idReferencia: result?.result?.datos?.idReferencia,
-          nroReferencia: result?.result?.datos?.nro_referencia,
-        }
-        const responseReferenc:any=await axios.post(`${process.env.apijimmynew}/refcon/reference/create`,objResultadoByidCuentaAtencion)
-        if(responseReferenc){
-        Swal.fire({
-          icon: 'success',
-          title: 'Éxito',
-          text: 'Referencia registrada correctamente',
+      const tratamientos: any[] = [];
+      const diagnosticos: any[] = [];
+      dataAtencion.atencionesDiagnosticos.forEach((item: any, index: number) => {
+        diagnosticos.push({
+          diagnostico: item.diagnostico?.codigoCIEsinPto.trim(),
+          nro_diagnostico: String(index + 1),
+          tipo_diagnostico: item.subclasificacionDiagnosticos?.codigo
         });
-        closeModal();
-        reset2();
-        }
+      });
+      const fechaNacimiento = dataAtencion?.medico?.empleado?.fechanacimiento;
+      let fechaNacMedico = formatearFecha(fechaNacimiento);
+      let fechaNacPaciente = formatearFecha(dataPaciente?.FechaNacimiento);
 
-      } else {
+      const sexoDescripcion = dataAtencion?.medico?.empleado?.tiposSexo?.descripcion ?? "";
+      const SexoHIS = sexoDescripcion ? sexoDescripcion.charAt(0) : "M";
+      const sexoPaciente = dataPaciente?.IdTipoSexo == 2 ? "F" : "M";
+      dataAtencion?.recetaCabeceras
+        ?.filter((cabecera: any) => cabecera.idPuntoCarga == 5)
+        .forEach((cabecera: any) => {
+          cabecera.recetaDetalles
+            ?.filter(
+              (detalle: any) =>
+                detalle.factCatalogoBienesInsumos?.tipoProducto === "0" // solo medicamentos
+            )
+            .forEach((detalle: any, index: number) => {
+              tratamientos.push({
+                cantidad: detalle.cantidadPedida ?? "",
+                codigo_medicamento: detalle.factCatalogoBienesInsumos?.codigo ?? "",
+                frecuencia: detalle.observaciones ?? "",
+                nro_diagnostico: String(index + 1),
+                nro_tratamiento: "",
+                periodo: "",
+                unidad_tiempo: "",
+              });
+            });
+        });
+      console.log(dataAtencion)
+      // 👇 Si no se agregó nada, meter un objeto vacío
+      if (tratamientos.length === 0) {
+        tratamientos.push({
+          cantidad: null,
+          codigo_medicamento: "",
+          frecuencia: "",
+          nro_diagnostico: null,
+          nro_tratamiento: null,
+          periodo: null,
+          unidad_tiempo: null,
+        });
+      }
+      const equivalencias: Record<number, string> = {
+        1: "12",
+        3: "2",
+        4: "4",
+        5: "12",
+        6: "3",
+        7: "8",
+        8: "1",
+        9: "9",
+        10: "10",
+        11: "5",
+        12: "6",
+        13: "7",
+        14: "10",
+      };
+      let idfinanciadorhldo = dataAtencion?.idFuenteFinanciamiento;
+
+      if (typeof idfinanciadorhldo === "number" && equivalencias[idfinanciadorhldo]) {
+        idfinanciadorhldo = equivalencias[idfinanciadorhldo];
+      }
+
+      if (!dataAtencion?.atencionesCE?.triajePresion) {
         Swal.fire({
-          title: "<strong>Datos</u></strong>",
-          icon: "info",
-          html: `
+          icon: 'error',
+          title: 'Error',
+          text: 'Presion arterial incompleta',
+        });
+        return;
+      } else {
+        const idcolegiohismedico = await axios.get(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/refcon-interoperabilidad/v1.0/listadoColegio?idProfesion=${dataAtencion?.medico?.idcolegiohis}`);
+        let idcolegioProf = idcolegiohismedico?.data?.data?.codigo_colegio
+        const [sistolica, diastolica] = dataAtencion?.atencionesCE?.triajePresion.split("/");
+
+        const dataenvioref = {
+          cita: {
+            fecha_vencimiento_sis: "",
+            frecuencia_cardiaca: dataAtencion?.atencionesCE?.triajeFrecCardiaca ? String(dataAtencion?.atencionesCE?.triajeFrecCardiaca) : "",
+            //   frecuencia_respiratoria: dataAtencion?.atencionesCE?.triajeFrecRespiratoria ? String(dataAtencion?.atencionesCE?.triajeFrecRespiratoria) : "90",
+            frecuencia_respiratoria: "90",
+            id_financiador: idfinanciadorhldo ? String(idfinanciadorhldo) : "",
+            num_afil: String(dataPaciente?.AfiliacionTipoFormato + "-" + dataPaciente?.AfiliacionNroFormato),
+            peso: dataAtencion?.atencionesCE?.triajePeso !== undefined && dataAtencion?.atencionesCE?.triajePeso !== null ? Number(dataAtencion.atencionesCE.triajePeso).toFixed(2) : "",
+            presion_arterial_diastolica: diastolica ? diastolica : "",
+            presion_arterial_sistolica: sistolica ? sistolica : "",
+            resumeanamnesis: dataForm?.resumeanamnesis,
+            resumeexfisico: dataForm?.resumeexfisico,
+            talla: dataAtencion?.atencionesCE?.triajeTalla,
+            temperatura: dataAtencion?.atencionesCE?.triajeTemperatura
+          },
+          cpt: {
+            cpt_1: "",
+            cpt_2: "",
+            cpt_3: "",
+            cpt_4: "",
+            cpt_5: "",
+            cpt_6: "",
+            cpt_7: "",
+            cpt_8: "",
+            cpt_9: "",
+            cpt_10: "",
+            cpt_11: "",
+            cpt_12: "",
+            cpt_13: "",
+            cpt_14: "",
+            cpt_15: "",
+            cpt_16: "",
+            cpt_17: "",
+            cpt_18: ""
+          },
+          datos_referencia: {
+            codEspecialidad: dataForm?.idespecialidades?.value,
+            condicion: dataForm?.condicion?.value,
+            desc_Cartera_servicio: "",
+            fechaReferencia: fechaHoy(),
+            fgRegistro: "2",
+            horaReferencia: horaActual(),
+            idCarteraServicio: "",
+            idEnvio: "R",
+            idTipoAtencion: "R",
+            idTipoTransporte: dataForm?.idTipoTransporte.value,
+            idestabDestino: dataForm?.idestabDestino?.value,
+            idestabOrigen: "754",
+            idupsOrigen: dataAtencion?.servicio?.codigoserviciosusalud,
+            idupsdestino: dataForm?.idupsDestino?.value,
+            motivo_referencia: {
+              idmotivoref: dataForm?.motivo?.value,
+              obsmotivoref: dataForm?.motivo?.label
+            },
+            notasobs: ""
+          },
+          diagnostico: diagnosticos,
+          paciente: {
+            apelmatpac: dataPaciente?.ApellidoMaterno,
+            apelpatpac: dataPaciente?.ApellidoPaterno,
+            celularpac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
+            correopac: dataPaciente?.Email ? dataPaciente?.Email : "",
+            direccion: dataPaciente?.DireccionDomicilio ? dataPaciente?.DireccionDomicilio : "Jr. Dos de Mayo N° 928",
+            fechnacpac: fechaNacPaciente,
+            idsexo: sexoPaciente,
+            idtipodoc: String(dataPaciente?.IdDocIdentidad),
+            nombpac: dataPaciente?.PrimerNombre + (dataPaciente?.SegundoNombre ? ` ${dataPaciente?.SegundoNombre}` : ""),
+            nrohis: dataPaciente?.NroHistoriaClinica.trim(),
+            numdoc: dataAtencion?.medico?.empleado?.dni.trim(),
+            telefonopac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
+            ubigeoactual: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
+            ubigeoreniec: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : ""
+          },
+          persona_acompana: {
+            apelmatacomp: "",
+            apelpatacomp: "",
+            fechanacacomp: "",
+            idcolegioacomp: "",
+            idprofesionacomp: "",
+            idsexoacomp: "",
+            idtipodocacmop: "",
+            nombperacomp: "",
+            numdocacomp: ""
+          },
+          persona_establecimiento: {
+            apelmata: "Valdivieso",
+            apelpata: "Ibazeta",
+            fechanac: "19800101",
+            idcolegio: "01",
+            idprofesion: "01",
+            idsexo: "F",
+            idtipodoc: "1",
+            nombper: "Anni Giovanna",
+            numdoc: "23165404"
+          },
+          personal_registra: {
+            apellidoMaterno: dataAtencion?.medico?.empleado?.apellidomaterno,
+            apellidoPaterno: dataAtencion?.medico?.empleado?.apellidoPaterno,
+            fechaNacimiento: fechaNacMedico,
+            idcolegio: dataAtencion?.medico?.idcolegiohis,
+            idprofesion: dataAtencion?.medico?.empleado?.tiposEmpleado?.tipoEmpleadoHIS,
+            nombres: dataAtencion?.medico?.empleado?.nombres,
+            nroDocumento: dataAtencion?.medico?.empleado?.dni.trim(),
+            sexo: SexoHIS,
+            tipoDocumento: String(dataAtencion?.medico?.empleado?.idtipodocumento)
+          },
+          responsable_referencia: {
+            apelmatrefiere: datosUsuarioRefcon?.ApellidoMaterno,
+            apelpatrefiere: datosUsuarioRefcon?.ApellidoPaterno,
+            fechanacrefiere: formatearFecha(datosUsuarioRefcon?.FechaNacimiento),
+            idcolegioref: idcolegioProf,
+            idprofesionref: datosUsuarioRefcon?.TipoEmpleadoHIS ? datosUsuarioRefcon?.TipoEmpleadoHIS : "29",
+            idsexorefiere: obtenerSexo(datosUsuarioRefcon?.sexo),
+            idtipodocref: datosUsuarioRefcon?.idTipoDocumento,
+            nombperrefiere: datosUsuarioRefcon?.Nombres,
+            numdocref: datosUsuarioRefcon?.Nombres,
+          },
+          tratamiento: tratamientos,
+          tutor: {
+            apellido_materno: "",
+            apellido_paterno: "",
+            celular: "",
+            correo: "",
+            estado_civil: "",
+            fecha_nacimiento: "",
+            nombres: "",
+            numero_documento: "",
+            sexo: "",
+            tipo_documento: ""
+          }
+        };
+
+        console.log(dataenvioref)
+
+        const response = await fetch("/api/refcon/saveRefencia", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dataenvioref),
+        });
+
+        const result = await response.json();
+        Swal.close();
+
+        if (result.result?.codigo == "0000") {
+          const objResultadoByidCuentaAtencion = {
+            idCuentaAtencion: dataAtencion?.idCuentaAtencion,
+            idReferencia: result?.result?.datos?.idReferencia,
+            nroReferencia: result?.result?.datos?.nro_referencia,
+          }
+          const responseReferenc: any = await axios.post(`${process.env.apijimmynew}/refcon/reference/create`, objResultadoByidCuentaAtencion)
+          if (responseReferenc) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Éxito',
+              text: 'Referencia registrada correctamente',
+            });
+            closeModal();
+            reset2();
+          }
+
+        } else {
+          Swal.fire({
+            title: "<strong>Datos</u></strong>",
+            icon: "info",
+            html: `
       <pre style="text-align:left; white-space:pre-wrap;">
   ${JSON.stringify(result, null, 2)}
       </pre>
     `,
-          showCloseButton: true,
-          showCancelButton: true,
-          focusConfirm: false,
-        });
+            showCloseButton: true,
+            showCancelButton: true,
+            focusConfirm: false,
+          });
+        }
+        /*
+   */
+
+
+
+
       }
-     /*
-*/
-
-
-
-
-    }
     } catch (error) {
-        Swal.close();
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Ocurrió un error al enviar la referencia',
-    });
+      Swal.close();
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Ocurrió un error al enviar la referencia',
+      });
     }
-    
+
   }
 
-  
+
   useEffect(() => {
     let isMounted = true;
     const fetchData = async () => {
@@ -494,7 +494,7 @@ export const Referencia = ({ session }: { session: any }) => {
 
   return (
     <>
-    
+
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
         <input
           type="text"
@@ -660,7 +660,7 @@ export const Referencia = ({ session }: { session: any }) => {
             )}
           />
 
-  <label className="block mb-1 font-semibold">resumeanamnesis :</label>
+          <label className="block mb-1 font-semibold">resumeanamnesis :</label>
           <textarea
             id="resumeanamnesis"
             {...register2("resumeanamnesis", { required: true })}
@@ -670,20 +670,20 @@ export const Referencia = ({ session }: { session: any }) => {
           />
           <label className="block mb-1 font-semibold">resumeexfisico :</label>
           <textarea
-  id="resumeexfisico"
-  {...register2("resumeexfisico", { 
-    required: "Este campo es obligatorio",
-    minLength: { value: 30, message: "Debe tener al menos 30 caracteres" }
-  })}
-  className="w-full border rounded-md p-2"
-  rows={4}
-  placeholder="Escribe tu resumen físico..."
-/>
-{errors2.resumeexfisico && (
-  <p className="text-red-500 text-sm mt-1">
-    {String(errors2.resumeexfisico.message)}
-  </p>
-)}
+            id="resumeexfisico"
+            {...register2("resumeexfisico", {
+              required: "Este campo es obligatorio",
+              minLength: { value: 30, message: "Debe tener al menos 30 caracteres" }
+            })}
+            className="w-full border rounded-md p-2"
+            rows={4}
+            placeholder="Escribe tu resumen físico..."
+          />
+          {errors2.resumeexfisico && (
+            <p className="text-red-500 text-sm mt-1">
+              {String(errors2.resumeexfisico.message)}
+            </p>
+          )}
 
           <button
             type="submit"

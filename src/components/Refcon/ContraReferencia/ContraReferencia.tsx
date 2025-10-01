@@ -248,15 +248,13 @@ if (tratamientos.length === 0) {
             },
             tratamiento: tratamientos
         };
-        console.log("=================================")
-console.log(dataenvio)
-console.log("=================================")
-    
+
 const response = await fetch("/api/refcon/saveContrareferencia", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(dataenvio),
 });
+
 const datosRespuestaMinsaContrareferencia={
   "ok": true,
   "message": "Petición enviada al servicio externo",
@@ -270,8 +268,7 @@ const datosRespuestaMinsaContrareferencia={
   }
 }
 const result = await response.json();
-console.log("Respuesta del backend:", result);
-    /**/
+
 Swal.fire({
   title: "<strong>Datos</u></strong>",
   icon: "info",
@@ -331,7 +328,6 @@ ${JSON.stringify(result, null, 2)}
                 const mappedOptions = response.map((est: any) => ({
                     value: est.codigo,
                     label: `${est.codigo?.trim()} - ${est.nombre.trim()}`,
-
                 }));
                 setOptions(mappedOptions);
             } catch (error) {
@@ -358,13 +354,11 @@ ${JSON.stringify(result, null, 2)}
             }),
         });
         const data = await res.json();
-
         const referenciadatas2 = data?.datos?.datos.map((item: any) => ({
             value: item.data?.idReferencia,
             label: `${item.data?.establecimientoOrigen} - ${item.data?.estado} (${item.data?.descUpsDestino} ${item.data?.fechaEnvio})`, // 👈 lo que se ve en el select
             ...item.data,
         })) || [];
-
         setdatosPxRefCon(referenciadatas2);
     };
 
@@ -377,12 +371,7 @@ ${JSON.stringify(result, null, 2)}
 
     return (
         <div>
-    paciente recibido 42713040 para contrareferefir
-    paciente recibido cita 42713030
-            <h1>
-                481252 44444444
-            </h1>
-            
+   
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
                 <input
                     type="text"
@@ -484,76 +473,8 @@ ${JSON.stringify(result, null, 2)}
                             </div>
                         )}
                     />
-                    {/* Select Especialidades 
-                    <Controller
-                        name="especialidad"
-                        control={control2}
-                        defaultValue=""
-                        render={({ field }) => (
-                            <div>
-                                <label className="block mb-1 font-semibold">Especialidades</label>
-                                <Select
-                                    {...field}
-                                    instanceId="especialidad-select"
-                                    options={especialidadOptions}
-                                    placeholder="Seleccione una especialidad"
-                                    className="mt-2 mb-2"
-                                    isClearable
-                                    value={especialidadOptions.find((opt: any) => opt.value === field.value) || null}
-                                    onChange={(selected) => field.onChange(selected?.value || "")}
-                                />
-                            </div>
-                        )}
-                    />
-*/}
+                 
 
-                    {/*
-
-                    <Controller
-                        name="idestabDestino"
-                        control={control2}
-                        defaultValue=""
-                        render={({ field }) => (
-                            <Select
-                                instanceId="unique-select-id"
-                                {...field}
-                                className="mt-2 mb-2"
-                                options={options}
-                                placeholder="Establecimiento Destino"
-                                required={true}
-                                onInputChange={(value: any) => {
-                                    if (value.length >= 3) {
-                                        fetchUPS(value);
-                                    } else {
-                                        setOptions([]);
-                                    }
-                                }}
-                            />
-                        )}
-                    />
-*/}
-                    {/*
-                    <Controller
-                        name="idupsOrigen"
-                        control={control2}
-                        defaultValue=""
-                        render={({ field }) => (
-                            <div>
-                                <label className="block mb-1 font-semibold">UPS que deriva : </label>
-                                <Select
-                                    {...field}
-                                    instanceId="especialidad-select"
-                                    options={listadoUpsOrigen}
-                                    placeholder="Seleccione una especialidad"
-                                    className="mt-2 mb-2"
-                                    isClearable
-                                    value={listadoUpsOrigen.find((opt: any) => opt.value === field.value) || null}
-                                    onChange={(selected) => field.onChange(selected?.value || "")}
-                                />
-                            </div>
-                        )}
-                    />
-*/}
                     <textarea
                         id="recomendacion"
                         
