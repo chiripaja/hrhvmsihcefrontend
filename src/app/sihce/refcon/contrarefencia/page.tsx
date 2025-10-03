@@ -1,9 +1,8 @@
 import ContraReferencia from '../../../../components/Refcon/ContraReferencia/ContraReferencia';
-
-export default function ContraReferenciaPage() {
+import { auth } from '@/auth';
+export default async function ContraReferenciaPage() {
+  const session = await auth()
   return (
-    <div>
-      <ContraReferencia/>
-    </div>
+      <ContraReferencia session={session}/>
   );
 }

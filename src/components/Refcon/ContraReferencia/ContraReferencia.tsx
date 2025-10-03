@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
-const ContraReferencia = () => {
+const ContraReferencia = ({ session }: { session: any }) => {
     const { register, handleSubmit } = useForm();
     const [datosPxRefCon, setdatosPxRefCon] = useState<any>();
     const [dataPaciente, setdataPaciente] = useState<any>();
@@ -16,7 +16,7 @@ const ContraReferencia = () => {
     const [dataAtencion, setdataAtencion] = useState<any>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [idEstabOrigen, setIdEstabOrigen] = useState('');
-
+    const [datosUsuarioRefcon, setdatosUsuarioRefcon] = useState<any>();
     const [verDataProcesada, setverDataProcesada] = useState<any>();
     const [listadoCondicionPaciente, setlistadoCondicionPaciente] = useState<any[]>([]);
     const [listadoCondicionPacientev2, setlistadoCondicionPacientev2] = useState<any[]>([]);
@@ -26,6 +26,15 @@ const ContraReferencia = () => {
     const { register: register2, handleSubmit: handleSubmit2, control: control2, watch: watch2 } = useForm();
     const [options, setOptions] = useState([]);
 
+const getDatosUsuario = async (idempleado: any) => {
+    const data = await getData(`${process.env.apijimmynew}/empleados/apiusuariosessionbyid/${idempleado}`)
+    setdatosUsuarioRefcon(data)
+  }
+  useEffect(() => {
+    if (session?.user?.id) {
+      getDatosUsuario(session?.user?.id)
+    }
+  }, [session])
     useEffect(() => {
         let isMounted = true;
         const fetchData = async () => {
@@ -109,11 +118,19 @@ const ContraReferencia = () => {
         const datapaciente = await getData(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`);
         setdataPaciente(datapaciente)
         const dataAtenc = await getData(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
-        setdataAtencion(dataAtenc)
-    
+        setdataAtencion(dataAtenc)    
         openModal();
     };
 
+  function obtenerSexo(idTipoSexo?: number): string {
+    if (idTipoSexo === 2) {
+      return "F"; // Femenino
+    }
+    if (idTipoSexo === 1) {
+      return "M"; // Masculino
+    }
+    return "M"; // vacío o puedes poner "N/A"
+  }
 
 
     const openModal = () => {
@@ -176,8 +193,9 @@ if (tratamientos.length === 0) {
     unidad_tiempo: null,
   });
 }
-
-
+  const idcolegiohismedico = await axios.get(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/refcon-interoperabilidad/v1.0/listadoColegio?idProfesion=${dataAtencion?.medico?.idcolegiohis}`);
+        let idcolegioProf = idcolegiohismedico?.data?.data?.codigo_colegio
+console.log(datosUsuarioRefcon)
 
         const dataenvio = {
             cita: {
@@ -236,15 +254,15 @@ if (tratamientos.length === 0) {
                 tipoDocumento: String(dataAtencion?.medico?.empleado?.idtipodocumento),
             },
             responsableContrareferencia: {
-                apelmatrefiere: "GRANDA",
-                apelpatrefiere: "JIMENEZ",
-                fechanacrefiere: "19661105",
-                idcolegioref: "123456",
-                idprofesionref: "1",
-                idsexorefiere: "M",
-                idtipodocref: "1",
-                nombperrefiere: "NESTOR ABEL",
-                numdocref: "10258720"
+                apelmatrefiere: datosUsuarioRefcon?.ApellidoMaterno,
+                apelpatrefiere: datosUsuarioRefcon?.ApellidoPaterno,
+                fechanacrefiere: formatearFecha(datosUsuarioRefcon?.FechaNacimiento),
+                idcolegioref: idcolegioProf,
+                idprofesionref:datosUsuarioRefcon?.TipoEmpleadoHIS ? datosUsuarioRefcon?.TipoEmpleadoHIS : "29",
+                idsexorefiere: obtenerSexo(datosUsuarioRefcon?.sexo),
+                idtipodocref: datosUsuarioRefcon?.idTipoDocumento,
+                nombperrefiere: datosUsuarioRefcon?.Nombres,
+                numdocref: datosUsuarioRefcon?.DNI?.trim(),
             },
             tratamiento: tratamientos
         };
@@ -371,7 +389,7 @@ ${JSON.stringify(result, null, 2)}
 
     return (
         <div>
-   
+ 
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
                 <input
                     type="text"

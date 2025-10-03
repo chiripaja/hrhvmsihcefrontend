@@ -301,7 +301,7 @@ export const Referencia = ({ session }: { session: any }) => {
             idsexorefiere: obtenerSexo(datosUsuarioRefcon?.sexo),
             idtipodocref: datosUsuarioRefcon?.idTipoDocumento,
             nombperrefiere: datosUsuarioRefcon?.Nombres,
-            numdocref: datosUsuarioRefcon?.Nombres,
+            numdocref: datosUsuarioRefcon?.DNI?.trim(),
           },
           tratamiento: tratamientos,
           tutor: {
