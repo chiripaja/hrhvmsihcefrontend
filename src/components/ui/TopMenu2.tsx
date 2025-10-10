@@ -7,6 +7,7 @@ import { FaRegFileAlt, FaRegUser, FaUserCog } from 'react-icons/fa';
 import { TbBuildingHospital } from 'react-icons/tb';
 import Link from 'next/link';
 import { GrConfigure } from "react-icons/gr";
+import { AiOutlineProject } from 'react-icons/ai';
 
 export const TopMenu2 = async () => {
   const session = await auth()
@@ -45,6 +46,11 @@ export const TopMenu2 = async () => {
     { href: "/sihce/auditoria", label: "Auditoria", condition: webadmin },
 
   ];
+
+  const menuItemsRefcon=[
+    { href: "/sihce/refcon/referencia", label: "Referencia", condition: webadmin },
+    { href: "/sihce/refcon/contrarefencia", label: "ContraReferencia", condition: webadmin },
+  ]
 
   return (<>
     <header className=" print:hidden flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full colorFondo text-sm py-4 sm:py-0 dark:bg-neutral-800 ">
@@ -258,6 +264,60 @@ export const TopMenu2 = async () => {
                   </div>
                 </div>
               )}
+
+
+
+             {menuItemsRefcon.filter(item => item.condition).length > 0 && (
+                <div className="hs-dropdown  z-50 [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
+                  <button
+                    id="hs-mega-menu-2-col"
+                    type="button"
+                    className="sm:p-3 flex items-center w-full text-white font-medium hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-neutral-400 dark:hover:text-neutral-500 dark:focus:text-neutral-500 dark:bg-neutral-700 dark:hover:bg-neutral-600 rounded-md shadow-md transition-all duration-300"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                    aria-controls="emergency-menu"
+                    aria-label="Emergencia"
+                  >
+                    <AiOutlineProject className='mr-2' />
+                    RefCon
+                    <svg
+                      className="hs-dropdown-open:-rotate-180 sm:hs-dropdown-open:rotate-0 duration-300 ms-1 shrink-0 size-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </button>
+
+                  <div
+                    id="emergency-menu"
+                    className="hs-dropdown-menu sm:transition-[opacity,margin] sm:ease-in-out sm:duration-150 hs-dropdown-open:opacity-100 opacity-0 hidden z-10 top-full sm:w-48 bg-white sm:shadow-md rounded-lg py-2 sm:px-2 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="hs-mega-menu-2-col"
+                  >
+                    <div className="flex flex-col space-y-1">
+                      {menuItemsRefcon
+                        .filter(item => item.condition) // Filter based on condition
+                        .map(item => (
+                          <Link key={item.href} href={item.href} passHref>
+                            <span className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300">
+                              {item.label}
+                            </span>
+                          </Link>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+   
               <div className="mr-2 z-50 hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover] [--is-collapse:true] sm:[--is-collapse:false]">
                 <button
                   id="hs-mega-menu-2-col"

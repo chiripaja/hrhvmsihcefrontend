@@ -26,15 +26,22 @@ const ContraReferencia = ({ session }: { session: any }) => {
     const { register: register2, handleSubmit: handleSubmit2, control: control2, watch: watch2 } = useForm();
     const [options, setOptions] = useState([]);
 
-const getDatosUsuario = async (idempleado: any) => {
-    const data = await getData(`${process.env.apijimmynew}/empleados/apiusuariosessionbyid/${idempleado}`)
-    setdatosUsuarioRefcon(data)
-  }
-  useEffect(() => {
-    if (session?.user?.id) {
-      getDatosUsuario(session?.user?.id)
+
+  const [data, setData] = useState<any[]>([]);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(100);
+  const [sortColumn, setSortColumn] = useState("FechaIngreso");
+  const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("DESC");
+
+    const getDatosUsuario = async (idempleado: any) => {
+        const data = await getData(`${process.env.apijimmynew}/empleados/apiusuariosessionbyid/${idempleado}`)
+        setdatosUsuarioRefcon(data)
     }
-  }, [session])
+    useEffect(() => {
+        if (session?.user?.id) {
+            getDatosUsuario(session?.user?.id)
+        }
+    }, [session])
     useEffect(() => {
         let isMounted = true;
         const fetchData = async () => {
@@ -118,19 +125,27 @@ const getDatosUsuario = async (idempleado: any) => {
         const datapaciente = await getData(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${dataForm?.idcuentaatencion}`);
         setdataPaciente(datapaciente)
         const dataAtenc = await getData(`${process.env.apijimmynew}/atenciones/cuenta/${dataForm?.idcuentaatencion}`);
-        setdataAtencion(dataAtenc)    
+        setdataAtencion(dataAtenc)
         openModal();
     };
 
-  function obtenerSexo(idTipoSexo?: number): string {
-    if (idTipoSexo === 2) {
-      return "F"; // Femenino
+    const buscadorByIdCuentaAtencion = async (idcuentaatencion: any) => {
+        const datapaciente = await getData(`${process.env.apijimmynew}/paciente/apipacientebynumcuenta/${idcuentaatencion}`);
+        setdataPaciente(datapaciente)
+        const dataAtenc = await getData(`${process.env.apijimmynew}/atenciones/cuenta/${idcuentaatencion}`);
+        setdataAtencion(dataAtenc)
+        openModal();
     }
-    if (idTipoSexo === 1) {
-      return "M"; // Masculino
+
+    function obtenerSexo(idTipoSexo?: number): string {
+        if (idTipoSexo === 2) {
+            return "F"; // Femenino
+        }
+        if (idTipoSexo === 1) {
+            return "M"; // Masculino
+        }
+        return "M"; // vacío o puedes poner "N/A"
     }
-    return "M"; // vacío o puedes poner "N/A"
-  }
 
 
     const openModal = () => {
@@ -142,7 +157,7 @@ const getDatosUsuario = async (idempleado: any) => {
     };
 
     const onSubmit2 = async (dataForm: any) => {
-        console.log(dataForm)
+ 
         const tratamientos: any[] = [];
         const diagnosticos: any[] = [];
 
@@ -159,43 +174,43 @@ const getDatosUsuario = async (idempleado: any) => {
 
         const sexoDescripcion = dataAtencion?.medico?.empleado?.tiposSexo?.descripcion ?? "";
         const SexoHIS = sexoDescripcion.charAt(0);
-        const sexoPaciente = dataPaciente?.IdTipoSexo==2 ? "F":"M";
+        const sexoPaciente = dataPaciente?.IdTipoSexo == 2 ? "F" : "M";
         dataAtencion?.recetaCabeceras
-  ?.filter((cabecera: any) => cabecera.idPuntoCarga == 5)
-  .forEach((cabecera: any) => {
-    cabecera.recetaDetalles
-      ?.filter(
-        (detalle: any) =>
-          detalle.factCatalogoBienesInsumos?.tipoProducto === "0" // solo medicamentos
-      )
-      .forEach((detalle: any, index: number) => {
-        tratamientos.push({
-          cantidad: detalle.cantidadPedida ?? "",
-          codigo_medicamento: detalle.factCatalogoBienesInsumos?.codigo ?? "",
-          frecuencia: detalle.observaciones ?? "",
-          nro_diagnostico: String(index + 1),
-          nro_tratamiento: "",
-          periodo: "",
-          unidad_tiempo: "",
-        });
-      });
-  });
+            ?.filter((cabecera: any) => cabecera.idPuntoCarga == 5)
+            .forEach((cabecera: any) => {
+                cabecera.recetaDetalles
+                    ?.filter(
+                        (detalle: any) =>
+                            detalle.factCatalogoBienesInsumos?.tipoProducto === "0" // solo medicamentos
+                    )
+                    .forEach((detalle: any, index: number) => {
+                        tratamientos.push({
+                            cantidad: detalle.cantidadPedida ?? "",
+                            codigo_medicamento: detalle.factCatalogoBienesInsumos?.codigo ?? "",
+                            frecuencia: detalle.observaciones ?? "",
+                            nro_diagnostico: String(index + 1),
+                            nro_tratamiento: "",
+                            periodo: "",
+                            unidad_tiempo: "",
+                        });
+                    });
+            });
 
-// 👇 Si no se agregó nada, meter un objeto vacío
-if (tratamientos.length === 0) {
-  tratamientos.push({
-    cantidad: null,
-    codigo_medicamento: "",
-    frecuencia: "",
-    nro_diagnostico: null,
-    nro_tratamiento: null,
-    periodo: null,
-    unidad_tiempo: null,
-  });
-}
-  const idcolegiohismedico = await axios.get(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/refcon-interoperabilidad/v1.0/listadoColegio?idProfesion=${dataAtencion?.medico?.idcolegiohis}`);
+        // 👇 Si no se agregó nada, meter un objeto vacío
+        if (tratamientos.length === 0) {
+            tratamientos.push({
+                cantidad: null,
+                codigo_medicamento: "",
+                frecuencia: "",
+                nro_diagnostico: null,
+                nro_tratamiento: null,
+                periodo: null,
+                unidad_tiempo: null,
+            });
+        }
+        const idcolegiohismedico = await axios.get(`${process.env.apiServiciosRefcon}/mcs-referencia-interoperabilidad/refcon-interoperabilidad/v1.0/listadoColegio?idProfesion=${dataAtencion?.medico?.idcolegiohis}`);
         let idcolegioProf = idcolegiohismedico?.data?.data?.codigo_colegio
-console.log(datosUsuarioRefcon)
+        console.log(datosUsuarioRefcon)
 
         const dataenvio = {
             cita: {
@@ -230,7 +245,7 @@ console.log(datosUsuarioRefcon)
                 apelmatpac: dataPaciente?.ApellidoMaterno,
                 apelpatpac: dataPaciente?.ApellidoPaterno,
                 celularpac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
-                correopac:dataPaciente?.Email ? dataPaciente?.Email : "",
+                correopac: dataPaciente?.Email ? dataPaciente?.Email : "",
                 direccion: dataPaciente?.DireccionDomicilio ? dataPaciente?.DireccionDomicilio : "",
                 fechnacpac: fechaNacPaciente,
                 idsexo: sexoPaciente,
@@ -239,8 +254,8 @@ console.log(datosUsuarioRefcon)
                 nrohis: dataPaciente?.NroHistoriaClinica,
                 numdoc: dataPaciente?.NroDocumento,
                 telefonopac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
-                ubigeoactual:  dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
-                ubigeoreniec:  dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
+                ubigeoactual: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
+                ubigeoreniec: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
             },
             personal_registra: {
                 apellidoMaterno: dataAtencion?.medico?.empleado?.apellidomaterno,
@@ -258,7 +273,7 @@ console.log(datosUsuarioRefcon)
                 apelpatrefiere: datosUsuarioRefcon?.ApellidoPaterno,
                 fechanacrefiere: formatearFecha(datosUsuarioRefcon?.FechaNacimiento),
                 idcolegioref: idcolegioProf,
-                idprofesionref:datosUsuarioRefcon?.TipoEmpleadoHIS ? datosUsuarioRefcon?.TipoEmpleadoHIS : "29",
+                idprofesionref: datosUsuarioRefcon?.TipoEmpleadoHIS ? datosUsuarioRefcon?.TipoEmpleadoHIS : "29",
                 idsexorefiere: obtenerSexo(datosUsuarioRefcon?.sexo),
                 idtipodocref: datosUsuarioRefcon?.idTipoDocumento,
                 nombperrefiere: datosUsuarioRefcon?.Nombres,
@@ -267,39 +282,39 @@ console.log(datosUsuarioRefcon)
             tratamiento: tratamientos
         };
 
-const response = await fetch("/api/refcon/saveContrareferencia", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(dataenvio),
-});
+        const response = await fetch("/api/refcon/saveContrareferencia", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dataenvio),
+        });
 
-const datosRespuestaMinsaContrareferencia={
-  "ok": true,
-  "message": "Petición enviada al servicio externo",
-  "result": {
-    "codigo": "0000",
-    "mensaje": null,
-    "datos": {
-      "idreferencia": 1366010,
-      "nroreferencia": "754-00001"
-    }
-  }
-}
-const result = await response.json();
+        const datosRespuestaMinsaContrareferencia = {
+            "ok": true,
+            "message": "Petición enviada al servicio externo",
+            "result": {
+                "codigo": "0000",
+                "mensaje": null,
+                "datos": {
+                    "idreferencia": 1366010,
+                    "nroreferencia": "754-00001"
+                }
+            }
+        }
+        const result = await response.json();
 
-Swal.fire({
-  title: "<strong>Datos</u></strong>",
-  icon: "info",
-  html: `
+        Swal.fire({
+            title: "<strong>Datos</u></strong>",
+            icon: "info",
+            html: `
     <pre style="text-align:left; white-space:pre-wrap;">
 ${JSON.stringify(result, null, 2)}
     </pre>
   `,
-  showCloseButton: true,
-  showCancelButton: true,
-  focusConfirm: false,
+            showCloseButton: true,
+            showCancelButton: true,
+            focusConfirm: false,
 
-});
+        });
     }
 
     const especialidadOptions = useMemo(() => {
@@ -386,10 +401,30 @@ ${JSON.stringify(result, null, 2)}
         }
     }, [dataPaciente])
 
+  const fetchData = async () => {
+    const res = await axios.get("http://192.168.13.7:9797/atenciones/apiAltasMedicasRefcon", {
+      params: { page, size, sortColumn, sortDirection },
+    });
+    setData(res.data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page, size, sortColumn, sortDirection]);
+
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortDirection((prev) => (prev === "ASC" ? "DESC" : "ASC"));
+    } else {
+      setSortColumn(column);
+      setSortDirection("ASC");
+    }
+  };
+
 
     return (
         <div>
- 
+
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
                 <input
                     type="text"
@@ -407,7 +442,7 @@ ${JSON.stringify(result, null, 2)}
             <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
                 <h3 className="text-lg font-semibold text-gray-900">Contrareferencia ss</h3>
                 <form onSubmit={handleSubmit2(onSubmit2)} className="space-y-4 p-4 border rounded-lg shadow">
-                 
+
                     <div>
                         <Controller
                             name="refcon"
@@ -491,11 +526,11 @@ ${JSON.stringify(result, null, 2)}
                             </div>
                         )}
                     />
-                 
+
 
                     <textarea
                         id="recomendacion"
-                        
+
                         {...register2("recomendacion")}
                         className="w-full border rounded-md p-2"
                         rows={4}
@@ -518,6 +553,59 @@ ${JSON.stringify(result, null, 2)}
                     </button>
                 </div>
             </ModalGeneric>
+
+ <div className="p-4">
+      <table className="min-w-full border border-gray-300 rounded-lg">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="p-2 border cursor-pointer" onClick={() => handleSort("TipoServicio")}>
+              Tipo Servicio {sortColumn === "TipoServicio" && (sortDirection === "ASC" ? "↑" : "↓")}
+            </th>
+             <th className="p-2 border cursor-pointer" onClick={() => handleSort("DestinoAtencion")}>
+              Destino {sortColumn === "DestinoAtencion" && (sortDirection === "ASC" ? "↑" : "↓")}
+            </th>
+            <th className="p-2 border cursor-pointer" onClick={() => handleSort("ApellidoPaterno")}>
+              Apellido Paterno {sortColumn === "ApellidoPaterno" && (sortDirection === "ASC" ? "↑" : "↓")}
+            </th>
+            <th className="p-2 border cursor-pointer" onClick={() => handleSort("ApellidoMaterno")}>
+              Apellido Materno {sortColumn === "ApellidoMaterno" && (sortDirection === "ASC" ? "↑" : "↓")}
+            </th>
+           
+            <th className="p-2 border cursor-pointer" onClick={() => handleSort("IdCuentaAtencion")}>
+              IdCuentaAtencion {sortColumn === "IdCuentaAtencion" && (sortDirection === "ASC" ? "↑" : "↓")}
+            </th>
+            <th className="p-2 border cursor-pointer" onClick={() => handleSort("FechaIngreso")}>
+              Fecha Ingreso {sortColumn === "FechaIngreso" && (sortDirection === "ASC" ? "↑" : "↓")}
+            </th>
+            <th>
+                Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item, i) => (
+            <tr key={i} className="hover:bg-gray-50">
+              <td className="p-2 border">{item.TipoServicio}</td>
+              <td className="p-2 border">{item.DestinoAtencion}</td>
+              <td className="p-2 border">{item.ApellidoPaterno}</td>
+              <td className="p-2 border">{item.ApellidoMaterno}</td>
+              <td className="p-2 border">{item.IdCuentaAtencion}</td>
+              <td className="p-2 border">{item.FechaIngreso?.slice(0, 10)}</td>
+              <td className="p-2 border text-center">
+               <button
+  onClick={() => buscadorByIdCuentaAtencion(item.IdCuentaAtencion)}
+  className="bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 
+             text-white font-semibold px-4 py-2 rounded-xl shadow-md hover:shadow-lg 
+             transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
+>
+  ContraReferir
+</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
         </div>
     )
 }

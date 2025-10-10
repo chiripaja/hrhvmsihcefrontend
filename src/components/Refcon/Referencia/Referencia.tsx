@@ -112,10 +112,13 @@ export const Referencia = ({ session }: { session: any }) => {
           tipo_diagnostico: item.subclasificacionDiagnosticos?.codigo
         });
       });
+      console.log(diagnosticos)
+
+
+      
       const fechaNacimiento = dataAtencion?.medico?.empleado?.fechanacimiento;
       let fechaNacMedico = formatearFecha(fechaNacimiento);
       let fechaNacPaciente = formatearFecha(dataPaciente?.FechaNacimiento);
-
       const sexoDescripcion = dataAtencion?.medico?.empleado?.tiposSexo?.descripcion ?? "";
       const SexoHIS = sexoDescripcion ? sexoDescripcion.charAt(0) : "M";
       const sexoPaciente = dataPaciente?.IdTipoSexo == 2 ? "F" : "M";
@@ -254,7 +257,7 @@ export const Referencia = ({ session }: { session: any }) => {
             idtipodoc: String(dataPaciente?.IdDocIdentidad),
             nombpac: dataPaciente?.PrimerNombre + (dataPaciente?.SegundoNombre ? ` ${dataPaciente?.SegundoNombre}` : ""),
             nrohis: dataPaciente?.NroHistoriaClinica.trim(),
-            numdoc: dataAtencion?.medico?.empleado?.dni.trim(),
+            numdoc: dataPaciente?.NroDocumento.trim(),
             telefonopac: dataPaciente?.Telefono ? dataPaciente?.Telefono : "",
             ubigeoactual: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : "",
             ubigeoreniec: dataPaciente?.IdDocIdentidad == 1 ? String(dataPaciente?.IdDistritoNacimiento) : ""
@@ -325,8 +328,9 @@ export const Referencia = ({ session }: { session: any }) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(dataenvioref),
         });
-
+        console.log("******************************************")
         const result = await response.json();
+         console.log(result)
         Swal.close();
 
         if (result.result?.codigo == "0000") {
@@ -335,6 +339,7 @@ export const Referencia = ({ session }: { session: any }) => {
             idReferencia: result?.result?.datos?.idReferencia,
             nroReferencia: result?.result?.datos?.nro_referencia,
           }
+  
           const responseReferenc: any = await axios.post(`${process.env.apijimmynew}/refcon/reference/create`, objResultadoByidCuentaAtencion)
           if (responseReferenc) {
             Swal.fire({
@@ -360,9 +365,7 @@ export const Referencia = ({ session }: { session: any }) => {
             focusConfirm: false,
           });
         }
-        /*
-   */
-
+   
 
 
 
@@ -494,6 +497,7 @@ export const Referencia = ({ session }: { session: any }) => {
 
   return (
     <>
+
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
         <input
