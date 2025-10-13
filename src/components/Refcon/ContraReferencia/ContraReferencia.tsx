@@ -1,15 +1,21 @@
 'use client'
 import { getData } from '@/components/helper/axiosHelper';
 import { ModalGeneric } from '@/components/ui/ModalGeneric/ModalGeneric';
-import { ModalGenerico } from '@/components/ui/ModalGenerico';
+
 import { debounce } from '@mui/material';
 import axios from 'axios';
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
+import "react-datepicker/dist/react-datepicker.css";
+import { differenceInDays, format } from 'date-fns';
+import DatePicker from "react-datepicker";
+import TablaAltasMedicasMUI from './TablaAltasMedicasMUI';
 const ContraReferencia = ({ session }: { session: any }) => {
     const { register, handleSubmit } = useForm();
+    const [fechaInicio, setFechaInicio] = useState<Date | null>(null);
+    const [fechaFin, setFechaFin] = useState<Date | null>(null);
     const [datosPxRefCon, setdatosPxRefCon] = useState<any>();
     const [dataPaciente, setdataPaciente] = useState<any>();
     const [listadoTransporte, setlistadoTransporte] = useState<any>();
@@ -24,15 +30,48 @@ const ContraReferencia = ({ session }: { session: any }) => {
     const [listadoEspecialidades, setlistadoEspecialidades] = useState<any[]>([]);
     const [listadoUpsOrigen, setlistadoUpsOrigen] = useState<any[]>([]);
     const { register: register2, handleSubmit: handleSubmit2, control: control2, watch: watch2 } = useForm();
+    const { register: registerFecha, handleSubmit: handleSubmitFecha, control: controlFecha, watch: watchFecha } = useForm();
     const [options, setOptions] = useState([]);
 
 
-  const [data, setData] = useState<any[]>([]);
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(100);
-  const [sortColumn, setSortColumn] = useState("FechaIngreso");
-  const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("DESC");
+    const [data, setData] = useState<any[]>([]);
 
+    const handleFechaInicio = (date: Date | null) => {
+        setFechaInicio(date);
+        // Si ya hay fecha fin, validar rango
+        if (date && fechaFin) {
+            validarRango(date, fechaFin);
+        }
+    };
+
+    const handleFechaFin = (date: Date | null) => {
+        setFechaFin(date);
+
+        // Si ya hay fecha inicio, validar rango
+        if (fechaInicio && date) {
+            validarRango(fechaInicio, date);
+        }
+    };
+
+    const validarRango = (inicio: Date, fin: Date) => {
+        const diff = differenceInDays(fin, inicio);
+
+        if (diff < 0) {
+            Swal.fire({
+                icon: "warning",
+                title: "Rango inválido",
+                text: "La fecha fin no puede ser anterior a la fecha inicio.",
+            });
+            setFechaFin(null);
+        } else if (diff > 30) {
+            Swal.fire({
+                icon: "warning",
+                title: "Rango inválido",
+                text: "El rango máximo permitido es de 30 días.",
+            });
+            setFechaFin(null);
+        }
+    };
     const getDatosUsuario = async (idempleado: any) => {
         const data = await getData(`${process.env.apijimmynew}/empleados/apiusuariosessionbyid/${idempleado}`)
         setdatosUsuarioRefcon(data)
@@ -157,7 +196,7 @@ const ContraReferencia = ({ session }: { session: any }) => {
     };
 
     const onSubmit2 = async (dataForm: any) => {
- 
+
         const tratamientos: any[] = [];
         const diagnosticos: any[] = [];
 
@@ -401,48 +440,138 @@ ${JSON.stringify(result, null, 2)}
         }
     }, [dataPaciente])
 
-  const fetchData = async () => {
-    const res = await axios.get("http://192.168.13.7:9797/atenciones/apiAltasMedicasRefcon", {
-      params: { page, size, sortColumn, sortDirection },
-    });
-    setData(res.data);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [page, size, sortColumn, sortDirection]);
-
-  const handleSort = (column: string) => {
-    if (sortColumn === column) {
-      setSortDirection((prev) => (prev === "ASC" ? "DESC" : "ASC"));
-    } else {
-      setSortColumn(column);
-      setSortDirection("ASC");
-    }
-  };
 
 
+
+
+    const onSubmitFecha = async () => {
+        if (!fechaInicio || !fechaFin) {
+            Swal.fire({
+                icon: "info",
+                title: "Fechas requeridas",
+                text: "Por favor selecciona ambas fechas.",
+            });
+            return;
+        }
+        const validarRango = (inicio: Date, fin: Date) => {
+            const diff = differenceInDays(fin, inicio);
+
+            if (diff < 0) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Rango inválido",
+                    text: "La fecha fin no puede ser anterior a la fecha inicio.",
+                });
+                setFechaFin(null);
+                return false;
+            } else if (diff > 30) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Rango inválido",
+                    text: "El rango máximo permitido es de 30 días.",
+                });
+                setFechaFin(null);
+                return false;
+            }
+            return true;
+        };
+        if (!validarRango(fechaInicio, fechaFin)) return;
+
+        const fechaInicioStr = format(fechaInicio, "yyyy-MM-dd");
+        const fechaFinStr = format(fechaFin, "yyyy-MM-dd");
+
+        try {
+            const res = await axios.get(
+                `${process.env.apijimmynew}/atenciones/apiAltasMedicasRefcon`,
+                {
+                    params: {
+                        fechaInicio: fechaInicioStr,
+                        fechaFin: fechaFinStr
+                    },
+                }
+            );
+            setData(res.data);
+            console.log("✅ Data recibida:", res.data);
+        } catch (error) {
+            console.error("❌ Error al obtener datos:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudieron obtener los datos del servidor.",
+            });
+        }
+    };
     return (
         <div>
+          
+            <div className="bg-white p-6 rounded-2xl shadow-lg space-y-6 w-full max-w-3xl mx-auto">
+                {/* 🔹 Búsqueda por rango de fechas */}
+                <form onSubmit={handleSubmitFecha(onSubmitFecha)}>
+                    <div className="flex flex-col md:flex-row gap-6 items-end justify-center">
+                        <div className="flex flex-col w-full md:w-1/3">
+                            <label className="text-gray-700 text-sm font-semibold mb-1">
+                                Fecha inicio
+                            </label>
+                            <DatePicker
+                                selected={fechaInicio}
+                                onChange={handleFechaInicio}
+                                dateFormat="dd/MM/yyyy"
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                                placeholderText="Selecciona inicio"
+                            />
+                        </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4 items-center p-4 bg-white shadow-md rounded-lg w-full max-w-xl mx-auto">
-                <input
-                    type="text"
-                    placeholder="ID Cuenta Atención"
-                    {...register('idcuentaatencion')}
-                    className="flex-1 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                    type="submit"
-                    className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                        <div className="flex flex-col w-full md:w-1/3">
+                            <label className="text-gray-700 text-sm font-semibold mb-1">
+                                Fecha fin
+                            </label>
+                            <DatePicker
+                                selected={fechaFin}
+                                onChange={handleFechaFin}
+                                minDate={fechaInicio || undefined}
+                                dateFormat="dd/MM/yyyy"
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                                placeholderText="Selecciona fin"
+                            />
+                        </div>
+
+                        <button
+
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full md:w-auto"
+                        >
+                            Buscar por fechas
+                        </button>
+                    </div>
+                </form>
+
+
+                {/* 🔹 Búsqueda por ID de cuenta atención */}
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex flex-col sm:flex-row gap-4 items-center justify-center"
                 >
-                    Buscar
-                </button>
-            </form>
-            <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
-                <h3 className="text-lg font-semibold text-gray-900">Contrareferencia ss</h3>
-                <form onSubmit={handleSubmit2(onSubmit2)} className="space-y-4 p-4 border rounded-lg shadow">
+                    <input
+                        type="text"
+                        placeholder="ID Cuenta Atención"
+                        {...register('idcuentaatencion')}
+                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 transition"
+                    />
+                    <button
+                        type="submit"
+                        className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2.5 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-400 w-full sm:w-auto"
+                    >
+                        Buscar por cuenta
+                    </button>
+                </form>
+            </div>
 
+
+            <ModalGeneric isOpen={isModalOpen} onClose={closeModal}>
+                <h3 className="text-lg font-semibold text-gray-900">Contrareferencia</h3>
+                <form onSubmit={handleSubmit2(onSubmit2)} className="space-y-4 p-4 border rounded-lg shadow">
+                    <label>
+                        {dataPaciente?.PrimerNombre} {dataPaciente?.SegundoNombre} {dataPaciente?.ApellidoPaterno} {dataPaciente?.ApellidoMaterno} - {dataPaciente?.NroDocumento    }
+                    </label>
                     <div>
                         <Controller
                             name="refcon"
@@ -553,59 +682,10 @@ ${JSON.stringify(result, null, 2)}
                     </button>
                 </div>
             </ModalGeneric>
+            <div className='p-4'>
+                <TablaAltasMedicasMUI data={data} buscadorByIdCuentaAtencion={buscadorByIdCuentaAtencion}></TablaAltasMedicasMUI>
+            </div>
 
- <div className="p-4">
-      <table className="min-w-full border border-gray-300 rounded-lg">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2 border cursor-pointer" onClick={() => handleSort("TipoServicio")}>
-              Tipo Servicio {sortColumn === "TipoServicio" && (sortDirection === "ASC" ? "↑" : "↓")}
-            </th>
-             <th className="p-2 border cursor-pointer" onClick={() => handleSort("DestinoAtencion")}>
-              Destino {sortColumn === "DestinoAtencion" && (sortDirection === "ASC" ? "↑" : "↓")}
-            </th>
-            <th className="p-2 border cursor-pointer" onClick={() => handleSort("ApellidoPaterno")}>
-              Apellido Paterno {sortColumn === "ApellidoPaterno" && (sortDirection === "ASC" ? "↑" : "↓")}
-            </th>
-            <th className="p-2 border cursor-pointer" onClick={() => handleSort("ApellidoMaterno")}>
-              Apellido Materno {sortColumn === "ApellidoMaterno" && (sortDirection === "ASC" ? "↑" : "↓")}
-            </th>
-           
-            <th className="p-2 border cursor-pointer" onClick={() => handleSort("IdCuentaAtencion")}>
-              IdCuentaAtencion {sortColumn === "IdCuentaAtencion" && (sortDirection === "ASC" ? "↑" : "↓")}
-            </th>
-            <th className="p-2 border cursor-pointer" onClick={() => handleSort("FechaIngreso")}>
-              Fecha Ingreso {sortColumn === "FechaIngreso" && (sortDirection === "ASC" ? "↑" : "↓")}
-            </th>
-            <th>
-                Acciones
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, i) => (
-            <tr key={i} className="hover:bg-gray-50">
-              <td className="p-2 border">{item.TipoServicio}</td>
-              <td className="p-2 border">{item.DestinoAtencion}</td>
-              <td className="p-2 border">{item.ApellidoPaterno}</td>
-              <td className="p-2 border">{item.ApellidoMaterno}</td>
-              <td className="p-2 border">{item.IdCuentaAtencion}</td>
-              <td className="p-2 border">{item.FechaIngreso?.slice(0, 10)}</td>
-              <td className="p-2 border text-center">
-               <button
-  onClick={() => buscadorByIdCuentaAtencion(item.IdCuentaAtencion)}
-  className="bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 
-             text-white font-semibold px-4 py-2 rounded-xl shadow-md hover:shadow-lg 
-             transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
->
-  ContraReferir
-</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
         </div>
     )
 }

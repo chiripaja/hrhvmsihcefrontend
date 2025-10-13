@@ -17,7 +17,7 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
     console.log(agrupado)
   }
 
-  const getCabecera=async(id:any)=>{
+  const getCabecera = async (id: any) => {
     const dataProgramacion = await getData(`${process.env.apijimmynew}/programacionmedica/${id}`)
     setdataCabeceraHis(dataProgramacion)
   }
@@ -125,7 +125,9 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
 
   return (
     <>
-  
+      <pre>
+        {JSON.stringify(dataCabeceraHis?.citas, null, 2)}
+      </pre>
       <button
         onClick={handleExportPDF}
         className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hidden"
@@ -133,11 +135,11 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
         Descargar PDF
       </button>
       <div ref={pdfRef}>
-      <div className="text-center mb-4">
-        <div className="font-bold text-xl">HOSPITAL REGIONAL HERMILIO VALDIZAN</div>
-        <div className="font-bold text-lg">Registro Diario de Atención y Otras Actividades de Salud</div>
-      </div>
-       
+        <div className="text-center mb-4">
+          <div className="font-bold text-xl">HOSPITAL REGIONAL HERMILIO VALDIZAN</div>
+          <div className="font-bold text-lg">Registro Diario de Atención y Otras Actividades de Salud</div>
+        </div>
+
 
 
         <table className="w-full table-auto border-collapse text-sm mb-4">
@@ -152,145 +154,80 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
               <td className="border border-black text-center">4 ESTABLEC</td>
               <td colSpan={2} className="border border-black text-center">5 UPS</td>
               <td colSpan={2} className="border border-black text-center">6 RESPONSABLE DE LA ATENCION</td>
-            </tr> 
+            </tr>
             <tr>
-                <td className="border border-black text-center font-bold">2 años</td>
-                <td className="border border-black text-center font-bold">3 mes</td>            
-                <td colSpan={2} rowSpan={2} className="border border-black text-center w-10"></td>
-                <td className="border border-black text-center bg-gray-300" rowSpan={2}>10 (Huanuco)</td>
-                <td className="border border-black text-center bg-gray-300" rowSpan={2}>01</td>
-                <td className="border border-black text-center bg-gray-300" rowSpan={2}>01</td>
-                <td className="border border-black text-center bg-gray-300" rowSpan={2}>00754</td>
-                <td className="border border-black text-center" rowSpan={2}>{dataCabeceraHis?.servicio?.nombre} ({dataCabeceraHis?.servicio?.codigoserviciohis})</td>
-                <td className="border border-black text-center bg-gray-300 w-10" rowSpan={2}></td>
-                <td className="border border-black text-center" rowSpan={2}>{dataCabeceraHis?.medico?.empleado?.nombres} {dataCabeceraHis?.medico?.empleado?.apellidoPaterno} {dataCabeceraHis?.medico?.empleado?.apellidomaterno}</td>
-                <td className="border border-black text-center bg-gray-300 w-10" rowSpan={2}></td>
-            </tr>           
+              <td className="border border-black text-center font-bold">2 años</td>
+              <td className="border border-black text-center font-bold">3 mes</td>
+              <td colSpan={2} rowSpan={2} className="border border-black text-center w-10"></td>
+              <td className="border border-black text-center bg-gray-300" rowSpan={2}>10 (Huanuco)</td>
+              <td className="border border-black text-center bg-gray-300" rowSpan={2}>01</td>
+              <td className="border border-black text-center bg-gray-300" rowSpan={2}>01</td>
+              <td className="border border-black text-center bg-gray-300" rowSpan={2}>00754</td>
+              <td className="border border-black text-center" rowSpan={2}>{dataCabeceraHis?.servicio?.nombre} ({dataCabeceraHis?.servicio?.codigoserviciohis})</td>
+              <td className="border border-black text-center bg-gray-300 w-10" rowSpan={2}></td>
+              <td className="border border-black text-center" rowSpan={2}>{dataCabeceraHis?.medico?.empleado?.nombres} {dataCabeceraHis?.medico?.empleado?.apellidoPaterno} {dataCabeceraHis?.medico?.empleado?.apellidomaterno}</td>
+              <td className="border border-black text-center bg-gray-300 w-10" rowSpan={2}></td>
+            </tr>
             <tr>
               <td className="border border-black text-center">{dataCabeceraHis?.fecha?.split('-')[0]}</td>
-                 <td className="border border-black text-center">{dataCabeceraHis?.fecha?.split('-')[1]}</td>
+              <td className="border border-black text-center">{dataCabeceraHis?.fecha?.split('-')[1]}</td>
             </tr>
 
-         
+
 
           </tbody>
         </table>
-  <table className="w-full table-auto border-collapse text-sm">
-            <thead>
-              <tr className="border-b">
-                <td className="border border-black text-center">7 Dia</td>
-                <td className="border border-black text-center">8,9 (HISTORIA CLINICA/FICHA FAMILIAR)/(DNI)</td>
-                <td className="border border-black text-center">10 FINAN DE SALUD</td>
-                <td className="border border-black text-center">11 ETNIA</td>
-                <td className="border border-black text-center">12 DISTRITO PROCEDENCIA</td>
-                <td className="border border-black text-center">13 EDAD</td>
-                <td className="border border-black text-center">14 SEXO</td>
-                <td className="border border-black text-center">15 ESTABLECIMIENTO</td>
-                <td className="border border-black text-center">16 SERVICIO</td>
-                <td className="border border-black text-center">17 DIAGNOSTICO MOTIVO DE CONSULTA Y/O ACTIVIDAD DE SALUD</td>
-                <td className="border border-black text-center">18 TIPO DE DIAGNOSTICO</td>
-                <td className="border border-black text-center">19 LAB</td>
+        <table className="w-full table-auto border-collapse text-sm">
+          <thead>
+            <tr className="border-b">
+              <td className="border border-black text-center">7 Dia</td>
+              <td className="border border-black text-center">8,9 (HISTORIA CLINICA/FICHA FAMILIAR)/(DNI)</td>
+              <td className="border border-black text-center">10 FINAN DE SALUD</td>
+              <td className="border border-black text-center">11 ETNIA</td>
+              <td className="border border-black text-center">12 DISTRITO PROCEDENCIA</td>
+              <td className="border border-black text-center">13 EDAD</td>
+              <td className="border border-black text-center">14 SEXO</td>
+              <td className="border border-black text-center">15 ESTABLECIMIENTO</td>
+              <td className="border border-black text-center">16 SERVICIO</td>
+              <td className="border border-black text-center">17 DIAGNOSTICO MOTIVO DE CONSULTA Y/O ACTIVIDAD DE SALUD</td>
+              <td className="border border-black text-center">18 TIPO DE DIAGNOSTICO</td>
+              <td className="border border-black text-center">19 LAB</td>
+            </tr>
+          </thead>
+          <tbody className="space-y-2">
+            {/* Separador visual entre grupos */}
+            <tr>
+              <td colSpan={4} className="py-1 bg-gray-100"></td>
+            </tr>
+            {dataCabeceraHis?.citas?.map((cita: any, index: number) => (
+              <tr key={index} className="border-b">
+                <td className="border border-black text-center">
+                  {String(new Date(cita.fecha).getDate()).padStart(2, '0')}
+                </td>
+                <td className="border border-black text-center">
+                  {cita?.atencion?.pacienteDTO?.nroHistoriaClinica || ""}
+                  <p>
+DNI: {cita?.atencion?.pacienteDTO?.nroDocumento || ""}
+                  </p>
+                  
+                </td>
+                <td className="border border-black text-center">
+                    {cita?.atencion?.idFormaPago || ""}
+                </td>
+                 <td className="border border-black text-center">
+                    80
+                </td>
               </tr>
-                </thead>
-                <tbody className="space-y-2">
-                  {/* Separador visual entre grupos */}
-      <tr>
-        <td colSpan={4} className="py-1 bg-gray-100"></td>
-      </tr>
-<pre>
-  {JSON.stringify(dataAgrupada, null, 2)}
-</pre>
-  {dataAgrupada.map((item: any, index: number) => (
-    <React.Fragment key={index}>
-      {item.Diagnosticos.map((dx: any, i: number) => (
-        <tr key={i} className="border-b">
-          {/* Fecha (día) */}
-          <td className="border border-black text-center">
-            {dataCabeceraHis?.fecha?.split('-')[2]}
-          </td>
-
-          {/* Documento — solo en la primera fila, con rowspan */}
-          {i === 0 && (
-            <td
-              className="py-1 border border-black text-center align-middle"
-              rowSpan={item.Diagnosticos.length}
-            >
-              {item.NroDocumento}
-            </td>
-          )}
-   {/* FINAN DE SALUD */}
-          <td className="py-1 border border-black text-center">
-            2
-          </td>
-           {/* ETNIA */}
-           <td className="py-1 border border-black text-center">
-            80
-          </td>
-             {/* DISTRITO PROCEDENCIA */}
-          <td className="py-1 border border-black text-center">
-            Punchao (Huamalies) (Huanuco)
-          </td>
-          {/* Diagnóstico */}
-          <td className="py-1 border border-black text-center">
-            {dx.DiagnosticoDescripcion}
-          </td>
-
-          {/* Subclasificación */}
-          <td className="border border-black text-center">
-            {dx.SubclasificacionDiagnostico}
-          </td>
-
-          {/* Código CIE10 */}
-          <td className="border border-black text-center font-bold">
-            {dx.CodigoCIE10}
-          </td>
-        </tr>
-      ))}
-
-      {/* Separador visual entre grupos */}
-      <tr>
-        <td colSpan={5} className="py-1 bg-gray-100"></td>
-      </tr>
-    </React.Fragment>
-  ))}
+            ))}
 
 
-</tbody>
-
-          
-              
-     </table>
-        {dataAgrupada.map((item: any, index: number) => (
-          <div key={index} className="border border-black p-2 mb-4">
-
-   
-       
-
-            <table className="w-full table-auto border-collapse text-sm">
-              <thead>
-                <tr className="border-t border-b">
-                  <th className="text-left py-1 w-1/6">DNI:</th>
-                  <th className="text-left py-1 w-3/6">Diagnóstico</th>
-                  <th className="text-center px-2 w-1/6">Tipo</th>
-                  <th className="text-right py-1 w-1/6">CIE10</th>
-                </tr>
-              </thead>
-              <tbody>
-                {item.Diagnosticos.map((dx: any, i: number) => (
-                  <tr key={i} className="border-b">
-                    <td className="py-1">{item.NroDocumento}</td>
-                    <td className="py-1">{dx.DiagnosticoDescripcion}</td>
-                    <td className="text-center">{dx.SubclasificacionDiagnostico}</td>
-                    <td className="text-right font-bold">{dx.CodigoCIE10}</td>
-                  </tr>
-                ))}
-
-              </tbody>
-            </table>
 
 
-          </div>
-        ))}
+          </tbody>
+
+
+
+        </table>
 
 
 
