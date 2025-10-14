@@ -5,6 +5,28 @@ import { useEffect, useRef, useState } from "react"
 // @ts-ignore
 import html2pdf from "html2pdf.js"
 import * as React from 'react';
+<style jsx global>{`
+  @media print {
+    /* Asegura que las tablas internas se alineen por fila */
+    td.align-top table {
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    /* Cada fila tendrá una altura fija */
+    td.align-top table tr {
+      height: 18px; /* ajusta según tu necesidad */
+    }
+
+    /* El contenido no debe romper la altura */
+    td.align-top table td {
+      vertical-align: middle;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+`}</style>
 export const ImpresionHis = ({ idprogramacion }: any) => {
   const [dataAgrupada, setDataAgrupada] = useState<any[]>([])
   const [dataCabeceraHis, setdataCabeceraHis] = useState<any>()
@@ -125,9 +147,7 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
 
   return (
     <>
-      <pre>
-        {JSON.stringify(dataCabeceraHis?.citas, null, 2)}
-      </pre>
+
       <button
         onClick={handleExportPDF}
         className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hidden"
@@ -145,15 +165,15 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
         <table className="w-full table-auto border-collapse text-sm mb-4">
           <tbody>
             <tr>
-              <td colSpan={2} className="border border-black text-center">FECHA</td>
+              <td colSpan={2} className="border border-black text-center font-bold">FECHA</td>
               <td className="border border-black w-10"></td>
               <td className="border border-black w-10"></td>
-              <td className="border border-black text-center">DPTO</td>
-              <td className="border border-black text-center">PROV</td>
-              <td className="border border-black text-center">DIST</td>
-              <td className="border border-black text-center">4 ESTABLEC</td>
-              <td colSpan={2} className="border border-black text-center">5 UPS</td>
-              <td colSpan={2} className="border border-black text-center">6 RESPONSABLE DE LA ATENCION</td>
+              <td className="border border-black text-center font-bold">DPTO</td>
+              <td className="border border-black text-center font-bold">PROV</td>
+              <td className="border border-black text-center font-bold">DIST</td>
+              <td className="border border-black text-center font-bold">4 ESTABLEC</td>
+              <td colSpan={2} className="border border-black text-center font-bold">5 UPS</td>
+              <td colSpan={2} className="border border-black text-center font-bold">6 RESPONSABLE DE LA ATENCION</td>
             </tr>
             <tr>
               <td className="border border-black text-center font-bold">2 años</td>
@@ -180,50 +200,122 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
         <table className="w-full table-auto border-collapse text-sm">
           <thead>
             <tr className="border-b">
-              <td className="border border-black text-center">7 Dia</td>
-              <td className="border border-black text-center">8,9 (HISTORIA CLINICA/FICHA FAMILIAR)/(DNI)</td>
-              <td className="border border-black text-center">10 FINAN DE SALUD</td>
-              <td className="border border-black text-center">11 ETNIA</td>
-              <td className="border border-black text-center">12 DISTRITO PROCEDENCIA</td>
-              <td className="border border-black text-center">13 EDAD</td>
-              <td className="border border-black text-center">14 SEXO</td>
-              <td className="border border-black text-center">15 ESTABLECIMIENTO</td>
-              <td className="border border-black text-center">16 SERVICIO</td>
-              <td className="border border-black text-center">17 DIAGNOSTICO MOTIVO DE CONSULTA Y/O ACTIVIDAD DE SALUD</td>
-              <td className="border border-black text-center">18 TIPO DE DIAGNOSTICO</td>
-              <td className="border border-black text-center">19 LAB</td>
+              <td className="border border-black text-center font-bold">7 Dia</td>
+              <td className="border border-black text-center w-6 font-bold">8,9 (HISTORIA CLINICA/FICHA FAMILIAR)/(DNI)</td>
+              <td className="border border-black text-center font-bold">10 FINAN DE SALUD</td>
+              <td className="border border-black text-center font-bold">11 ETNIA</td>
+              <td className="border border-black text-center font-bold">12 DISTRITO PROCEDENCIA</td>
+              <td className="border border-black text-center font-bold">13 EDAD</td>
+              <td className="border border-black text-center font-bold" colSpan={2}>14 SEXO</td>
+              <td className="border border-black text-center w-7 font-bold" colSpan={3}>15 ESTABLECIMIENTO</td>
+              <td className="border border-black text-center font-bold" colSpan={3}>16 SERVICIO</td>
+              <td className="border border-black text-center font-bold">17 DIAGNOSTICO MOTIVO DE CONSULTA Y/O ACTIVIDAD DE SALUD</td>
+              <td className="border border-black text-center font-bold">18 TIPO DE DIAGNOSTICO</td>
+              <td className="border border-black text-center font-bold">19 LAB</td>
             </tr>
           </thead>
-          <tbody className="space-y-2">
-            {/* Separador visual entre grupos */}
-            <tr>
-              <td colSpan={4} className="py-1 bg-gray-100"></td>
-            </tr>
-            {dataCabeceraHis?.citas?.map((cita: any, index: number) => (
-              <tr key={index} className="border-b">
-                <td className="border border-black text-center">
-                  {String(new Date(cita.fecha).getDate()).padStart(2, '0')}
-                </td>
-                <td className="border border-black text-center">
-                  {cita?.atencion?.pacienteDTO?.nroHistoriaClinica || ""}
-                  <p>
-DNI: {cita?.atencion?.pacienteDTO?.nroDocumento || ""}
-                  </p>
-                  
-                </td>
-                <td className="border border-black text-center">
+       <tbody className="space-y-2">
+  <tr>
+    <td className="border border-black text-center"></td>
+    <td className="border border-black text-center"></td>
+    <td className="border border-black text-center"></td>
+    <td className="border border-black text-center"></td>
+    <td className="border border-black text-center"></td>
+    <td className="border border-black text-center"></td>
+    <td className="border border-black text-center w-4">M</td>
+    <td className="border border-black text-center w-4">F</td>
+    <td className="border border-black text-center">N</td>
+    <td className="border border-black text-center">C</td>
+    <td className="border border-black text-center">R</td>
+    <td className="border border-black text-center">N</td>
+    <td className="border border-black text-center">C</td>
+    <td className="border border-black text-center">R</td>
+    <td className="border border-black text-center"></td>
+    <td className="border border-black text-center"></td>
+    <td className="border border-black text-center"></td>
+  </tr>
+
+  {dataCabeceraHis?.citas
+    ?.filter((cita: any) => cita?.atencion?.atencionesDiagnosticos?.length)
+    ?.map((cita: any, index: number) => {
+      const diagnosticos = cita?.atencion?.atencionesDiagnosticos || [];
+      const totalDx = diagnosticos.length;
+
+      return (
+        <React.Fragment key={index}>
+          <tr><td colSpan={17} className="h-4"></td></tr>
+
+          {diagnosticos.map((diag: any, idx: number) => (
+            <tr key={idx} className="border-b">
+              {/* Solo la primera fila muestra los datos generales con rowspan */}
+              {idx === 0 && (
+                <>
+                  <td className="border border-black text-center " rowSpan={totalDx}>
+                    {String(new Date(cita.fecha).getDate()).padStart(2, '0')}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                    {cita?.atencion?.pacienteDTO?.nroHistoriaClinica || ""}
+                    <p>DNI: {cita?.atencion?.pacienteDTO?.nroDocumento || ""}</p>
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
                     {cita?.atencion?.idFormaPago || ""}
-                </td>
-                 <td className="border border-black text-center">
-                    80
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>80</td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                    {cita?.atencion?.pacienteDTO?.distrito + " -" || ""} 
+                    {cita?.atencion?.pacienteDTO?.provincia + " -" || ""} 
+                    {cita?.atencion?.pacienteDTO?.departamento || ""}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                    {(() => {
+                      const fechaNacimiento = cita?.atencion?.pacienteDTO?.fechaNacimiento;
+                      if (!fechaNacimiento) return "";
+                      const fecha = new Date(fechaNacimiento);
+                      const hoy = new Date();
+                      let edad = hoy.getFullYear() - fecha.getFullYear();
+                      const mes = hoy.getMonth() - fecha.getMonth();
+                      if (mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) edad--;
+                      return edad + " años";
+                    })()}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                    {cita?.atencion?.pacienteDTO?.idTipoSexo === '1' ? 'X' : ''}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                    {cita?.atencion?.pacienteDTO?.idTipoSexo === '2' ? 'X' : ''}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}></td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>X</td>
+                  <td className="border border-black text-center" rowSpan={totalDx}></td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                    {cita?.atencion?.idTipoCondicionAlServicio == '1' ? 'X' : ''}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                    {cita?.atencion?.idTipoCondicionAlServicio == '2' ? 'X' : ''}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                    {cita?.atencion?.idTipoCondicionAlServicio == '3' ? 'X' : ''}
+                  </td>
+                </>
+              )}
 
+              {/* Columnas de diagnóstico */}
+              <td className="border border-black text-left px-1 py-0.5">
+                {diag?.diagnostico?.codigoCIE10} - {diag?.diagnostico?.descripcion}
+              </td>
+              <td className="border border-black text-center px-1 py-0.5">
+                {diag?.subclasificacionDiagnosticos?.codigo}
+              </td>
+              <td className="border border-black text-center px-1 py-0.5">
+                {diag?.labConfHIS}
+              </td>
+            </tr>
+          ))}
+        </React.Fragment>
+      );
+    })}
+</tbody>
 
-
-
-          </tbody>
 
 
 
