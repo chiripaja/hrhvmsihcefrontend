@@ -28,102 +28,24 @@ import * as React from 'react';
   }
 `}</style>
 export const ImpresionHis = ({ idprogramacion }: any) => {
-  const [dataAgrupada, setDataAgrupada] = useState<any[]>([])
+
   const [dataCabeceraHis, setdataCabeceraHis] = useState<any>()
-
-  const getdata = async (id: any) => {
-    const data = await getData(`${process.env.apijimmynew}/programacionmedica/apiimpresionhis/${id}`)
-    console.log(data)
-    const agrupado = agruparPorCuenta(data)
-    setDataAgrupada(agrupado)
-    console.log(agrupado)
-  }
-
+  const [loading, setLoading] = useState(true) // 👈 Estado de carga
   const getCabecera = async (id: any) => {
     const dataProgramacion = await getData(`${process.env.apijimmynew}/programacionmedica/${id}`)
     setdataCabeceraHis(dataProgramacion)
   }
 
-  const agruparPorCuenta = (data: any[]) => {
-    const map = new Map<number, any>()
-
-    data.forEach((item) => {
-      const id = item.IdCuentaAtencion
-
-      // Diagnóstico original del item
-      const diagnostico = {
-        CodigoCIE10: item.CodigoCIE10?.trim(),
-        DiagnosticoDescripcion: item.DiagnosticoDescripcion,
-        SubclasificacionDiagnostico: item.SubclasificacionDiagnostico
-      }
-
-      // Si hay procedimiento, crear también un "diagnóstico" con su nombre
-      const diagnosticoDesdeProcedimiento = item.nombreproc?.trim()
-        ? {
-          CodigoCIE10: item.codigoproc.trim(),
-          DiagnosticoDescripcion: item.nombreproc.trim(),
-          SubclasificacionDiagnostico: "Procedimiento"
-        }
-        : null
-
-      if (!map.has(id)) {
-        map.set(id, {
-          IdCuentaAtencion: id,
-          Sexo: item.Sexo,
-          ApellidoPaterno: item.ApellidoPaterno,
-          ApellidoMaterno: item.ApellidoMaterno,
-          NroDocumento: item.NroDocumento,
-          NombresEmpleado: item.NombresEmpleado,
-          Servicio: item.Servicio,
-          Diagnosticos: [],
-          Procedimientos: []
-        })
-      }
-
-      const paciente = map.get(id)
-
-      // Agregar diagnóstico si no está repetido
-      const yaExisteDx = paciente.Diagnosticos.some(
-        (dx: any) =>
-          dx.CodigoCIE10 === diagnostico.CodigoCIE10 &&
-          dx.DiagnosticoDescripcion === diagnostico.DiagnosticoDescripcion &&
-          dx.SubclasificacionDiagnostico === diagnostico.SubclasificacionDiagnostico
-      )
-      if (!yaExisteDx) {
-        paciente.Diagnosticos.push(diagnostico)
-      }
-
-      // Agregar diagnóstico generado desde procedimiento si no está repetido
-      if (diagnosticoDesdeProcedimiento &&
-        diagnosticoDesdeProcedimiento.CodigoCIE10 !== "99203") {
-        const yaExisteProcComoDx = paciente.Diagnosticos.some(
-          (dx: any) =>
-            dx.DiagnosticoDescripcion === diagnosticoDesdeProcedimiento.DiagnosticoDescripcion &&
-            dx.SubclasificacionDiagnostico === "Procedimiento"
-        )
-        if (!yaExisteProcComoDx) {
-          paciente.Diagnosticos.push(diagnosticoDesdeProcedimiento)
-        }
-      }
-
-      // Agregar procedimiento a lista normal si no está repetido
-      if (
-        diagnosticoDesdeProcedimiento?.DiagnosticoDescripcion &&
-        !paciente.Procedimientos.includes(diagnosticoDesdeProcedimiento.DiagnosticoDescripcion)
-      ) {
-        paciente.Procedimientos.push(diagnosticoDesdeProcedimiento.DiagnosticoDescripcion)
-      }
-    })
-
-    return Array.from(map.values())
-  }
-
-
-
   useEffect(() => {
-    if (idprogramacion) {
-      getdata(idprogramacion)
-      getCabecera(idprogramacion)
+       if (idprogramacion) {
+      const fetchData = async () => {
+        setLoading(true) // 👈 Mostrar loader
+        await Promise.all([
+          getCabecera(idprogramacion)
+        ])
+        setLoading(false) // 👈 Ocultar loader
+      }
+      fetchData()
     }
   }, [idprogramacion])
 
@@ -144,11 +66,20 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
     html2pdf().set(opt).from(pdfRef.current).save()
   }
 
-
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mb-3"></div>
+          <p className="text-gray-600">Cargando datos del HIS...</p>
+        </div>
+      </div>
+    )
+  }
   return (
     <>
 
-      <button
+      <button 
         onClick={handleExportPDF}
         className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hidden"
       >
@@ -284,9 +215,15 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
                   <td className="border border-black text-center" rowSpan={totalDx}>
                     {cita?.atencion?.pacienteDTO?.idTipoSexo === '2' ? 'X' : ''}
                   </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}></td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>X</td>
-                  <td className="border border-black text-center" rowSpan={totalDx}></td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                     {cita?.atencion?.idTipoCondicionAlEstablecimiento == '1' ? 'X' : ''}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                     {cita?.atencion?.idTipoCondicionAlEstablecimiento == '2' ? 'X' : ''}
+                  </td>
+                  <td className="border border-black text-center" rowSpan={totalDx}>
+                     {cita?.atencion?.idTipoCondicionAlEstablecimiento == '3' ? 'X' : ''}
+                  </td>
                   <td className="border border-black text-center" rowSpan={totalDx}>
                     {cita?.atencion?.idTipoCondicionAlServicio == '1' ? 'X' : ''}
                   </td>
