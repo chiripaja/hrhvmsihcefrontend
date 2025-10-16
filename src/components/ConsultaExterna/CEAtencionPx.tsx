@@ -9,6 +9,8 @@ import { Loading } from '../utils/Loading'
 import { getData } from '../helper/axiosHelper'
 import { RecetaCabecera } from '@/interfaces/RecetaCabezeraI'
 import { MedicamentosCE } from '@/interfaces/MedicamentosCe'
+import Consulta from './consultamedica/ConsultaProc'
+import ConsultaProc from './consultamedica/ConsultaProc'
 
 declare global {
   interface Window {
@@ -104,7 +106,7 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
   const getDatosConsulta = async () => {
     try {
       const datosAtencion = await getData(`${process.env.apijimmynew}/atenciones/findByIdCuentaAtencion/${idcuentaatencion}`);
-      console.log(datosAtencion)
+
       setDatosAtencion(datosAtencion)
       setIdMedicoIngresoServicioIngresoFuenteFinanciamientoFormaPago(datosAtencion?.idMedicoIngreso, datosAtencion?.servicio?.idServicio,
         datosAtencion?.idFuenteFinanciamiento, datosAtencion?.idFormaPago,
@@ -346,7 +348,26 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           role="tabpanel"
           aria-labelledby="vertical-tab-with-border-item-2"
         >
+          <>
+      
+  {/*
+  
+             {cuentaDatos?.FuaCodigoPrestacion == '071'? (
+            <>
+           <ConsultaProc handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion} cuentaDatos={cuentaDatos} />
+            </>
+           ):(
+<>
+           <CEConsultaGeneral handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion} cuentaDatos={cuentaDatos} />
+            </>
+           )}
+  
+  */}
+
+          
           <CEConsultaGeneral handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion} cuentaDatos={cuentaDatos} />
+          </>
+          
         </div>
         <div
           id="vertical-tab-with-border-3"

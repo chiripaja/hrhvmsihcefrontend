@@ -1,10 +1,17 @@
 
 
 export const TicketImpresion = ({ Datos }: any) => {
+    const horarioTexto=(idturno:any)=>{
+        if(idturno==4) return ' MAÑANA'
+        if(idturno==40) return ' TARDE'        
+        return '';
+    }
   return (
 <>
+
         {Datos && (
             <div className='container hidden print:block'>
+       
                 <div className="row text-center  text-xs">
                     <div className="col-sm-12 font-bold">
                         HOSPITAL REGIONAL HERMILIO VALDIZAN
@@ -16,7 +23,7 @@ export const TicketImpresion = ({ Datos }: any) => {
                         JIRON HERMILIO VALDIZAN NUMERO 950 DISTRITO HUANUCO
                     </div>
                     <div className="col-sm-12 font-bold text-xs">
-                        TICKET DE CITA
+                        TICKET DE CITA 
                     </div>
                 </div>
                 <div className="row text-sm">
@@ -26,10 +33,14 @@ export const TicketImpresion = ({ Datos }: any) => {
                         {Datos.ordenPago ? ( <span> N° Orden Pago : {Datos.ordenPago} </span> ):(null)}
                     </div>
                     <div className="col-sm-12 font-bold">
-                        Fecha: {Datos.fechaIngreso} Hr: {Datos.horaIngreso}
+                        Fecha: {Datos.fechaIngreso}  
+                   {[54, 53, 1230].includes(Datos?.IdEspecialidad)
+  ? <>Hr: {Datos.HoraInicio}</>
+  : horarioTexto(Datos?.IdTurno)}
+                    
                     </div>
                     <div className="col-sm-12">
-                        Servicio : {Datos.servicio}
+                        Servicio : {Datos.NombreServicio}
                     </div>
                     <div className="col-sm-12">
                         Médico. : {Datos.nombreMedico}
@@ -39,10 +50,10 @@ export const TicketImpresion = ({ Datos }: any) => {
                         </div>
                     </div>
                     <div className="col-sm-12 font-bold">
-                        <span>N° Historia : {Datos.nroHistoriaClinica}  </span>
+                        <span>N° Historia : {Datos.NroHistoriaClinica}  </span>
                     </div>
                     <div className="col-sm-12 font-bold">
-                        <span>N° Cuenta : {Datos.idCuentaAtencion} </span>
+                        <span>N° Cuenta : {Datos.IdCuentaAtencion} </span>
                     </div>
                     <div className="col-sm-12 font-bold">
                         <span>Paciente : {Datos.nombrePaciente} </span>

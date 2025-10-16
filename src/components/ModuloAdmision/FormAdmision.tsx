@@ -460,8 +460,9 @@ export const FormAdmision = (data: any) => {
     }
 
     const impresionTicket = async (numcuenta: any) => {
-        const { data } = await axios.get(`${process.env.apiurl}/TicketAdmision/${numcuenta}`)
+        const { data } = await axios.get(`${process.env.apijimmynew}/atenciones/ticket/${numcuenta}`)
         await setNearest(data)
+       console.log(data)
         setShouldPrint(true);
     }
 

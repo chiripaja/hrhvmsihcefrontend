@@ -9,9 +9,8 @@ import { useCEDatosStore } from '@/store';
 import axios from 'axios';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import Swal from 'sweetalert2';
-
-export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion,cuentaDatos }: any) => {
-    const [isSubmitting, setIsSubmitting] = useState(false);
+export default function ConsultaProc({ handleTabChange, session, datosAtencion,cuentaDatos }: any) {
+   const [isSubmitting, setIsSubmitting] = useState(false);
     const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
     const formRef = useRef<HTMLFormElement>(null);
     const setAtencionMedica=useCEDatosStore((state:any)=>state.setAtencionMedica);
@@ -39,7 +38,7 @@ export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion,cuen
 
 
     const FormMotivo: SubmitHandler<any> = async (data: any) => {
-        console.log(cuentaDatos?.diagnosticos.length)
+     
         if(cuentaDatos?.diagnosticos.length==0){
             Swal.fire({
                 icon: "error",
@@ -47,9 +46,8 @@ export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion,cuen
                 text: "Ingrese al menos un diagnostico.",
               });
             return;
-        }
-        const concatenatedNomdx = getConcatenatedNomdx(cuentaDatos?.diagnosticos);
-        
+        }        
+        const concatenatedNomdx = getConcatenatedNomdx(cuentaDatos?.diagnosticos);        
         try {
             setIsSubmitting(true);
             const objectAtencionCe = {
@@ -58,13 +56,13 @@ export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion,cuen
                 citaMedico: getCitaMedico(datosAtencion?.medico),
                 citaServicioJamo: datosAtencion?.servicio?.nombre,
                 citaIdServicio: cuentaDatos?.idServicio,
-                citaMotivo: data?.citaMotivo,
-                citaExamenClinico: data?.citaExamenClinico,
+                citaMotivo: "",
+                citaExamenClinico:"",
                 citaDiagMed: concatenatedNomdx,
                 citaIdUsuario: session?.user?.id,
                 triajeEdad: cuentaDatos?.edad,
             };
-            setAtencionMedica(data?.citaMotivo,data?.citaExamenClinico);
+            setAtencionMedica("","");
             await axios.post(`${process.env.apijimmynew}/atenciones/atencionce`, objectAtencionCe);
     
             if (cuentaDatos.diagnosticos.length > 0) {
@@ -108,55 +106,14 @@ export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion,cuen
     const handleButtonClick = () => {
         handleSubmit(FormMotivo)();
     };
-    return (
-        <>
-     
+  return (
+
+      <>
+
             <div className='grid grid-cols-2 gap-3 mt-4'>
                 <form ref={formRef} onSubmit={handleSubmit(FormMotivo)}>
-                    <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
-                        <h2 className="text-lg font-semibold text-gray-800 flex items-center">
-                            <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                            Motivo
-                        </h2>
-                        <div className="flex flex-col items-center justify-center mt-6 w-full">
-                            <textarea
-                                {...register('citaMotivo', {
-                                    required: 'El campo es obligatorio',
-                                })}
-                                className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-gray-700 placeholder-gray-400 resize-none shadow-inner"
-                                rows={6}
-                                placeholder="Escribe aquí el motivo..."
-                            />
-                            {errors.citaMotivo?.message && (
-                                <p className="text-red-500 text-sm mt-1">
-                                    {String(errors.citaMotivo.message)}
-                                </p>
-                            )}
-                        </div>
-                    </div>
+                   
 
-                    <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4 mt-2">
-                        <h2 className="text-lg font-semibold text-gray-800 flex items-center">
-                            <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                            Examen Clinico
-                        </h2>
-                        <div className="flex flex-col items-center justify-center mt-6 w-full">
-                            <textarea
-                                {...register('citaExamenClinico', {
-                                    required: 'El campo es obligatorio',
-                                })}
-                                required
-                                className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-gray-700 placeholder-gray-400 resize-none shadow-inner"
-                                rows={6}
-                                placeholder="Escribe aquí el motivo..."
-                            />
-                            {errors.citaExamenClinico?.message && (
-                                <p className="text-red-500 text-sm mt-1">
-                                    {String(errors.citaExamenClinico.message)}
-                                </p>
-                            )}
-                        </div>
-                    </div>
                 </form>
 
                 <CEDiagnostico />
@@ -180,5 +137,6 @@ export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion,cuen
          
             </div>
         </>
-    );
-};
+
+  )
+}

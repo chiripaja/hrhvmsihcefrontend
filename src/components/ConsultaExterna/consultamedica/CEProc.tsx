@@ -9,9 +9,10 @@ import { useCEDatosStore } from '@/store';
 import axios from 'axios';
 import { ToasterMsj } from '@/components/utils/ToasterMsj';
 import Swal from 'sweetalert2';
+import { ModalProps } from '@/components/ui/ModalProps/ModalProps';
+const CEProc = ({ handleTabChange, session, datosAtencion,cuentaDatos }: any) => {
 
-export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion,cuentaDatos }: any) => {
-    const [isSubmitting, setIsSubmitting] = useState(false);
+     const [isSubmitting, setIsSubmitting] = useState(false);
     const { control, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<any>();
     const formRef = useRef<HTMLFormElement>(null);
     const setAtencionMedica=useCEDatosStore((state:any)=>state.setAtencionMedica);
@@ -108,77 +109,78 @@ export const CEConsultaGeneral = ({ handleTabChange, session, datosAtencion,cuen
     const handleButtonClick = () => {
         handleSubmit(FormMotivo)();
     };
-    return (
-        <>
-     
-            <div className='grid grid-cols-2 gap-3 mt-4'>
-                <form ref={formRef} onSubmit={handleSubmit(FormMotivo)}>
-                    <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
-                        <h2 className="text-lg font-semibold text-gray-800 flex items-center">
-                            <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                            Motivo
-                        </h2>
-                        <div className="flex flex-col items-center justify-center mt-6 w-full">
-                            <textarea
-                                {...register('citaMotivo', {
-                                    required: 'El campo es obligatorio',
-                                })}
-                                className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-gray-700 placeholder-gray-400 resize-none shadow-inner"
-                                rows={6}
-                                placeholder="Escribe aquí el motivo..."
-                            />
-                            {errors.citaMotivo?.message && (
-                                <p className="text-red-500 text-sm mt-1">
-                                    {String(errors.citaMotivo.message)}
-                                </p>
-                            )}
-                        </div>
-                    </div>
+  return (
+    <div>
+          <div className='grid grid-cols-2 gap-3 mt-4'>
+                      <form ref={formRef} onSubmit={handleSubmit(FormMotivo)}>
+                          <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4">
+                              <h2 className="text-lg font-semibold text-gray-800 flex items-center">
+                                  <span className="border-l-4 borderfondo h-6 mr-2"></span>
+                                  Motivo
+                              </h2>
+                              <div className="flex flex-col items-center justify-center mt-6 w-full">
+                                  <textarea
+                                      {...register('citaMotivo', {
+                                          required: 'El campo es obligatorio',
+                                      })}
+                                      className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-gray-700 placeholder-gray-400 resize-none shadow-inner"
+                                      rows={6}
+                                      placeholder="Escribe aquí el motivo..."
+                                  />
+                                  {errors.citaMotivo?.message && (
+                                      <p className="text-red-500 text-sm mt-1">
+                                          {String(errors.citaMotivo.message)}
+                                      </p>
+                                  )}
+                              </div>
+                          </div>
+      
+                          <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4 mt-2">
+                              <h2 className="text-lg font-semibold text-gray-800 flex items-center">
+                                  <span className="border-l-4 borderfondo h-6 mr-2"></span>
+                                  Examen Clinico
+                              </h2>
+                              <div className="flex flex-col items-center justify-center mt-6 w-full">
+                                  <textarea
+                                      {...register('citaExamenClinico', {
+                                          required: 'El campo es obligatorio',
+                                      })}
+                                      required
+                                      className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-gray-700 placeholder-gray-400 resize-none shadow-inner"
+                                      rows={6}
+                                      placeholder="Escribe aquí el motivo..."
+                                  />
+                                  {errors.citaExamenClinico?.message && (
+                                      <p className="text-red-500 text-sm mt-1">
+                                          {String(errors.citaExamenClinico.message)}
+                                      </p>
+                                  )}
+                              </div>
+                          </div>
+                      </form>
+      
+                      <CEDiagnostico />
+                      <div className="flex justify-end mt-6 col-span-2">
+                              <button
+                                  type="submit"
+                                  disabled={isSubmitting}
+                                  onClick={handleButtonClick} 
+                                  className={`flex items-center px-4 py-2 rounded focus:outline-none ${isSubmitting ? 'bg-gray-400' : 'colorFondo'} text-white`}
+                              >
+                                  {isSubmitting ? (
+                                      <Loading />
+                                  ) : (
+                                      <>
+                                          Guardar y continuar
+                                          <GrFormNextLink className="ml-2" />
+                                      </>
+                                  )}
+                              </button>
+                          </div>
+               
+                  </div>
+    </div>
+  )
+}
 
-                    <div className="bg-white border border-gray-300 rounded-md shadow-sm p-4 mt-2">
-                        <h2 className="text-lg font-semibold text-gray-800 flex items-center">
-                            <span className="border-l-4 borderfondo h-6 mr-2"></span>
-                            Examen Clinico
-                        </h2>
-                        <div className="flex flex-col items-center justify-center mt-6 w-full">
-                            <textarea
-                                {...register('citaExamenClinico', {
-                                    required: 'El campo es obligatorio',
-                                })}
-                                required
-                                className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-gray-700 placeholder-gray-400 resize-none shadow-inner"
-                                rows={6}
-                                placeholder="Escribe aquí el motivo..."
-                            />
-                            {errors.citaExamenClinico?.message && (
-                                <p className="text-red-500 text-sm mt-1">
-                                    {String(errors.citaExamenClinico.message)}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                </form>
-
-                <CEDiagnostico />
-                <div className="flex justify-end mt-6 col-span-2">
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            onClick={handleButtonClick} 
-                            className={`flex items-center px-4 py-2 rounded focus:outline-none ${isSubmitting ? 'bg-gray-400' : 'colorFondo'} text-white`}
-                        >
-                            {isSubmitting ? (
-                                <Loading />
-                            ) : (
-                                <>
-                                    Guardar y continuar
-                                    <GrFormNextLink className="ml-2" />
-                                </>
-                            )}
-                        </button>
-                    </div>
-         
-            </div>
-        </>
-    );
-};
+export default CEProc
