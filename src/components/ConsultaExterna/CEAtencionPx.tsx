@@ -349,9 +349,8 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
           aria-labelledby="vertical-tab-with-border-item-2"
         >
           <>
+      {/*
       
-  {/*
-  
              {cuentaDatos?.FuaCodigoPrestacion == '071'? (
             <>
            <ConsultaProc handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion} cuentaDatos={cuentaDatos} />
@@ -361,13 +360,15 @@ export const CEAtencionPx = ({ idcuentaatencion, idpaciente, session }: any) => 
            <CEConsultaGeneral handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion} cuentaDatos={cuentaDatos} />
             </>
            )}
+   */} 
   
-  */}
-
-          
           <CEConsultaGeneral handleTabChange={handleTabChange} session={session} datosAtencion={datosAtencion} cuentaDatos={cuentaDatos} />
-          </>
           
+
+
+
+          </>
+        
         </div>
         <div
           id="vertical-tab-with-border-3"

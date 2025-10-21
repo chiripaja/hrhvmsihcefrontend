@@ -109,15 +109,16 @@ export default function ConsultaProc({ handleTabChange, session, datosAtencion,c
   return (
 
       <>
-
-            <div className='grid grid-cols-2 gap-3 mt-4'>
-                <form ref={formRef} onSubmit={handleSubmit(FormMotivo)}>
+ <form ref={formRef} onSubmit={handleSubmit(FormMotivo)}>
                    
 
                 </form>
+            <div className='grid grid-cols-2 gap-3 mt-4 '>
+               
 
                 <CEDiagnostico />
-                <div className="flex justify-end mt-6 col-span-2">
+
+                <div className="flex justify-end mt-12 col-span-2">
                         <button
                             type="submit"
                             disabled={isSubmitting}

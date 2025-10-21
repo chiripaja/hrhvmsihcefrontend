@@ -7,23 +7,35 @@ import html2pdf from "html2pdf.js"
 import * as React from 'react';
 <style jsx global>{`
   @media print {
-    /* Asegura que las tablas internas se alineen por fila */
-    td.align-top table {
-      table-layout: fixed;
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    /* Ocupa toda la hoja A4 */
+    html, body {
+      width: 210mm;
+      height: 297mm;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Escala el contenido al tamaño de la hoja */
+    #print-area {
+      transform: scale(0.65); /* Ajusta este valor */
+      transform-origin: top left;
       width: 100%;
     }
 
-    /* Cada fila tendrá una altura fija */
-    td.align-top table tr {
-      height: 18px; /* ajusta según tu necesidad */
+    /* Evita saltos de página */
+    table, tr, td, thead, tbody {
+      page-break-inside: avoid !important;
     }
 
-    /* El contenido no debe romper la altura */
-    td.align-top table td {
-      vertical-align: middle;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+    * {
+      font-size: 2px !important;
+      line-height: 1.1;
     }
   }
 `}</style>
@@ -85,7 +97,7 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
       >
         Descargar PDF
       </button>
-      <div ref={pdfRef}>
+      <div ref={pdfRef} id="print-area" style={{fontSize: "7px",margin: "10px"}}>
         <div className="text-center mb-4">
           <div className="font-bold text-xl">HOSPITAL REGIONAL HERMILIO VALDIZAN</div>
           <div className="font-bold text-lg">Registro Diario de Atención y Otras Actividades de Salud</div>
@@ -128,21 +140,22 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
 
           </tbody>
         </table>
-        <table className="w-full table-auto border-collapse text-sm">
+        <table className="w-full table-auto border-collapse text-xs">
           <thead>
             <tr className="border-b">
               <td className="border border-black text-center font-bold">7 Dia</td>
-              <td className="border border-black text-center w-6 font-bold">8,9 (HISTORIA CLINICA/FICHA FAMILIAR)/(DNI)</td>
-              <td className="border border-black text-center font-bold">10 FINAN DE SALUD</td>
+              <td className="border border-black text-center w-6 font-bold">8,9 (HISTORIA CLINICA /FICHA FAMILIAR) / (DNI)</td>
+              <td className="border border-black text-center font-bold w-4">10 FIN. DE SAL.</td>
               <td className="border border-black text-center font-bold">11 ETNIA</td>
               <td className="border border-black text-center font-bold">12 DISTRITO PROCEDENCIA</td>
               <td className="border border-black text-center font-bold">13 EDAD</td>
               <td className="border border-black text-center font-bold" colSpan={2}>14 SEXO</td>
-              <td className="border border-black text-center w-7 font-bold" colSpan={3}>15 ESTABLECIMIENTO</td>
-              <td className="border border-black text-center font-bold" colSpan={3}>16 SERVICIO</td>
+              <td className="border border-black text-center w-7 font-bold" colSpan={3}>15 EST.</td>
+              <td className="border border-black text-center font-bold" colSpan={3}>16 SERV.</td>
               <td className="border border-black text-center font-bold">17 DIAGNOSTICO MOTIVO DE CONSULTA Y/O ACTIVIDAD DE SALUD</td>
-              <td className="border border-black text-center font-bold">18 TIPO DE DIAGNOSTICO</td>
+              <td className="border border-black text-center font-bold">18 TIPO DE DX</td>
               <td className="border border-black text-center font-bold">19 LAB</td>
+              <td className="border border-black text-center font-bold">20 CODIGO</td>
             </tr>
           </thead>
        <tbody className="space-y-2">
@@ -161,6 +174,7 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
     <td className="border border-black text-center">N</td>
     <td className="border border-black text-center">C</td>
     <td className="border border-black text-center">R</td>
+    <td className="border border-black text-center"></td>
     <td className="border border-black text-center"></td>
     <td className="border border-black text-center"></td>
     <td className="border border-black text-center"></td>
@@ -238,13 +252,16 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
 
               {/* Columnas de diagnóstico */}
               <td className="border border-black text-left px-1 py-0.5">
-                {diag?.diagnostico?.codigoCIE10} - {diag?.diagnostico?.descripcion}
+                {diag?.diagnostico?.descripcion}
               </td>
               <td className="border border-black text-center px-1 py-0.5">
                 {diag?.subclasificacionDiagnosticos?.codigo}
               </td>
               <td className="border border-black text-center px-1 py-0.5">
                 {diag?.labConfHIS}
+              </td>
+                <td className="border border-black text-center px-1 py-0.5">
+                 {diag?.diagnostico?.codigoCIE10}
               </td>
             </tr>
           ))}
