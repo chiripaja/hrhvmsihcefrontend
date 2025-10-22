@@ -36,56 +36,55 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
     useEffect(() => {
         console.log(datos[0]?.idReceta)
         if (datos[0]?.idReceta) {
-            // window.print()
+             window.print()
         }
     }, [datos])
 
 
     return (
-        <div className={`flex justify-center print-page-break scale-[0.9]`}>
+        <div className="print-container">
             <div className='grid grid-cols-2 gap-1 items-start'>
                 {/* primer componente*/}
-                <div className="p-6 border border-black flex flex-col justify-between min-h-[650px] w-full">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <Image
-                                        src="/img/loghrhvm.png"
-                                        alt="Logo del hospital"
-                                        width={80}
-                                        height={80}
-                                        className="w-30 h-auto"
-                                    />
-                                </td>
-                                <td className='text-xs'>
-                                    <div className='text-center'>
-                                        <h2 className="font-bold">HOSPITAL REGIONAL HERMINIO VALDIZÁN</h2>
-                                        <p>RUC: 20146038329</p>
-                                        <p>JIRÓN HERMILIO VALDIZAN NÚMERO 950 DISTRITO HUÁNUCO</p>
-                                        <p>TELÉFONO: (062)</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <table className='border-collapse text-xs'>
-                                        <tbody>
-                                            <tr>
-                                                <td className='border border-black text-center'> N° de Receta </td>
-                                            </tr>
-                                            <tr>
-                                                <td className='border border-black text-center'> {datos[0]?.idReceta}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
+                <div className="p-2 border border-black flex flex-col justify-between min-h-[650px] w-full">
+                    <table className="w-full">
+    <tbody>
+      <tr>
+        <td className="align-top w-[70px]">
+          <Image
+            src="/img/loghrhvm.png"
+            alt="Logo del hospital"
+            width={55}
+            height={55}
+            className="w-[55px] h-auto"
+          />
+        </td>
+        <td className="text-[10px] leading-tight text-center">
+          <h2 className="font-bold text-[11px]">HOSPITAL REGIONAL HERMINIO VALDIZÁN</h2>
+          <p>RUC: 20146038329</p>
+          <p>JIRÓN HERMILIO VALDIZÁN N° 950 - HUÁNUCO</p>
+          <p>TELÉFONO: (062)</p>
+        </td>
+        <td className="align-top w-[110px]">
+          <table className="border-collapse text-[10px] w-full">
+            <tbody>
+              <tr>
+                <td className="border border-black text-center font-semibold">N° de Receta</td>
+              </tr>
+              <tr>
+                <td className="border border-black text-center font-bold">
+                  {datos[0]?.idReceta}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
                     {/* Encabezado */}
 
 
-                    <div className="text-center font-bold">RECETA MÉDICA</div>
+                    <div className="text-center font-bold text-xs">RECETA MÉDICA</div>
 
                     <div className="text-xs w-full ">
                         <span className='font-bold'>
@@ -153,15 +152,15 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
 
 
 
-                    <div className='mt-2 font-semibold'>
+                    <div className='mt-2 font-semibold text-xs'>
                         DIAGNOSTICOS
                     </div>
                     <table className="w-full text-xs ">
                         <thead className="border-b border-t border-black">
                             <tr>
-                                <th className="text-left">TIPO</th>
-                                <th>CIE 10</th>
-                                <th >DESCRIPCION</th>
+                                <th className="text-left text-xs">TIPO</th>
+                                <th className='text-xs'>CIE 10</th>
+                                <th className='text-xs'>DESCRIPCION</th>
                             </tr>
                         </thead>
                         <tbody className="">
@@ -180,23 +179,23 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
 
 
 
-                    <table className="w-full mt-7">
+                    <table className="w-full mt-3">
                         <thead className="border-b border-t border-black">
                             <tr>
-                                <th className="text-left">Medicamento o Insumo</th>
-                                <th>Cantidad</th>
+                                <th className="text-left text-xs">Medicamento o Insumo</th>
+                                <th className="text-xs">Cantidad</th>
                             </tr>
                         </thead>
                         <tbody className="">
                             {datos.map((item: any) => (
                                 <tr key={item.idReceta + item.Nombre}>
-                                    <td className=' text-[10px]'>{item.Nombre}</td>
-                                    <td className=' text-[10px] text-center'>{item.CantidadPedida}</td>
+                                    <td className=' text-[9px]'>{item.Nombre}</td>
+                                    <td className=' text-[9px] text-center'>{item.CantidadPedida}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                    <div className="text-xs mt-44 text-right">
+                    <div className="text-xs mt-20 text-right">
                         <span className='border-t border-black pl-2 pr-2'>
                             {datosPxGeneral?.MedicoPaterno} {datosPxGeneral?.MedicoMaterno} {datosPxGeneral?.MedicoNombres}
                         </span>
@@ -205,47 +204,46 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
 
 
                 {/* segundo componente*/}
-                <div className="p-6 border border-black flex flex-col justify-between min-h-[650px]  w-full">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <Image
-                                        src="/img/loghrhvm.png"
-                                        alt="Logo del hospital"
-                                        width={80}
-                                        height={80}
-                                        className="w-30 h-auto"
-                                    />
-                                </td>
-                                <td className='text-xs'>
-                                    <div className='text-center'>
-                                        <h2 className="font-bold">HOSPITAL REGIONAL HERMINIO VALDIZÁN</h2>
-                                        <p>RUC: 20146038329</p>
-                                        <p>JIRÓN HERMILIO VALDIZAN NÚMERO 950 DISTRITO HUÁNUCO</p>
-                                        <p>TELÉFONO: (062)</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <table className='border-collapse text-xs'>
-                                        <tbody>
-                                            <tr>
-                                                <td className='border border-black text-center'> N° de Receta </td>
-                                            </tr>
-                                            <tr>
-                                                <td className='border border-black text-center'> {datos[0]?.idReceta}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
+                              <div className="p-6 border border-black flex flex-col justify-between min-h-[650px]  w-full">
+                                <table className="w-full">
+    <tbody>
+      <tr>
+        <td className="align-top w-[70px]">
+          <Image
+            src="/img/loghrhvm.png"
+            alt="Logo del hospital"
+            width={55}
+            height={55}
+            className="w-[55px] h-auto"
+          />
+        </td>
+        <td className="text-[10px] leading-tight text-center">
+          <h2 className="font-bold text-[11px]">HOSPITAL REGIONAL HERMINIO VALDIZÁN</h2>
+          <p>RUC: 20146038329</p>
+          <p>JIRÓN HERMILIO VALDIZÁN N° 950 - HUÁNUCO</p>
+          <p>TELÉFONO: (062)</p>
+        </td>
+        <td className="align-top w-[110px]">
+          <table className="border-collapse text-[10px] w-full">
+            <tbody>
+              <tr>
+                <td className="border border-black text-center font-semibold">N° de Receta</td>
+              </tr>
+              <tr>
+                <td className="border border-black text-center font-bold">
+                  {datos[0]?.idReceta}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
                     {/* Encabezado */}
 
 
-                    <div className="text-center font-bold">RECETA MÉDICA</div>
+                    <div className="text-center font-bold text-xs">RECETA MÉDICA</div>
 
                     <div className="text-xs w-full ">
                         <span className='font-bold'>
@@ -269,7 +267,7 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
                         </table>
                     </div>
 
-                    <table className="w-full mt-7">
+                    <table className="w-full mt-4">
                         <thead className="border-b border-t border-black">
                             <tr>
                                 <th className="text-left text-[10px]">Medicamento o Insumo</th>
@@ -280,8 +278,8 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
                             {datos.map((item: any) => (
                                 <React.Fragment key={item.idReceta + item.Nombre}>
                                     <tr className="border-b">
-                                        <td className="p-1 text-[10px]">{item.Nombre}</td>
-                                        <td className="p-1 text-[10px]">{item.viaadministracion}</td>
+                                        <td className="p-1 text-[9px]">{item.Nombre}</td>
+                                        <td className="p-1 text-[9px]">{item.viaadministracion}</td>
                                     </tr>
                                     {item.observaciones && (
                                         <tr className="bg-gray-100">
@@ -295,7 +293,7 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
                         </tbody>
                     </table>
 
-                    <div className="text-xs mt-44 text-right">
+                    <div className="text-xs mt-20 text-right">
                         <span className='border-t border-black pl-2 pr-2'>
                             {datosPxGeneral?.MedicoPaterno} {datosPxGeneral?.MedicoMaterno} {datosPxGeneral?.MedicoNombres}
                         </span>
@@ -306,7 +304,23 @@ export const RecetasOrdenesFarmacia = ({ idcuentaatencion }: any) => {
 
             </div>
 
+{/* CSS para impresión */}
+<style jsx global>{`
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
 
+    .print-container {
+      zoom: 0.8; /* 🔹 Reduce al 80% todo el contenido */
+      margin-top: 3mm; /* 🔹 Margen superior */
+      margin-left:3mm; /* 🔹 Margen izquierdo */
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
+`}</style>
         </div>
     )
 }

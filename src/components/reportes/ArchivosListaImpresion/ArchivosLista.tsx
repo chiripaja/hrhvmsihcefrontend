@@ -1,14 +1,19 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
 const ArchivosLista = () => {
-    const [fecha, setFecha] = useState('')
-    const [horaInicio, setHoraInicio] = useState('')
-    const [horaFin, setHoraFin] = useState('')
+  const [fecha, setFecha] = useState("");
+  const [horaInicio, setHoraInicio] = useState("00:00");
+  const [horaFin, setHoraFin] = useState("23:59");
     const [resultados, setResultados] = useState([])
     const [loading, setLoading] = useState(false)
-
+  useEffect(() => {
+    // Establecer la fecha actual al cargar el componente
+    const hoy = new Date();
+    const fechaFormateada = hoy.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+    setFecha(fechaFormateada);
+  }, []);
     const buscarProgramacion = async () => {
         if (!fecha || !horaInicio || !horaFin) {
             alert('Por favor completa todos los campos.')
@@ -32,9 +37,14 @@ const ArchivosLista = () => {
         }
     }
 
+     function handleHCClick(idProgramacion: any): void {
+    const url = `/reportes/listaarchivos/${idProgramacion}`;
+    window.open(url, '_blank');
+  }
+
     return (
         <div className="max-w-5xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center" >
                 🔍 Buscar Programación Médica
             </h2>
 
@@ -107,6 +117,7 @@ const ArchivosLista = () => {
                                     </td>
                                     <td className="border px-3 py-2">
                                         <button
+                                        onClick={()=>handleHCClick(item.idProgramacion)}
                                             className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 font-medium rounded-xl border  hover:bg-blue-200 transition-all duration-300 shadow-sm active:scale-95"
                                         >
                                             🖨️
