@@ -26,15 +26,26 @@ interface Props {
 const ListaArchivoByIdProgramacion: React.FC<Props> = ({ idprogramacion }) => {
   const [listado, setListado] = useState<Paciente[]>([])
 
-  const getListaArchivos = async (idprogramacion: string) => {
-    try {
-      const data = await getData(`${process.env.apijimmynew}/programacionmedica/apilistasarchivosbyidprogramacion/${idprogramacion}`)
-      console.log(data)
-      setListado(data)
-    } catch (error) {
-      console.error('Error al obtener los datos:', error)
-    }
+const getListaArchivos = async (idprogramacion: string) => {
+  try {
+    const data = await getData(
+      `${process.env.apijimmynew}/programacionmedica/apilistasarchivosbyidprogramacion/${idprogramacion}`
+    )
+    console.log(data)
+
+    // 🔹 Ordenar correctamente por fecha + hora
+    const dataOrdenada = [...data].sort((a, b) => {
+      // Combinar la fecha y hora para comparar correctamente
+      const fechaA = new Date(`${a.Fecha.split('T')[0]}T${a.HoraInicio}:00`)
+      const fechaB = new Date(`${b.Fecha.split('T')[0]}T${b.HoraInicio}:00`)
+      return fechaA.getTime() - fechaB.getTime() // ascendente
+    })
+
+    setListado(dataOrdenada)
+  } catch (error) {
+    console.error('Error al obtener los datos:', error)
   }
+}
 
   useEffect(() => {
     if (idprogramacion) getListaArchivos(idprogramacion)
@@ -44,11 +55,19 @@ const ListaArchivoByIdProgramacion: React.FC<Props> = ({ idprogramacion }) => {
   useEffect(() => {
     if (listado.length > 0) {
       const timer = setTimeout(() => {
-        window.print()
+        //window.print()
       }, 500)
       return () => clearTimeout(timer)
     }
   }, [listado])
+
+  const ImpresionHF = (idcuenta:any) => { 
+     window.open(
+      `/reportes/historiaclinica/${idcuenta}`,
+      "_blank"
+    );
+    console.log(idcuenta)
+  }
 
   return (
     <div className="p-6 bg-white rounded-2xl shadow-md">
@@ -98,6 +117,7 @@ const ListaArchivoByIdProgramacion: React.FC<Props> = ({ idprogramacion }) => {
               <th className="px-3 py-2 border-r border-gray-300">Paciente</th>
               <th className="px-3 py-2 border-r border-gray-300">Teléfono</th>
               <th className="px-3 py-2">N° DNI</th>
+              <th className="px-3 py-2 print:hidden">HF</th>
             </tr>
           </thead>
           <tbody>
@@ -113,6 +133,11 @@ const ListaArchivoByIdProgramacion: React.FC<Props> = ({ idprogramacion }) => {
                 </td>
                 <td className="px-3 py-2 border-r border-gray-300">{paciente.Telefono ?? '-'}</td>
                 <td className="px-3 py-2">{paciente.NroDocumento}</td>
+                <td className='px-3 py-2 print:hidden'>
+                  <button className='btn bg-cyan-700 text-white p-2 rounded-lg hover:bg-cyan-800 transition' onClick={()=>ImpresionHF(paciente.IdCuentaAtencion)}>
+                    🖨️ Hoja Filiacion
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

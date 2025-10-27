@@ -1,10 +1,35 @@
 'use client'
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import TablaRecomendaciones from './TablaRecomendaciones'
 
-export const FormatoInterconsulta = ({ idcuentaatencion }: any) => {
+export const FormatoTeleconsulta = ({ idcuentaatencion }: any) => {
+  const [datapx, setdatapx] = useState<any>()
+
+  const getAtencionData = async (id: string) => {
+    const {data}=await axios.get(`${process.env.apijimmynew}/atenciones/cuenta/${id}`)
+    setdatapx(data)
+  }
+
+  useEffect(() => {
+    if(idcuentaatencion){
+      getAtencionData(idcuentaatencion)
+    }
+  }, [idcuentaatencion])
+  
+
+  // 🔹 Filtramos solo las recetas de Farmacia
+  const recetasFarmacia = datapx?.recetaCabeceras?.filter(
+    (data: any) => data.idPuntoCarga === 5
+  )
+
+  // 🔹 Si hay recetas, combinamos todos los productos
+  const detalles = recetasFarmacia?.flatMap(
+    (r: any) => r.recetaDetalles || []
+  ) || []
   return (
-    <div className="p-2 print-container">FormatoInterconsulta {idcuentaatencion}
-    
+    <div className="p-2 print-container"> 
+   
     <table className='border border-collapse w-full'>
       <tbody>
         <tr className='text-center border border-black'>
@@ -83,83 +108,48 @@ export const FormatoInterconsulta = ({ idcuentaatencion }: any) => {
       </tbody>
     </table>
 
-    <table className='border border-black border-collapse w-full mt-2'>
-      <tbody>
-        <tr>
-          <td className='border border-black text-center'>N°</td>
-          <td className='border border-black text-center'>CIE 10</td>
-          <td className='border border-black text-center'>DESCRIPCION DE DIAGNOSTICOS</td>
-          <td className='border border-black text-center'>P</td>
-          <td className='border border-black text-center'>D</td>
-          <td className='border border-black text-center'>R</td>
-        </tr>
-
-        {[...Array(6)].map((_, rowIndex) => (
-    <tr key={rowIndex} className="border border-black text-center">
-      {/* Aquí puedes poner tus <td> manuales o vacíos */}
-      <td className="border border-black text-center">{rowIndex+1}</td>
-      <td className="border border-black text-center"></td>
-      <td className="border border-black text-center"></td>
-      <td className="border border-black text-center"></td>
-      <td className="border border-black text-center"></td>
-      <td className="border border-black text-center"></td>
+   <table className='border border-black border-collapse w-full mt-2'>
+  <tbody>
+    <tr>
+      <td className='border border-black text-center font-semibold'>N°</td>
+      <td className='border border-black text-center font-semibold'>CIE 10</td>
+      <td className='border border-black text-center font-semibold'>DESCRIPCIÓN DE DIAGNÓSTICOS</td>
+      <td className='border border-black text-center font-semibold'>P</td>
+      <td className='border border-black text-center font-semibold'>D</td>
+      <td className='border border-black text-center font-semibold'>R</td>
     </tr>
-  ))}
-        
-      </tbody>
-    </table>
+
+    {/* 🔹 Mostramos los diagnósticos que vienen del objeto */}
+    {datapx?.atencionesDiagnosticos?.map((dx: any, index: number) => (
+      <tr key={dx.idAtencionDiagnostico} className="border border-black text-center">
+        <td className="border border-black">{index + 1}</td>
+        <td className="border border-black">{dx.diagnostico?.codigoCIE10 || ''}</td>
+        <td className="border border-black text-left px-1">{dx.diagnostico?.descripcion || ''}</td>
+
+        {/* 🔹 Marcamos la subclasificación (P, D o R) según el código */}
+        <td className="border border-black">{dx.subclasificacionDiagnosticos?.codigo === 'P' ? 'X' : ''}</td>
+        <td className="border border-black">{dx.subclasificacionDiagnosticos?.codigo === 'D' ? 'X' : ''}</td>
+        <td className="border border-black">{dx.subclasificacionDiagnosticos?.codigo === 'R' ? 'X' : ''}</td>
+      </tr>
+    ))}
+
+    {/* 🔹 Rellenamos las filas vacías hasta llegar a 6 */}
+    {[...Array(6 - (datapx?.atencionesDiagnosticos?.length || 0))].map((_, rowIndex) => (
+      <tr key={`empty-${rowIndex}`} className="border border-black text-center">
+        <td className="border border-black">{(datapx?.atencionesDiagnosticos?.length || 0) + rowIndex + 1}</td>
+        <td className="border border-black"></td>
+        <td className="border border-black"></td>
+        <td className="border border-black"></td>
+        <td className="border border-black"></td>
+        <td className="border border-black"></td>
+      </tr>
+    ))}
+  </tbody>
+</table>
 
 
 
-    <table className='w-full border-collapse  mt-2'>
-      <tbody>
-        <tr  className='w-full border-collapse text-center border border-black'>
-          <td colSpan={4}>RECOMENDACIONS / PLAN</td>
-        </tr>
-        <tr>
-          <td className='border-r border-l border-black text-center'>1</td>
-          <td className=''></td>
-          <td className='border-r border-l border-black w-3 text-center'>8</td>
-          <td className=' w-96 text-center border-black border-r'></td>
-        </tr>
-        <tr>
-          <td className='border-r border-l border-black w-3 text-center'>2</td>
-          <td className=' w-96 text-center'></td>
-          <td className='border-black border-r border-l w-3 text-center'>9</td>
-          <td className=' w-96 text-center border-black border-r'></td>
-        </tr>
-        <tr>
-          <td className='border-r border-l border-black w-3 text-center'>3</td>
-          <td className=' w-96 text-center'></td>
-          <td className='border-black border-r border-l w-3 text-center'>10</td>
-          <td className=' w-96 text-center border-black border-r'></td>
-        </tr>
-        <tr>
-          <td className='border-r border-l border-black w-3 text-center'>4</td>
-          <td className=' w-96 text-center'></td>
-          <td className='border-black border-r border-l w-3 text-center'></td>
-          <td className=' w-96 text-center border-black border-r'></td>
-        </tr>
-        <tr>
-          <td className='border-r border-l border-black w-3 text-center'>5</td>
-          <td className=' w-96 text-center'></td>
-          <td className='border-black border-r border-l w-3 text-center'></td>
-          <td className=' w-96 text-center border-black border-r'></td>
-        </tr>
-        <tr>
-          <td className='border-r border-l border-black w-3 text-center'>6</td>
-          <td className=' w-96 text-center'></td>
-          <td className='border-black border-r border-l w-3 text-center'></td>
-          <td className=' w-96 text-center border-black border-r'></td>
-        </tr>
-         <tr>
-          <td className='border-r border-l border-b border-black w-3 text-center'>7</td>
-          <td className=' w-96 text-center border-b border-black'></td>
-          <td className='border-black border-r border-l border-b w-3 text-center'></td>
-          <td className=' w-96 text-center border-b border-black border-r'></td>
-        </tr>
-      </tbody>
-    </table>
+    <TablaRecomendaciones receta={detalles} />
 
     <table className='w-full border-collapse border-black'>
       <tbody>
@@ -168,16 +158,16 @@ export const FormatoInterconsulta = ({ idcuentaatencion }: any) => {
         </tr>
         <tr>
           <td className='border border-black'>Nombres y Apellidos:</td>
-          <td className='border border-black'></td>
+          <td className='border border-black text-center'>{datapx?.medico?.empleado?.nombres} {datapx?.medico?.empleado?.apellidoPaterno} {datapx?.medico?.empleado?.apellidomaterno}</td>
           <td rowSpan={3} className='w-56 border border-black'></td>
         </tr>
         <tr>
           <td className='w-1/4 border border-black'>Profesional de Salud / Especialidad / Subespecialidad:</td>
-          <td className='border border-black'></td>           
+          <td className='border border-black text-center'>{datapx?.medico?.empleado?.tiposEmpleado?.descripcion}</td>           
         </tr>
         <tr>
-          <td className='border border-black'>N° Colegio profesiona / RNE:</td>
-          <td className='border border-black'></td>
+          <td className='border border-black'>N° Colegio profesional / RNE:</td>
+          <td className='border border-black text-center'>{datapx?.medico?.colegiatura}</td>
         </tr>
       </tbody>
     </table>

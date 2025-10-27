@@ -43,9 +43,24 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
   const { formattedDate, hora, fechayhora } = obtenerFechaYHora();
   return (
     <>
+ <style jsx global>{`
+        @media print {
+          @page {
+            size: A4 portrait;
+            margin: 0.5cm;
+          }
+          body {
+            -webkit-print-color-adjust: exact !important;
+            zoom: 85%; /* Ajusta el contenido a una sola hoja */
+          }
+        
+          .no-print {
+            display: none !important;
+          }
+        }
+      `}</style>
 
-
-      <div className="p-8 bg-gray-100 min-h-screen flex justify-center">
+      <div className="p-8  min-h-screen flex justify-center">
         <div className=" w-full max-w-4xl p-6 ">
           {/* Encabezado */}
           <div className="text-center border-b pb-4  flex justify-between">
@@ -118,7 +133,7 @@ export const Historiaclinica = ({ idcuentaatencion }: any) => {
 
                 <tr>
                   <td className="font-bold">Médico:</td>
-                  <td>{datosPx?.Medico}</td>
+                  <td className="uppercase">{datosPx?.Medico}</td>
                 </tr>
 
                 <tr>

@@ -1,7 +1,8 @@
-import { FormatoInterconsulta } from "@/components/reportes/FormatoInterconsulta/FormatoInterconsulta";
+import { FormatoTeleconsulta } from "@/components/reportes/FormatoTeleconsulta/FormatoTeleconsulta";
+
 
 export default function formatoInterconsultaPage(props:any) {
   return (
-    <FormatoInterconsulta idcuentaatencion={props.params.idcuenta}/>
+    <FormatoTeleconsulta idcuentaatencion={props.params.idcuenta}/>
   );
 }
