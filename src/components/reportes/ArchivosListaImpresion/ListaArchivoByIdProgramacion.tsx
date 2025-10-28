@@ -55,7 +55,7 @@ const getListaArchivos = async (idprogramacion: string) => {
   useEffect(() => {
     if (listado.length > 0) {
       const timer = setTimeout(() => {
-        //window.print()
+        window.print()
       }, 500)
       return () => clearTimeout(timer)
     }
@@ -124,7 +124,8 @@ const getListaArchivos = async (idprogramacion: string) => {
             {listado.map((paciente) => (
               <tr key={paciente.IdCuentaAtencion} className="border-b border-gray-300 hover:bg-gray-50">
                 <td className="px-3 py-2 border-r border-gray-300">
-                  {new Date(paciente.Fecha).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' })} - {paciente.HoraInicio}
+                  {paciente.Fecha}
+                 
                 </td>
                 <td className="px-3 py-2 border-r border-gray-300">{paciente.NroHistoriaClinica}</td>
                 <td className="px-3 py-2 border-r border-gray-300">{paciente.IdCuentaAtencion}</td>
