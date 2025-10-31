@@ -1,11 +1,13 @@
 'use client'
 
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Select from 'react-select';
 import * as StompJs from '@stomp/stompjs';
 import { FormAdmision } from "./FormAdmision";
 import { Controller, useForm } from "react-hook-form";
+import { getData } from "../helper/axiosHelper";
+import { toast } from "sonner";
 
 interface Cita {
     idEspecialidad: number;
@@ -66,6 +68,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
     const [idcuentaActualizacion, setidcuentaActualizacion] = useState();
     const [medicoSeleccionado, setMedicoSeleccionado] = useState<string | null>(null);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
+    const { control:control2, handleSubmit:handleSubmit2} = useForm<any>();
     const diactual = new Date().toISOString().split('T')[0];
 
  
@@ -78,7 +81,21 @@ export const ModuloAdmision = ({ usuario }: any) => {
     const [establecimientosLista, setEstablecimientosLista] = useState<any>()
     const [ffFinanciamiento, setffFinanciamiento] = useState<any>()
     const [tipoDoc, setTipoDoc] = useState<any>()
+    const [ventanillas, setVentanillas] = useState<any[]>([])
 
+    useEffect(() => {
+        getVentanillas();
+    }, []);
+
+    const getVentanillas = async () => {
+        try {
+            const { data } = await axios.get(`${process.env.apiSistemasColas}api/ventanillas`);
+            console.log(data)
+            setVentanillas(data);
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const obtenerMedicosUnicos2 = (citas: Cita[]) => {
         const medicos = new Set<string>();
@@ -109,9 +126,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
         setIsLoading(true);
         try {
             const { data } = await axios.get(`${process.env.apiurl}/Admision/CuposLibres`);
-
             setCitas(data);
-
         } catch (error) {
             console.error('Error fetching products:', error);
         } finally {
@@ -145,8 +160,6 @@ export const ModuloAdmision = ({ usuario }: any) => {
         fetchProducts();
         obtenerff();
         getTipoDoc();
-       
-
     }, []);
 
 
@@ -226,6 +239,26 @@ export const ModuloAdmision = ({ usuario }: any) => {
         fetchProductsActualizacionPosterior()
      }
     }, [idcuentaActualizacion])
+    const onSubmitTicket = async(data: any) => {
+        try {
+
+        const dataTicket=await axios.post(`${process.env.apiSistemasColas}api/atenciones/atender?idVentanilla=${data?.ventanilla}&tipo=${data?.tipo}`);
+        console.log(`${process.env.apiSistemasColas}api/atenciones/atender?idVentanilla=${data?.ventanilla}&tipo=${data?.tipo}`)
+        console.log(dataTicket);   
+        } catch (error) {
+    toast('No hay más Tickets en espera.', {
+          position: 'top-right', 
+  style: {
+    background: '#E0F2FE', // azul claro
+    color: '#0369A1',      // azul oscuro para el texto
+    border: '1px solid #7DD3FC',
+  },
+});
+            console.log("------------")
+            console.log(error)
+            console.log("------------")
+        }
+    }
 /*    
 useEffect(() => {
   if (activeIndex) {
@@ -283,6 +316,91 @@ useEffect(() => {
                             />
 
                         </div>
+                                <div
+                                className="col-span-8">
+                                      <Controller
+                                name="medicoBuscado"
+                                control={control}
+                                defaultValue={null}
+                                render={({ field }) => (
+                                    <Select
+                                        instanceId="unique-select-id"
+                                        {...field}
+                                        options={[
+                                            { value: "", label: "Todos" }, // Opción adicional para "Todos"
+                                            ...obtenerMedicosUnicos2(citas)
+                                        ]}
+                                        placeholder="Nombre de medico"
+                                        className="w-full z-30"
+                                        isLoading={isLoading}
+                                        required
+                                        onChange={(selectedOption) => {
+                                            field.onChange(selectedOption); // Mantiene la funcionalidad de react-hook-form
+                                            setMedicoSeleccionado(selectedOption?.value); // Actualiza el estado directamente
+                                        }}
+                                    />
+                                )}
+                            />
+                                </div>
+
+         <form
+      onSubmit={handleSubmit2(onSubmitTicket)}
+      className="col-span-4 flex items-center"
+    >
+
+      {/* SELECT 1 */}
+      <Controller
+        name="ventanilla"
+        control={control2}
+        render={({ field }) => (
+          <select
+            {...field}
+            className="w-36  rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm 
+                       focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 focus:outline-none 
+                       transition duration-200 ease-in-out"
+          >
+           <option value="">seleccione...</option>
+      {ventanillas
+        .filter((v) => v.activa) // opcional: solo muestra las activas
+        .map((v) => (
+          <option key={v.id} value={v.id}>
+            {v.nombre}
+          </option>
+        ))}
+          </select>
+        )}
+      />
+
+      {/* SELECT 2 */}
+      <Controller
+        name="tipo"
+        control={control2}
+        render={({ field }) => (
+          <select
+            {...field}
+            className="ml-2 w-36 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm 
+                       focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 focus:outline-none 
+                       transition duration-200 ease-in-out"
+          >
+            <option value="">seleccione...</option>
+            <option value="GENERAL">GENERAL</option>
+            <option value="PREFERENCIAL">PREFERENCIAL</option>
+            <option value="INVITADO">INVITADO</option>
+          </select>
+        )}
+      />
+
+      {/* BOTÓN */}
+      <button
+        type="submit"
+        className="px-5 py-2.5 ml-2 bg-cyan-700 text-white rounded-xl font-semibold shadow-md 
+                   hover:bg-cyan-800 hover:shadow-lg transition-all duration-300 ease-in-out 
+                   focus:outline-none focus:ring-2 focus:ring-cyan-400"
+      >
+        Buscar
+      </button>
+    </form>
+
                         <div className="col-span-12 print:hidden">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
                                 <button

@@ -16,7 +16,8 @@ const nextConfig = {
     AUTH_SECRET: 'J8Jt9JPwxJGObxxbFXda/ncOyYi9RigtqTZts5NS/Aw=',
     apireportespatologia: "http://192.168.250.10:8083/",
     apiWebOrigenNodeJs: 'http://192.168.250.10:8081/',
-    apiServiciosRefcon: 'https://dservicios.minsa.gob.pe'
+    apiServiciosRefcon: 'https://dservicios.minsa.gob.pe',
+    apiSistemasColas:'http://192.168.210.69:8090/'
   },
   images: {
     remotePatterns: [
