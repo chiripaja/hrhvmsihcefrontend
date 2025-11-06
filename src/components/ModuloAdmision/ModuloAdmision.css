@@ -1,0 +1,29 @@
+/* Efecto de latido en el número */
+@keyframes pulse-hard {
+ 0%, 100% {
+    transform: scale(1) translateZ(0);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    transform: scale(1.05) translateZ(0);
+    box-shadow: 0 0 6px 2px rgba(239, 68, 68, 0.3);
+  }
+}
+.animate-pulse-hard {
+ animation: pulse-hard 1.8s ease-in-out infinite !important;
+}
+
+/* Efecto de respiración suave en el contenedor */
+@keyframes border-pulse {
+ 0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    transform: scale(1) translateZ(0);
+  }
+  50% {
+    box-shadow: 0 0 15px 3px rgba(239, 68, 68, 0.5);
+    transform: scale(1.01) translateZ(0);
+  }
+}
+.animate-border-pulse {
+  animation: border-pulse 2.5s ease-in-out infinite !important;
+}

@@ -8,7 +8,9 @@ import { FormAdmision } from "./FormAdmision";
 import { Controller, useForm } from "react-hook-form";
 import { getData } from "../helper/axiosHelper";
 import { toast } from "sonner";
-
+import { RiUserVoiceLine } from "react-icons/ri";
+import { Tooltip } from "../ui/Tooltip";
+import './ModuloAdmision.css';
 interface Cita {
     idEspecialidad: number;
     fecha: string;
@@ -65,13 +67,14 @@ const generarFechas = (citas: Cita[]): string[] => {
 
 export const ModuloAdmision = ({ usuario }: any) => {
     const ws = useRef<WebSocket | null>(null);
+    const [seconds, setSeconds] = useState(0);
     const [idcuentaActualizacion, setidcuentaActualizacion] = useState();
     const [medicoSeleccionado, setMedicoSeleccionado] = useState<string | null>(null);
     const { control, register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<any>();
-    const { control:control2, handleSubmit:handleSubmit2} = useForm<any>();
+    const { control: control2, handleSubmit: handleSubmit2,setValue:setValue2,register:register2 } = useForm<any>();
     const diactual = new Date().toISOString().split('T')[0];
 
- 
+
     const [citas, setCitas] = useState<Cita[]>([]);
     const [consultorio, setConsultorio] = useState<Cita[]>()
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -82,7 +85,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
     const [ffFinanciamiento, setffFinanciamiento] = useState<any>()
     const [tipoDoc, setTipoDoc] = useState<any>()
     const [ventanillas, setVentanillas] = useState<any[]>([])
-
+    const [dataTicket, setdataTicket] = useState<any>()
     useEffect(() => {
         getVentanillas();
     }, []);
@@ -108,7 +111,24 @@ export const ModuloAdmision = ({ usuario }: any) => {
             .sort()
             .map(medico => ({ value: medico, label: medico }));
     };
+    useEffect(() => {
+   console.log(dataTicket?.data?.ticket?.id)
+        if(dataTicket?.data?.ticket?.id){
+            console.log("*******************************")
+            console.log(dataTicket?.data?.ticket?.id)
+            setValue2("idpenultimoticket",dataTicket?.data?.ticket?.id)
+           console.log("*******************************")
+        }
 
+        let timer: NodeJS.Timeout;
+        if (dataTicket) {
+            setSeconds(0); // reinicia al obtener nuevo ticket
+            timer = setInterval(() => {
+                setSeconds((prev) => prev + 1);
+            }, 1000);
+        }
+        return () => clearInterval(timer); // limpia cuando cambia el ticket o desmonta
+    }, [dataTicket]);
     const citasFiltradas = medicoSeleccionado
         ? citas.filter((cita: any) => cita?.nombreMedico === medicoSeleccionado)
         : citas;
@@ -166,30 +186,30 @@ export const ModuloAdmision = ({ usuario }: any) => {
     useEffect(() => {
         // Crear conexión WebSocket
         ws.current = new WebSocket(`${process.env.apiws}/ws/chat`);
-    
+
         ws.current.onopen = () => {
-          console.log('✅ Conectado al WebSocket');
+            console.log('✅ Conectado al WebSocket');
         };
-    
+
         ws.current.onmessage = (event: MessageEvent) => {
             setidcuentaActualizacion(event.data)
-          console.log('📩 Mensaje recibido:', event.data);
-      
+            console.log('📩 Mensaje recibido:', event.data);
+
         };
-    
+
         ws.current.onerror = (event: Event) => {
-          console.error('❌ Error en WebSocket:', event);
+            console.error('❌ Error en WebSocket:', event);
         };
-    
+
         ws.current.onclose = (event: CloseEvent) => {
-          console.log('🔌 Conexión cerrada:', event.reason);
+            console.log('🔌 Conexión cerrada:', event.reason);
         };
-    
+
         // Limpiar la conexión al desmontar
         return () => {
-          ws.current?.close();
+            ws.current?.close();
         };
-      }, []);
+    }, []);
 
 
     function toBoolean(value: any) {
@@ -234,45 +254,50 @@ export const ModuloAdmision = ({ usuario }: any) => {
     }, [medicoBuscadoW])
 
     useEffect(() => {
-     if(idcuentaActualizacion){
-        
-        fetchProductsActualizacionPosterior()
-     }
-    }, [idcuentaActualizacion])
-    const onSubmitTicket = async(data: any) => {
-        try {
+        if (idcuentaActualizacion) {
 
-        const dataTicket=await axios.post(`${process.env.apiSistemasColas}api/atenciones/atender?idVentanilla=${data?.ventanilla}&tipo=${data?.tipo}`);
-        console.log(`${process.env.apiSistemasColas}api/atenciones/atender?idVentanilla=${data?.ventanilla}&tipo=${data?.tipo}`)
-        console.log(dataTicket);   
+            fetchProductsActualizacionPosterior()
+        }
+    }, [idcuentaActualizacion])
+    const onSubmitTicket = async (data: any) => {
+        if(data?.idpenultimoticket){
+            const datosActualizar=await axios.put(`${process.env.apiSistemasColas}api/tickets/${data?.idpenultimoticket}/estado?estado=ATENDIDO`);
+            console.log(datosActualizar)
+        }
+        try {
+            console.log(data)
+            const dataTicket = await axios.post(`${process.env.apiSistemasColas}api/atenciones/atender?idVentanilla=${data?.ventanilla}&tipo=${data?.tipo}`);
+          
+            setdataTicket(dataTicket);
         } catch (error) {
-    toast('No hay más Tickets en espera.', {
-          position: 'top-right', 
-  style: {
-    background: '#E0F2FE', // azul claro
-    color: '#0369A1',      // azul oscuro para el texto
-    border: '1px solid #7DD3FC',
-  },
-});
+            setdataTicket(null);
+            toast('No hay más Tickets en espera.', {
+                position: 'top-right',
+                style: {
+                    background: '#E0F2FE', // azul claro
+                    color: '#0369A1',      // azul oscuro para el texto
+                    border: '1px solid #7DD3FC',
+                },
+            });
             console.log("------------")
             console.log(error)
             console.log("------------")
         }
     }
-/*    
-useEffect(() => {
-  if (activeIndex) {
-    const especilidadDatos = citas.filter(
-      (item: Cita) =>
-        item.idEspecialidad.toString() === activeIndex.id &&
-        item.fecha === activeIndex.fecha
-    );
-    setConsultorio(especilidadDatos);
-  } else {
-    // 👇 si no hay consultorio seleccionado, vaciamos
-    setConsultorio([]);
-  }
-}, [citas, activeIndex]);*/
+    /*    
+    useEffect(() => {
+      if (activeIndex) {
+        const especilidadDatos = citas.filter(
+          (item: Cita) =>
+            item.idEspecialidad.toString() === activeIndex.id &&
+            item.fecha === activeIndex.fecha
+        );
+        setConsultorio(especilidadDatos);
+      } else {
+        // 👇 si no hay consultorio seleccionado, vaciamos
+        setConsultorio([]);
+      }
+    }, [citas, activeIndex]);*/
 
     return (
         <div className="px-2 bg-white rounded print:m-0 print:p-0 print:bg-transparent print:rounded-none">
@@ -283,13 +308,14 @@ useEffect(() => {
                 </div>
             ) : (
                 <>
+
                     <div className="grid grid-cols-12 gap-4  h-[90vh] sm:overflow-hidden bg-white">
                         <div className="col-span-12 print:hidden">
                             <h1>{TextoLoading}</h1>
                         </div>
-                        <div className="col-span-12 print:hidden">
+                        <div className="col-span-12 print:">
                             <label htmlFor="medico" className=" block text-sm font-medium text-gray-700">
-                                Filtrar por Médico 
+                                Filtrar por Médico
                             </label>
                             <Controller
                                 name="medicoBuscado"
@@ -316,9 +342,10 @@ useEffect(() => {
                             />
 
                         </div>
-                                <div
-                                className="col-span-8">
-                                      <Controller
+                       
+  <div
+                            className="col-span-12 md:col-span-8 print:hidden ">
+                            <Controller
                                 name="medicoBuscado"
                                 control={control}
                                 defaultValue={null}
@@ -330,7 +357,7 @@ useEffect(() => {
                                             { value: "", label: "Todos" }, // Opción adicional para "Todos"
                                             ...obtenerMedicosUnicos2(citas)
                                         ]}
-                                        placeholder="Nombre de medico"
+                                        placeholder="Nombre de medico 2"
                                         className="w-full z-30"
                                         isLoading={isLoading}
                                         required
@@ -341,65 +368,127 @@ useEffect(() => {
                                     />
                                 )}
                             />
-                                </div>
+                        </div>
 
-         <form
-      onSubmit={handleSubmit2(onSubmitTicket)}
-      className="col-span-4 flex items-center"
-    >
-
-      {/* SELECT 1 */}
-      <Controller
-        name="ventanilla"
-        control={control2}
-        render={({ field }) => (
-          <select
-            {...field}
-            className="w-36  rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm 
-                       focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 focus:outline-none 
-                       transition duration-200 ease-in-out"
-          >
-           <option value="">seleccione...</option>
-      {ventanillas
-        .filter((v) => v.activa) // opcional: solo muestra las activas
-        .map((v) => (
-          <option key={v.id} value={v.id}>
-            {v.nombre}
-          </option>
-        ))}
-          </select>
+                    <form
+  onSubmit={handleSubmit2(onSubmitTicket)}
+  className="col-span-12 md:col-span-4 flex flex-wrap md:flex-nowrap items-center gap-3 "
+>
+  {/* SELECT 1 */}
+  <Controller
+    name="ventanilla"
+    control={control2}
+    rules={{ required: true }}
+    render={({ field, fieldState }) => (
+      <div className="flex flex-col w-full sm:w-1/2 md:w-auto">
+        <select
+          {...field}
+          required
+          className={`w-full sm:w-36 rounded-xl border px-4 py-2 text-gray-700 shadow-sm 
+          focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 focus:outline-none 
+          transition duration-200 ease-in-out
+          ${fieldState.invalid ? 'border-red-500' : 'border-gray-300'}`}
+        >
+          <option value="">Seleccione...</option>
+          {ventanillas
+            .filter((v) => v.activa)
+            .map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.nombre}
+              </option>
+            ))}
+        </select>
+        {fieldState.invalid && (
+          <span className="text-red-500 text-sm mt-1">Campo requerido</span>
         )}
-      />
+      </div>
+    )}
+  />
 
-      {/* SELECT 2 */}
-      <Controller
-        name="tipo"
-        control={control2}
-        render={({ field }) => (
-          <select
-            {...field}
-            className="ml-2 w-36 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm 
-                       focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 focus:outline-none 
-                       transition duration-200 ease-in-out"
-          >
-            <option value="">seleccione...</option>
-            <option value="GENERAL">GENERAL</option>
-            <option value="PREFERENCIAL">PREFERENCIAL</option>
-            <option value="INVITADO">INVITADO</option>
-          </select>
+  {/* SELECT 2 */}
+  <Controller
+    name="tipo"
+    control={control2}
+    rules={{ required: true }}
+    render={({ field, fieldState }) => (
+      <div className="flex flex-col w-full sm:w-1/2 md:w-auto">
+        <select
+          {...field}
+          required
+          className={`w-full sm:w-36 rounded-xl border px-4 py-2 text-gray-700 shadow-sm 
+          focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 focus:outline-none 
+          transition duration-200 ease-in-out
+          ${fieldState.invalid ? 'border-red-500' : 'border-gray-300'}`}
+        >
+          <option value="">Seleccione...</option>
+          <option value="GENERAL">GENERAL</option>
+          <option value="PREFERENCIAL">PREFERENCIAL</option>
+          <option value="INVITADO">INVITADO</option>
+        </select>
+        {fieldState.invalid && (
+          <span className="text-red-500 text-sm mt-1">Campo requerido</span>
         )}
-      />
+      </div>
+    )}
+  />
 
-      {/* BOTÓN */}
-      <button
-        type="submit"
-        className="px-5 py-2.5 ml-2 bg-cyan-700 text-white rounded-xl font-semibold shadow-md 
-                   hover:bg-cyan-800 hover:shadow-lg transition-all duration-300 ease-in-out 
-                   focus:outline-none focus:ring-2 focus:ring-cyan-400"
+  {/* Input oculto */}
+  <input
+    type="text"
+    className="hidden"
+    placeholder="idpenultimoticket"
+    {...register2("idpenultimoticket")}
+  />
+
+  {/* BOTÓN */}
+  <button
+    type="submit"
+    title="Llamar al siguiente paciente"
+    className="w-full sm:w-auto px-5 py-2.5 bg-cyan-700 text-white rounded-xl font-semibold shadow-md 
+    hover:bg-cyan-800 hover:shadow-lg transition-all duration-300 ease-in-out 
+    focus:outline-none focus:ring-2 focus:ring-cyan-400 flex justify-center items-center"
+  >
+    <RiUserVoiceLine className="text-xl" />
+  </button>
+
+{/* TICKET + TIEMPO */}
+{dataTicket && (
+  <div
+    className={`w-full md:w-auto ml-0 md:ml-4 p-1 px-2 rounded-2xl shadow-md border transition-all duration-300
+        ${
+      seconds > 10
+        ? 'bg-red-200 border-red-400 animate-border-pulse' // 🔴 Rojo + palpita
+        : 'bg-gray-50 border-gray-200' // ⚪ Normal
+    }`}
+  >
+    <div className="flex flex-col md:flex-row items-center justify-between gap-2">
+      <p className="text-lg font-semibold text-gray-800 ">
+        Ticket:{" "}
+        <span className="font-bold text-cyan-700">
+          {dataTicket.data?.ticket?.codigo}
+        </span>
+      </p>
+
+      <span
+        className={`font-mono text-lg px-3 py-1 rounded-md shadow-sm transition-all duration-300
+          ${
+            seconds >= 10
+              ? 'bg-red-600 text-white'
+              : 'bg-gray-200 text-gray-800'
+          }`}
       >
-        Buscar
-      </button>
-    </form>
+        {String(Math.floor(seconds / 60)).padStart(2, "0")}:
+        {String(seconds % 60).padStart(2, "0")}
+      </span>
+    </div>
+  </div>
+)}
+
+
+</form>
+
+                      
+
 
                         <div className="col-span-12 print:hidden">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">

@@ -34,7 +34,7 @@ export const TicketImpresion = ({ Datos }: any) => {
                     </div>
                     <div className="col-sm-12 font-bold">
                         Fecha: {Datos.fechaIngreso}  
-                   {[54, 53, 1230].includes(Datos?.IdEspecialidad)
+                   {[54, 53, 1230,1241,1233].includes(Datos?.IdEspecialidad)
   ? <>Hr: {Datos.HoraInicio}</>
   : horarioTexto(Datos?.IdTurno)}
                     
