@@ -95,14 +95,14 @@ export default function HistoriaClinicaEmer({ idcuentaatencion }: any) {
                   <td className="font-bold">Fecha Nacimiento:</td>
                   <td>{datosPx?.FechaNacimiento}</td>
                 </tr>
-              
+
                 <tr>
                   <td className="font-bold">Consultorio médico:</td>
                   <td>{datosPx?.servicio}</td>
                   <td className="font-bold">Sexo:</td>
                   <td>{datosPx?.sexo}</td>
                 </tr>
-                 <tr>
+                <tr>
                   <td className="font-bold">Médico:</td>
                   <td className="uppercase">{datosPx?.Medico}</td>
                   <td className="font-bold">Ocupación:</td>
@@ -124,19 +124,19 @@ export default function HistoriaClinicaEmer({ idcuentaatencion }: any) {
                 </tr>
 
 
-                 <tr>
+                <tr>
                   <td className="font-bold">Lugar Nacimiento:</td>
                   <td className="capitalize">
-                    
-                    {datosPx?.distritoNacimiento ? datosPx?.distritoNacimiento : ''   } 
-                    {datosPx?.provinciaNacimiento ? ` / `+datosPx?.provinciaNacimiento : ''  }
-                    {datosPx?.departamentoNacimiento ? ` / `+datosPx?.departamentoNacimiento : ''  }
-                   </td>
+
+                    {datosPx?.distritoNacimiento ? datosPx?.distritoNacimiento : ''}
+                    {datosPx?.provinciaNacimiento ? ` / ` + datosPx?.provinciaNacimiento : ''}
+                    {datosPx?.departamentoNacimiento ? ` / ` + datosPx?.departamentoNacimiento : ''}
+                  </td>
                   <td className="font-bold">Lugar Procedencia:</td>
                   <td>
-{datosPx?.DistritoProcedencia ? datosPx?.DistritoProcedencia : ''   } 
-                    {datosPx?.provinciaProcedencia ? ` / `+datosPx?.provinciaProcedencia : ''  }
-                    {datosPx?.departamentoProcedencia ? ` / `+datosPx?.departamentoProcedencia : ''  }
+                    {datosPx?.DistritoProcedencia ? datosPx?.DistritoProcedencia : ''}
+                    {datosPx?.provinciaProcedencia ? ` / ` + datosPx?.provinciaProcedencia : ''}
+                    {datosPx?.departamentoProcedencia ? ` / ` + datosPx?.departamentoProcedencia : ''}
                   </td>
                 </tr>
 
@@ -144,17 +144,17 @@ export default function HistoriaClinicaEmer({ idcuentaatencion }: any) {
                 <tr>
                   <td className="font-bold">Lugar Domicilio:</td>
                   <td>
-                     {datosPx?.distrito ? datosPx?.distrito : ''   } 
-                    {datosPx?.provincia ? ` / `+datosPx?.provincia : ''  }
-                    {datosPx?.departamento ? ` / `+datosPx?.departamento : ''  }
+                    {datosPx?.distrito ? datosPx?.distrito : ''}
+                    {datosPx?.provincia ? ` / ` + datosPx?.provincia : ''}
+                    {datosPx?.departamento ? ` / ` + datosPx?.departamento : ''}
                   </td>
                   <td className="font-bold">Religión:</td>
                   <td> - </td>
                 </tr>
-               
+
                 <tr>
                   <td className="font-bold"> Acompañante:</td>
-                  <td colSpan={3}> {datosPx?.NombreAcompaniante ? datosPx?.NombreAcompaniante : ''   }</td>
+                  <td colSpan={3}> {datosPx?.NombreAcompaniante ? datosPx?.NombreAcompaniante : ''}</td>
                 </tr>
               </tbody>
             </table>
@@ -222,7 +222,7 @@ export default function HistoriaClinicaEmer({ idcuentaatencion }: any) {
                 </tr>
               </tbody>
             </table>
-            
+
             <table className="w-full text-[11px] leading-tight border border-black mt-2">
               <tbody>
                 <tr>
@@ -262,7 +262,7 @@ export default function HistoriaClinicaEmer({ idcuentaatencion }: any) {
           className="bg-white w-[210mm] h-[297mm] p-6 shadow-lg print:shadow-none print:m-0 print:p-6 overflow-hidden scale-container"
         >
           <div className="text-xs leading-tight w-full max-w-full mx-auto">
- <div className="border-b pb-2 mb-2 flex justify-between items-center">
+            <div className="border-b pb-2 mb-2 flex justify-between items-center">
               <div>
                 <Image
                   src="/img/loghrhvm.png"
@@ -318,7 +318,7 @@ export default function HistoriaClinicaEmer({ idcuentaatencion }: any) {
 
                   </td>
                 </tr>
-                   <tr>
+                <tr>
                   <td className="font-bold ">TIEMPO DE PERMANENCIA:</td>
                 </tr>
                 <tr>
@@ -331,7 +331,7 @@ export default function HistoriaClinicaEmer({ idcuentaatencion }: any) {
                 </tr>
                 <tr>
                   <td className='pt-40 text-center' colSpan={2}>
-                  Firma y sello del Médico Responsable Atención/Emergencia
+                    Firma y sello del Médico Responsable Atención/Emergencia
                   </td>
                 </tr>
               </tbody>
