@@ -313,7 +313,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
                         <div className="col-span-12 print:hidden">
                             <h1>{TextoLoading}</h1>
                         </div>
-                        <div className="col-span-12 print:">
+                        <div className="col-span-12 print:hidden">
                             <label htmlFor="medico" className=" block text-sm font-medium text-gray-700">
                                 Filtrar por Médico
                             </label>
@@ -344,7 +344,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
                         </div>
                        
   <div
-                            className="col-span-12 md:col-span-8 print:hidden ">
+                            className="col-span-12 md:col-span-8 print:hidden hidden">
                             <Controller
                                 name="medicoBuscado"
                                 control={control}
@@ -372,7 +372,7 @@ export const ModuloAdmision = ({ usuario }: any) => {
 
                     <form
   onSubmit={handleSubmit2(onSubmitTicket)}
-  className="col-span-12 md:col-span-4 flex flex-wrap md:flex-nowrap items-center gap-3 "
+  className="col-span-12 md:col-span-4 flex flex-wrap md:flex-nowrap items-center gap-3 print:hidden hidden"
 >
   {/* SELECT 1 */}
   <Controller

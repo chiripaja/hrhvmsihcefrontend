@@ -149,7 +149,7 @@ export default function HistoriaClinicaEmer({ idcuentaatencion }: any) {
                     {datosPx?.departamento ? ` / ` + datosPx?.departamento : ''}
                   </td>
                   <td className="font-bold">Religión:</td>
-                  <td> - </td>
+                  <td>    {datosPx?.Observacion ? datosPx?.Observacion : ''} </td>
                 </tr>
 
                 <tr>
@@ -311,7 +311,7 @@ export default function HistoriaClinicaEmer({ idcuentaatencion }: any) {
                   </td>
                 </tr>
                 <tr>
-                  <td className="font-bold ">CONDICION DE EGRESO:</td>
+                  <td className="font-bold ">CONDICIÓN DE EGRESO:</td>
                 </tr>
                 <tr>
                   <td className='pt-20'>

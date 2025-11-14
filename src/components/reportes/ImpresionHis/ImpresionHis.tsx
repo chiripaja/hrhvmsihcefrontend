@@ -45,6 +45,7 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
   const [loading, setLoading] = useState(true) // 👈 Estado de carga
   const getCabecera = async (id: any) => {
     const dataProgramacion = await getData(`${process.env.apijimmynew}/programacionmedica/${id}`)
+    console.log(dataProgramacion)
     setdataCabeceraHis(dataProgramacion)
   }
 
@@ -180,94 +181,125 @@ export const ImpresionHis = ({ idprogramacion }: any) => {
     <td className="border border-black text-center"></td>
   </tr>
 
-  {dataCabeceraHis?.citas
-    ?.filter((cita: any) => cita?.atencion?.atencionesDiagnosticos?.length)
-    ?.map((cita: any, index: number) => {
-      const diagnosticos = cita?.atencion?.atencionesDiagnosticos || [];
-      const totalDx = diagnosticos.length;
+{dataCabeceraHis?.citas
+  ?.filter((cita: any) => cita?.atencion?.atencionesDiagnosticos?.length)
+  ?.map((cita: any, index: number) => {
+    const diagnosticos = cita?.atencion?.atencionesDiagnosticos || [];
 
-      return (
-        <React.Fragment key={index}>
-          <tr><td colSpan={17} className="h-4"></td></tr>
+    // 🔹 Extraemos todos los procedimientos (servicios facturados)
+ const procedimientos =
+      cita?.atencion?.factOrdenServicio
+        ?.flatMap((orden: any) => orden?.facturacionServicioDespacho || [])
+        ?.map((item: any) => item?.factCatalogoServicios)
+        ?.filter((proc: any) => proc?.codigo !== "99203") || []; 
 
-          {diagnosticos.map((diag: any, idx: number) => (
-            <tr key={idx} className="border-b">
-              {/* Solo la primera fila muestra los datos generales con rowspan */}
-              {idx === 0 && (
-                <>
-                  <td className="border border-black text-center " rowSpan={totalDx}>
-                    {String(new Date(cita.fecha).getDate()).padStart(2, '0')}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                    {cita?.atencion?.pacienteDTO?.nroHistoriaClinica || ""}
-                    <p>DNI: {cita?.atencion?.pacienteDTO?.nroDocumento || ""}</p>
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                    {cita?.atencion?.idFormaPago || ""}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>80</td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                    {cita?.atencion?.pacienteDTO?.distrito + " -" || ""} 
-                    {cita?.atencion?.pacienteDTO?.provincia + " -" || ""} 
-                    {cita?.atencion?.pacienteDTO?.departamento || ""}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                    {(() => {
-                      const fechaNacimiento = cita?.atencion?.pacienteDTO?.fechaNacimiento;
-                      if (!fechaNacimiento) return "";
-                      const fecha = new Date(fechaNacimiento);
-                      const hoy = new Date();
-                      let edad = hoy.getFullYear() - fecha.getFullYear();
-                      const mes = hoy.getMonth() - fecha.getMonth();
-                      if (mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) edad--;
-                      return edad + " años";
-                    })()}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                    {cita?.atencion?.pacienteDTO?.idTipoSexo === '1' ? 'X' : ''}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                    {cita?.atencion?.pacienteDTO?.idTipoSexo === '2' ? 'X' : ''}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                     {cita?.atencion?.idTipoCondicionAlEstablecimiento == '1' ? 'X' : ''}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                     {cita?.atencion?.idTipoCondicionAlEstablecimiento == '2' ? 'X' : ''}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                     {cita?.atencion?.idTipoCondicionAlEstablecimiento == '3' ? 'X' : ''}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                    {cita?.atencion?.idTipoCondicionAlServicio == '1' ? 'X' : ''}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                    {cita?.atencion?.idTipoCondicionAlServicio == '2' ? 'X' : ''}
-                  </td>
-                  <td className="border border-black text-center" rowSpan={totalDx}>
-                    {cita?.atencion?.idTipoCondicionAlServicio == '3' ? 'X' : ''}
-                  </td>
-                </>
-              )}
+    const totalDx = diagnosticos.length;
+    const totalProc = procedimientos.length;
 
-              {/* Columnas de diagnóstico */}
-              <td className="border border-black text-left px-1 py-0.5">
-                {diag?.diagnostico?.descripcion}
-              </td>
+    return (
+      <React.Fragment key={index}>
+        <tr><td colSpan={17} className="h-4"></td></tr>
+
+        {diagnosticos.map((diag: any, idx: number) => (
+          <tr key={idx} className="border-b">
+            {/* Solo la primera fila muestra los datos generales con rowspan */}
+            {idx === 0 && (
+              <>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {String(new Date(cita.fecha).getDate()).padStart(2, '0')}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.pacienteDTO?.nroHistoriaClinica || ""}
+                  <p>DNI: {cita?.atencion?.pacienteDTO?.nroDocumento || ""}</p>
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.idFormaPago || ""}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>80</td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.pacienteDTO?.distrito + " -" || ""} 
+                  {cita?.atencion?.pacienteDTO?.provincia + " -" || ""} 
+                  {cita?.atencion?.pacienteDTO?.departamento || ""}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {(() => {
+                    const fechaNacimiento = cita?.atencion?.pacienteDTO?.fechaNacimiento;
+                    if (!fechaNacimiento) return "";
+                    const fecha = new Date(fechaNacimiento);
+                    const hoy = new Date();
+                    let edad = hoy.getFullYear() - fecha.getFullYear();
+                    const mes = hoy.getMonth() - fecha.getMonth();
+                    if (mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) edad--;
+                    return edad + " años";
+                  })()}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.pacienteDTO?.idTipoSexo === '1' ? 'X' : ''}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.pacienteDTO?.idTipoSexo === '2' ? 'X' : ''}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.idTipoCondicionAlEstablecimiento == '1' ? 'X' : ''}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.idTipoCondicionAlEstablecimiento == '2' ? 'X' : ''}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.idTipoCondicionAlEstablecimiento == '3' ? 'X' : ''}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.idTipoCondicionAlServicio == '1' ? 'X' : ''}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.idTipoCondicionAlServicio == '2' ? 'X' : ''}
+                </td>
+                <td className="border border-black text-center" rowSpan={totalDx + totalProc}>
+                  {cita?.atencion?.idTipoCondicionAlServicio == '3' ? 'X' : ''}
+                </td>
+              </>
+            )}
+
+            {/* Columnas de diagnóstico */}
+            <td className="border border-black text-left px-1 py-0.5">
+              {diag?.diagnostico?.descripcion}
+            </td>
+            <td className="border border-black text-center px-1 py-0.5">
+              {diag?.subclasificacionDiagnosticos?.codigo}
+            </td>
+            <td className="border border-black text-center px-1 py-0.5">
+              {diag?.labConfHIS}
+            </td>
+            <td className="border border-black text-center px-1 py-0.5">
+              {diag?.diagnostico?.codigoCIE10}
+            </td>
+          </tr>
+        ))}
+
+        {/* Mostrar los procedimientos debajo de los diagnósticos */}
+        {procedimientos.length > 0 && 
+        procedimientos
+        //.filter((proc: any) => proc?.codigo !== "99203")
+        .map((proc: any, i: number) => (
+          <tr key={`proc-${i}`} className="border-b ">
+            <td className="border border-black text-left px-1 py-0.5 ">
+               {proc?.nombre || ''}
+            </td>
               <td className="border border-black text-center px-1 py-0.5">
-                {diag?.subclasificacionDiagnosticos?.codigo}
-              </td>
-              <td className="border border-black text-center px-1 py-0.5">
-                {diag?.labConfHIS}
-              </td>
-                <td className="border border-black text-center px-1 py-0.5">
-                 {diag?.diagnostico?.codigoCIE10}
-              </td>
-            </tr>
-          ))}
-        </React.Fragment>
-      );
-    })}
+            
+            </td>
+            <td className="border border-black text-center px-1 py-0.5">
+             {proc?.codigo=='99499.11' ? '2':''}
+            </td>
+            <td className="border border-black text-center px-1 py-0.5">
+              {proc?.codigo || ''}
+            </td>
+          </tr>
+        ))}
+      </React.Fragment>
+    );
+  })}
+
 </tbody>
 
 
